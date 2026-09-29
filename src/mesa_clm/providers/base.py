@@ -450,7 +450,16 @@ def _mask_is_empty(r: DecisionRecord, masked: list[bool]) -> bool:
 def _check_mask(r: DecisionRecord) -> None:
     """A mask removes options after scoring: removed options carry probability 0, the anchor is
     never removed, a fully masked record abstains, and at zero shot ``probs`` is still CLM's
-    distribution, renormalised over what the mask kept (no other transform)."""
+    distribution, renormalised over what the masks kept (no other transform).
+
+    A fully masked record keeps the distribution it had before the mask that emptied it
+    (:func:`apply_mask` never renormalises onto the anchor alone). That distribution may itself
+    be the renormalisation of an *earlier* mask (the provider masks by aspect, the pipeline then
+    by the ontologies in play), so the zero-shot check reads the support off ``probs`` instead of
+    off the final flags: ``probs`` must be ``raw_probs`` restricted to its own support and
+    renormalised (``raw_probs`` itself when nothing was removed), and that support must contain
+    every option the flags keep. For a partially masked record the support is exactly the kept
+    options (served probabilities are ``> 0``), which is the old rule."""
     masked = r.masked
     if masked is not None:
         if len(masked) != r.k:
@@ -471,12 +480,29 @@ def _check_mask(r: DecisionRecord) -> None:
     ):
         raise ValueError("a masked option carries probability 0")
     if r.level == "zero_shot" and r.probs is not None and r.raw_probs is not None:
-        expected = list(r.raw_probs)
-        if renormalised and masked is not None:
-            kept = math.fsum(p for p, m in zip(r.raw_probs, masked, strict=True) if not m)
-            expected = [0.0 if m else p / kept for p, m in zip(r.raw_probs, masked, strict=True)]
-        if any(abs(p - q) > DERIVED_TOL for p, q in zip(r.probs, expected, strict=True)):
-            raise ValueError("a zero_shot record's probs are CLM's raw_probs, untransformed")
+        _check_zero_shot_probs(r.probs, r.raw_probs, masked)
+
+
+def _check_zero_shot_probs(
+    probs: list[float], raw_probs: list[float], masked: list[bool] | None
+) -> None:
+    """At zero shot the only transforms are masks: ``probs`` is ``raw_probs`` renormalised over
+    the options it still gives mass to, and no option the flags keep has lost its mass."""
+    support = [p > 0.0 for p in probs]
+    kept_by_flags = [True] * len(probs) if masked is None else [not m for m in masked]
+    if any(k and not s for k, s in zip(kept_by_flags, support, strict=True)):
+        raise ValueError("a zero_shot record's probs drop an option no mask removed")
+    if sum(support) < 2:
+        # A mask always keeps a candidate next to the anchor, and an emptying mask leaves the
+        # previous distribution: all mass on one option is fabricated, never renormalised.
+        raise ValueError("a zero_shot record's probs put all mass on one option")
+    if all(support):
+        expected = list(raw_probs)  # nothing removed: CLM's distribution bit for bit
+    else:
+        kept = math.fsum(p for p, s in zip(raw_probs, support, strict=True) if s)
+        expected = [p / kept if s else 0.0 for p, s in zip(raw_probs, support, strict=True)]
+    if any(abs(p - q) > DERIVED_TOL for p, q in zip(probs, expected, strict=True)):
+        raise ValueError("a zero_shot record's probs are CLM's raw_probs, untransformed")
 
 
 def _check_artifact(r: DecisionRecord) -> None:
