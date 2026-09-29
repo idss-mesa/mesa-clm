@@ -8,6 +8,14 @@ All notable changes to the mesa-clm package. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- Bench ranking metrics no longer depend on the order of tied confidences (DESIGN D33):
+  `mesa_clm.bench.metrics` replaces the vendored `ece`, `coverage_at_risk` and `aurc` in every
+  cell (tied items share their group's mean correctness; identical to the vendored values on
+  tie-free inputs). The committed `bench/results/2026-09-29/baselines.json` was regenerated;
+  only `ece`, `cov@5%`, `cov@10%` and `aurc` moved. Found by x86-64 CI disagreeing with aarch64.
+
 ### Added
 
 - Milestone M0: repository scaffold and contracts. The hatchling `src/` package `mesa_clm`

@@ -536,6 +536,14 @@ will move when it lands.
   carc-fast L0, static planner): rep-to-rep Jaccard 0.37, consensus-all recall 0.25 — the
   report-only e2e comparison in M4.
 
+- **Vendored ranking metrics are tie-order dependent** (found by PR #1 CI, 2026-09-29): AnyJev
+  `bench/metrics.py` `ece` and `coverage_risk` sort with `np.argsort` (unstable); on the M0
+  lookup cell the same inputs gave `neon_annotate` ECE 0.1452 on aarch64 and 0.1473 on the
+  x86-64 GitHub runners. With the tie-invariant metrics of DESIGN D33 the committed cells
+  (`bench/results/2026-09-29/baselines.json`) report lookup_prob ECE 0.131 (annotate), 0.401
+  (aspect), 0.152 (ontology_fits), 0.070 (term.fits), 0.142 (value_kind); accuracy, NLL, AUROC,
+  the novel-key and LOPO blocks are unchanged.
+
 ## Contradictions found during exploration and how they were settled
 
 1. HF caches were said to be under the repo tree; they are under `~/.cache/huggingface/hub`, and

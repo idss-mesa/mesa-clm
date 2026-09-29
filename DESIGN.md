@@ -73,6 +73,7 @@ history, is the design record `design/plan-2026-09-28.md` (cited below as "plan 
 | D30 | Frozen label snapshots: the bench reads only `labels snapshot` output; cells record `labels_sha256`; curator labels on bench cards are tagged and excluded from pre-registered cells | accepted |
 | D31 | Reversibility: `mesa-clm revert` deletes exactly the written triples; neon replace mode backs up existing reps; the live-venv bump has a written rollback | accepted |
 | D32 | Plugin visibility: a mesa-mcp allowlist `MESA_MCP_SERVER__PLUGINS` and a neon template setting it to `none` land before the live bump | accepted |
+| D33 | Ranking metrics (ECE, coverage-at-risk, AURC) are tie-invariant: tied confidences share their group's mean correctness before binning; equal to the vendored AnyJev metrics on tie-free inputs | accepted |
 
 ## D0. Pinned git dependencies; a torch-free core
 
@@ -335,6 +336,22 @@ Before the live venv bump, a mesa-mcp PR adds a plugin allowlist
 neon-ducklake PR sets it to `none` in the committed template `curation/mcp-mesa-ols.json`.
 neon's `HIDDEN_TOOLS` is a static list of the 8fbaedf registry (`curate.py:101-104,324`), so new
 plugin tools would change the Opus child's `tools_visible` and with it the teacher corpus.
+
+## D33. Tie-invariant ranking metrics
+
+The vendored AnyJev `bench/metrics.py` (byte-identical, never edited) orders items by confidence
+with `np.argsort`'s default, unstable sort. With tied confidences the order of the tied items is
+whatever the platform's sort kernel yields, and that order decides which items share an
+equal-mass ECE bin and which prefix of the risk-coverage curve they join. The M0 lookup cell
+gave ECE 0.1452 on sparky-1 (aarch64) and 0.1473 on x86-64 CI from identical inputs (PR #1).
+Lookup probabilities take a handful of distinct values and a collapsed zero-shot CLM head
+(issue #15) is almost all ties, so every mesa-clm cell reports `ece`, `cov@5%`, `cov@10%` and
+`aurc` from `mesa_clm.bench.metrics`: each item's correctness is replaced by the mean over its
+tie group before sorting (with a stable sort). For the risk-coverage curve this is the
+expectation over uniformly random tie-breaking; for ECE it is a canonical order-free value. On
+tie-free inputs the functions equal the vendored ones exactly (`tests/unit/test_tie_metrics.py`),
+so mesa-anyjev's continuous-probability L2 cells stay directly comparable. Accuracy, macro-F1,
+Brier and NLL do not sort and still come from the vendored module.
 
 ## Pre-registration (G1)
 
