@@ -1,0 +1,295 @@
+{
+ "schema_sha256": "52cec58afbf49ad7b7aa6bdb7e7476ee42bf3fd7a2703d44319dc4b565987335",
+ "tasks": {
+  "column.annotate": {
+   "task_key": "8b8c7f14be35925d",
+   "shape": "choice",
+   "active_framing": "F7",
+   "framings": {
+    "F7": {
+     "question_key": "fd462090da41fe4b",
+     "shape": "choice",
+     "context_view": "column_state",
+     "context_template": null,
+     "instructions": null,
+     "candidate_template": "{label}: {description}",
+     "anchor_key": null,
+     "anchor_text": null,
+     "closed_options": {
+      "Yes": "This column records a scientific concept, such as an organism, a measured property, an environment or a method, that deserves an ontology annotation.",
+      "No": "This column is an identifier, a bookkeeping field, a timestamp, a free-text remark or otherwise needs no ontology annotation."
+     },
+     "option_keys": [
+      "Yes",
+      "No"
+     ],
+     "label_map": {
+      "Yes": "Yes",
+      "No": "No"
+     },
+     "mask_rule": null,
+     "render_version": "1",
+     "control": false,
+     "active": true
+    }
+   }
+  },
+  "column.aspect": {
+   "task_key": "982e2baa2c1c7762",
+   "shape": "choice",
+   "active_framing": "F7",
+   "framings": {
+    "F7": {
+     "question_key": "c6e75e0f5de7ea72",
+     "shape": "choice",
+     "context_view": "column_state",
+     "context_template": null,
+     "instructions": null,
+     "candidate_template": "{label}: {description}",
+     "anchor_key": null,
+     "anchor_text": null,
+     "closed_options": {
+      "taxon": "taxon: the organisms observed, sampled or identified",
+      "environment": "environment: the biome, habitat or environmental material at a site",
+      "method": "method: the sampling protocol, device, assay or processing step",
+      "measurement": "measurement: a measured quantity, quality or attribute of a thing",
+      "unit": "unit: the unit of measure of a measured quantity",
+      "data_type": "data_type: the kind of record, identifier, dataset or information artifact",
+      "location": "location: a named place, region, plot or geographic feature",
+      "other": "other: none of the above or not an annotatable column"
+     },
+     "option_keys": [
+      "taxon: the organisms observed, sampled or identified",
+      "environment: the biome, habitat or environmental material at a site",
+      "method: the sampling protocol, device, assay or processing step",
+      "measurement: a measured quantity, quality or attribute of a thing",
+      "unit: the unit of measure of a measured quantity",
+      "data_type: the kind of record, identifier, dataset or information artifact",
+      "location: a named place, region, plot or geographic feature",
+      "other: none of the above or not an annotatable column"
+     ],
+     "label_map": {
+      "taxon": "taxon: the organisms observed, sampled or identified",
+      "environment": "environment: the biome, habitat or environmental material at a site",
+      "method": "method: the sampling protocol, device, assay or processing step",
+      "measurement": "measurement: a measured quantity, quality or attribute of a thing",
+      "unit": "unit: the unit of measure of a measured quantity",
+      "data_type": "data_type: the kind of record, identifier, dataset or information artifact",
+      "location": "location: a named place, region, plot or geographic feature",
+      "other": "other: none of the above or not an annotatable column"
+     },
+     "mask_rule": null,
+     "render_version": "1",
+     "control": false,
+     "active": true
+    }
+   }
+  },
+  "column.ontology_fits": {
+   "task_key": "f45eb7fe2fbefdb5",
+   "shape": "rank_fit",
+   "active_framing": "F7",
+   "framings": {
+    "F1": {
+     "question_key": "7187328988b9192f",
+     "shape": "rank_fit",
+     "context_view": "ontology_state",
+     "context_template": null,
+     "instructions": "Does the ontology described in the state contain the right kind of term for annotating this column?",
+     "candidate_template": "{label}: {description}",
+     "anchor_key": null,
+     "anchor_text": null,
+     "closed_options": null,
+     "option_keys": [
+      "Yes",
+      "No"
+     ],
+     "label_map": {
+      "true": "Yes",
+      "false": "No"
+     },
+     "mask_rule": "aspect",
+     "render_version": "1",
+     "control": true,
+     "active": false
+    },
+    "F4": {
+     "question_key": "dbc0f6ddf8bded7e",
+     "shape": "rank_fit",
+     "context_view": "target_state",
+     "context_template": null,
+     "instructions": "Which ontology has the right kind of term for annotating this column?",
+     "candidate_template": "{label}: {description}",
+     "anchor_key": "__none__",
+     "anchor_text": "None of these ontologies has a suitable term for this target.",
+     "closed_options": null,
+     "option_keys": null,
+     "label_map": null,
+     "mask_rule": "aspect",
+     "render_version": "1",
+     "control": false,
+     "active": false
+    },
+    "F7": {
+     "question_key": "8e8c77ee40c3eacb",
+     "shape": "rank_fit",
+     "context_view": "target_state",
+     "context_template": null,
+     "instructions": null,
+     "candidate_template": "{label}: {description}",
+     "anchor_key": "__none__",
+     "anchor_text": "None of these ontologies has a suitable term for this target.",
+     "closed_options": null,
+     "option_keys": null,
+     "label_map": null,
+     "mask_rule": "aspect",
+     "render_version": "1",
+     "control": false,
+     "active": true
+    },
+    "F9": {
+     "question_key": "c95785008b523fd0",
+     "shape": "rank_fit",
+     "context_view": "target_state",
+     "context_template": "NEON dataset {title}. Column {name}: {description} ({unit}). {aspect} ontology term:",
+     "instructions": null,
+     "candidate_template": "{label}: {description}",
+     "anchor_key": "__none__",
+     "anchor_text": "None of these ontologies has a suitable term for this target.",
+     "closed_options": null,
+     "option_keys": null,
+     "label_map": null,
+     "mask_rule": "aspect",
+     "render_version": "1",
+     "control": false,
+     "active": false
+    }
+   }
+  },
+  "term.fits": {
+   "task_key": "0ccc8d141ffd30ff",
+   "shape": "rank_fit",
+   "active_framing": "F7",
+   "framings": {
+    "F1": {
+     "question_key": "d7e807a6608d7883",
+     "shape": "rank_fit",
+     "context_view": "candidate_state",
+     "context_template": null,
+     "instructions": "Is the candidate ontology term a correct annotation for the described column, site or dataset: the right concept at an appropriate specificity, not merely related?",
+     "candidate_template": "{label}: {description}",
+     "anchor_key": null,
+     "anchor_text": null,
+     "closed_options": null,
+     "option_keys": [
+      "Yes",
+      "No"
+     ],
+     "label_map": {
+      "true": "Yes",
+      "false": "No"
+     },
+     "mask_rule": null,
+     "render_version": "1",
+     "control": true,
+     "active": false
+    },
+    "F4": {
+     "question_key": "c3de3841a066c906",
+     "shape": "rank_fit",
+     "context_view": "target_state",
+     "context_template": null,
+     "instructions": "Which term is the right concept for this target, not merely related?",
+     "candidate_template": "{label}: {description}",
+     "anchor_key": "__none__",
+     "anchor_text": "None of these terms is the right concept for this target.",
+     "closed_options": null,
+     "option_keys": null,
+     "label_map": null,
+     "mask_rule": null,
+     "render_version": "1",
+     "control": false,
+     "active": false
+    },
+    "F7": {
+     "question_key": "a686a06aab14497a",
+     "shape": "rank_fit",
+     "context_view": "target_state",
+     "context_template": null,
+     "instructions": null,
+     "candidate_template": "{label}: {description}",
+     "anchor_key": "__none__",
+     "anchor_text": "None of these terms is the right concept for this target.",
+     "closed_options": null,
+     "option_keys": null,
+     "label_map": null,
+     "mask_rule": null,
+     "render_version": "1",
+     "control": false,
+     "active": true
+    },
+    "F9": {
+     "question_key": "45dd37ce79b90117",
+     "shape": "rank_fit",
+     "context_view": "target_state",
+     "context_template": {
+      "column": "NEON dataset {title}. Column {name}: {description} ({unit}). {aspect} ontology term:",
+      "site": "NEON dataset {title}. Site {code}: {site_name}, {habitat}. {aspect} ontology term:",
+      "dataset": "NEON dataset {title}: {product_description}. {aspect} ontology term:"
+     },
+     "instructions": null,
+     "candidate_template": "{label}: {description}",
+     "anchor_key": "__none__",
+     "anchor_text": "None of these terms is the right concept for this target.",
+     "closed_options": null,
+     "option_keys": null,
+     "label_map": null,
+     "mask_rule": null,
+     "render_version": "1",
+     "control": false,
+     "active": false
+    }
+   }
+  },
+  "avu.value_kind": {
+   "task_key": "18a3a5159c3a8492",
+   "shape": "choice",
+   "active_framing": "F7",
+   "framings": {
+    "F7": {
+     "question_key": "082178504fb4a3c9",
+     "shape": "choice",
+     "context_view": "value_kind_state",
+     "context_template": null,
+     "instructions": null,
+     "candidate_template": "{label}: {description}",
+     "anchor_key": null,
+     "anchor_text": null,
+     "closed_options": {
+      "term_label": "the term label",
+      "site_code": "the site code",
+      "column_name": "the column name",
+      "top_value": "the most frequent data value"
+     },
+     "option_keys": [
+      "the term label",
+      "the site code",
+      "the column name",
+      "the most frequent data value"
+     ],
+     "label_map": {
+      "term_label": "the term label",
+      "site_code": "the site code",
+      "column_name": "the column name",
+      "top_value": "the most frequent data value"
+     },
+     "mask_rule": null,
+     "render_version": "1",
+     "control": false,
+     "active": true
+    }
+   }
+  }
+ },
+ "lock_sha": "b432d32a7536c8f455098ae4a23139f6badbae7bc181a3a64853df3e80921eca"
+}
