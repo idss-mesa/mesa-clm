@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "sample collected",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001123",
+   "description": "An identifier field which describes the user-defined name for the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001123",
+   "isRoot": false,
+   "label": "specimen collector sample ID",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001153",
+   "description": "A data field which describes the name of the organization with which the sample collector is affiliated.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001153",
+   "isRoot": false,
+   "label": "sample collected by",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100428",
+   "description": "A data field which describes the specific laboratory affiliation of the sample collector.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100428",
+   "isRoot": false,
+   "label": "sample collected by laboratory name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001174",
+   "description": "A data field which describes the date on which the sample was collected.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001174",
+   "isRoot": false,
+   "label": "sample collection start date",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001177",
+   "description": "A data field which describes the precision to which the \"sample collection date\" was provided.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001177",
+   "isRoot": false,
+   "label": "sample collection date precision",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100429",
+   "description": "A data field which describes the project/initiative/program for which the sample was collected.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100429",
+   "isRoot": false,
+   "label": "sample collection project name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001156",
+   "description": "A data field which describes the email address of the contact responsible for follow-up regarding the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001156",
+   "isRoot": false,
+   "label": "sample collector contact email",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100432",
+   "description": "A data field which describes the name or job title of the contact responsible for follow-up regarding the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100432",
+   "isRoot": false,
+   "label": "sample collector contact name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0101071",
+   "description": "A data field which describes the date on which sample collection ended.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0101071",
+   "isRoot": false,
+   "label": "sample collection end date",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100277",
+   "description": "A data field which describes whether the sample was collected from an individual in quarantine.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100277",
+   "isRoot": false,
+   "label": "sample collected in quarantine",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001150",
+   "description": "A data field category which refers to sample collection and processing information fields.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001150",
+   "isRoot": false,
+   "label": "sample collection and processing field category",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0101073",
+   "description": "A data field which describes the time at which sample collection ended.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0101073",
+   "isRoot": false,
+   "label": "sample collection end time",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100762",
+   "description": "A data field which describes the name of the individual responsible for the data governance, (meta)data usage and distribution of the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100762",
+   "isRoot": false,
+   "label": "sample collection data steward name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001158",
+   "description": "A data field which describes the mailing address of the agency submitting the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001158",
+   "isRoot": false,
+   "label": "sample collector contact address",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102162",
+   "description": "PCDS: If the sample is associated with a particular collection, provide the name of the sample collection. Type culture collection names can be referenced here. Private collections and sample collection project names can also be included.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102162",
+   "isRoot": false,
+   "label": "sample collection name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0101107",
+   "description": "PCDS: Provide the email address of the sample collection data steward. This may or may not be the same individual/organization that collected the sample. If the contact is the same, provide the same address as the 'sample collector contact email'.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0101107",
+   "isRoot": false,
+   "label": "sample collection data steward contact email",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102067",
+   "description": "PCDS: If the sample collection has online materials that may be useful for providing context, include the URL associated with the sample collection.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102067",
+   "isRoot": false,
+   "label": "sample collection url",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100764",
+   "description": "A sample collection data field which describes the time the sample was collected.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100764",
+   "isRoot": false,
+   "label": "sample collection time",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100752",
+   "description": "An identifier field which describes the user defined name for a portion of the original sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100752",
+   "isRoot": false,
+   "label": "specimen collector subsample id",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0101072",
+   "description": "A data field which describes the time at which sample collection began.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0101072",
+   "isRoot": false,
+   "label": "sample collection start time",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

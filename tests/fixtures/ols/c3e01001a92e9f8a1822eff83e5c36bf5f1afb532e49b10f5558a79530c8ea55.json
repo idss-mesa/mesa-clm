@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "nlcd class",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01000740",
+   "description": "This class covers part of the NLCD \"Perennial Ice/Snow\" class.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000740",
+   "isRoot": false,
+   "label": "area of perennial water ice",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000745",
+   "description": "This class covers part of the NLCD \"Perennial Ice/Snow\" class.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000745",
+   "isRoot": false,
+   "label": "area of perennial snow",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000869",
+   "description": "According to the NLCD 2011, areas of scrub or shrub are dominated by shrubs; less than 5 meters tall with shrub canopy typically greater than 20% of total vegetation. This class includes true shrubs, young trees in an early successional stage or trees stunted from environmental conditions. Such thresholds - which are themselves fuzzy - are not asserted in this definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000869",
+   "isRoot": false,
+   "label": "area of scrub",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

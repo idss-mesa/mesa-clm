@@ -1,0 +1,918 @@
+# mesa-clm documentation — full corpus
+
+Each page below begins with its canonical URL followed by its original Markdown, OKF frontmatter included.
+
+---8<--- https://idss-mesa.github.io/mesa-clm/getting-started/configuration/
+
+---
+title: "Configuration"
+description: "Configure mesa-clm with a YAML file, MESA_CLM_ environment variables or flags; precedence, the sections, secrets, and the CLM fallbacks."
+type: Reference
+tags:
+  - getting-started
+  - configuration
+  - environment
+generated:
+  by: "claude/fable-5.1"
+  at: "2026-09-29T00:00:00Z"
+sources:
+  - id: design
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
+    title: "mesa-clm decisions register (DESIGN.md)"
+    author: "team:idss-mesa"
+  - id: plan
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/plan-2026-09-28.md"
+    title: "mesa-clm implementation plan (v1.1, 2026-09-28)"
+    author: "team:idss-mesa"
+status: draft
+stale_after: "2027-03-31T00:00:00Z"
+---
+
+# Configuration
+
+Precedence, highest first: command-line flag, environment variable, YAML file
+(`--config FILE`), built-in default. Environment variables use the `MESA_CLM_` prefix and `__`
+to descend into a section: `MESA_CLM_HISTORY__BACKEND=spool` sets `history.backend`. The model
+is `mesa_clm.config.Config`; a secret-free `config_sha256` is recorded on every run. Data lives
+under `~/.mesa/clm/` (provenance, locks, features, artifacts, heads, secrets, spool).
+
+Two CLM names are honoured as fallbacks so an upstream `clm` client environment keeps working:
+`CLM_BASE_URL` and `CLM_API_KEY`. Every `*_API_KEY` field has a `*_API_KEY_FILE` twin that reads
+a raw 0600 file; `MESA_CLM_SECRETS=auto|env|file|keyring` chooses where secrets come from. No
+secret is ever logged, hashed into a fingerprint or written to a run record.
+
+## Sections
+
+| Section | What it configures |
+|---|---|
+| `clm` | The clm-serve URL (`http://127.0.0.1:8700`), key, model (`clm-latest`, `clm-raw` or a promoted head), `allow_remote` (needs https). |
+| `encoder` | The vLLM pooling URL (`http://127.0.0.1:8090`), key, `max_len` (4096), the token guard. |
+| `decider` | Tier request (`auto`), temperature (always 1 on the wire; calibration is client-side). |
+| `planner` | The reasoning model that only plans: `static` (default in 0.1.0), `claude`, `gateway`. |
+| `claude` | Credentials profile and model for the planner and the second opinion. |
+| `policy` | Profile (`prod` needs `calibrated` for auto-writes and an audit; `dev` allows `--history none`), thresholds file (`policy_defaults.yaml`). |
+| `artifacts`, `features` | Artifact root and feature cache under `~/.mesa/clm/`, keyed by fingerprint. |
+| `provenance`, `ducklake` | Sidecar DSN (`duckdb:///~/.mesa/clm/provenance.duckdb` or `postgresql://`), TTL for abandoned runs; local DuckLake catalog for development. |
+| `history` | `backend` (`direct`, `spool`, `none`, `auto`), `multiwriter`, spool root, lock paths (`$MESA_HOME/locks/mesa-catalog.lock` plus neon's when configured). |
+| `apply` | Batch size (≤500 operations per call) and the token bucket (`max_calls_per_s`, default 5). |
+| `ols` | OLS base URL and the fixture directory for replay. |
+| `neon` | The neon-ducklake root, iRODS root and curation-sync switch for the adapter (0.2.0). |
+
+The configuration module is ported from mesa-anyjev in M0; the serving-facing sections
+(`clm`, `encoder`) become live in M1 and `history`/`apply` in M3. The authoritative field list is
+the `mesa_clm.config` model and `config.yaml.example` in the repository.
+
+---8<--- https://idss-mesa.github.io/mesa-clm/getting-started/install/
+
+---
+title: "Install"
+description: "Install mesa-clm with uv, choose the extras for the bench, Claude, Postgres or end-to-end tests, verify the vendored files, and know what a serving host needs."
+type: Guide
+tags:
+  - getting-started
+  - install
+generated:
+  by: "claude/fable-5.1"
+  at: "2026-09-29T00:00:00Z"
+sources:
+  - id: design
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
+    title: "mesa-clm decisions register (DESIGN.md)"
+    author: "team:idss-mesa"
+  - id: research
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/RESEARCH.md"
+    title: "mesa-clm verified facts (RESEARCH.md)"
+    author: "team:idss-mesa"
+  - id: plan
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/plan-2026-09-28.md"
+    title: "mesa-clm implementation plan (v1.1, 2026-09-28)"
+    author: "team:idss-mesa"
+status: draft
+stale_after: "2027-03-31T00:00:00Z"
+---
+
+# Install
+
+```bash
+git clone https://github.com/idss-mesa/mesa-clm
+cd mesa-clm
+uv sync --all-extras                 # dev install; nothing here pulls torch or vllm
+uv run pytest -q                     # hermetic suite
+sha256sum -c vendored.sha256         # vendored CLM and AnyJev files are byte-identical
+uv run mesa-clm doctor               # pins, versions, plugin API, policy, stores
+```
+
+Python 3.11 or newer. `mesa-mcp` and `mesa-ducklake` come from pinned git commits
+(`pyproject.toml`, `[tool.uv.sources]`; DESIGN D0); neither is on PyPI. The core is a torch-free
+HTTP client: it never depends on `contrastive-lm`, torch or vllm, and the vendored CLM
+`schema.py` is the only upstream code it imports (DESIGN D4).
+
+## Command line (milestone M0)
+
+`mesa-clm --help` lists the verbs that exist. Global options go before the verb: `--config` (a
+YAML file; `MESA_CLM_*` variables and flags override it), `--provenance` (the sidecar DSN,
+`duckdb:///<path>`; also accepted after the verb) and `--actor` (recorded on labels; default
+`$USER`). Exit codes: 0 ok, 1 the verb ran and failed, 2 a configuration or usage problem.
+
+| Verb | What it does |
+|---|---|
+| `doctor [--quick] [--json]` | Vendored files against `vendored.sha256`, the configuration, Python, duckdb (1.5.x window), mesa-mcp and mesa-ducklake with their pinned commits, mesa-mcp's plugin API (`load_plugins`, `register_tool(meta=)`) and the `clm` entry point, the policy defaults, the provenance path, the label store, key files (mode 0600, never read), eval root and OLS fixtures. `--quick` skips the hashing; `--json` prints `{ok, summary, checks[]}`. The serving probes land in M1. |
+| `labels ingest-neon-eval --eval-root DIR [--exclude-models a,b]` | Silver labels from a neon-avu-eval checkout (`tests/fixtures/neon-avu-eval` in this repository), terms resolved through OLS (`MESA_CLM_OLS__FIXTURES=replay` for the recorded fixtures). |
+| `labels import-anyjev --dsn DSN` | Labels from a mesa-anyjev sidecar, opened read-only, re-identified per DESIGN D1. |
+| `labels snapshot [--out PATH]` | Freeze the store to Parquet and print its `labels_sha256` (DESIGN D30); default `bench/snapshots/<today>.parquet`. |
+| `labels stats` | Counts per task, source, label and weight as JSON. |
+| `bench baselines [--out-dir DIR] [--date D] [--snapshot PATH] [--B N] [--seed S]` | The no-model controls per task (`lookup_prob`, novel-key, leave-one-product-out) into `<out-dir>/<date>/baselines.json` and `.md`, stamped with the snapshot's `labels_sha256`; the default snapshot `bench/snapshots/<date>.parquet` is written when missing and refused when the store has changed since. |
+| `bench mde [--n-sims N] ...` | The minimum detectable effect under rule R at the realised label counts, into `<out-dir>/<date>/mde.json`. |
+
+The M0 sequence, as run for `bench/results/2026-09-29/`: `labels ingest-neon-eval --eval-root
+tests/fixtures/neon-avu-eval` → `labels snapshot --out bench/snapshots/2026-09-29.parquet` →
+`bench baselines --date 2026-09-29` → `bench mde --date 2026-09-29`.
+
+## Extras
+
+| Extra | Adds | When |
+|---|---|---|
+| `bench` | `scikit-learn` | The PR #13 logistic-regression baseline replica in the bench (M2). |
+| `tokenize` | `tokenizers` | Exact Qwen3 token counts for the client token guard when the encoder's `/tokenize` is unavailable (M1). |
+| `claude` | `anthropic` | The Claude planner and the second-opinion provider. |
+| `pg` | `psycopg` | The optional Postgres dialect of the provenance sidecar (DuckDB per host is the default). |
+| `e2e` | `mcp` | The end-to-end test over MCP stdio (M3). |
+| `docs` | `zensical`, `pyyaml` | Building this site. |
+| `dev` | pytest, ruff, mypy, `requests` | Development; `requests` only for the vendored CLM client used as a test oracle. |
+
+## Serving hosts (milestone M1)
+
+Annotation needs the two serving processes described in [Serving](../concepts/serving.md): a
+vLLM pooling container serving `Qwen/Qwen3-8B` on `127.0.0.1:8090` and a patched `clm-serve`
+on `127.0.0.1:8700`, both keyed. In 0.1.0 they run on one GPU host (sparky-1); the core
+refuses a non-loopback URL unless `MESA_CLM_CLM__ALLOW_REMOTE=1` is set **and** the URL is
+`https://` (use an `ssh -L` forward otherwise). `mesa-clm doctor` reports what a host can reach.
+Everything else (labels, snapshots, baselines, the hermetic pipeline with the fake transport)
+runs without a GPU.
+
+## As a mesa-mcp plugin (milestone M3)
+
+Installed beside mesa-mcp (≥ `c74f3aa`, which has the entry-point loader), mesa-clm registers
+the five `mesa_clm_*` tools under the surface `clm` through the `mesa_mcp.tools` entry point
+`clm`. The umbrella installer (`idss-mesa/docs` `install.sh`) makes it opt-in
+(`MESA_PLUGINS="mesa-anyjev mesa-clm"`) because serving exists only on the GPU host.
+
+---8<--- https://idss-mesa.github.io/mesa-clm/concepts/decision-model/
+
+---
+title: "Decision model"
+description: "How mesa-clm asks CLM: one rank per candidate group with a fixed abstain anchor, set-independent scores, the Q1-Q8 pipeline, contexts that end with the target, framings and the two keys."
+type: Guide
+tags:
+  - concepts
+  - decisions
+  - clm
+  - framings
+generated:
+  by: "claude/fable-5.1"
+  at: "2026-09-29T00:00:00Z"
+sources:
+  - id: design
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
+    title: "mesa-clm decisions register (DESIGN.md)"
+    author: "team:idss-mesa"
+  - id: research
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/RESEARCH.md"
+    title: "mesa-clm verified facts (RESEARCH.md)"
+    author: "team:idss-mesa"
+  - id: clm
+    resource: "https://github.com/Contrastive-LM/CLM/tree/bb42c6c5bf914fd449bed2f6ca65be80602cb1f7"
+    title: "Contrastive-LM/CLM at bb42c6c5 (schema.py, engine.py, server.py)"
+    author: "org:Contrastive-LM"
+status: draft
+stale_after: "2026-12-31T00:00:00Z"
+---
+
+# Decision model
+
+CLM scores candidate texts against a state: a frozen Qwen3-8B last-token encoder, two 512-d
+projection heads, and a softmax over `scale · cosine` **within each question's candidate set**
+(RESEARCH.md, text contract). There is no abstain option and the probabilities are relative to
+the set, so mesa-clm never asks "does this term fit?" one candidate at a time. Instead
+(DESIGN D2):
+
+* every fit question is **one `/v1/systemone` Choice** whose criteria are
+  `{<CURIE or registry id>: candidate_text, "__none__": anchor_text}`;
+* the score of a candidate is `s_c = ln p_c − ln p_anchor = (scale/T)(cos_c − cos_anchor)`,
+  which does not depend on which other candidates were offered;
+* `p_fit = σ(s_c)` at zero shot and `σ(a·s_c + b)` once calibrated; the winner is the largest
+  `s_c`, and the anchor winning is an abstain (`anchor_won`).
+
+Score questions are never used (upstream #3: state-independent answers). Noul-per-candidate,
+the shape mesa-anyjev used, survives only as the control arm F1 of the framing experiment
+(DESIGN D3). Closed questions (aspect, annotate, value kind) are ordinary Choices without an
+anchor, and `confidence = max(probs)` is computed locally (DESIGN D7). Requests always use
+temperature 1; calibration is client-side.
+
+## Pipeline (planned, milestone M1)
+
+Every context view ends with the target, because last-token pooling weights the tail
+(DESIGN D23). The default framing is F7 (state-only context) until the framing experiment
+chooses A1.
+
+| Step | Task | Shape | Context view | Candidates |
+|---|---|---|---|---|
+| Plan | (the planner) | — | — | which ontologies, columns and queries; hints only |
+| Q1 | `column.annotate` | choice K=2 | `{card_header, column}` | `ANNOTATE_OPTIONS`; identifiers are a rule |
+| Q2 | `column.aspect` | choice K=8 | same text as Q1 | `ASPECT_OPTIONS`; top-1 if proposed, else top-2 |
+| Q3 | `column.ontology_fits` | rank_fit 12 + anchor | same text as Q1 | registry `option_text`, masked by aspect after scoring |
+| S | candidates | OLS | — | `search_candidates` ≤12, fixed `unit_candidate` |
+| Q4 | `term.fits` | rank_fit ≤12 + anchor | `target_state = {card_header, scope, aspect, column|site}` | `"{label}: {description[:300]}"` |
+| Q4b | `term.fits` (specificity) | rank_fit | same | {parent, ≤10 children, anchor}; a child wins at `p_fit +0.10`, proposed-only (DESIGN D24) |
+| Q5 / Q6 | `term.fits` | rank_fit | `{card_header, site}` / `{card_header}` | ENVO biome descendants / NCBITaxon |
+| Q7 | `avu.value_kind` | choice K=4 | `value_kind_state` | `VALUE_KINDS`, deterministic pre-rules first |
+| Q8 | rule | — | — | exact-triple dedup, cap 25 by `p_fit` (DESIGN D25) |
+
+Questions sharing a context go in one request. While a task is uncalibrated, steps prune by
+top-k only; when CLM is down or a tier is killed, the degraded method `ols_rank` proposes the
+OLS top-1 per group as `proposed`, never `auto` (DESIGN D28).
+
+## Rendering, anchors and the token guard
+
+`render.context(state, framing)` projects the builder-ordered state through the view and calls
+the vendored `to_text` (prose, never JSON). Candidate texts are stable per CURIE so CLM's
+action cache hits. The anchors are fixed strings in `registry.ANCHORS`: for terms "None of
+these terms is the right concept for this target.", for ontologies "None of these ontologies
+has a suitable term for this target." Raw cards are never sent: measured states are at most
+1,165 tokens (2,272 synthetic worst case), the encoder runs at `--max-model-len 4096`, and a
+client-side guard abstains with `truncated=true` above `max_len − 16` (RESEARCH.md, token
+lengths).
+
+## Two keys
+
+`task_key = sha256(json{kind, text, options, scale, centers})[:16]` over the original question
+texts is mesa-anyjev's lock key (term.fits `0ccc8d141ffd30ff`) and identifies labels together
+with `(target_sha256, option_key, label_source)`. `question_key` hashes the framing (context
+view and template, instructions, candidate template, anchor text, options, mask rule, render
+version, `schema_sha256`) and keys decisions, features and artifacts (DESIGN D1).
+`framings.lock.json` pins both; `mesa-clm framings --check` fails CI on drift (M1). Framings in
+the experiment grid: F1 (noul control), F4 (Choice + anchor with a task sentence), F7
+(state-only target context), F9 (a query-shaped sentence ending in "ontology term:").
+
+---8<--- https://idss-mesa.github.io/mesa-clm/concepts/learning-and-bench/
+
+---
+title: "Learning and bench"
+description: "Where mesa-clm's labels come from and how they are identified and frozen, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, and the pre-registered experiments X1-X4 with the AnyJev baseline numbers."
+type: Guide
+tags:
+  - concepts
+  - learning
+  - bench
+  - labels
+  - calibration
+generated:
+  by: "claude/fable-5.1"
+  at: "2026-09-29T00:00:00Z"
+sources:
+  - id: design
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
+    title: "mesa-clm decisions register (DESIGN.md)"
+    author: "team:idss-mesa"
+  - id: research
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/RESEARCH.md"
+    title: "mesa-clm verified facts (RESEARCH.md)"
+    author: "team:idss-mesa"
+  - id: anyjev-bench
+    resource: "https://github.com/idss-mesa/mesa-anyjev/blob/main/bench/results/2026-09-25/Qwen__Qwen3-8B.hf.json"
+    title: "mesa-anyjev local bench results, 2026-09-25 (Qwen/Qwen3-8B, raw/L0/L1/L2, leave-one-card-out)"
+    author: "team:idss-mesa"
+  - id: m0-baselines
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/bench/results/2026-09-29/baselines.json"
+    title: "mesa-clm M0 no-model controls (lookup_prob, novel-key, leave-one-product-out), 2026-09-29"
+    author: "team:idss-mesa"
+  - id: m0-mde
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/bench/results/2026-09-29/mde.json"
+    title: "mesa-clm M0 minimum detectable effect under rule R, 2026-09-29"
+    author: "team:idss-mesa"
+status: draft
+stale_after: "2027-03-31T00:00:00Z"
+---
+
+# Learning and bench
+
+## Labels
+
+A label is identified by `(task_key, target_sha256, option_key, label_source)` (DESIGN D1), so
+rotating a framing never orphans it; `option_key` is empty for closed choices. Each carries a
+weight and the flags `fold_eligible`, `bench_card`, `product_code` and `leak_group`:
+
+| Source | Weight | Fold-eligible | Producer |
+|---|---|---|---|
+| `curator` / `curator_implicit` | 1.0 / 0.7 | yes, except on bench cards | a pick in the MRTR elicitation or the interactive CLI (`review`), or a ticked neon `review.md` (DESIGN D21) |
+| `agent_pick` | 0 | no | a plain `mesa_clm_feedback` tool call; recorded, never learned from |
+| `consensus_all` / `_majority` / `_negative` | 0.8 / 0.6 / 0.5 | yes | `labels ingest-neon-eval`: a term proposed by every, by at least two, or by a single one of the four agentic models in neon-avu-eval |
+| `teacher` / `teacher_implicit` | 0.5 / 0.3 | **no** | `labels ingest-teacher`: accepted items of neon-ducklake's Opus-validated generic curation, in-registry only, leak group = product (DESIGN D19) |
+| `gold` | 1.0 | yes | reserved; no hand-verified rows exist yet |
+
+The silver is *agreement between models*, not truth, and Opus is both a silver labeler and the
+teacher, which is why teacher labels never reach a test fold and X4 ablates them. Weights are
+`sample_weight` in every fitter, including LDA and ridge (DESIGN D20). The bench never reads
+the live label table: `labels snapshot` writes a frozen Parquet whose `labels_sha256` every
+cell and manifest records, and curator labels on bench cards are excluded from pre-registered
+cells (DESIGN D30). M0 ships `labels ingest-neon-eval|import-anyjev|snapshot|stats`; the
+fixture ingestion yields 934 rows (term.fits 285: 86 Yes / 199 No), and the 303 valid (card,
+CURIE) pairs of `validated.json` become 285 rows because five GAZ CURIEs come back from EBI OLS
+as root terms (18 pairs, listed in `terms_missing`; RESEARCH.md).
+
+## Tiers and fitters (milestones M2, M4, M7)
+
+| Tier | rank_fit | choice | Artifact |
+|---|---|---|---|
+| `zero_shot` | `σ(s_c)` from `clm-latest` or `clm-raw` | softmax | none |
+| `calibrated` | weighted Platt on `s_c` (`a < 0` flags `inverted`) | temperature (K>2), Platt on the logit difference (K=2) | `calibrators.json` |
+| `probe` | weighted logistic regression, LDA or ridge on `lowdim.v1`, `pair512.v1`, `pair4096.v1` or the PR #13 replica `joint4096@S1`; spec and hyperparameters by grouped inner CV, then temperature | `choice.state.v1` | `probes/<question_key>.json` |
+| `head` | per-candidate two-way rows through CLM's `finetune.py` in the serve venv, re-scored with `HeadPair`, then Platt | closed options | `heads/mesa-<task>-<qk8>-v<N>.pt` |
+
+Artifacts live under `~/.mesa/clm/artifacts/<encoder_fp>/<clm_model_fp>/<lock8>/v<N>/`,
+immutable, with a strict loader that refuses fingerprint mismatches. `learn promote` moves
+`CURRENT` only when the new version beats the current on NLL and is within 0.01 on accuracy
+under rule R; a head is promoted only if it beats the probe (DESIGN D18). Serving never fits
+(DESIGN D15).
+
+## Leave-one-card-out, nested selection, rule R
+
+Folds are one per card over the fold-eligible cards; each needs 30 training and 5 held-out
+labels per class, else it is skipped and reported; predictions are pooled, never fold-averaged.
+Every choice of framing, model, anchor, feature spec or hyperparameter is re-made inside each
+outer fold by grouped inner cross-validation on the six training cards (`selection: "nested"`,
+DESIGN D27); a choice made on all seven cards is `exploratory: true` and cannot be cited.
+Teacher rows of the held-out product never train that fold; a property test proves it.
+
+**Rule R** ("A beats B on m"): the one-sided 95% lower bound of a card-cluster paired bootstrap
+of the difference (resample held-out cards, B=2000, seed 0) is above zero **and** A beats B on
+at least ⌈0.8·m_c⌉ of the held-out cards with at least 10 evaluable items. Effect floors are
+always paired with a confidence-interval condition. `bench mde` simulates the minimum
+detectable effect at the realised n and is committed with the pre-registration.
+
+## The lookup baseline
+
+A no-model lookup that copies the label of the same (scope, column, CURIE) from the other cards
+already scores leave-one-card-out accuracy 0.772 on `term.fits` and 0.800 on
+`column.ontology_fits`, above AnyJev L2's 0.765 on `term.fits` (reproduced by `mesa-clm bench
+baselines`: `bench/results/2026-09-29/baselines.json`, cells `neon_term_fits.baseline.lookup_prob`
+and `neon_ontology_fits.baseline.lookup_prob`; leave-one-product-out 0.723 / 0.721; ties between
+training cards go to the alphabetically first card, RESEARCH.md). So every citable cell must
+report `lookup_prob` (Laplace-smoothed key frequency over the training cards, falling back to
+the training prior on unseen keys), the novel-key subset (159 items for term.fits, 99 for
+ontology_fits) and leave-one-product-out, and **`beats_lookup_novel`** — novel-key AUROC
+cluster lower bound above 0.5 and novel-key NLL beating `lookup_prob` under rule R — gates
+every `auto` threshold (DESIGN D8).
+
+## Pre-registered experiments (frozen at G1; full text in DESIGN.md)
+
+* **X1 framing A/B**: {F1, F4, F7, F9} × {`clm-latest`, `clm-raw`} × {term.fits,
+  ontology_fits}, scored offline from the feature cache with shuffle and candidate-only
+  controls; a fixed decision rule picks the production framing A1 (M2).
+* **X2 baselines**: majority, `lookup_prob`, novel-key, leave-one-product-out, the PR #13
+  logistic-regression replica, and per-item AnyJev L2 predictions if the dump is feasible.
+* **X3 tier sweep**: zero-shot and calibrated on A1; probe specs and fitters; the head (M7).
+* **X4 teacher ablation**: off vs (0.5/0.3) vs (0.3/0.1), scored on silver and
+  silver-minus-Opus; the expected effect with 13 usable items is stated in advance as about
+  null.
+
+Kill and pivot criteria K0–K4 are fixed with them: no state signal makes a task's CLM tiers
+audit-only and its proposals `ols_rank`; a task earns auto-eligibility only by beating the
+lookup on novel keys and matching AnyJev L2 in a paired test with ECE at most 0.08.
+
+## Baseline numbers
+
+From mesa-anyjev's `bench/results/2026-09-25/Qwen__Qwen3-8B.hf.json` (Qwen/Qwen3-8B bf16,
+leave-one-card-out over 7 cards): `neon_term_fits.L2` accuracy 0.765, ECE 0.058, coverage at 5%
+risk 0.088 (n 285, 199 negatives); `neon_ontology_fits.L2` accuracy 0.837, ECE 0.078, coverage
+at 5% risk 0.547 (n 190, 114 negatives).
+
+mesa-clm reports ECE, coverage at risk and AURC with tie-invariant versions of those metrics
+(DESIGN D33): tied confidences share their group's mean correctness, so a cell no longer depends
+on how a platform's sort orders ties. On tie-free probabilities such as AnyJev L2's the values are
+identical, so the numbers above stay directly comparable.
+
+The first mesa-clm cells are the M0 no-model controls in
+`bench/results/2026-09-29/baselines.json` (five `<task>.baseline.lookup_prob` cells, snapshot
+`bench/snapshots/2026-09-29.parquet`): `lookup_acc` 0.772 (term.fits, n 285), 0.800
+(ontology_fits, n 190), 0.796 (annotate, n 98), 0.550 (aspect, n 60), 0.680 (value_kind, n 278);
+leave-one-product-out 0.723 / 0.721 / 0.724 / 0.350 / 0.543; novel-key subsets of 159 / 99 / 39
+/ 28 / 80 items. `bench/results/2026-09-29/mde.json` (200 simulated datasets per grid point,
+B=2000, seed 0) puts the minimum detectable effect under rule R at AUROC 0.625 on term.fits
+(0.675 on its novel keys), 0.650 on ontology_fits (0.750 on novel keys, with four counting
+cards) and 0.700 on annotate, whose novel-key population has one counting card and therefore
+cannot pass rule R at any effect. Model cells (X1, X2) follow in milestone M2, and every cell
+names its results JSON here.
+
+---8<--- https://idss-mesa.github.io/mesa-clm/concepts/provenance/
+
+---
+title: "Provenance"
+description: "The mesa_clm sidecar: a per-host DuckDB opened under a flock, its tables and fingerprints, the direct/spool/none history backends and the lock set, source tags, export, prune and revert."
+type: Reference
+tags:
+  - concepts
+  - provenance
+  - ducklake
+  - history
+generated:
+  by: "claude/fable-5.1"
+  at: "2026-09-29T00:00:00Z"
+sources:
+  - id: design
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
+    title: "mesa-clm decisions register (DESIGN.md)"
+    author: "team:idss-mesa"
+  - id: research
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/RESEARCH.md"
+    title: "mesa-clm verified facts (RESEARCH.md)"
+    author: "team:idss-mesa"
+status: draft
+stale_after: "2027-03-31T00:00:00Z"
+---
+
+# Provenance
+
+Decision provenance is a sidecar owned by mesa-clm: schema `mesa_clm` in a DuckDB file per host
+at `~/.mesa/clm/provenance.duckdb`, **opened per operation under
+`flock(~/.mesa/clm/locks/provenance.lock)`**, with a run's rows buffered and committed in one
+transaction (DESIGN D11). Postgres is an optional dialect with the same CHECK constraints; a
+parity test compares both DDLs. It is never a column on mesa-ducklake's `avu_changes` (the
+13-column Parquet layout is a hard contract) and never a table in schema `mesa`.
+
+Tables (`migrations/0001_mesa_clm.sql`, milestone M1): `runs` (owner, fingerprints, lock shas,
+`labels_sha256`, history backend and waiver, counters, `exported_at`, `terminal_at`),
+`decisions` (method, shape, level, calibration, probs, `raw_probs`, confidence,
+`clm_confidence`, `s_c`, `p_fit`, `anchor_index`, artifact version, the two keys, the
+fingerprints, context sha and token count, outcome and reason), `decision_options` (rank, `s_c`,
+`p_fit`, `action_sha256`), `decision_groups` (the ranking over a candidate group), `avu_links`
+(`write_status ∈ {proposed, accepted, dry_run, writing, written, spooled, reverted,
+mirror_failed, local_only}`, `accepted_by ∈ {policy, human, agent}`, spool batch and snapshot
+ids), `human_overrides` (`via ∈ {elicitation, cli, tool}` and what was offered), `labels`
+(identity `(task_key, target_sha256, option_key, label_source)`, product code, leak group,
+`fold_eligible`, `bench_card`), `audits`, `clm_calls`, `schema_versions`. DuckDB 1.5.5 rejects
+`UNIQUE NULLS NOT DISTINCT`, so nullable key columns are `NOT NULL DEFAULT ''` sentinels.
+
+Decisions are never updated; only a link's write status and snapshot id, and a run's status,
+change. Corrections are new rows. Every AVU written by mesa-clm carries a mesa-ducklake `source`
+of the form `mesa-clm:<tool>:<outcome>` (`mesa-clm:apply:auto|human|agent`,
+`mesa-clm:revert:human`), so `get_history` shows what mesa-clm wrote without a join.
+
+## History backends (milestone M3)
+
+`MESA_CLM_HISTORY__BACKEND=direct|spool|none|auto` (DESIGN D12):
+
+* **spool** (the plugin's only mode): a `mesa-spool/1` batch (Parquet with neon-ducklake's
+  column set, a manifest with sha256, row count and sizes verified by read-back) under
+  `<spool_root>/<vm>/`; links become `spooled`. A recorder (`mesa-clm history record`, a timer on
+  the catalog host) folds batches into one mesa-ducklake snapshot per project, de-duplicates by
+  `sha1(path, a, v, u, op, ts)`, moves batches to `spool-done/` or `spool-quarantine/`, and
+  `provenance reconcile` then fills `snapshot_id`.
+* **direct** (CLI only): takes the whole lock set through `fcntl.flock`, the same call
+  neon-ducklake uses (`$MESA_HOME/locks/mesa-catalog.lock`, plus
+  `<NEON_DUCKLAKE_ROOT>/work/locks/mesa-tag.lock` when configured), refuses if a `/proc` scan
+  finds another holder (falls back to spool), records one snapshot per (run, project) with a
+  note listing the paths, never an empty `record_changes` (DESIGN D13), and closes. mesa-mcp's
+  own DuckLake singleton never closes, which is why the plugin never writes through it.
+* **none**: only with `profile.allow_history_none` or `--allow-no-history`; the run records a
+  `history_waiver_actor`.
+
+Upstream, the plan proposes the lock and the spool recorder to mesa-ducklake and the
+per-write client to mesa-mcp (plan §7.3); until then mesa-clm's recorder is interim with the
+identical format.
+
+## Export, prune, retry, revert
+
+`provenance export --run-id R` writes a run's rows as Parquet to
+`<project>/.mesa/clm/runs/<run_id>/` (read-back verified, never under `.mesa/ducklake/`) and
+re-exports after reconcile; `prune` deletes local rows only for **terminal** runs (applied,
+every link `written|spooled` with a snapshot id, no open elicitation) or abandoned ones past
+`MESA_CLM_PROVENANCE__TTL_DAYS` (DESIGN D29). `history retry --run-id R` closes the crash window
+between an iRODS write and the link update. `mesa-clm revert --run-id R` deletes exactly the
+written triples with the stored unit, records `op=delete`, and marks links `reverted`
+(DESIGN D31).
+
+---8<--- https://idss-mesa.github.io/mesa-clm/concepts/serving/
+
+---
+title: "Serving"
+description: "The mesa-clm serving stack planned for milestone M1: a vLLM pooling container serving Qwen3-8B and a patched clm-serve on loopback with keys, the carried CLM patches, fingerprints and the serving lock, the GPU budget, and the in-process fallback encoder."
+type: Guide
+tags:
+  - concepts
+  - serving
+  - vllm
+  - clm
+  - deploy
+generated:
+  by: "claude/fable-5.1"
+  at: "2026-09-29T00:00:00Z"
+sources:
+  - id: design
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
+    title: "mesa-clm decisions register (DESIGN.md)"
+    author: "team:idss-mesa"
+  - id: research
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/RESEARCH.md"
+    title: "mesa-clm verified facts (RESEARCH.md)"
+    author: "team:idss-mesa"
+  - id: clm
+    resource: "https://github.com/Contrastive-LM/CLM/tree/bb42c6c5bf914fd449bed2f6ca65be80602cb1f7"
+    title: "Contrastive-LM/CLM at bb42c6c5 (server.py, embedder.py, heads.py)"
+    author: "org:Contrastive-LM"
+status: draft
+stale_after: "2026-12-31T00:00:00Z"
+---
+
+# Serving
+
+Planned for milestone M1 (track A); nothing here is running yet. The core never imports torch:
+it talks to two loopback HTTP services (DESIGN D16), and the serve-venv side lives under
+`serving/` and `deploy/` in the repository and never imports `mesa_clm`.
+
+## Topology
+
+| Process | Port | What | Unit |
+|---|---|---|---|
+| Encoder | `127.0.0.1:8090` | `vllm/vllm-openai` v0.27.1 (pinned by digest) running `Qwen/Qwen3-8B` at the pinned revision with `--runner pooling --dtype bfloat16 --max-model-len 4096 --max-num-seqs 8 --no-enable-prefix-caching --gpu-memory-utilization 0.20 --enforce-eager`, offline HF cache mounted read-only, `VLLM_API_KEY` from an env file | `mesa-clm-encoder.service` (user unit, `sg docker`) |
+| clm-serve | `127.0.0.1:8700` | CLM `bb42c6c5` with patches 0001–0006 in its own venv (`~/.mesa/clm/serve/.venv`, uv CPython 3.11, torch CPU, **no vllm**), `--device cpu --action-cache 512MiB --max-tokens 4096 --no-download --no-ui`, the pinned head `CLM_v0.1-8B.pt` and promoted heads from `heads/served/` | `mesa-clm-serve.service` (`Requires=` the encoder) |
+
+Both bind loopback only and require bearer keys; `mesa-clm serve keys --init|--rotate` writes
+raw 0600 key files and the derived env files and restarts both units. The core refuses a
+non-loopback URL unless `MESA_CLM_CLM__ALLOW_REMOTE=1` **and** the scheme is https; DE VMs
+reach the stack through an `ssh -L` forward or a GPU VM of their own (0.1.0 annotate runs on
+the serving host). Timers run the spool recorder every 10 minutes and a GPU headroom check every
+5 minutes. Heads on CPU (DESIGN D17): the two heads are 18.9M parameters, and the encoder gets
+the whole 0.20 GPU share (about 24.3 GiB on the 121.7 GiB unified-memory GB10: weights about
+16 GiB plus 4.5 GiB of KV cache).
+
+## Patches carried
+
+None touches the vendored `schema.py` or `client.py`; their sha256 are pinned in
+`serving/serving.lock.json` (RESEARCH.md, issues and pull requests).
+
+| Patch | Upstream | Change |
+|---|---|---|
+| 0001 | PR #6 | `truncation_side: "left"` on every embedding request (vLLM ≥0.18 honours it; pooling truncates from the right by default and would drop the tail) |
+| 0002 | PR #11 | loopback default; refuse an exposed unkeyed server |
+| 0003 | PR #10 | `torch.load(..., weights_only=True)` |
+| 0004 | PR #23 | vector-arena slot leak on concurrent misses |
+| 0005 | local | Embedder reads `CLM_EMB_API_KEY` and `CLM_EMB_CACHE_SIZE` (the upstream host LRU is 200,000 vectors, about 3.3 GB) |
+| 0006 | local | constant-time API-key comparison |
+
+## Fingerprints and the lock
+
+`encoder_fp = sha256{model, revision, dtype, pooling: "LAST", normalize, max_len,
+truncation_side: "left", prefix_caching, route}[:12]`, `clm_model_fp`, `schema_sha256` and
+`serving_lock_sha` are stamped on every decision, feature row, artifact and bench cell and must
+match exactly (DESIGN D5): CLM heads are encoder-locked, the announced CLM-35B may change the
+encoder, and prefix caching is off until golden-vector parity with it on has been recorded.
+`serving/serving.lock.json` pins the CLM commit, the patches and their sha256, the head
+(repository, revision, file, size, sha256), the encoder recipe and the image digest.
+`mesa-clm doctor --serve` checks the lock against `docker inspect`, the head file, the serve
+venv's schema sha and the patch shas; that unauthenticated `/v1` requests get 401 on both ports
+(while `/health`, `/tokenize` and `/metrics` are open by design on loopback); a golden cosine
+and a 5,000-token tail probe on the encoder; golden `/v1/systemone` answers; and upstream drift
+against the numbers reported in issue #15 and the model card. Any mismatch fails the doctor and
+the provider refuses until the task is re-benched (K4).
+
+## Fallback encoder
+
+`serving/fallback_serve.py` loads `Qwen/Qwen3-8B` bf16 with transformers (right padding, left
+truncation, `last_hidden_state` at the last non-pad token, L2-normalised), runs an in-process
+`Engine(embedder=CudaEncoder)` on :8700 and a second server exposing `/v1/embeddings`,
+`/tokenize`, `/v1/models` and `/health` on :8090 with the same keys. `route: transformers`
+enters `encoder_fp`, and artifacts are shared across routes only after a sequential parity run
+(minimum cosine ≥0.999, mean ≥0.9999, probe agreement ≥99%). The fallback never runs alongside
+the vLLM container. If the GPU share is unavailable (the co-tenant plan for this host sums to
+0.83), the headroom check fails, the doctor reports `gpu_budget`, both units stop and the tools
+return `decider_unavailable`; the bench is unaffected because features are cached.
+
+---8<--- https://idss-mesa.github.io/mesa-clm/concepts/tiers-and-policy/
+
+---
+title: "Tiers and policy"
+description: "What level and calibration promise on a mesa-clm decision, the record invariants, and the rules that turn a decision into auto, proposed or abstain with a cited bench cell."
+type: Guide
+tags:
+  - concepts
+  - calibration
+  - policy
+generated:
+  by: "claude/fable-5.1"
+  at: "2026-09-29T00:00:00Z"
+sources:
+  - id: design
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
+    title: "mesa-clm decisions register (DESIGN.md)"
+    author: "team:idss-mesa"
+  - id: plan
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/plan-2026-09-28.md"
+    title: "mesa-clm implementation plan (v1.1, 2026-09-28)"
+    author: "team:idss-mesa"
+status: draft
+stale_after: "2027-03-31T00:00:00Z"
+---
+
+# Tiers and policy
+
+Every stored decision carries two fields (DESIGN D6):
+
+* `level`: the tier that produced the probability. `zero_shot` (CLM's released head, or
+  `clm-raw`), `calibrated` (Platt or temperature fitted on labels), `probe` (a local linear
+  model on the frozen 4096-d or 512-d features), `head` (a fine-tuned CLM head served by
+  clm-serve), or `none` for anything that is not a CLM decision: a rule, a planner hint, the
+  `ols_rank` fallback, a Claude second opinion, an unavailable decider.
+* `calibration`: how the probabilities were mapped: `uncalibrated`, `platt`, `temperature`, or
+  `none`. `probs` is null exactly when calibration is `none`; nothing is ever one-hot.
+
+`LEVEL_RANK = {none: -1, zero_shot: 0, calibrated: 1, probe: 2, head: 2}`. The `_honest`
+check refuses a record that breaks the invariants: `zero_shot ⇒ uncalibrated`;
+`calibrated|probe|head ⇒ platt|temperature`; rank_fit records carry `anchor_index` and a
+`p_fit` per option; `confidence == max(probs)`; a level above `zero_shot` names an
+`artifact_version` whose `(question_key, encoder_fp, clm_model_fp)` match the record; an anchor
+win or a truncated context is an abstain and builds no AVU; `ols_rank` records have null probs
+and are never `auto`; every record carries `task_key, question_key, framing_id, encoder_fp,
+clm_model_fp, schema_sha256, state_sha256, target_sha256, context_sha256, context_tokens`
+(plan §4.6). The same invariants are CHECK constraints in the sidecar.
+
+## Outcomes
+
+`outcome(record, thresholds, profile)` (`policy_defaults.yaml`, `mesa_clm.policy`) reads `p_fit`
+for rank_fit questions and `confidence` for choices:
+
+0. a `rule` record keeps its rule outcome; an `ols_rank` record is `proposed` if its OLS rank is
+   within `ols_rank_top` (default 1), else `abstain`;
+1. **abstain** if probs are null, the answer index is negative, the context was truncated, the
+   anchor won, or every option is masked;
+2. **auto** only if the task's `auto` threshold is set, the level is at or above both the
+   task's `min_level` and the profile's `min_level_write`, the calibration is one the profile
+   allows, the statistic clears `auto`, the margin clears `margin`, and the cited cell is valid
+   and fingerprint-matched (below);
+3. **proposed** if the statistic clears `propose`;
+4. **abstain** otherwise. A group margin can only demote an auto.
+
+Profiles: `prod` (`min_level_write: calibrated`, `auto_calibrations: [platt, temperature]`,
+`auto_requires_audit: true`, `allow_history_none: false`) and `dev` (`min_level_write:
+zero_shot`, `allow_auto_write: false`, `allow_history_none: true`). The shipped defaults are
+proposed-only: `auto: null` everywhere, and `zero_shot` never auto-writes.
+
+## Citations
+
+A numeric `auto` must cite `bench/results/<date>/<file>.json#<task>.<tier>.<framing>`, and
+`tests/test_policy_citations.py` parses the cell (DESIGN D8): leave-one-card-out,
+pre-registered, `selection: "nested"`, not exploratory, at least 5 folds, no teacher row in a
+test fold, servable, `masked` equal to serving, `labels_sha256` equal to a committed snapshot,
+at least 30 negatives (rank_fit) or 30 non-modal items (choice), fingerprint and
+`question_key` equal to the live ones, fold choices agreeing with the production framing in at
+least 5 of 7 folds, `beats_lookup_novel` true, and `auto ≥ threshold_cp[risk]`, the smallest
+threshold whose pooled held-out items (at least 30) have a one-sided 95% Clopper–Pearson error
+bound within the risk. With `auto_requires_audit`, apply also needs a passing audit row: at
+least 50 would-be-auto decisions from at least 3 non-bench cards, curator-reviewed, error bound
+within twice the risk. `min_weight` has one source, the policy file, and the bench reads it too
+(DESIGN D9).
+
+---8<--- https://idss-mesa.github.io/mesa-clm/develop/architecture/
+
+---
+title: "Architecture"
+description: "The mesa-clm modules and which milestone delivers each, the annotate and apply phases, the MCP tools, and the boundaries with CLM, mesa-mcp, mesa-ducklake and neon-ducklake."
+type: Reference
+tags:
+  - develop
+  - architecture
+generated:
+  by: "claude/fable-5.1"
+  at: "2026-09-29T00:00:00Z"
+sources:
+  - id: design
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
+    title: "mesa-clm decisions register (DESIGN.md)"
+    author: "team:idss-mesa"
+  - id: plan
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/plan-2026-09-28.md"
+    title: "mesa-clm implementation plan (v1.1, 2026-09-28)"
+    author: "team:idss-mesa"
+status: draft
+stale_after: "2027-03-31T00:00:00Z"
+---
+
+# Architecture
+
+Two phases (DESIGN D10): `annotate` decides, proposes and records (no writes); `apply` writes
+the accepted AVUs to iRODS through mesa-mcp's shared helpers in atomic batches and records
+history through a backend (DESIGN D12). Decisions are written to the sidecar before any iRODS
+write, and `revert` undoes exactly what `apply` wrote (DESIGN D31).
+
+Layers: the CLM clients (`clm/http.py` for `/v1/systemone`, `/v1/rank`, `/v1/models`,
+`/health`; `clm/encoder.py` for `/v1/embeddings` with the token guard; `clm/headproj.py`, a
+numpy re-implementation of the head for local probes; `clm/fake.py`, a deterministic hashed
+n-gram fake with a collapse knob) below the providers (`DecisionRecord` with level,
+calibration and fingerprints; the tiered provider that resolves a tier per `question_key`)
+below the pipeline (`Annotator.annotate`, Q1–Q8). The planner is a separate role that only
+proposes. `mesa_mcp.ols` provides the OLS client and the canonical AVU transform;
+`mesa_ducklake.DuckLakeClient` records snapshots; the vendored `clm/schema.py` is reached only
+through `render.py` (DESIGN D4).
+
+## Modules by milestone
+
+| Milestone | Modules |
+|---|---|
+| M0 (this) | `config.py`, `secrets.py`; `cards.py`, `states.py`, `registry.py`; `tasks.py`, `identity.py`; `policy_defaults.py` + `policy_defaults.yaml`; `ols.py`, `avu.py`, `ols_closure.py`; `planner/`; `provenance/labels.py`; `learn/labels.py`; `bench/_metrics.py` (vendored), `bench/{stats,results,baselines,mde}.py`, `bench/tasks/`; `health.py` (pins, versions, plugin API, policy, stores); `mcp_tools/` (entry-point stub); `cli.py` (`labels`, `bench`, `doctor`); `_vendor/clm/` |
+| M1 | `framings.py`, `render.py`, `framings.lock.json`; `clm/{http,encoder,headproj,fingerprint,fake}.py`; `providers/`; `pipeline.py`; `policy.py`; `provenance/{models,store,migrate,export}.py`; `service.py`; `health.py` serving probes; `learn/features.py`; `serving/`, `deploy/` |
+| M2 | `bench/{run,framing}.py` |
+| M3 | `apply.py`, `revert.py`, `irods_io.py`, `history/`; the five `mesa_clm_*` tools in `mcp_tools/` |
+| M4 | `learn/{linear,calibrate,fit,teacher}.py`, `artifacts.py`, `bench/e2e.py`, audits |
+| M6 | `adapters/neon.py` |
+| M7 | `learn/finetune.py`, `serving/finetune_preflight.py`, `serving/rescore_head.py` |
+
+Deferred to M8: DataCite questions, the chooser for mesa-mcp's own picker, dense retrieval
+over pre-embedded registry ontologies, `mesa_clm_rank`.
+
+## Service and tools (milestone M3)
+
+`service.py` holds the collaborators (provider, planner, OLS layer, policy, store) and owns the
+human-feedback path (`record_human_pick(via=)`), the candidate read-back for elicitations and
+the run-owner checks (DESIGN D21). The CLI and the five tools build on it:
+
+| Tool | Phase | What it does |
+|---|---|---|
+| `mesa_clm_annotate` | decide | Runs the pipeline on a card (`card_text` or an iRODS path checked by `assert_allowed`; local paths are CLI-only), records every decision and proposal, returns proposals with `p_fit`, level, calibration and the fingerprint; writes nothing. |
+| `mesa_clm_apply` | write | Writes accepted AVUs to an iRODS path (`dry_run=true` by default); `accept="proposed"` asks one elicitation per open group first with an ids-only state (DESIGN D26); anonymous callers are refused; history is spooled. |
+| `mesa_clm_explain` | read | A run's decisions, top options per group, links and pending groups; the owner's runs only. |
+| `mesa_clm_feedback` | curate | Pick, reject or decline on a group; recorded as `agent_pick` (weight 0) unless it came through an elicitation. |
+| `mesa_clm_health` | ops | `doctor --quick`: locks, vendored shas, transport, stores, fingerprint. |
+
+Tools register through `register_tool(..., meta={"io.mesa/surface": "clm"})` with 2020-12
+schemas; handlers run service calls in `asyncio.to_thread`.
+
+## The neon-ducklake adapter (0.2.0, milestone M6)
+
+`mesa-clm neon curate --site S --neon-root R --mode replace|verify` reads the site's table cards,
+runs the pipeline with the neon profile (no `uo`/`gaz`/`ncbitaxon`, aspects through
+`NEON_ASPECT_MAP`) and writes `sites/<S>/curation/proposals/<DP>.rep1.json` (proposed ∪ auto) and
+`.rep2.json` (auto only) with neon's record fields, so an unchanged `neon-ducklake site
+validate` evaluates them. It works in an isolated CLM root by default, never writes iRODS or
+history, and refuses to overwrite non-CLM replicates without backing them up.
+
+---8<--- https://idss-mesa.github.io/mesa-clm/develop/testing/
+
+---
+title: "Testing"
+description: "How to run the hermetic mesa-clm test suite, what the fake CLM transport and the recorded OLS fixtures cover, the vendored-file and parity checks, and the opt-in live, engine, GPU, Postgres, end-to-end and neon tiers."
+type: Guide
+tags:
+  - develop
+  - testing
+generated:
+  by: "claude/fable-5.1"
+  at: "2026-09-29T00:00:00Z"
+sources:
+  - id: design
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
+    title: "mesa-clm decisions register (DESIGN.md)"
+    author: "team:idss-mesa"
+  - id: plan
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/plan-2026-09-28.md"
+    title: "mesa-clm implementation plan (v1.1, 2026-09-28)"
+    author: "team:idss-mesa"
+status: draft
+stale_after: "2027-03-31T00:00:00Z"
+---
+
+# Testing
+
+```bash
+uv run pytest -q                                   # hermetic: fake CLM transport, OLS fixtures, DuckDB under tmp_path
+uv run ruff check src tests scripts && uv run ruff format --check src tests
+uv run mypy --strict src
+sha256sum -c vendored.sha256                       # vendored files are byte-identical to upstream
+uv run mesa-clm doctor --quick                     # pins, versions, plugin API, policy, stores (no hashing)
+```
+
+Unit tests never touch the network or a GPU, and they never read the sibling mesa-anyjev
+checkout: parity data (`tests/fixtures/anyjev_parity.json`: states, `state_sha256`, task keys
+and AVUs) are committed fixtures. The seven neon-avu-eval cards, 1,884 recorded EMBL-EBI OLS4
+responses (777 from mesa-anyjev, 15 for the unit table, 1,092 for the fixture closure recorded
+once with `scripts/record_ols_closure.py`) and `results/validated.json` live under
+`tests/fixtures/`. Opt-in tiers are excluded by default (`addopts` in `pyproject.toml`)
+and selected with a marker and an environment variable:
+
+| Marker | Variable | Needs |
+|---|---|---|
+| `live` | `MESA_CLM_LIVE=1` | the real EMBL-EBI OLS API; only for recording fixtures and the closure check |
+| `engine` | `MESA_CLM_ENGINE=1` | the real encoder on :8090 and clm-serve on :8700 (goldens, wire parity, `s_c` vs `/v1/rank`) |
+| `gpu`, `serve` | `MESA_CLM_GPU=1`, run with the serve venv's Python | a CUDA device and the serve venv (`tests/serve`, `tests/gpu`) |
+| `requires_postgres` | `MESA_CLM_TEST_PG_DSN=postgresql://…` | a Postgres 16 (docker) for the sidecar dialect parity |
+| `e2e` | `MESA_CLM_E2E=1` | the real `mesa-mcp --transport stdio` and the `e2e` extra |
+| `neon` | `MESA_CLM_NEON_ROOT=<clm root>` | a neon-ducklake root for the adapter |
+
+## The fake CLM (milestone M1)
+
+`tests/fakes/clm_transport.py` is an `httpx.MockTransport` serving `/v1/systemone`, `/v1/rank`,
+`/v1/models`, `/health`, `/v1/embeddings` and `/tokenize`. It scores with the vendored
+`build_pairs` and `answer_from_logits` over hashed n-gram vectors and has a `collapse` knob to
+reproduce upstream #15; OLS is replayed from the fixture closure, and a replay miss names the
+missing query. Its request bodies are checked against the vendored CLM client's
+`question_to_dict` output, so the wire shape stays the upstream one.
+
+## Key tests
+
+Vendored hashes; `test_anyjev_parity` (state shas, task keys and AVUs equal mesa-anyjev's);
+`test_policy_min_weight_counts` (class counts at the policy `min_weight` equal the published
+cells); `test_unit_lookup` (defect (a), including kilometer's UO id against a recorded
+`get_term`); `test_ols_fixture_closure` (0 missing queries); `test_cli` (the M0 verbs end to end
+on the fixtures: ingest, stats, snapshot, baselines and MDE stamped with the snapshot's
+`labels_sha256`, exit codes); `test_health` (every doctor check, each failure path forced, no
+secret in a report line); `test_mcp_tools` (the `clm` entry point loads under `load_plugins`
+and registers nothing). From M1: `test_framing_keys`,
+`test_honest` (at least 12 rejected records), `test_context_ends_with_target`,
+`test_pipeline_fake` (7 cards end to end), `test_ols_rank_proposes_never_auto`,
+`test_provenance_ddl` and `test_sidecar_flock`. From M3: `test_apply_anonymous_rejected`,
+`test_apply_crash_retry`, `test_revert`, `test_history_spool_recorder` (two VMs, dedup,
+quarantine), `test_feedback_agent_pick`, `test_run_owner_checks`, `test_mcp_conformance`. From
+M4: `test_policy_citations`, `test_loco_leakage`, `test_nested_selection`, `test_rule_r`,
+`test_lookup_prob`, `test_cp_threshold`, `test_teacher_weight_changes_fit`,
+`test_artifact_identity`. Coverage must stay at or above 80% (`fail_under`).
+
+---8<--- https://idss-mesa.github.io/mesa-clm/about/ai-agents/
+
+---
+title: "AI agents"
+description: "How AI agents should read this documentation bundle: llms.txt, the markdown mirror, trust markers, and where the decisions and facts live."
+type: Guide
+tags:
+  - about
+  - agents
+  - okf
+generated:
+  by: "claude/fable-5.1"
+  at: "2026-09-29T00:00:00Z"
+sources:
+  - id: design
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
+    title: "mesa-clm decisions register (DESIGN.md)"
+    author: "team:idss-mesa"
+  - id: research
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/RESEARCH.md"
+    title: "mesa-clm verified facts (RESEARCH.md)"
+    author: "team:idss-mesa"
+status: draft
+stale_after: "2027-03-31T00:00:00Z"
+---
+
+# AI agents
+
+Start from [`llms.txt`](../llms.txt) (an outline with descriptions) or
+[`llms-full.txt`](../llms-full.txt) (the whole corpus). Any page URL plus `index.md` returns
+that page's Markdown source. Pages without a `verified:` key are unverified (OKF v0.2 §5.3);
+`status: draft` pages need review; pages that describe a future milestone say so. For
+decisions and facts, prefer `DESIGN.md` (append-only register, pre-registered experiments and
+amendments) and `RESEARCH.md` (every fact with its source and `stale_after`) in the
+repository; for behaviour, run `mesa-clm` and read its provenance sidecar. Never cite a number
+that does not name its results JSON.
+
+---8<--- https://idss-mesa.github.io/mesa-clm/about/license/
+
+---
+title: "License"
+description: "mesa-clm is MIT licensed by the Regents of the University of New Mexico; Contrastive LM, Qwen3-8B and the vendored AnyJev metrics are Apache-2.0; NEON data are CC BY 4.0."
+type: Policy
+tags:
+  - about
+  - license
+generated:
+  by: "claude/fable-5.1"
+  at: "2026-09-29T00:00:00Z"
+sources:
+  - id: third-party
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/THIRD_PARTY.md"
+    title: "mesa-clm third-party code and data (THIRD_PARTY.md)"
+    author: "team:idss-mesa"
+status: draft
+stale_after: "2027-03-31T00:00:00Z"
+---
+
+# License
+
+mesa-clm is released under the MIT License, Copyright (c) 2026 The Regents of the University
+of New Mexico. Contrastive LM (CLM) is Apache-2.0 software; its `schema.py` and `LICENSE` are
+vendored byte-identical, its `client.py` only as a test oracle, and four of its open pull
+requests are carried as serving patches, all with attribution in `THIRD_PARTY.md`. CLM
+reimplements the TypeSafe wire format and is not affiliated with TypeSafe AI or Jev. The CLM
+head and the Qwen/Qwen3-8B encoder are Apache-2.0 and are downloaded at serving bootstrap, never
+committed. AnyJev's `bench/metrics.py` (Apache-2.0) is vendored byte-identical; `anyjev` itself
+is not a dependency. NEON metadata in the fixtures and the bench are CC BY 4.0; OLS fixture
+terms are under the OBO Foundry ontologies' own licenses. See `THIRD_PARTY.md` for every
+third-party component and its hash.
+
+---8<--- https://idss-mesa.github.io/mesa-clm/log/
+
+# Directory Update Log
+
+## 2026-09-29
+
+* **Update**: [Learning and bench](concepts/learning-and-bench.md) notes that ECE, coverage-at-risk and AURC are tie-invariant (DESIGN D33) and that the baselines cell was regenerated.
+* **Update**: [Testing](develop/testing.md) counts the 1,884 OLS fixtures (five `get_term` responses recorded for the compound units `UNIT_TABLE` now names exactly: meter per second, watt per square meter, milligram per kilogram, square meter, cubic meter); `llms.txt` and `llms-full.txt` regenerated.
+* **Update**: [Install](getting-started/install.md) gains the M0 command line (`doctor`, `labels ingest-neon-eval|import-anyjev|snapshot|stats`, `bench baselines|mde`, the global options, exit codes and the bench sequence); [Testing](develop/testing.md) adds `mesa-clm doctor --quick`, the 1,879 OLS fixtures and `test_cli`, `test_health`, `test_mcp_tools`; [Architecture](develop/architecture.md) moves the modules that landed in M0 (`tasks`, `identity`, `policy_defaults`, `ols_closure`, `provenance/labels`, `bench/{stats,results}`, `bench/tasks`, `health`, the `mcp_tools` stub) into the M0 row; [Learning and bench](concepts/learning-and-bench.md) cites the reproduced lookup controls and the minimum detectable effect from `bench/results/2026-09-29/`.
+* **Creation**: the documentation bundle for milestone M0: [Getting started](getting-started/index.md) ([Install](getting-started/install.md), [Configuration](getting-started/configuration.md)), [Concepts](concepts/index.md) ([Decision model](concepts/decision-model.md), [Tiers and policy](concepts/tiers-and-policy.md), [Provenance](concepts/provenance.md), [Learning and bench](concepts/learning-and-bench.md), [Serving](concepts/serving.md)), [Develop](develop/index.md) ([Architecture](develop/architecture.md), [Testing](develop/testing.md)) and [About](about/index.md) ([AI agents](about/ai-agents.md), [License](about/license.md)). Pages describe the plan (`design/plan-2026-09-28.md`) and mark future-milestone features as planned.

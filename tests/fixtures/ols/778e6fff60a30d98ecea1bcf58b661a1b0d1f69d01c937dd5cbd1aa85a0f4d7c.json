@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000080",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000080",
+  "description": "An area unit which is equal to an area enclosed by a square with sides each 1 meter long.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000080",
+  "isRoot": false,
+  "label": "square meter",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

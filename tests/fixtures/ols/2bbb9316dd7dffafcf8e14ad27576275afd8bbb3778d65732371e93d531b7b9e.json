@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "km per hour observed wind speed",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "species",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00442421",
+   "description": "A protected area. A Site of Special Scientific Interest (Site of Special Scientific Interest).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00442421",
+   "isRoot": true,
+   "label": "Bawsey Site of Special Scientific Interest (Site of Special Scientific Interest)",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00023371",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00023371",
+   "isRoot": true,
+   "label": "Site of Special Scientific Interest 16",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00031138",
+   "description": "One of the 79 woredas in the Southern Nations, Nationalities, and Peoples Region (SNNPR) of Ethiopia. Because Burji is not part of any Zone in the SNNPR, it is considered a Special woreda. Burji is bordered on the east and south by the Oromia Region, on the west by the Konso Special Woreda, and on the north by the Amaro Special Woreda. The administrative center of Burji is Soyama.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00031138",
+   "isRoot": true,
+   "label": "Burji Special Woreda",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00031142",
+   "description": "Dirashe is one of the 77 woredas in the Southern Nations, Nationalities, and Peoples Region (SNNPR) of Ethiopia. Because Dirashe is not part of any Zone in the SNNPR, it is considered a Special woreda. Located in the Great Rift Valley, Dirashe is bordered on the south by Konso special woreda, on the west by the Weito River which separates it from the Debub Omo Zone, on the north by the Semien Omo Zone, on the northeast by Lake Chamo, and on the east by Amaro special woreda. The administrative center of Dirashe is Gidole.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00031142",
+   "isRoot": true,
+   "label": "Dirashe Special Woreda",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00052547",
+   "description": "One of the 77 woredas in the Southern Nations, Nationalities, and Peoples Region (SNNPR) of Ethiopia. Because Konso is not part of any Zone in the SNNPR, it is considered a Special woreda. Located in the Great Rift Valley, Konso is bordered on the south by the Oromia Region, on the west by the Weito River which separates it from the Debub Omo Zone, on the north by the Dirashe Special Woreda, and on the east by Burji Special Woreda. The Sagan River, which flows south then west to join the Weito, defines part of the woreda's boundary with Burji and the entire length of the boundary with the Oromia Region. The administrative center is Karati; other towns in Konso include Fasha and Sagan. Rivers in this woreda include the Talpeena, a tributary of the Sagan.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00052547",
+   "isRoot": true,
+   "label": "Konso Special Woreda",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00096495",
+   "description": "A former special zone (khetphiset) of Laos, located in the north of the country, near the capital Vientiane. The special zone was created 1994 with area split off from the provinces Vientiane, and Xiangkhoang. It was dissolved on 2006-01-13. The province was originally up of the following districts: Hom (18-03); Longsane (18-04); Phun (18-05); Thathom (18-02); Xaysomboun (18-01). On 2004-09-23 the districts Hom and Longsane were merged. The new district, retaining the name Hom, was reassigned to Vientiane Province. On 2005-06-27 the districts Phun and Xaysomboun were merged, with the new district still named Xaysomboun. On 2006-01-13 the special area was dissolved. Xaysomboun district was reassigned to Vientiane Province, while Thaton went to Xiangkhoang Province.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00096495",
+   "isRoot": true,
+   "label": "[Former] Special Zone of Xaisomboun",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00117840",
+   "description": "A special district of Liupanshui City Prefecture.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00117840",
+   "isRoot": true,
+   "label": "Liuzhi Special District",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00491809",
+   "description": "A Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00491809",
+   "isRoot": true,
+   "label": "Baulk Head to Mullion Site of Special Scientific Interest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00496899",
+   "description": "A Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00496899",
+   "isRoot": true,
+   "label": "Black Down and Sampford Commons Site of Special Scientific Interest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003732",
+   "description": "The capital region of Indonesia.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003732",
+   "isRoot": false,
+   "label": "Jakarta Special Capital Region",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00027770",
+   "description": "A special district of South Hamgyong province, near the city of Sinpo. Kumho was part of Sinpo until 1995, when it was made a special area under the direct administration of the province.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00027770",
+   "isRoot": true,
+   "label": "Kumho Special District",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00031144",
+   "description": "One of the 79 woredas in the Southern Nations, Nationalities, and Peoples Region (SNNPR) of Ethiopia. Because Amaro is not part of any Zone in the SNNPR, it is considered a Special woreda. Located in the Great Rift Valley, Amaro is bordered on the south by Burji Special Woreda, on the east by Semien Omo and Lake Chamo, and on the north and east by the Oromia Region. It is divided into 32 kebeles. The administrative center of the woreda is Kele.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00031144",
+   "isRoot": true,
+   "label": "Amaro Special Woreda",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00069332",
+   "description": "A specialized municipality in western Alberta, Canada. It is the commercial center of Jasper National Park, located in the Canadian Rockies in the Athabasca River valley. It was established as a specialized municipality on 2001-07-20 and the governance of Jasper is shared between the Municipality of Jasper and Parks Canada Agency.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00069332",
+   "isRoot": true,
+   "label": "Specialized Municipality of Jasper",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00076580",
+   "description": "A protected area in Madagascar.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00076580",
+   "isRoot": true,
+   "label": "Manongarivo Special Reserve",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00252921",
+   "description": "A protected area. Established 1972.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00252921",
+   "isRoot": true,
+   "label": "Special Reserve Cap N'Dua",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00491818",
+   "description": "A Site of Special Scientific Interest. It covers much of the Camel Valley between Egloshayle and Blisland, and then extends in several further sections of varying size right up to its source. This Site of Special Scientific Interest also covers much of the River Allen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00491818",
+   "isRoot": true,
+   "label": "River Camel Valley and Tributaries Site of Special Scientific Interest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00494768",
+   "description": "A Site of Special Scientific Interest. Located Tickenham, Nailsea and Kenn Moors Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00494768",
+   "isRoot": true,
+   "label": "Tickenham, Nailsea and Kenn Moors Site of Special Scientific Interest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00495315",
+   "description": "A former Site of Special Scientific Interest; now subsumed by Cheddar Complex Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00495315",
+   "isRoot": true,
+   "label": "[Former] Cheddar Gorge Site of Special Scientific Interest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00495368",
+   "description": "A Site of Special Scientific Interest. The Site of Special Scientific Interest designation applies to part of the former stable block of Brockley Hall, the roofspace of which hosts a large breeding colony of greater horseshoe bats during summer.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00495368",
+   "isRoot": true,
+   "label": "Brockley Hall Stables Site of Special Scientific Interest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00496930",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00496930",
+   "isRoot": true,
+   "label": "Woodgreen Quarry & Railway Cutting Site of Special Scientific Interest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

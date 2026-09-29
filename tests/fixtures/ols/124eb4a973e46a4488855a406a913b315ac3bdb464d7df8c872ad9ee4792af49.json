@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBCS_0000002",
+  "ontology_id": "obcs"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBCS:0000002",
+  "description": "A planned process that gathers and measures information on variables of interest, in an established systematic fashion that enables one to answer stated research questions, test hypotheses, and evaluate outcomes. Data collection results in a collection of data.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBCS_0000002",
+  "isRoot": false,
+  "label": "data collection",
+  "ontologyId": "obcs",
+  "synonyms": []
+ }
+}

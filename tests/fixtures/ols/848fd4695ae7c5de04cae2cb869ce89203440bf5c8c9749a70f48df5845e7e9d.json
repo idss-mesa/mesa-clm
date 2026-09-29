@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "class",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0000128",
+   "description": "For any biological use of PATO, the concept that should be used is 'mass' and not 'weight'. For example, increased weight of an organism.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000128",
+   "isRoot": false,
+   "label": "weight",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000462",
+   "description": "We recommend using the new absent terms (physical absence, absent anatomical entity, or absent process) instead of this class. This is a legacy term and will ultimately be obsoleted.\nSee https://github.com/pato-ontology/pato/issues/331.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000462",
+   "isRoot": false,
+   "label": "absent",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001005",
+   "description": "This class is a candidate for obsoletion. The definition is not clear, and the placement under \"delayed\" is not consistent with the definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001005",
+   "isRoot": false,
+   "label": "latency",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001394",
+   "description": "The exact number may be one or two different from the 2n number and still be classified as diploidy (although with aneuploidy). Nearly all mammals are diploid organisms, although all individuals have some small fraction of cells that are polyploidy.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001394",
+   "isRoot": false,
+   "label": "diploid",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040057",
+   "description": "A quality inhering in a process by virtue of that process having a population or part of a population, where population is defined as a collection of individuals from the same taxonomic class distinguished by one or more characteristics, as participants.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040057",
+   "isRoot": false,
+   "label": "population process quality",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "developmental_classification",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/uberon/core#developmental_classification",
+   "isRoot": false,
+   "label": "developmental_classification",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "functional_classification",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/uberon/core#functional_classification",
+   "isRoot": false,
+   "label": "functional_classification",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "grouping_class",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/uberon/core#grouping_class",
+   "isRoot": false,
+   "label": "grouping_class",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "is_class_level",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://www.geneontology.org/formats/oboInOwl#is_class_level",
+   "isRoot": true,
+   "label": "is_class_level",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "UBERON:0000966",
+   "description": "Currently this class encompasses only verteberate AOs but could in theory also include cephalopod - we may want to make a more specific class for vertebrate retina. note that this class excludes ommatidial retinas, as the retina must be part of an eyeball. Use the parent class photoreceptor array / light-sensitive tissue for arthropods",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0000966",
+   "isRoot": false,
+   "label": "retina",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:22315",
+   "description": "Any of the naturally occurring, basic nitrogen compounds (mostly heterocyclic) occurring mostly in the plant kingdom, but also found in bacteria, fungi, and animals. By extension, certain neutral compounds biogenetically related to basic alkaloids are also classed as alkaloids. Amino acids, peptides, proteins, nucleotides, nucleic acids, amino sugars and antibiotics are not normally regarded as alkaloids. Compounds in which the nitrogen is  exocyclic (dopamine, mescaline, serotonin, etc.) are usually classed as amines rather than alkaloids.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_22315",
+   "isRoot": false,
+   "label": "alkaloid",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "CL:0000115",
+   "description": "From FMA: 9.07.2001: Endothelial cell has always been classified as a kind of epithelial cell, specifically a squamous cell but that is not true. First, endothelial cell can either be squamous or cuboidal (e.g. high-endothelial cell) and secondly, it has different embryological derivation (mesodermal) than a true epithelial cell (ectodermal and endodermal). The basis for present classification is the fact that it comprises the outermost layer or lining of anatomical structures (location-based) but a better structural basis for the differentia is the cytoskeleton of the cell. Endothelial cell has vimentin filaments while an epithelial cell has keratin filaments. [Onard].",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CL_0000115",
+   "isRoot": false,
+   "label": "endothelial cell",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0001957",
+   "description": "An instance of intramembranous ossification may also be classified as metaplastic; the former classifies based on tissue type location, and the latter based on mechanism/cell division.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0001957",
+   "isRoot": false,
+   "label": "intramembranous ossification",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0007610",
+   "description": "1. Note that this term is in the subset of terms that should not be used for direct gene product annotation. Instead, select a child term or, if no appropriate child term exists, please request a new term. Direct annotations to this term may be amended during annotation reviews.\n2. While a broader definition of behavior encompassing plants and single cell organisms would be justified on the basis of some usage (see PMID:20160973 for discussion), GO uses a tight definition that limits behavior to animals and to responses involving the nervous system, excluding plant responses that GO classifies under development, and responses of unicellular organisms that has general classifications for covering the responses of cells in multicellular organisms (e.g. cell chemotaxis).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0007610",
+   "isRoot": false,
+   "label": "behavior",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000000001",
+   "description": "The definition above excludes protein complexes, which some also consider a protein. Those who wish to refer to a class representing both senses of the word are directed to CHEBI:36080. Note that the definition allows for experimentally-manipulated genes, and allows for artifically-produced derivatives that mimic those found naturally. Proteins (in the sense defined here) that descended from a common ancestor can be classified into families and superfamilies composed of products of evolutionarily-related genes. The domain architecture of a protein is described by the order of its constituent domains. Proteins with the same domains in the same order are defined as homeomorphic [PRO:WCB).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000000001",
+   "isRoot": false,
+   "label": "protein",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000001004",
+   "description": "Category=gene. Requested by=CL.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000001004",
+   "isRoot": false,
+   "label": "CD4 molecule",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000001084",
+   "description": "Category=gene. Requested by=CL.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000001084",
+   "isRoot": false,
+   "label": "T-cell surface glycoprotein CD8 alpha chain",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000016043",
+   "description": "Category=gene. Requested by=CL.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000016043",
+   "isRoot": false,
+   "label": "T-cell acute lymphocytic leukemia protein 1",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "UBERON:0002275",
+   "description": "A composite substructure of the brainstem that consists of the midbrain reticular formation, the pontine reticular formation and the medullary reticular formation ( Carpenter-1983 ).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0002275",
+   "isRoot": false,
+   "label": "reticular formation",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:16646",
+   "description": "Any member of the class of organooxygen compounds that is a polyhydroxy-aldehyde or -ketone or a lactol resulting from their intramolecular condensation (monosaccharides); substances derived from these by reduction of the carbonyl group (alditols), by oxidation of one or more hydroxy groups to afford the corresponding aldehydes, ketones, or carboxylic acids, or by replacement of one or more hydroxy group(s) by a hydrogen atom; and polymeric products arising by intermolecular acetal formation between two or more such molecules (disaccharides, polysaccharides and oligosaccharides). Carbohydrates contain only carbon, hydrogen and oxygen atoms; prior to any oxidation or reduction, most have the empirical formula Cm(H2O)n. Compounds obtained from carbohydrates by substitution, etc., are known as carbohydrate derivatives and may contain other elements. Cyclitols are generally not regarded as carbohydrates.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_16646",
+   "isRoot": false,
+   "label": "carbohydrate",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

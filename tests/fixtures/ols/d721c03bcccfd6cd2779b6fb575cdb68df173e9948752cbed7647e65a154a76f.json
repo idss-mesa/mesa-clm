@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000016",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000016",
+  "description": "A length unit which is equal to one thousandth of a meter or 10^[-3] m.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000016",
+  "isRoot": false,
+  "label": "millimeter",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

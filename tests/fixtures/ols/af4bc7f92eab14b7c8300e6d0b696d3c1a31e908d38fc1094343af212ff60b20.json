@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "Decimal days between trap setting and collecting events",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

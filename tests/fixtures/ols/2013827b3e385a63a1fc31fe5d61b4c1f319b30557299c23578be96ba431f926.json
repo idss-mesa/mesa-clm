@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000389",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000389",
+  "description": "A temperate mixed forest which has communities of trees composed primarily of species with broad leaves.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000389",
+  "isRoot": false,
+  "label": "temperate mixed broadleaf forest",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

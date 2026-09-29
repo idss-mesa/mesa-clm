@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003646",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0003642",
+   "description": "An antibody purification of MHC class II protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of mouse MHC class II protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003642",
+   "isRoot": false,
+   "label": "antibody purification of mouse MHC class II protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

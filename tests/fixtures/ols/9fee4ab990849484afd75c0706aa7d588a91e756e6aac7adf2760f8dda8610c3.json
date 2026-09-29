@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001492",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0001493",
+   "description": "This term will be obsoleted; Use GO:growth and PATO:rate.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001493",
+   "isRoot": false,
+   "label": "hypertrophic growth",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001494",
+   "description": "This term will be obsoleted; Use GO:growth and PATO:rate.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001494",
+   "isRoot": false,
+   "label": "hypotrophic growth",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040045",
+   "description": "The rate or speed of the change in in number of a population.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040045",
+   "isRoot": false,
+   "label": "population growth rate",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

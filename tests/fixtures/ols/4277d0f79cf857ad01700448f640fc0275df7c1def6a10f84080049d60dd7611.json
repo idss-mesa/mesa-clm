@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/CHEBI_16236",
+  "ontology_id": "chebi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "CHEBI:16236",
+  "description": "A primary alcohol that is ethane in which one of the hydrogens is substituted by a hydroxy group.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/CHEBI_16236",
+  "isRoot": false,
+  "label": "ethanol",
+  "ontologyId": "chebi",
+  "synonyms": []
+ }
+}

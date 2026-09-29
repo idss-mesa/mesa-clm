@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0020000",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0020001",
+   "description": "Note that the chromosomal constitution of genotypic sex varies in different organisms. In human, this would be XY, though abnormal XXY and XYY would also result in a male phenotypic outcome.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0020001",
+   "isRoot": false,
+   "label": "male genotypic sex",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0020002",
+   "description": "Note that the chromosomal constitution of genotypic sex varies in different organisms. In human, this would be XX, though abnormal X0 and XXX would also result in a female phenotypic outcome.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0020002",
+   "isRoot": false,
+   "label": "female genotypic sex",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

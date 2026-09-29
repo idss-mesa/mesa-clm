@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1104689",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:1104690",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1104690",
+   "isRoot": false,
+   "label": "uncultured Aerophobetes bacterium",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

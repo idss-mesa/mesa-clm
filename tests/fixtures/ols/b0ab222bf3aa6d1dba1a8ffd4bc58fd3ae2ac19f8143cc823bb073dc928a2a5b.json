@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_09200001",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:09200001",
+  "description": "The temperature of some air.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_09200001",
+  "isRoot": false,
+  "label": "temperature of air",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

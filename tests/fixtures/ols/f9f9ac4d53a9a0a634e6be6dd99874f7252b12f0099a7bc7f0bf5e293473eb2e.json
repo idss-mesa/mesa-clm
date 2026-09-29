@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "genus",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "CHEBI:83057",
+   "description": "A crustacean metabolite produced by the genus of small planktonic arthropods, Daphnia",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_83057",
+   "isRoot": false,
+   "label": "Daphnia metabolite",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

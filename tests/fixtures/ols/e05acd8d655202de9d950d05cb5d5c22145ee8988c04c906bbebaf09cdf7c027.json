@@ -1,0 +1,180 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "distance",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01000700",
+   "description": "A sturzstrom is a landslide consisting which has a great amount of kinetic energy resulting in greater horizontal movement when compared to its initial vertical drop — as much as 20 or 30 times the vertical distance. By contrast a normal landslide will typically travel a horizontal distance that is less than twice the distance that the material has fallen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000700",
+   "isRoot": false,
+   "label": "sturzstrom",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:06105203",
+   "description": "An elevation which inheres in a water table by virture of its vertical distance from a land surface.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_06105203",
+   "isRoot": false,
+   "label": "water table depth",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000499",
+   "description": "A linear structural depression that extends laterally over a distance, while being less steep than a trench. A trough can be a narrow basin or a geologic rift. There are various oceanic troughs, troughs found under oceans; examples include the rift along the mid-oceanic ridge and the Cayman Trough.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000499",
+   "isRoot": false,
+   "label": "trough",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00009725",
+   "description": "A glacier covering a coastal strip of low-lying land backed by mountains, and sloping gently seaward over a distance up to 30km or more to terminate in ice cliffs or to merge with an ice shelf.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00009725",
+   "isRoot": false,
+   "label": "ice piedmont",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000099",
+   "description": "A marine current bordered by the surface of the water column and the permanent thermocline, where it occurs. Surface currents are mostly wind driven and mostly limited to the top 400 m of the water column. Ocean currents are driven by the circulation of wind above surface waters. Frictional stress at the interface between the ocean and the wind causes the water to move in the direction of the wind. Large ocean currents are a response of the atmosphere and ocean to the flow of energy from the tropics to polar regions. In some cases, currents are transient features and affect only a small area. Other ocean currents are essentially permanent and extend over large horizontal distances.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000099",
+   "isRoot": false,
+   "label": "marine surface current",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000232",
+   "description": "Felsic lava is lava which is high in silica (> 69 percent by weight), aluminium, potassium, sodium, and calcium, forming a polymerized liquid rich in feldspar and quartz. Felsic lava has a  higher viscosity than other magma types. Felsic magmas can erupt at temperatures as low as 650 to 750 °C. Unusually hot (>950 °C) rhyolite lavas, however, may flow for distances of many tens of kilometres",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000232",
+   "isRoot": false,
+   "label": "felsic lava",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000258",
+   "description": "A similar term exists in linguistics and mathematics. An ecocline, or biological cline, is a related concept; however, may be better placed as a child of a class like \"ecotone\". Further, some definitions of \"layer\" require a layer's constiuent materials to have consistent properties, thus \"cline\" would not qualify as a subclass. The term \"gradient\" has been proposed as a more suitable superclass. Discussion in Issue #286)",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000258",
+   "isRoot": false,
+   "label": "fluid cline",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000944",
+   "description": "This classification is based on the thresholds detailed in GESAMP report # 99 on recommendation from the SDG 14 indicator team. While the definition is in accordance with the common use of this term (as per GESAMP report # 99), alternative size classifications exist. Alternative classifications are a piece of plastic which is between 1 and 5 millimetres in diameter, a piece of plastic which has a diameter less than 1 millimetre, or a piece of plastic which has a diameter greater than 330 micrometres. The use of the word diameter in this case was understood to mean the generalised form of diameter, i.e. the largest distance between two points belonging to an object.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000944",
+   "isRoot": false,
+   "label": "microplastic particle",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001132",
+   "description": "A gas planet which has a mass similar to that of Neptune or Uranus and which closely orbits its star (normally at a distance less than 1 Astronomical Unit).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001132",
+   "isRoot": false,
+   "label": "hot Neptune",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:06105105",
+   "description": "This classification is based on the thresholds detailed in GESAMP report # 99 on recommendation from the SDG 14 indicator team. While the definition is in accordance with the common use of this term (as per GESAMP report # 99), alternative size classifications exist. An alternative classification is a piece of plastic which has a diameter less than 100 nanometres. The GESAMP report states that it assumes a spherical shape for this size classification, which was understood to mean the generalised form of diameter, i.e. the largest distance between two points belonging to an object.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_06105105",
+   "isRoot": false,
+   "label": "nanoplastic particle",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000052",
+   "description": "A morphological quality inhering in a bearer by virtue of the bearer's ratios of distances between its features (points, edges, surfaces and also holes etc).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000052",
+   "isRoot": false,
+   "label": "shape",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000122",
+   "description": "A 1-D extent quality which is equal to the distance between two points.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000122",
+   "isRoot": false,
+   "label": "length",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000921",
+   "description": "A 1-D extent quality which is equal to the distance from one side of an object to another side which is opposite.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000921",
+   "isRoot": false,
+   "label": "width",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001687",
+   "description": "A positional quality inhering in a bearer by virtue of the bearer's vertical distance of a point above or below a reference surface.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001687",
+   "isRoot": false,
+   "label": "elevation",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001711",
+   "description": "An 1-D extent quality inhering in two-dimensional bearer by virtue of being equal to the distance around it.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001711",
+   "isRoot": false,
+   "label": "perimeter",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002272",
+   "description": "A spatial quality inhering in a bearer by virtue of the bearer's being located at the same continuous distance relative to another object.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002272",
+   "isRoot": false,
+   "label": "parallel to",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "UBERON:0001605",
+   "description": "The ciliary muscle is a ring of smooth muscle in the middle layer of the eye that controls the eye's accommodation for viewing objects at varying distances and regulates the flow of aqueous humour through Schlemm's canal. [WP,unvetted].",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0001605",
+   "isRoot": false,
+   "label": "ciliary muscle",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

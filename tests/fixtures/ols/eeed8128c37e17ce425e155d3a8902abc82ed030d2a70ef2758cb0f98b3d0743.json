@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GAZ_00002537",
+  "ontology_id": "gaz"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "GAZ:00002537",
+  "description": "A state located in the New England region of the northeastern United States. It borders Rhode Island and Connecticut to the south, New York to the west, and Vermont and New Hampshire to the north. To the east, it borders the Atlantic Ocean.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/GAZ_00002537",
+  "isRoot": true,
+  "label": "Commonwealth of Massachusetts",
+  "ontologyId": "gaz",
+  "synonyms": []
+ }
+}

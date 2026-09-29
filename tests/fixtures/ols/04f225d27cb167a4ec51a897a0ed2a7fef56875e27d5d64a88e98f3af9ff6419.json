@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "taxon rank",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

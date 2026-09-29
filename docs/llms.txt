@@ -1,0 +1,36 @@
+# mesa-clm documentation
+
+> mesa-clm proposes calibrated, ontology-grounded AVUs for the MESA stack with Contrastive LM (CLM): rank-first decisions with a fixed abstain anchor over mesa-mcp's OBO/OLS ontology tools, scored by a frozen Qwen3-8B encoder and CLM's projection heads, fingerprinted and pre-registered, with every decision recorded in a provenance sidecar next to the mesa-ducklake AVU history. This documentation covers installation, configuration, the decision model, tiers and the write policy, provenance and history, learning and the bench, serving, and development. The source repository is an Open Knowledge Format (OKF v0.2) bundle: every page carries YAML frontmatter with type, provenance (generated/sources), and lifecycle (status/stale_after) fields.
+
+Full corpus for ingestion: https://idss-mesa.github.io/mesa-clm/llms-full.txt
+
+Every page's Markdown source (OKF frontmatter included) is served at its URL plus `index.md` — for example https://idss-mesa.github.io/mesa-clm/getting-started/install/index.md. Agent guide: https://idss-mesa.github.io/mesa-clm/about/ai-agents/
+
+For the decisions and verified facts behind the design, read DESIGN.md and RESEARCH.md in the repository; for behaviour, run mesa-clm and read its provenance sidecar.
+
+## Getting started
+
+- [Configuration](https://idss-mesa.github.io/mesa-clm/getting-started/configuration/): Configure mesa-clm with a YAML file, MESA_CLM_ environment variables or flags; precedence, the sections, secrets, and the CLM fallbacks. (draft)
+- [Install](https://idss-mesa.github.io/mesa-clm/getting-started/install/): Install mesa-clm with uv, choose the extras for the bench, Claude, Postgres or end-to-end tests, verify the vendored files, and know what a serving host needs. (draft)
+
+## Concepts
+
+- [Decision model](https://idss-mesa.github.io/mesa-clm/concepts/decision-model/): How mesa-clm asks CLM: one rank per candidate group with a fixed abstain anchor, set-independent scores, the Q1-Q8 pipeline, contexts that end with the target, framings and the two keys. (draft)
+- [Learning and bench](https://idss-mesa.github.io/mesa-clm/concepts/learning-and-bench/): Where mesa-clm's labels come from and how they are identified and frozen, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, and the pre-registered experiments X1-X4 with the AnyJev baseline numbers. (draft)
+- [Provenance](https://idss-mesa.github.io/mesa-clm/concepts/provenance/): The mesa_clm sidecar: a per-host DuckDB opened under a flock, its tables and fingerprints, the direct/spool/none history backends and the lock set, source tags, export, prune and revert. (draft)
+- [Serving](https://idss-mesa.github.io/mesa-clm/concepts/serving/): The mesa-clm serving stack planned for milestone M1: a vLLM pooling container serving Qwen3-8B and a patched clm-serve on loopback with keys, the carried CLM patches, fingerprints and the serving lock, the GPU budget, and the in-process fallback encoder. (draft)
+- [Tiers and policy](https://idss-mesa.github.io/mesa-clm/concepts/tiers-and-policy/): What level and calibration promise on a mesa-clm decision, the record invariants, and the rules that turn a decision into auto, proposed or abstain with a cited bench cell. (draft)
+
+## Develop
+
+- [Architecture](https://idss-mesa.github.io/mesa-clm/develop/architecture/): The mesa-clm modules and which milestone delivers each, the annotate and apply phases, the MCP tools, and the boundaries with CLM, mesa-mcp, mesa-ducklake and neon-ducklake. (draft)
+- [Testing](https://idss-mesa.github.io/mesa-clm/develop/testing/): How to run the hermetic mesa-clm test suite, what the fake CLM transport and the recorded OLS fixtures cover, the vendored-file and parity checks, and the opt-in live, engine, GPU, Postgres, end-to-end and neon tiers. (draft)
+
+## About
+
+- [AI agents](https://idss-mesa.github.io/mesa-clm/about/ai-agents/): How AI agents should read this documentation bundle: llms.txt, the markdown mirror, trust markers, and where the decisions and facts live. (draft)
+- [License](https://idss-mesa.github.io/mesa-clm/about/license/): mesa-clm is MIT licensed by the Regents of the University of New Mexico; Contrastive LM, Qwen3-8B and the vendored AnyJev metrics are Apache-2.0; NEON data are CC BY 4.0. (draft)
+
+## Meta
+
+- [Documentation update log](https://idss-mesa.github.io/mesa-clm/log/): dated history of changes to this bundle.

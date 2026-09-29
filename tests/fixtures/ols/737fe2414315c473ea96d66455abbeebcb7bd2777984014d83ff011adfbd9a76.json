@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "scientific name",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "scientificName",
+   "description": "The full scientific name, with authorship and date information if known. When forming part of an Identification, this should be the name in lowest level taxonomic rank that can be determined. This term should not contain identification qualifications, which should instead be supplied in the IdentificationQualifier term.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/scientificName",
+   "isRoot": true,
+   "label": "Scientific Name",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "scientificNameID",
+   "description": "An identifier for the nomenclatural (not taxonomic) details of a scientific name.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/scientificNameID",
+   "isRoot": true,
+   "label": "Scientific Name ID",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "scientificNameAuthorship",
+   "description": "The authorship information for the scientificName formatted according to the conventions of the applicable nomenclaturalCode.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/scientificNameAuthorship",
+   "isRoot": true,
+   "label": "Scientific Name Authorship",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "cultivarEpithet",
+   "description": "Part of the name of a cultivar, cultivar group or grex that follows the scientific name.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/cultivarEpithet",
+   "isRoot": true,
+   "label": "Cultivar Epithet",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "class",
+   "description": "The full scientific name of the class in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/class",
+   "isRoot": true,
+   "label": "Class",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "family",
+   "description": "The full scientific name of the family in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/family",
+   "isRoot": true,
+   "label": "Family",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "genus",
+   "description": "The full scientific name of the genus in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/genus",
+   "isRoot": true,
+   "label": "Genus",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "identificationID",
+   "description": "An identifier for the Identification (the body of information associated with the assignment of a scientific name). May be a global unique identifier or an identifier specific to the data set.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/identificationID",
+   "isRoot": true,
+   "label": "Identification ID",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "kingdom",
+   "description": "The full scientific name of the kingdom in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/kingdom",
+   "isRoot": true,
+   "label": "Kingdom",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "order",
+   "description": "The full scientific name of the order in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/order",
+   "isRoot": true,
+   "label": "Order",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "phylum",
+   "description": "The full scientific name of the phylum or division in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/phylum",
+   "isRoot": true,
+   "label": "Phylum",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "subfamily",
+   "description": "The full scientific name of the subfamily in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/subfamily",
+   "isRoot": true,
+   "label": "Subfamily",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "subgenus",
+   "description": "The full scientific name of the subgenus in which the taxon is classified. Values should include the genus to avoid homonym confusion.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/subgenus",
+   "isRoot": true,
+   "label": "Subgenus",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "typeStatus",
+   "description": "A list (concatenated and separated) of nomenclatural types (type status, typified scientific name, publication) applied to the subject.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/typeStatus",
+   "isRoot": true,
+   "label": "Type Status",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "taxonRank",
+   "description": "The taxonomic rank of the most specific name in the scientificName.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/taxonRank",
+   "isRoot": true,
+   "label": "Taxon Rank",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "verbatimTaxonRank",
+   "description": "The taxonomic rank of the most specific name in the scientificName as it appears in the original record.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/verbatimTaxonRank",
+   "isRoot": true,
+   "label": "Verbatim Taxon Rank",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "nomenclaturalCode",
+   "description": "The nomenclatural code (or codes in the case of an ambiregnal name) under which the scientificName is constructed.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/nomenclaturalCode",
+   "isRoot": true,
+   "label": "Nomenclatural Code",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "genericName",
+   "description": "The genus part of the scientificName without authorship.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/genericName",
+   "isRoot": true,
+   "label": "Generic Name",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "originalNameUsage",
+   "description": "The taxon name, with authorship and date information if known, as it originally appeared when first established under the rules of the associated nomenclaturalCode. The basionym (botany) or basonym (bacteriology) of the scientificName or the senior/earlier homonym for replaced names.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/originalNameUsage",
+   "isRoot": true,
+   "label": "Original Name Usage",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "namePublishedIn",
+   "description": "A reference for the publication in which the scientificName was originally established under the rules of the associated nomenclaturalCode.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/namePublishedIn",
+   "isRoot": true,
+   "label": "Name Published In",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+/* neon-mcp documentation — small tweaks on top of Zensical's defaults.
+   The palette (primary green / accent teal, light + dark) lives in
+   zensical.toml; keep site-wide styling there and reserve this file for
+   the few things the theme cannot express. */
+
+/* Endpoint and rate-limit tables quote a lot of paths; keep code in cells on one line. */
+.md-typeset table:not([class]) td code {
+  white-space: nowrap;
+}

@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "cup status",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

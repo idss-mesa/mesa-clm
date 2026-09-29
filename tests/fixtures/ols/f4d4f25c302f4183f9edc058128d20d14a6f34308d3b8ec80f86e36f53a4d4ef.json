@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001661",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0000383",
+   "description": "A biological sex quality inhering in an individual or a population that only produces gametes that can be fertilised by male gametes.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000383",
+   "isRoot": false,
+   "label": "female",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000384",
+   "description": "A biological sex quality inhering in an individual or a population whose sex organs contain only male gametes.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000384",
+   "isRoot": false,
+   "label": "male",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

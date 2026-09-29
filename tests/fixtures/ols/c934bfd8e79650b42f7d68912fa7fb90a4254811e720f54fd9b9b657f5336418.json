@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000098",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000098",
+  "description": "A volume unit which is equal to one thousandth of a liter or 10^[-3] L, or to 1 cubic centimeter.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000098",
+  "isRoot": false,
+  "label": "milliliter",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

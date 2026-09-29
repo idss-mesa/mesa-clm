@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003536",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0003502",
+   "description": "An observational assessment of the loss of facial muscle tissue due to inactivity or disease.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003502",
+   "isRoot": false,
+   "label": "facial atrophy assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003503",
+   "description": "An observational assessment of the loss of muscle tissue related to tongue movement due to inactivity or disease.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003503",
+   "isRoot": false,
+   "label": "tongue atrophy assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003513",
+   "description": "An observational assesment of an individual's muscle tissue loss due to inactivity or disease.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003513",
+   "isRoot": false,
+   "label": "muscle atrophy assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

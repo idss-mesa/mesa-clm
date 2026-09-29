@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000021",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000021",
+  "description": "A mass unit which is equal to one thousandth of a kilogram or 10^[-3] kg.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000021",
+  "isRoot": false,
+  "label": "gram",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

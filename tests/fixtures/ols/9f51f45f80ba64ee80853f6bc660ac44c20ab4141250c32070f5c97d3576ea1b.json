@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001479",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001479",
+  "description": "A specimen that derives from an anatomical part or substance arising from an organism. Examples of tissue specimen include tissue, organ, physiological system, blood, or body location (arm).",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001479",
+  "isRoot": false,
+  "label": "specimen from organism",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

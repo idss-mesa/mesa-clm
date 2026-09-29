@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0045001",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0045001",
+  "description": "A quality of an object that has a value that is normal or average.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0045001",
+  "isRoot": false,
+  "label": "normal object quality",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

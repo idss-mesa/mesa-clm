@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "end cloud cover percentage",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

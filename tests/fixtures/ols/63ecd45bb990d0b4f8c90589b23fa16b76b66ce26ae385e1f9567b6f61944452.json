@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001141",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001141",
+  "description": "a CRID symbol used to distinguish one individual organism from another.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001141",
+  "isRoot": false,
+  "label": "individual organism identifier",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000065",
+  "ontology_id": "bco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "BCO:0000065",
+  "description": "An observing process in which the observing entity consists of one or more humans.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000065",
+  "isRoot": false,
+  "label": "human observation process",
+  "ontologyId": "bco",
+  "synonyms": []
+ }
+}

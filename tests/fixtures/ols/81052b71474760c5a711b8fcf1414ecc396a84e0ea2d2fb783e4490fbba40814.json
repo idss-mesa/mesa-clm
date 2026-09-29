@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "celsius",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00052717",
+   "description": "A mine near the Mouana Mine that is the site of over a dozen precambrian natural nuclear reactors. Secondary enrichment of uranium oxides in cm to meter sized veins moderated by ground water consumed six tons of U235 and elevated temperatures to a few hundred Celsius. Remarkably the non-volatile fission products moved only a few cm in the veins during the last 1.5 billion years.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00052717",
+   "isRoot": true,
+   "label": "Oklo Mine",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:80000013",
+   "description": "A river. This watercourse is known for its unusually warm temperatures compared to other surface water bodies in Wyoming; these elevated temperatures enable crawfish to thrive in the water. Summer water temperatures are in the range of 22 to 24 degrees Celsius; pH levels are typically about 9.1, or somewhat alkaline. The warm waters come from a southern portion of the Yellowstone volcanic zone which produces hot water from hot springs and fumaroles in the area. The stream feeds into the Lewis River just south of the Lewis River Canyon and just before the Lewis River converges with the Snake River.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_80000013",
+   "isRoot": true,
+   "label": "Crawfish Creek",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

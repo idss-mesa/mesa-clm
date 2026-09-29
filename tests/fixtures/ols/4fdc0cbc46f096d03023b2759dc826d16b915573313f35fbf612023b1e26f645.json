@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "How the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00001880",
+   "description": "A small uninhabited archipelago in Loch Boisdale, in the south east of the island of South Uist, in the Outer Hebrides, Scotland. The individual islands are separated from one another at high tide, but connected to one another at low tide.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00001880",
+   "isRoot": true,
+   "label": "Eileanan Iasgaich",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003985",
+   "description": "An overseas territory of the United Kingdom situated in the Indian Ocean, halfway between Africa and Indonesia. The territory comprises the six atolls of the Chagos Archipelago with over 1,000 individual islands.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003985",
+   "isRoot": false,
+   "label": "British Indian Ocean Territory",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003992",
+   "description": "A group of seven atolls comprising more than 60 individual tropical islands roughly in the centre of the Indian Ocean. The Chagos lies about 500 km due south of the Maldives, its nearest neighbour, 1600 km southwest of India, half way between Tanzania and Java.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003992",
+   "isRoot": true,
+   "label": "Chagos Archipelago",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00009717",
+   "description": "Detailed data from the GBRMPA Zoning Maps at: http://www.gbrmpa.gov.au/corp_site/management/zoning/zoning_maps.html.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00009717",
+   "isRoot": true,
+   "label": "Great Barrier Reef",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00016657",
+   "description": "The largest island of the Butaritari Atoll, on the S, with Tanimaiki, Tabonugea and Tabononobi as named regions in the E, central and W respectively (individual islands?).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00016657",
+   "isRoot": true,
+   "label": "Butaritari Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00017454",
+   "description": "An atoll consisting of twenty-six individual islets forming an incomplete atoll ring.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00017454",
+   "isRoot": true,
+   "label": "South Keeling Islands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00023263",
+   "description": "A large group of high mountains and individually named ranges and ridges in NE Victoria Land which are bounded by the sea, and by the Dennistoun, Ebbe, and Tucker Glaciers.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00023263",
+   "isRoot": true,
+   "label": "Admiralty Mountains",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00023343",
+   "description": "That part of the Ross Ice Shelf bounded by McMurdo Sound and Ross Island on the north and Minna Bluff on the south. Studies show this feature has characteristics quite distinct from the Ross Ice Shelf and merits individual naming.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00023343",
+   "isRoot": true,
+   "label": "McMurdo Ice Shelf",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00048434",
+   "description": "The largest atoll structure in the world, with a total area of 12,642 km2. There are seven or eight individual islands on the rim of the atoll, one in the North (Nelson's Island) and the others on the Eastern rim.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00048434",
+   "isRoot": true,
+   "label": "Great Chagos Bank",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00050996",
+   "description": "A mountain range the United States but extending into southeastern Canada, forming a zone, from 160 to 480 km wide, running from the island of Newfoundland 2,400 km south-westward to central Alabama in the United States (with foothills in northeastern Mississippi). The system is divided into a series of ranges, with the individual mountains averaging around 900 m. The highest of the group is Mount Mitchell in North Carolina at 2,037 m, which is the highest point in the United States east of the Mississippi River. The USGS defines the Appalachian Highlands physiographic division as consisting of thirteen provinces: The Atlantic Coast Uplands, Eastern Newfoundland Atlantic, Maritime Acadian Highlands, Maritime Plain, Notre Dame And Megantic Mountains, Western Newfoundland Mountains, Piedmont, Blue Ridge, Valley And Ridge, St. Lawrence Valley, Appalachian Plateaus, New England province, and the Adirondack provinces.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00050996",
+   "isRoot": true,
+   "label": "Appalachian Mountains",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00053398",
+   "description": "A dominantly Pleistocene group of 240 scoria cones, maars, and small stratovolcanoes covering an area of about 600 sq km. The West Eifel volcanic field lies about 40 km SW of the smaller, but better known East Eifel volcanic field. Individual vents, most of which cover a broad NW-SE-trending area extending about 50 km from the towns of Ormont on the NW to Bad Bertrich on the SE, were erupted above a mantle plume through Devonian sedimentary and metamorphic rocks. Scoria cones, about half of which have produced lava flows, form two-thirds of the volcanic centers, and about 30% are maars or tuff rings, many of which are occupied by lakes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00053398",
+   "isRoot": true,
+   "label": "West Eifel Volcanic Field",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00053567",
+   "description": "A volcanic complex, located immediately south of Lake Naivasha and west of Longonot volcano, comprises up to 80 individual commenditic and other peralkaline rhyolitic centers. A thick, geochemically diverse basal complex is overlain by a dominantly silicic lava-dome and lava-flow complex active from about 20,000 years ago to the present. The youngest known eruption originated from the Ololbutot fissure on the SE side of the complex produced lava flows and a pumice flow and has a radiocarbon age of about 180 years. Fumarolic activity occurs at the Njorowa Gorge and at the Orengingnai and Olkaria (Orgaria) pumice cones.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00053567",
+   "isRoot": true,
+   "label": "Olkaria Volcanic Complex",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00053711",
+   "description": "A basaltic volcanic field in NW Saudi Arabia, east of the Red Sea port of Umm Lajj. It contains about 50 volcanic cones that were constructed over Precambrian crystalline rocks along a N-S axis. Harrat Lunayyir is one of the smallest of the Holocene lava fields of Saudi Arabia, but individual flow lobes radiate long distances from the center of the Harrat, and flows reached the Red Sea in two places. Lava flows are basaltic to basanitic in composition, and the Holocene flows are alkali olivine basalts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00053711",
+   "isRoot": true,
+   "label": "Harrat Lunayyir Volcanic Field",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00055637",
+   "description": "A Pleistocene-to-Holocene polygenetic volcanic field, located midway between Mount St. Helens and Mount Adams, is an area of low overlapping shield volcanoes with flank vents primarily oriented along a N-S line. Small shield volcanoes topped by cinder and spatter cones dominate the volcanic field, which also contains subglacial vents. The shield volcanoes extend from Sawtooth Mountain on the north to Red Mountain on the south; the high point of the field is 1806 m high Lemei Rock shield volcano. Basasltic-to-andesitic lava flows blanket much of the field; individual lava flows, many of which display extensive lava tubes, traveled up to 46 km. The youngest eruption about 8200 years ago produced the voluminous Big Lava Bed, a 0.9 cu km basaltic lava flow that traveled nearly 25 km south of its source, an unnamed cinder cone SE of Red Mountain, to within 8 km of the Columbia River.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00055637",
+   "isRoot": true,
+   "label": "Indian Heaven Volcanic Field",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00056612",
+   "description": "A 1,500 km long system of mountain ranges and escarpments in Southeastern Brazil, which runs in parallel to the Atlantic Ocean coast, from the State of Espirito Santo to Santa Catarina. The main escarpment forms the boundary between the sea-level littoral and the inland plateau (planalto), which has a mean altitude of 500 to 1300 m. The mountain ranges are discontinuous in several places and receive individual names, such as Serra de Bocaina, Serra de Paranapiacaba, Serra Negra, Serra dos Orgaos, etc. It also extends to some large islands near the coastline, such as Ilhabela and Ilha Grande. The highest point of Serra do Mar is the Pico das Salinas, located in the Parque Estadual dos Tres Picos in the State of Rio de Janeiro in a municipality of Nova Friburgo, with a height of 2,316 m.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00056612",
+   "isRoot": true,
+   "label": "Serra do Mar",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00062742",
+   "description": "The largest individual bog and one of the major nature reserves in Serbia. It is located in the Banat region of the province of Vojvodina. Carska Bara is located 17 km SW of the town of Zrenjanin, in the west-central part of the Serbian section of Banat, near the mouth of the river Begej into the Tisa. The southern border is bounded by the final, navigable section of the Begej before it empties into the Tisa (followed by the Belgrade-Zrenjanin road), while to the north are the vast Ecka fishponds, the largest in Serbia. Entire bog belongs to the municipality of Zrenjanin. A Ramsar Site.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00062742",
+   "isRoot": true,
+   "label": "Carska Bara",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00063811",
+   "description": "A network of mostly navigable rivers and lakes (known locally as broads) in the English counties of Norfolk and Suffolk. The lakes (Broads) themselves are ancient artificial features, resulting from the flooding of early peat excavations. The Broads largely follows the line of the rivers and natural navigations of the area. There are seven navigable rivers, the River Yare and its (direct and indirect) tributaries the Rivers Bure, Thurne, Ant, Waveney, Chet and Wensum. There are no locks on any of the rivers (except for Mutford lock in Oulton Broad that links to the saltwater Lake Lothing in Lowestoft), all the waterways are subject to tidal influence. The tidal range decreases with distance from the sea, with highly tidal areas such as Breydon Water contrasted with effectively non-tidal reaches such as the River Ant upstream of Barton Broad. The broads themselves range in size from small pools to the large expanses of Hickling Broad, Barton Broad and Breydon Water. The broads are unevenly distributed, with far more broads in the northern half of Broadland (the Rivers Bure, Thurne and Ant) than in the central and southern portions (the Rivers Yare, Waveney, Chet and Wensum). Individual broads may lie directly on the river, or are more often situated to one side and connected to the river by an artificial channel or dyke.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00063811",
+   "isRoot": true,
+   "label": "The Broads",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00144541",
+   "description": "Un'isola della Laguna Veneta. Sorge tra San Giuliano e Venezia ed e facilmente individuabile in quanto si trova subito a sinistra del Ponte della Liberta per chi va verso Venezia.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00144541",
+   "isRoot": true,
+   "label": "San Secondo Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00204203",
+   "description": "A river. A tributary of the Des Plaines River, begins as two individual streams. The West Branch of the DuPage River, starting out in Hanover Park in Cook County, continues southward through the entire county of DuPage, including the towns of Bartlett, Wheaton, Warrenville, Winfield and Naperville. The East Branch of the DuPage River begins in Bloomingdale and flows southward through Glendale Heights, Glen Ellyn, Lisle, Woodridge, parts of Naperville and parts of Bolingbrook. Both branches flow though many forest preserves and parks. The two branches meet at a spot between Naperville and Bolingbrook. The combined DuPage River continues southward from that point, through Plainfield and then west of Joliet, before finally meeting the Des Plaines River.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00204203",
+   "isRoot": true,
+   "label": "DuPage River",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00281441",
+   "description": "An archeological site. It consists of many individual necropoleis with coffins crested by unusually-distinctive terra cotta statuettes. The main necropolis itself has a diameter of about one kilometer. Burial mounds, religious altars, and ancient dwellings occur here over a large area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00281441",
+   "isRoot": true,
+   "label": "Bura Archaeological Site",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

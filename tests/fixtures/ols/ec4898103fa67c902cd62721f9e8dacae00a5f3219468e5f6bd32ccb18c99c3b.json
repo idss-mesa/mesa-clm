@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "percent",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0003149",
+   "description": "A basophil assay that measures the percentage of basophils in a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003149",
+   "isRoot": false,
+   "label": "basophil percentage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003154",
+   "description": "An eosinophil assay that measures the percentage of eosinophils in a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003154",
+   "isRoot": false,
+   "label": "eosinophil percentage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003160",
+   "description": "A lymphocyte assay that measures the percentage of lymphocytes in a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003160",
+   "isRoot": false,
+   "label": "lymphocyte percentage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003162",
+   "description": "A metamyelocyte assay that measures the percentage of metamyelocytes in a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003162",
+   "isRoot": false,
+   "label": "metamyelocyte percentage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003163",
+   "description": "A methemoglobin assay that measures the percentage of methemoglobin in a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003163",
+   "isRoot": false,
+   "label": "methemoglobin percentage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003164",
+   "description": "A monocyte assay that measures the percentage of monocytes in a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003164",
+   "isRoot": false,
+   "label": "monocyte percentage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003166",
+   "description": "A neutrophil assay that measures the percentage of neutrophils in a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003166",
+   "isRoot": false,
+   "label": "neutrophil percentage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003170",
+   "description": "A reticulocyte assay that measures the percentage of reticulocytes in a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003170",
+   "isRoot": false,
+   "label": "reticulocyte percentage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003187",
+   "description": "An neutrophil assay that measures the percentage of immature neutrophils in a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003187",
+   "isRoot": false,
+   "label": "immature neutrophil percentage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003188",
+   "description": "An erythrocyte assay that measures the percentage of nucleated erythrocytes in a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003188",
+   "isRoot": false,
+   "label": "nucleated erythrocyte percentage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003227",
+   "description": "A lymphocyte assay that measures the percentage of lymphocytes and large unstained cells in a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003227",
+   "isRoot": false,
+   "label": "total lymphocyte percentage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003723",
+   "description": "A cytometry assay that measures the percentage of natural killer cells in a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003723",
+   "isRoot": false,
+   "label": "natural killer cell percentage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003843",
+   "description": "A mass measurement assay with evaluant tissue expressed as a percentage of the body weight of the organism from which the specimen was derived.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003843",
+   "isRoot": false,
+   "label": "tissue mass percent of body mass assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000789",
+   "description": "A measurement data that represents the percentage of people or animals in a study or treatment group who are alive for a given period of time after diagnosis or initiation of monitoring.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000789",
+   "isRoot": false,
+   "label": "survival rate",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000805",
+   "description": "An antithrombin-III (AT-III) assay in which exogenous bovine thrombin and heparin are added to test plasma to form a thrombin-heparin-AT complex. The residual thrombin not bound then hydrolyzes the p-nitroalanine substrate to produce a yellow color, which is read at 405 nm. The intensity of color produced is inversely proportional to the AT present. A calibration is done with standard human plasma reagent and results for a given specimen are reported as a percentage relative to the standard",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000805",
+   "isRoot": false,
+   "label": "antithrombin-III berichrome assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000889",
+   "description": "A survival curve is a report graph which is a graphical representation of data where the percentage of survival is plotted as a function of time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000889",
+   "isRoot": false,
+   "label": "survival curve",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001939",
+   "description": "A data item that is the total number of bases in reads, divided by genome size, assumed to be the reference size (for instance of 3.10 Gb for human and 2.73 Gb for mouse) and refers to the percentage of the genome that is contained in the assembly based on size estimates; these are usually based on cytological techniques. Genome coverage of 90–95% is generally considered to be good, as most genomes contain a considerable fraction of repetitive regions that are difficult to sequence. So it is not a cause for concern if the genome coverage of an assembly is a bit less than 100%.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001939",
+   "isRoot": false,
+   "label": "genome coverage",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003191",
+   "description": "A hematocrit assay that measures the percentage of erythrocytes in a specimen by manual processes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003191",
+   "isRoot": false,
+   "label": "manual hematocrit assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003898",
+   "description": "A hematology assay that measures the percentage of classes of leukocytes in a sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003898",
+   "isRoot": false,
+   "label": "differential leukocyte count assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000163",
+   "description": "A dimensionless concentration unit which denotes the mass of a substance in a mixture as a percentage of the mass of the entire mixture.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000163",
+   "isRoot": false,
+   "label": "mass percentage",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

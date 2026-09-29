@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "uo",
+  "query": "unit",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "UO:0000000",
+   "description": "A unit of measurement is a standardized quantity of a physical quality.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000000",
+   "isRoot": true,
+   "label": "unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000177",
+   "description": "A concentration unit which is a standard measure of the number of units, as an agreed arbitrary amount, of a given substance per a specific volume of solution.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000177",
+   "isRoot": false,
+   "label": "unit per volume unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000054",
+   "description": "A density unit which is a standard measure of the mass exerting an influence on a given area.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000054",
+   "isRoot": false,
+   "label": "area density unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000178",
+   "description": "A unit per milliliter unit which is equal to one unit of an agreed arbitrary amount per one milliliter.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000178",
+   "isRoot": false,
+   "label": "unit per milliliter",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000179",
+   "description": "A unit per milliliter unit which is equal to one unit of an agreed arbitrary amount per one liter.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000179",
+   "isRoot": false,
+   "label": "unit per liter",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000178",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000178",
+   "isRoot": false,
+   "label": "unit per milliliter based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000179",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000179",
+   "isRoot": false,
+   "label": "unit per liter based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000180",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000180",
+   "isRoot": false,
+   "label": "mass per unit volume based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000181",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000181",
+   "isRoot": false,
+   "label": "enzyme unit based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000210",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000210",
+   "isRoot": false,
+   "label": "colony forming unit based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000211",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000211",
+   "isRoot": false,
+   "label": "plaque forming unit based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000213",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000213",
+   "isRoot": false,
+   "label": "colony forming unit per milliliter based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000215",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000215",
+   "isRoot": false,
+   "label": "plaque forming unit per milliliter based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000237",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000237",
+   "isRoot": false,
+   "label": "chroma sampling unit based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000238",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000238",
+   "isRoot": false,
+   "label": "dynamic range unit based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000260",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000260",
+   "isRoot": false,
+   "label": "effective dose unit based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000269",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000269",
+   "isRoot": false,
+   "label": "absorbance unit based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000310",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000310",
+   "isRoot": false,
+   "label": "dosage unit based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000312",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000312",
+   "isRoot": false,
+   "label": "relative light unit based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000313",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000313",
+   "isRoot": false,
+   "label": "relative luminescence unit based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  }
+ ]
+}

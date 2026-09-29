@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Sphaeroderus stenostomus",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:207752",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_207752",
+   "isRoot": false,
+   "label": "Sphaeroderus stenostomus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2681030",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2681030",
+   "isRoot": false,
+   "label": "Sphaeroderus stenostomus lecontei",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3047998",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3047998",
+   "isRoot": false,
+   "label": "Sphaeroderus stenostomus stenostomus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

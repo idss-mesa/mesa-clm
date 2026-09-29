@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002076",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0002076",
+  "description": "A material entity that has two or more specimens as its parts.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002076",
+  "isRoot": false,
+  "label": "collection of specimens",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

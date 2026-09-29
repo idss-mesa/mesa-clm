@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "Radial distance between the observer and the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

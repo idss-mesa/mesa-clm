@@ -1,0 +1,50 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "genus",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00378524",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00378524",
+   "isRoot": true,
+   "label": "Commune of Les Landes-Genusson",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00172062",
+   "description": "A quarry located near the top of the hillside of Smithsonian Hill in Hagerman Fossil Beds National Monument. The Hagerman Horse is the first fossil representation of the genus Equus in North America.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00172062",
+   "isRoot": true,
+   "label": "Hagerman Horse Quarry",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00248175",
+   "description": "A unique stand of riverine forest with the only known population of the endemic palm Neoveitchia storckii (an endemic genus).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00248175",
+   "isRoot": true,
+   "label": "Waindrandra Palms",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00493439",
+   "description": "A garden. It holds the UK national collection of the genus Helenium.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00493439",
+   "isRoot": true,
+   "label": "Holbrook Garden",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

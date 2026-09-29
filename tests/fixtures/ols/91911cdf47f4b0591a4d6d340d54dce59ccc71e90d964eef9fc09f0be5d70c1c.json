@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "sex or age",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0000455",
+   "description": "A maturity quality inhering in a bearer by virtue of the bearer's having arrived at the onset of puberty (the age at which sex glands become functional) but not yet fully mature.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000455",
+   "isRoot": false,
+   "label": "pubescent",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

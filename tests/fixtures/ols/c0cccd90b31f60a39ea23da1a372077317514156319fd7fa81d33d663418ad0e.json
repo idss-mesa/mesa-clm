@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0070017",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0070018",
+   "description": "A pyramidal cell morphology that inheres in neurons which have a distinct tuft formation, distal from the soma.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070018",
+   "isRoot": false,
+   "label": "tufted pyramidal morphology",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0070019",
+   "description": "A pyramidal cell morphology that inheres in neurons which lack a clear tuft formation but extend to large radial distances.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070019",
+   "isRoot": false,
+   "label": "untufted pyramidal morphology",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0070020",
+   "description": "A pyramidal cell morphology that inheres in neurons which lack a tuft formation but extend to small radial distances forming a star-like shape.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070020",
+   "isRoot": false,
+   "label": "stellate pyramidal morphology",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0070021",
+   "description": "A pyramidal cell morphology that inheres in neurons which have an apical tree which is oriented towards the white matter.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070021",
+   "isRoot": false,
+   "label": "inverted pyramidal morphology",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

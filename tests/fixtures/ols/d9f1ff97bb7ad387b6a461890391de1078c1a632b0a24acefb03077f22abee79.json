@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "identification references",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:00003861",
+   "description": "It's possible that this will become an inferred class in the future. The United Nations' International Standard Industrial Classification should be referred to when expanding this branch. ISIC can also be used to identify processes. See http://unstats.un.org/unsd/cr/registry/regcst.asp?Cl=27&Lg=1.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00003861",
+   "isRoot": false,
+   "label": "industrial building",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00002985",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:00002983",
+   "description": "An oil which 1) is liquid at room temperature (approximately 20 degrees Celsius) 2) is intended to be burned in a furnace or boiler for the generation of heat or used in an engine for the generation of power, 3) is obtained from petroleum distillation, either as a distillate or a residue, 4) composed of long hydrocarbon chains, particularly alkanes, cycloalkanes and aromatics.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002983",
+   "isRoot": false,
+   "label": "fuel oil",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00002984",
+   "description": "A naturally occurring flammable liquid consisting of a complex mixture of hydrocarbons of various molecular weights and other liquid organic compounds, that are found in geologic formations beneath the planetary surfaces.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002984",
+   "isRoot": false,
+   "label": "petroleum",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00003903",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00003903",
+   "isRoot": false,
+   "label": "aviation fuel",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

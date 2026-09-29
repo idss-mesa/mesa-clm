@@ -1,0 +1,190 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "damaged",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0001167",
+   "description": "A structural quality inhering in a bearer by virtue of the bearer being harmed or injured or spoiled, such that its functionality is impaired.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001167",
+   "isRoot": false,
+   "label": "damaged",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0302736",
+   "description": "A cell based DNA damage assay that measures DNA damage (DNA breakage) in eucaryotic cells exposed to a challenge by determining the size and shape of DNA migration by detecting fluorescently labeled DNA from a cell placed in an electric field using gel electrophoresis",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0302736",
+   "isRoot": false,
+   "label": "DNA damage comet assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003591",
+   "description": "A clinical data item that quantifies the degree of tissue damage in biopsies taken from transplanted kidneys.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003591",
+   "isRoot": false,
+   "label": "chronic allograft damage index score",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003721",
+   "description": "A cytometry assay that measures DNA damage in cells.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003721",
+   "isRoot": false,
+   "label": "cell based DNA damage assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000516",
+   "description": "Part of an NMR instrument that detects the signals emitted from a sample. No single probe can perform the full range of experiments, and probes that are designed to perform more than one type of measurement usually suffer from performance compromises. The probe represents a rather fragile single point of failure that can render an NMR system completely unusable if the probe is dropped or otherwise damaged. Probes are usually characterised by Sample diameter and Frequency.n  alt The instrument that transmits and receives radiofrequency to and from the NMR sample.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000516",
+   "isRoot": false,
+   "label": "NMR probe",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000815",
+   "description": "For the chromogenic determination of antithrombin III. Autoanalyzer method for undiluted samples. For the quantitative chromogenic determination of the functional activity of antithrombin III in plasma on autoanalyzers for the diagnosis of diminished AT III synthesis, increased consumption, and for monitoring substitution therapy. Berichrom(r) Antithrombin III (A) is used for the rapid determination of the physiologically active antithrombin III and permits the diagnosis of congenital and acquired antithrombin III deficiency, a condition frequently associated with an increased risk of thrombosis. Acquired antithrombin III deficiencies frequently occur due to consumption following major operations or due to disseminated intravascular coagulation (DIC) in cases of septicaemia, nephroses, liver parenchymal damage (hepatitis, drug intoxication, alcoholism) and estrogen-containing contraceptives. The test permits early detection of patients at increased risk for thrombosis. Kit contains: 6 x for 5.0 mL Thrombin (bovine), 3 x for 3.0 mL Substrate Reagent, 1 x 30.0 mL Buffer Solution",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000815",
+   "isRoot": false,
+   "label": "Berichrom(r) Antithrombin III (A) Kit",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001374",
+   "description": "A study design in which the response of an organism(s) to injury or damage is studied.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001374",
+   "isRoot": false,
+   "label": "injury design",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002155",
+   "description": "An analyte assay that is meant to detect general antibodies that react with substances that are produced by cellular damage caused by Treponema pallidum indicating a syphilis infection. VDRL tests require a microscope and can be done on cerebrospinal fluid as well as blood.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002155",
+   "isRoot": false,
+   "label": "venereal disease research laboratory test",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002156",
+   "description": "An analyte assay that is meant to detect with the aid of carbon or charcoal particles general antibodies that react with substances that are produced by cellular damage caused by Treponema pallidum indicating a syphilis infection. RPR tests can be done without a microscope.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002156",
+   "isRoot": false,
+   "label": "rapid plasma reagin test",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003754",
+   "description": "A cell based DNA damage assay that uses several constructed bacterial strains to detect mutations.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003754",
+   "isRoot": false,
+   "label": "Ames assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003755",
+   "description": "A cell based DNA damage assay in eukaryotic cells that detects cytoplasmic micronuclei.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003755",
+   "isRoot": false,
+   "label": "micronucleus assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003756",
+   "description": "A cell based DNA damage assay in eukaryotic cells that detects loss of function through mutation of the X-linked (single-copy) Pig-a gene.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003756",
+   "isRoot": false,
+   "label": "PIG-a assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0600032",
+   "description": "a protocol application to repair damaged DNA molecules",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0600032",
+   "isRoot": false,
+   "label": "artificially induced DNA repair",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000643",
+   "description": "the relation of the cells in the finger of the skin to the finger, in which an indeterminate number of grains are parts of the whole by virtue of being grains in a collective that is part of the whole, and in which removing one granular part does not nec- essarily damage or diminish the whole. Ontological Whether there is a fixed, or nearly fixed number of parts - e.g. fingers of the hand, chambers of the heart, or wheels of a car - such that there can be a notion of a single one being missing, or whether, by contrast, the number of parts is indeterminate - e.g., cells in the skin of the hand, red cells in blood, or rubber molecules in the tread of the tire of the wheel of the car.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000643",
+   "isRoot": false,
+   "label": "has grain",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000645",
+   "description": "A relation between granular parts and the whole of which they are a part. Granular parts have indeterminate number such that removing one granular part does not necessarily damage or diminish the whole.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000645",
+   "isRoot": false,
+   "label": "is grain of",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0006974",
+   "description": "Any process that results in a change in state or activity of a cell (in terms of movement, secretion, enzyme production, gene expression, etc.) as a result of a stimulus indicating damage to its DNA from environmental insults or errors during metabolism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0006974",
+   "isRoot": false,
+   "label": "DNA damage response",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001020",
+   "description": "A structural quality inhering in a bearer by virtue of whether the bearer has been harmed or injured or spoiled.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001020",
+   "isRoot": false,
+   "label": "damage",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0006915",
+   "description": "A programmed cell death process which begins when a cell receives an internal (e.g. DNA damage) or external signal (e.g. an extracellular death ligand), and proceeds through a series of biochemical events (signaling pathway phase) which trigger an execution phase. The execution phase is the last step of an apoptotic process, and is typically characterized by rounding-up of the cell, retraction of pseudopodes, reduction of cellular volume (pyknosis), chromatin condensation, nuclear fragmentation (karyorrhexis), plasma membrane blebbing and fragmentation of the cell into apoptotic bodies. When the execution phase is completed, the cell has died.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0006915",
+   "isRoot": false,
+   "label": "apoptotic process",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "The geographic latitude",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00055476",
+   "description": "The northwesternmost region in the Canadian province of British Columbia. It emcompasses the only area in BC not in a regional district. The term Stikine Region should not be confused with the terms Stikine Territory, Stikine District, or Stikine Country, which all mean something slightly different. Half the historical Stikine Country, roughly synonymous with the Stikine Mining District of colonial times, as being the entire basin of that river, is in the Kitimat-Stikine Regional District. The Stikine Territory was a colonial-era entity which existed briefly and had boundaries differing from that of the Stikine Country per se, being latitudinal in part and so cutting across terrain rather than defined by it. Most of the Stikine Region, the boundaries of which reflect modern-era administrative realities, is composed of areas not part of the historical or geographical Stikine, such as the Atlin District and some of the Cassiar Mining Districts, as well as some of the Liard basin, plus the basin of the Tatshenshini-Alsek in the \"BC Panhandle\" west of Skagway and north of Alaska's Glacier Bay National Park.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00055476",
+   "isRoot": true,
+   "label": "Stikine Region",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

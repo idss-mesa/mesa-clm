@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001621",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001621",
+  "description": "A measurement datum that is the measure of the longitude coordinate of a site.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001621",
+  "isRoot": false,
+  "label": "longitude coordinate measurement datum",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

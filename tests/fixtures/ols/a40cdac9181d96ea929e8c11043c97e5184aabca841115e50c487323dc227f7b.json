@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000308",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000308",
+  "description": "A dose unit which is equal to 1 milligram of a toxic or pharmaceutical substance per kilogram body weight of the recipient subject.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000308",
+  "isRoot": false,
+  "label": "milligram per kilogram",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "named location",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001189",
+   "description": "A data field which describes the city of origin of the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001189",
+   "isRoot": false,
+   "label": "sampling location name city",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100438",
+   "description": "A host geographical location field which describes the country of origin of the host.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100438",
+   "isRoot": false,
+   "label": "host origin geo loc name country",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100436",
+   "description": "A data field which describes the name of a specific geographical location (i.e. toponym).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100436",
+   "isRoot": false,
+   "label": "sampling location name site",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001410",
+   "description": "A geographical data field which describes the country where the host was likely exposed to the causative agent of the illness.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001410",
+   "isRoot": false,
+   "label": "location of exposure geo loc name country",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001181",
+   "description": "A data field which describes the country of origin of the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001181",
+   "isRoot": false,
+   "label": "sampling location name country",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100280",
+   "description": "A data field which describes the county or region of origin of the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100280",
+   "isRoot": false,
+   "label": "sampling location name county region",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001185",
+   "description": "A data field which describes the state, province, or territory of origin of the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001185",
+   "isRoot": false,
+   "label": "sampling location name state province region",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100437",
+   "description": "A data field which describes the country of origin of a food product.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100437",
+   "isRoot": false,
+   "label": "food product origin geo loc name country",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001396",
+   "description": "A host geographical location field which describes the country where the host resides.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001396",
+   "isRoot": false,
+   "label": "host residence geo loc name country",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001397",
+   "description": "A host geographical location field which describes the state or province or territory of residence of the host.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001397",
+   "isRoot": false,
+   "label": "host residence geo loc name state province territory",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002097",
+   "description": "An ontology identifier or textual name of the most precise geographical location available for the site of a specimen collection event.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002097",
+   "isRoot": false,
+   "label": "specimen collection location - state/province/territory/region",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001657",
+   "description": "Geographical origin of the sample; use the appropriate name from this list http://www.insdc.org/documents/country-qualifier-vocabulary. Use a colon to separate the country or ocean from more detailed information about the location, eg \"Canada: Vancouver\" or \"Germany: halfway down Zugspitze, Alps\"",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001657",
+   "isRoot": false,
+   "label": "draft NCBI BioSample geo_loc_name model",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100443",
+   "description": "A data field which describes the type of animal or plant population inhabiting an area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100443",
+   "isRoot": false,
+   "label": "animal or plant population",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C13717",
+   "description": "Named locations of or within the body.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C13717",
+   "isRoot": false,
+   "label": "Anatomic Site",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:02000279",
+   "description": "A whole cut that is derived from the short loin or any loin item that includes the sirloin. Because of its anatomical location, the tenderloin is the least exercised muscle in the carcass thus the name “Tender” Loin. The cut location is from underneath the finger bones in the short loin and the hipbone in the sirloin.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_02000279",
+   "isRoot": false,
+   "label": "lamb tenderloin",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:02000306",
+   "description": "The whole tenderloin. Because of its anatomical location, the tenderloin is the least exercised muscle in the carcass, thus the name “tender” loin. The tenderloin is located underneath the Finger bones and the Hipbone in the Loin.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_02000306",
+   "isRoot": false,
+   "label": "pork tenderloin",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001627",
+   "description": "A textual entity that denotes a geographic location that is a site or part of a site that is identified as a country in the political geography.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001627",
+   "isRoot": false,
+   "label": "country name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000022",
+   "description": "A stream which, through permanent or seasonal flow processes, moves from elevated land towards lower elevations through a definite channel and empties either into a sea, lake, or another river or ends on land as bed seepage and evapotranspiration exceed water supply.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000022",
+   "isRoot": false,
+   "label": "river",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C25690",
+   "description": "The street name and building number where a person or organization is located.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C25690",
+   "isRoot": false,
+   "label": "Street Address",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:02000039",
+   "description": "A beef cut that is an elongated muscle located in the center of the beef round cut, and thus is named “Eye.”",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_02000039",
+   "isRoot": false,
+   "label": "beef eye of round",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

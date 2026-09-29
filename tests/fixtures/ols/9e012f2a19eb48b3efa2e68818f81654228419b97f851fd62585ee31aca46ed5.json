@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0060001",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0060002",
+   "description": "A quality inhering in a bearer by virtue of the bearer's being present in males and absent from females in members of the same species.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0060002",
+   "isRoot": false,
+   "label": "male-specific",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0060003",
+   "description": "A quality inhering in a bearer by virtue of the bearer's being present in females and absent from males in members of the same species.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0060003",
+   "isRoot": false,
+   "label": "female-specific",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

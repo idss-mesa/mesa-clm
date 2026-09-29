@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001796",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001796",
+  "description": "A mixed forest which is subject to temperate climatic conditions.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001796",
+  "isRoot": false,
+  "label": "temperate mixed forest",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

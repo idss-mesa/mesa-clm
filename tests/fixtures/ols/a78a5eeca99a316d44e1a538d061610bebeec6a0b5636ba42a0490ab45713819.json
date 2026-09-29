@@ -1,0 +1,50 @@
+{
+ "args": {
+  "ontology_id": "iao",
+  "query": "order",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "IAO:0000426",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000426",
+   "isRoot": true,
+   "label": "first order logic expression",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000129",
+   "description": "A version number is an information content entity which is a sequence of characters borne by part of each of a class of manufactured products or its packaging and indicates its order within a set of other products having the same name.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000129",
+   "isRoot": false,
+   "label": "version number",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000584",
+   "description": "A data set that is an aggregate of data recording some measurement at a number of time points. The time series data set is an ordered list of pairs of time measurement data and the corresponding measurement data acquired at that time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000584",
+   "isRoot": false,
+   "label": "time sampled measurement data set",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000219",
+   "description": "A primitive, instance-level, relation obtaining between an information content entity and some portion of reality. Denotation is what happens when someone creates an information content entity E in order to specifically refer to something. The only relation between E and the thing is that E can be used to 'pick out' the thing. This relation connects those two together. Freedictionary.com sense 3: To signify directly; refer to specifically",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000219",
+   "isRoot": false,
+   "label": "denotes",
+   "ontologyId": "iao",
+   "synonyms": []
+  }
+ ]
+}

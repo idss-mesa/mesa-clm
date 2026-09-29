@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000025",
+  "ontology_id": "bco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "BCO:0000025",
+  "description": "An information artifact that is about a spatio-temporal region at which a process (such as collecting process, observing process, or material sampling process) occured.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000025",
+  "isRoot": false,
+  "label": "locality description",
+  "ontologyId": "bco",
+  "synonyms": []
+ }
+}

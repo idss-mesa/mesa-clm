@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "end rh",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00002694",
+   "description": "A volcanic island. An island that is the peak of a stratovolcano about halfway between Stromboli and Lipari in the eastern part of the Aeolian Islands. The 421 m high island of Panarea, the smallest in the Aeolian Archipelago, lies on the western side of a shallow platform whose shelf margin is at about 130 m depth. A series of small islands breach the surface to form the Central Reefs, the rim of a crater 2 km east of Panarea whose shallow submerged floor contains Roman ruins. The submerged Secca dei Pesci lava dome lies at the SE end of the platform, and the rhyolitic Basiluzzo lava dome rises 165 m above the surface at the NE end, along a ridge trending towards Stromboli volcano. The Panarea complex was constructed in two main stages; initial effusive activity that produced lava domes, and an explosive stage. The youngest products of the Panarea complex are airfall-tephra deposits were dated at between about 11,000 and 8000 years ago. Vigorous hydrothermal activity has continued at fumarolic fields at several locations on the submerged platform.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002694",
+   "isRoot": true,
+   "label": "Panarea",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00053267",
+   "description": "A large dominantly andesitic stratovolcano that forms the SE end of St. Eustatius (Statia) Island. The 601 m high volcano was formed about 32,000-22,000 years ago by rhyolitic eruptions on a shallow-water limestone bank 3 km offshore of an older 0.2 million years old volcanic center exposed at the NW end of the island. The interaction of rhyolitic magma with sea water produced pyroclastic-surge deposits, rich in limestone fragments, that joined the two islands and blanket the entire slopes of The Quill. The surges also swept across the older island and incorporated carbonized plant remains, shell fragments, and remains of fossil hermit crabs. A likely cryptodome tilted up limestones at Sugarloaf on the southern coast. A steep-sided crater, 760 m wide and more than 300 m deep caps The Quill; a notch on the western rim of the crater has directed the youngest pyroclastic flows towards the island's capital, Orangestad. The last dated eruption of The Quill produced pyroclastic flows about 1600 years ago.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00053267",
+   "isRoot": true,
+   "label": "The Quill",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00144412",
+   "description": "A canal in the Netherlands that was dug between 1701 and 1709 to cut off a large, shallow bend of river Rhine and so improve river traffic and water regulation. The canal, now indistinguishable from a \"real\" river, forks off north from river Waal a few km past the point where the Bijlands Kanaal, a similar canal dug to cut off a Waal bend, ends. It flows past the towns of Pannerden (right bank), which gives the canal its name, and Angeren (left bank) and so north to the point where the old Rhine bend flows into it and the river continues to the sea as Nederrijn (Lower Rhine). The old Rhine bend, cut off at its upstream end, still exists and is called, unsurprisingly, Oude Rijn.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00144412",
+   "isRoot": true,
+   "label": "Pannerdens Kanaal",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00053845",
+   "description": "A dominantly rhyolitic Volcanic Centre is surrounded by extensive ignimbrite and pyroclastic sheets produced during multiple caldera-forming eruptions. Numerous lava domes and craters erupted from two subparallel NE-SW-trending vent lineations form the Haroharo and Tarawera volcanic complexes. Lava domes of the Haroharo complex, at the northern end of the Okataina Volcanic Centre, occupy part of the 16 x 26 km Pleistocene Haroharo caldera, which formed incrementally between 300,000 and 50,000 years before present (BP). The oldest exposed rocks on the caldera floor are about 22,000 years old. The Tarawera complex at the southern end of Okataina consists of 11 rhyolitic lava domes and associated lava flows. The oldest domes were formed as late as about 15,000 years BP, and the youngest were formed in the Kaharoa eruption about 800 years BP. The NE-SW Tarawera vent lineation extends from the two dacitic cones of Maungaongaonga and Mangakakaramea on the SW to Mount Edgecumbe on the NE. Construction of the Haroharo and Tarawera complexes impounded lakes Rotoiti, Totoehu, Okataina, and Tarawera against the outer margins of the Okataina ring structure. A major hydrothermal area is located at Waimangu.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00053845",
+   "isRoot": true,
+   "label": "Okataina Volcanic Centre",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00246601",
+   "description": "A chottt that occupies the eastern and lowest end of the trough holding the Zahrez Rharbi. The depression is fed by 11 oueds and the area subject to inundation, 34 km long and up to 9 km wide, is bounded by humid sands along the southern shore. An area of permanent swamp occurs at the western end, and the land rises from the eastern end to a high ridge separating this endorheic system from the Chott el Hodna farther east.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00246601",
+   "isRoot": true,
+   "label": "Zarhez Chergui",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00053492",
+   "description": "A volcanic field covers an area of about 1800 km2 in the Hoggar Province of southern Algeria. The large volcanic field lies WSW of the town of Tamanrasset and was active from the Miocene to the Holocene, producing alkaline strombolian cones and lava flows. The high point of the volcanic field, which was constructed over a basement of Precambrian metamorphic and plutonic rocks of the Tuareg shield, lies near its eastern end. A dozen trachytic-to-rhyolitic lava domes and spines formed during the Pliocene, and Pliocene-to Pleistocene activity formed about 100 small strombolian basaltic (mostly basanitic) cones.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00053492",
+   "isRoot": true,
+   "label": "Tahalra Volcanic Field",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00055197",
+   "description": "A stratovolcano that is located ENE of a roughly 900 m high saddle across from Vsevidof volcano. Recheschnoi consists of an elongated, NE-SW-trending ridge that is dissected by deep glacier-filled valleys. Erosion is more extensive at the NE end. Holocene andesitic pyroclastic cones and rhyolitic lava domes, the latter west of the head of Russian Bay, are situated on the east and west flanks of the volcano. The Geyser Bight geothermal area on the NE flank of Recheschnoi is one of the hottest and most extensive thermal areas in Alaska. It consists of six zones of thermal springs and two fumarolic areas along upper Geyser Creek and contains the only known geysers in the state. Other thermal areas occur at Hot Springs Cove and Partov Cove on the rugged isthmus between Recheschnoi and Okmok volcanoes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00055197",
+   "isRoot": true,
+   "label": "Mount Recheshnoi",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00055753",
+   "description": "A large 17 x 32 km Long Valley caldera east of the central Sierra Nevada Range that formed as a result of the voluminous Bishop Tuff eruption about 760,000 years ago. Resurgent doming in the central part of the caldera occurred shortly afterwards, followed by rhyolitic eruptions from the caldera moat and the eruption of rhyodacite from outer ring fracture vents, ending about 50,000 years ago. During early resurgent doming the caldera was filled with a large lake that left strandlines on the caldera walls and the resurgent dome island; the lake eventually drained through the Owens River Gorge. The caldera remains thermally active, with many hot springs and fumaroles, and has had significant deformation, seismicity, and other unrest in recent years. The late-Pleistocene to Holocene Inyo Craters cut the NW topographic rim of the caldera, and along with Mammoth Mountain on the SW topographic rim, are west of the structural caldera and are chemically and tectonically distinct from the Long Valley magmatic system.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00055753",
+   "isRoot": true,
+   "label": "Long Valley Caldera",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00147543",
+   "description": "A headland situated at one end of Llandudno Bay, in Conwy county borough, north Wales.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00147543",
+   "isRoot": true,
+   "label": "Little Orme",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00444176",
+   "description": "A river. It starts near the village of Widdington in Essex flowing the 24 km north past Audley End House to merge with the Rhee a mile south of Grantchester.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00444176",
+   "isRoot": true,
+   "label": "River Granta [Essex]",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00053642",
+   "description": "A rhyolitic stratovolcano along the axis of the Addado graben. The volcano was constructed at the intersection of the central Afar rift zone with the northern end of the NE-SW-trending Ethiopian rift. Rhyolitic lava domes are located on the flanks of the volcano, and a 5 x 17 km basaltic lava field that covers the Ado Bad plain north of the volcano originated from a broad area of fissure vents and spatter cones on the north side of Gabillema volcano. Young lava flows also occur south and east of the volcano, the latter along E-W-trending fissures.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00053642",
+   "isRoot": true,
+   "label": "Gabillema Volcano",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00054912",
+   "description": "A low-rimmed caldera was formed in two stages during the late Pleistocene and early Holocene. The first caldera-forming eruption took place about 41,500 radiocarbon years ago. The second episode of caldera formation occurred about 7600 radiocarbon years ago during one of the world's largest Holocene eruptions. A total of 140-170 cu km of material was ejected, and extensive thick pyroclastic-flow deposits from the caldera-forming eruptions blanket the countryside. Ash from the eruption, one of the world's largest during the Holocene, fell more than 1000 km away on the Asia mainland. The eruption resulted in the formation of an 8 x 14 km wide caldera, now largely filled by Kurile Lake. The steep-sided Serdtze Alaida (Heart of Alaid), which forms a small island rising 300 m from the caldera floor in the center of the lake, is a rhyodacitic lava dome that formed at the end of the caldera-forming eruption.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00054912",
+   "isRoot": true,
+   "label": "Kurile Caldera",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00054994",
+   "description": "A rhyodacitic lava dome that formed at the end of the caldera-forming eruption that forms an island in Kurile Lake.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00054994",
+   "isRoot": true,
+   "label": "Serdtze Alaida",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00246600",
+   "description": "A chott. The depression lies at the western end of a trough 30 km wide, running WSW-ENE for 140 km along the High Plateau. The sides of the trough rise steeply from the floor, to altitudes of 1200-1370 m asl on the north, and to 1550 m on the south side.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00246600",
+   "isRoot": true,
+   "label": "Zahrez Rharbi",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00053834",
+   "description": "A volcanic field at the upper end of the Northland Peninsula contains 30 Pleistocene to upper-Holocene eruptive centers, consisting primarily of basaltic scoria cones, lava flows, and small shield volcanoes, along with minor rhyolitic lava flows and domes. The field lies at the northern end of the Northland Intraplate Province, and volcanism has progressively shifted to the SE, with the younger Taheke Basalts being aligned along a NE trend at the southern end of the volcanic field.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00053834",
+   "isRoot": true,
+   "label": "Kaikohe-Bay of Islands Volcanic Field",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00056149",
+   "description": "An elongated group of roughly E-W-trending basaltic-to-andesitic Pleistocene and Holocene stratovolcanoes in western El Salvador between the Santa Ana complex and the Guatemala border. The 5 x 3.5 km wide Pleistocene dacitic-rhyolitic Concepcion de Ataco caldera lies at the western end of the complex, along with post-caldera late-Pleistocene to Holocene andesitic-dacitic lava domes. The post-caldera cones of Cerro el Aguila (at 2036 m the highest peak of the complex) and Cerro los Naranjos volcano at the eastern end of the chain were mapped as Holocene by Weber and Weisemann (1978). Young craters on basaltic Laguna Verde stratovolcano may also have been active during the Holocene. Numerous fumarole fields are located on the northern flank of the range, and the Ahuachapan geothermal field has been producing since 1975.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00056149",
+   "isRoot": true,
+   "label": "Cordillera de Apaneca",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00148722",
+   "description": "A river in eastern France. The river rises at an altitude of some 700 m, near the village of La Faviere, in the Jurassic limestone of the southern end of the Jura mountains and flows into the Rhone about 40 km above Lyon, some 190 km down the Ain.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00148722",
+   "isRoot": true,
+   "label": "Ain",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002690",
+   "description": "A volcanic island. An island made up of a complex of stratovolcanoes. Lipari was formed in three major eruptive cycles, the first of which took place from about 223 to 188 thousand years ago (ka) from N-S-trending fissures on the western side of the island. The second eruptive period from about 102 to 53 ka included the formation of the Monte San Angelo and Costa d'Agosto stratovolcanoes in the center of the island. The third eruptive cycle (40 ka to the present) included the Monte Guardia sequence, erupted at the southern tip of the island between about 22,600 and 16,800 years ago, and Holocene rhyolitic pyroclastic deposits and obsidian lava flows at the NE end of the island.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002690",
+   "isRoot": true,
+   "label": "Lipari",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00053650",
+   "description": "A large stratovolcano at the northern end of the Main Ethiopian Rift. It consists primarily of rhyolitic obsidian lava flows with minor tuffs. Welded pantelleritic ash flows accompanied formation of a 2.5 x 4.5 km summit caldera, which has steep-sided walls up to 500 m high. The WNW-ESE-trending elliptical caldera has an orientation perpendicular to the Ethiopian Rift, and post-caldera vents occur along the same orientation. Trachytic and obsidian lava flows occur on the caldera floor, and fresh-looking lava flows descend the flanks from satellitic vents.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00053650",
+   "isRoot": true,
+   "label": "Mount Fentale",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00063478",
+   "description": "A sea loch in Argyll and Bute, Scotland. A sea loch aligned north-south, Gare Loch is 10 km long with an average width of 1.5 km. At its southern end it opens into the Firth of Clyde through the Rhu narrows.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00063478",
+   "isRoot": true,
+   "label": "Gare Loch",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

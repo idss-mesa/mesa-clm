@@ -1,0 +1,70 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Discoderus",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:60760",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_60760",
+   "isRoot": false,
+   "label": "Discoderus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1205993",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1205993",
+   "isRoot": false,
+   "label": "Discoderus parallelus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1902540",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1902540",
+   "isRoot": false,
+   "label": "Discoderus impotens",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2611573",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2611573",
+   "isRoot": false,
+   "label": "Discoderus diffiformipes",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2903183",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2903183",
+   "isRoot": false,
+   "label": "Discoderus robustus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:60761",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_60761",
+   "isRoot": false,
+   "label": "Discoderus cordicollis",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

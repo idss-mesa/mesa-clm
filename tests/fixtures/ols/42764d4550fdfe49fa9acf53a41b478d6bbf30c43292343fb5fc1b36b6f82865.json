@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "class",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PCO:0000001",
+   "description": "A collection of organisms, all of the same species, that live in the same place.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000001",
+   "isRoot": false,
+   "label": "population of organisms",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000059",
+   "description": "A collection of organisms that has as members every organism of a taxon and no organisms of any other equal or higher ranked taxon. The taxon may be at any level. If the taxon is species, then this is the same as the class species as a collection of organisms. When defining a taxon, it is generally understood that members include both living organisms and dead organisms that are known through specimens or observations.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000059",
+   "isRoot": false,
+   "label": "taxon as collection of organisms",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:1000004",
+   "description": "An ecological community which is composed of co-existing populations of microbial organisms that interact, directly or indirectly, such that they impact one another's ecological fitness.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_1000004",
+   "isRoot": false,
+   "label": "microbial community",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000420",
+   "description": "A defined class is a class that is defined by a set of logically necessary and sufficient conditions but is not a universal",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000420",
+   "isRoot": false,
+   "label": "defined class",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000421",
+   "description": "A named class expression is a logical expression that is given a name. The name can be used in place of the expression.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000421",
+   "isRoot": false,
+   "label": "named class expression",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000122",
+   "description": "Class has undergone final review, is ready for use, and will be included in the next release. Any class lacking \"ready_for_release\" should be considered likely to change place in hierarchy, have its definition refined, or be obsoleted in the next release.  Those classes deemed \"ready_for_release\" will also derived from a chain of ancestor classes that are also \"ready_for_release.\"",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000122",
+   "isRoot": false,
+   "label": "ready for release",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001369",
+   "description": "A shrubland biome which is densely vegetated by dwarf or short mangroves (and associates) that are generally less than 6 meters in height, is tidally influenced,  is located in tropical or subtropical areas.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001369",
+   "isRoot": false,
+   "label": "tidal mangrove shrubland",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0007610",
+   "description": "1. Note that this term is in the subset of terms that should not be used for direct gene product annotation. Instead, select a child term or, if no appropriate child term exists, please request a new term. Direct annotations to this term may be amended during annotation reviews.\n2. While a broader definition of behavior encompassing plants and single cell organisms would be justified on the basis of some usage (see PMID:20160973 for discussion), GO uses a tight definition that limits behavior to animals and to responses involving the nervous system, excluding plant responses that GO classifies under development, and responses of unicellular organisms that has general classifications for covering the responses of cells in multicellular organisms (e.g. cell chemotaxis).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0007610",
+   "isRoot": false,
+   "label": "behavior",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:8000009",
+   "description": "A subset ontology that is largely comprised of a single layer or strata in an ontology class hierarchy. The purpose is typically for rolling up for visualization. The classes in the layer need not be disjoint.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_8000009",
+   "isRoot": false,
+   "label": "single layer subset ontology module",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000120",
+   "description": "Class has all its metadata, but is either not guaranteed to be in its final location in the asserted IS_A hierarchy or refers to another class that is not complete.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000120",
+   "isRoot": false,
+   "label": "metadata complete",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000115",
+   "description": "The official OBI definition, explaining the meaning of a class or property. Shall be Aristotelian, formalized and normalized. Can be augmented with colloquial definitions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000115",
+   "isRoot": true,
+   "label": "definition",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "CARO:0000012",
+   "description": "Anatomical structure that is an individual member of a clade and, at some point in its life-cycle, consists of more than one cell.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/CARO_0000012",
+   "isRoot": false,
+   "label": "multicellular organism",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:8000007",
+   "description": "A subset ontology that is intended as a whitelist for curators using the ontology. Such a subset will exclude classes that curators should not use for curation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_8000007",
+   "isRoot": false,
+   "label": "curation subset ontology module",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:8000010",
+   "description": "A subset of an ontology that is intended to be excluded for some purpose. For example, a blacklist of classes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_8000010",
+   "isRoot": false,
+   "label": "exclusion subset ontology module",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000123",
+   "description": "Class is being worked on; however, the metadata (including definition) are not complete or sufficiently clear to the branch editors.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000123",
+   "isRoot": false,
+   "label": "metadata incomplete",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000124",
+   "description": "Nothing done yet beyond assigning a unique class ID and proposing a preferred term.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000124",
+   "isRoot": false,
+   "label": "uncurated",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000125",
+   "description": "All definitions, placement in the asserted IS_A hierarchy and required minimal metadata are complete. The class is awaiting a final review by someone other than the term editor.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000125",
+   "isRoot": false,
+   "label": "pending final vetting",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000111",
+   "description": "The concise, meaningful, and human-friendly name for a class or property preferred by the ontology developers. (US-English)",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000111",
+   "isRoot": true,
+   "label": "editor preferred label",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000112",
+   "description": "A phrase describing how a term should be used and/or a citation to a work which uses it. May also include other kinds of examples that facilitate immediate understanding, such as widely know prototypes or instances of a class, or cases where a relation is said to hold.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000112",
+   "isRoot": true,
+   "label": "example of usage",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000118",
+   "description": "An alternative name for a class or property which means the same thing as the preferred name (semantically equivalent)",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000118",
+   "isRoot": true,
+   "label": "alternative term",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

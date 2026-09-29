@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001209",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001209",
+  "description": "A terrestrial ecosystem which is inundated or saturated by surface or ground water at a frequency and duration sufficient to support, and that under normal circumstances does support, a prevalence of vegetation typically adapted for life in saturated soil conditions.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001209",
+  "isRoot": false,
+  "label": "wetland ecosystem",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

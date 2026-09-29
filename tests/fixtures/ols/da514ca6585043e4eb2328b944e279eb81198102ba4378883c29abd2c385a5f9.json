@@ -1,0 +1,100 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "Whether the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0002430",
+   "description": "An exclusion criterion defined as whether an individual has ever been diagnosed with metastatic cancer (cancer that spread beyond the initial site such as to other organs like brain bone or liver), which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002430",
+   "isRoot": false,
+   "label": "history of metastatic cancer exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002432",
+   "description": "An exclusion criterion defined  as whether an individual has a history of sex with someone who has been diagnosed or at risk for a blood borne infections disease in a specified time frame, which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002432",
+   "isRoot": false,
+   "label": "history of sex with someone with a history of blood borne infection  exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002433",
+   "description": "An exclusion criterion defined  as whether an individual has a history of sex with someone who has used intravenous drugs in a specified time frame, which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002433",
+   "isRoot": false,
+   "label": "history of sex with someone with a history of intravenous drugs exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002434",
+   "description": "An exclusion criterion defined  as whether an individual has a history of repeatedly reactive screening assays for HIV-1 or HIV-2 antibody regardless of the results of supplemental assays, which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002434",
+   "isRoot": false,
+   "label": "HIV exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002435",
+   "description": "An exclusion criterion defined  as whether an individual has been exposed to a blood borne infections disease through needle sticks and/or contact with non-intact skin and/or contact with open wounds and/or contact with mucous membranes, which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002435",
+   "isRoot": false,
+   "label": "exposure to blood borne infectious disease exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002426",
+   "description": "An exclusion criterion that defines whether chemotherapy was received within a certain timeframe, which when met, makes an individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002426",
+   "isRoot": false,
+   "label": "chemotherapy treatment within the recent past exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002427",
+   "description": "An exclusion criterion that defines whether radiation was received within a certain timeframe, which when met, makes an individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002427",
+   "isRoot": false,
+   "label": "radiation treatment within the recent past exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002424",
+   "description": "An exclusion criterion that defines whether chemotherapy was received or is being received for a previous  or current cancer, which when met, makes an individual unsuitable for a given task or participation in a given process",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002424",
+   "isRoot": false,
+   "label": "chemotherapy treatment exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002425",
+   "description": "An exclusion criterion that defines whether radiation was received or is being received for a previous  or current cancer, which when met, makes an individual unsuitable for a given task or participation in a given process",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002425",
+   "isRoot": false,
+   "label": "radiation treatment exclusion criteria",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

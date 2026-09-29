@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_7041",
+  "ontology_id": "ncbitaxon"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "NCBITaxon:7041",
+  "description": "",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_7041",
+  "isRoot": false,
+  "label": "Coleoptera",
+  "ontologyId": "ncbitaxon",
+  "synonyms": []
+ }
+}

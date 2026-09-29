@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000019",
+  "ontology_id": "pco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PCO:0000019",
+  "description": "The Shannon Index and Simpson Index are examples of ways in which species diversity is quantified.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000019",
+  "isRoot": false,
+  "label": "community species diversity",
+  "ontologyId": "pco",
+  "synonyms": []
+ }
+}

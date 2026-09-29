@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "geodetic datum",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "geodeticDatum",
+   "description": "The ellipsoid, geodetic datum, or spatial reference system (SRS) upon which the geographic coordinates given in decimalLatitude and decimalLongitude as based.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/geodeticDatum",
+   "isRoot": true,
+   "label": "Geodetic Datum",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "footprintSRS",
+   "description": "The ellipsoid, geodetic datum, or spatial reference system (SRS) upon which the geometry given in footprintWKT is based.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/footprintSRS",
+   "isRoot": true,
+   "label": "Footprint SRS",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "verbatimSRS",
+   "description": "The ellipsoid, geodetic datum, or spatial reference system (SRS) upon which coordinates given in verbatimLatitude and verbatimLongitude, or verbatimCoordinates are based.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/verbatimSRS",
+   "isRoot": true,
+   "label": "Verbatim SRS",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

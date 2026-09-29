@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "identification qualifier",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "identificationQualifier",
+   "description": "A brief phrase or a standard term (\"cf.\", \"aff.\") to express the determiner's doubts about the Identification.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/identificationQualifier",
+   "isRoot": true,
+   "label": "Identification Qualifier",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "otherCatalogNumbers",
+   "description": "A list (concatenated and separated) of previous or alternate fully qualified catalog numbers or other human-used identifiers for the same Occurrence, whether in the current or any other data set or collection.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/otherCatalogNumbers",
+   "isRoot": true,
+   "label": "Other Catalog Numbers",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

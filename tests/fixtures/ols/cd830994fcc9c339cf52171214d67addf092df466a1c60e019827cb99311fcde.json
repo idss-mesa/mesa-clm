@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "The horizontal distance",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00056350",
+   "description": "A massive ice-covered volcanic complex with at least a half dozen summit cones scattered over a 12 x 20 km area. The 6377 m high summit of the andesitic-to-dacitic complex is a cone at the NW end, north of a line of E-W-trending cones. Deep, steep-walled canyons surrounding the volcano give it an impressive topographic relief of more than 4000 m over a horizontal distance of 15 km. Several young Holocene lava flows descend the NE, SE, and western flanks. The age of its latest eruption is not known, but solfataric activity has been reported.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00056350",
+   "isRoot": true,
+   "label": "Nevado Coropuna",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00000423",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:00000423",
+  "description": "An island that lies in a river.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00000423",
+  "isRoot": false,
+  "label": "river island",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

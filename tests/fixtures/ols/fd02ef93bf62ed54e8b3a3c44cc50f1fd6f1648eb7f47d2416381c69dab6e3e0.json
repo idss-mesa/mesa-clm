@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/APOLLO_SV_00000796",
+  "ontology_id": "apollo_sv"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "APOLLO_SV:00000796",
+  "description": "A planned process that has a data set as its specified output.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/APOLLO_SV_00000796",
+  "isRoot": false,
+  "label": "dataset creating",
+  "ontologyId": "apollo_sv",
+  "synonyms": []
+ }
+}

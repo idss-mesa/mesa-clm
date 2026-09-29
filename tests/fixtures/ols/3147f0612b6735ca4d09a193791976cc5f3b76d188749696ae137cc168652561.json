@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Sphaeroderus stenostomus lecontei",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:2681030",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2681030",
+   "isRoot": false,
+   "label": "Sphaeroderus stenostomus lecontei",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

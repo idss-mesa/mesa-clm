@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000047",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0000047",
+  "description": "An organismal quality inhering in a bearer by virtue of the bearer's ability to undergo sexual reproduction in order to differentiate the individuals or types involved.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000047",
+  "isRoot": false,
+  "label": "biological sex",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

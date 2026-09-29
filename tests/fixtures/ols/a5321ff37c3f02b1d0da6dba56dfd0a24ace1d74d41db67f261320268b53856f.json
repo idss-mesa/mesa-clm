@@ -1,0 +1,100 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "How the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "BCO:0000003",
+   "description": "An observing process is distinguished from a specimen collecting process in by having an information content entity as an output rather than a specimen. The information artifact may be written or recorded or just be stored in someone's head (specifically depenedent upon that person). In the context of a taxonomic inventory, an observing process may be called a sighting, which is an ad hoc reporting of, typically, a single taxon occurrence, usually motivated by rarity, individual interest in the taxon, or atypicality of circumstances.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/BCO_0000003",
+   "isRoot": false,
+   "label": "observing process",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "BCO:0000053",
+   "description": "This is more typically used to report multiple sightings, where the motivation is to record presence and abundance, rather than for individual anecdotal occurrences that are noteworthy.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/BCO_0000053",
+   "isRoot": false,
+   "label": "opportunistic search taxonomic inventory process",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "individualCount",
+   "description": "The number of individuals present at the time of the Occurrence.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/individualCount",
+   "isRoot": true,
+   "label": "Individual Count",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "CARO:0001010",
+   "description": "Material anatomical entity that is a member of an individual species or is a viral or viroid particle.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/CARO_0001010",
+   "isRoot": false,
+   "label": "organism or virus or viroid",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000245",
+   "description": "An entity that can bear roles, has members, and has a set of organization rules. Members of organizations are either organizations themselves or individual people. Members can bear specific organization member roles that are determined in the organization rules. The organization rules also determine how decisions are made on behalf of the organization by the organization members.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000245",
+   "isRoot": false,
+   "label": "organization",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0100026",
+   "description": "A material entity that is an individual living system, such as animal, plant, bacteria or virus, that is capable of replicating or reproducing, growth and maintenance in the right environment. An organism may be unicellular or made up, like humans, of many billions of cells divided into specialized tissues and organs.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0100026",
+   "isRoot": false,
+   "label": "organism",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "locationAccordingTo",
+   "description": "Information about the source of this Location information. Could be a publication (gazetteer), institution, or team of individuals.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/locationAccordingTo",
+   "isRoot": true,
+   "label": "Location According To",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "reproductiveCondition",
+   "description": "The reproductive condition of the biological individual(s) represented in the Occurrence.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/reproductiveCondition",
+   "isRoot": true,
+   "label": "Reproductive Condition",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "sex",
+   "description": "The sex of the biological individual(s) represented in the Occurrence.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/sex",
+   "isRoot": true,
+   "label": "Sex",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

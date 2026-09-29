@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "number",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01000449",
+   "description": "A wet meadow is a type of wetland with soils that are saturated with water for part or all of the growing season.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000449",
+   "isRoot": false,
+   "label": "wet meadow ecosystem",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03600000",
+   "description": "A building part which is maintained such that the number of foreign particulates within it is controlled.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03600000",
+   "isRoot": false,
+   "label": "cleanroom",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000233",
+   "description": "A wetland ecosystem in which land mass is permanently inundated by shallow bodies of water, generally with a substantial number of hummocks, or dry-land protrusions.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000233",
+   "isRoot": false,
+   "label": "swamp ecosystem",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000057",
+   "description": "A marine algal bloom is a rapid increase or accumulation in the population of algae in a marine system. Typically, only one or a small number of phytoplankton  species are involved. Although there is no officially recognized threshold level, algae can be considered to be blooming at concentrations of hundreds to thousands of cells per milliliter, depending on the severity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000057",
+   "isRoot": false,
+   "label": "marine algal bloom",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000280",
+   "description": "ENVO contains this top-level class, but all instances will be in GAZ. The definition is preliminary and will be aligned to BFO.\nhttps://en.wikipedia.org/wiki/  Ecozones correspond to the floristic kingdoms of botany or zoogeographic regions of zoology. Ecozones are characterized by the evolutionary history of the organisms they contain. They are distinct from biomes, also known as major habitat types, which are divisions of the Earth's surface based on life form, or the adaptation of plants and animals to climatic, soil, and other conditions. Biomes are characterized by similar climax vegetation. Each ecozone may include a number of different biomes. A tropical moist broadleaf forest in Central America, for example, may be similar to one in New Guinea in its vegetation type and structure, climate, soils, etc., but these forests are inhabited by plants and animals with very different evolutionary histories.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000280",
+   "isRoot": false,
+   "label": "ecozone",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000606",
+   "description": "NB: \"[A cart]...is different from a dray or wagon, which is a heavy transport vehicle with four wheels and typically two or more horses, or a carriage, which is used exclusively for transporting humans...Over time, the term \"cart\" has come to mean nearly any small conveyance, from shopping carts to golf carts, without regard to number of wheels, load carried, or means of propulsion.\" https://en.wikipedia.org/wiki/Cart",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000606",
+   "isRoot": false,
+   "label": "cart",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000798",
+   "description": "A material entity which is composed of a volume of unbound positive and negative particles in roughly equal numbers, conducts electricity, and possesses internal magnetic fields.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000798",
+   "isRoot": false,
+   "label": "plasma",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000809",
+   "description": "A minor planet is an astronomical object in direct orbit around the Sun that is neither a planet nor exclusively classified as a comet. Minor planets can be dwarf planets, asteroids, trojans, centaurs, Kuiper belt objects, and other trans-Neptunian objects.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000809",
+   "isRoot": false,
+   "label": "minor planet",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000846",
+   "description": "A crystal which is primarily composed of water ice.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000846",
+   "isRoot": false,
+   "label": "water ice crystal",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001219",
+   "description": "A stellar radiation process during which electromagnetic waves or their quanta are emitted from a star with sufficient energy to disrupt molecular bonds or alter the electron number of atoms.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001219",
+   "isRoot": false,
+   "label": "ionizing stellar radiation",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001514",
+   "description": "Freshwater ice which forms downward from the surface of a freshwater water body and is transparent due to a reduced number of air bubbles trapped in its mass.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001514",
+   "isRoot": false,
+   "label": "congelation ice in a fresh water body",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03501342",
+   "description": "A dormitory is often used to describe student and backpacker accommodation of this kind.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03501342",
+   "isRoot": false,
+   "label": "dormitory",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:06105113",
+   "description": "A planned environmental usage process during which any number of fish are caught by humans or their technologies.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_06105113",
+   "isRoot": false,
+   "label": "fishing",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:06105204",
+   "description": "Often represented in micromoles of photons associated with photosynthetically active radiation per square meter per second.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_06105204",
+   "isRoot": false,
+   "label": "photosynthetic photon flux density",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:06105215",
+   "description": "The number of days during which there is precipitation",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_06105215",
+   "isRoot": false,
+   "label": "rainy day count",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:06105240",
+   "description": "In soils, these materials include clay and organic matter particles. Soil CEC is measured in millequivalents per 100 grams of soil (meq/100g). A meq is the number of ions which total a specific quantity of electrical charges. Common soil cations include: calcium (Ca++), magnesium (Mg++), potassium (K+), ammonium (NH4+), hydrogen (H+) and sodium (Na+).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_06105240",
+   "isRoot": false,
+   "label": "cation exchange capacity",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:21001219",
+   "description": "A radiation process during which electromagnetic waves or their quanta are emitted with sufficient energy to disrupt molecular bonds or alter the electron number of atoms.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_21001219",
+   "isRoot": false,
+   "label": "ionizing radiation",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:02000200",
+   "description": "A has part relationship between a whole and a part, where the number of parts present in the whole is higher than in comparable entities.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_02000200",
+   "isRoot": false,
+   "label": "has increased levels of",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000470",
+   "description": "An amount which is relatively high.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000470",
+   "isRoot": false,
+   "label": "increased amount",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001997",
+   "description": "An amount which is relatively low.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001997",
+   "isRoot": false,
+   "label": "decreased amount",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,60 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "scientific name authorship",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "scientificNameAuthorship",
+   "description": "The authorship information for the scientificName formatted according to the conventions of the applicable nomenclaturalCode.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/scientificNameAuthorship",
+   "isRoot": true,
+   "label": "Scientific Name Authorship",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "scientificName",
+   "description": "The full scientific name, with authorship and date information if known. When forming part of an Identification, this should be the name in lowest level taxonomic rank that can be determined. This term should not contain identification qualifications, which should instead be supplied in the IdentificationQualifier term.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/scientificName",
+   "isRoot": true,
+   "label": "Scientific Name",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "genericName",
+   "description": "The genus part of the scientificName without authorship.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/genericName",
+   "isRoot": true,
+   "label": "Generic Name",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "originalNameUsage",
+   "description": "The taxon name, with authorship and date information if known, as it originally appeared when first established under the rules of the associated nomenclaturalCode. The basionym (botany) or basonym (bacteriology) of the scientificName or the senior/earlier homonym for replaced names.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/originalNameUsage",
+   "isRoot": true,
+   "label": "Original Name Usage",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "parentNameUsage",
+   "description": "The full name, with authorship and date information if known, of the direct, most proximate higher-rank parent taxon (in a classification) of the most specific element of the scientificName.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/parentNameUsage",
+   "isRoot": true,
+   "label": "Parent Name Usage",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

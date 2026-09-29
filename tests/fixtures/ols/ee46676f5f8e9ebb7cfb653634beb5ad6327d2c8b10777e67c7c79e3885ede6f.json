@@ -1,0 +1,90 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000017",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:00002118",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002118",
+   "isRoot": false,
+   "label": "sea sand",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00002138",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002138",
+   "isRoot": false,
+   "label": "beach sand",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00005798",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00005798",
+   "isRoot": false,
+   "label": "acid dune sand",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00005799",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00005799",
+   "isRoot": false,
+   "label": "rocky sand",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00005800",
+   "description": "Sand which is part of a desert.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00005800",
+   "isRoot": false,
+   "label": "desert sand",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000350",
+   "description": "Autoclaved sand is sand that has been sterlised by exposure to high pressure saturated steam at at least 121 degrees Celsius.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000350",
+   "isRoot": false,
+   "label": "autoclaved sand",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:06105272",
+   "description": "Soil which is primarily composed of sand with silt and clay in progressively smaller proportions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_06105272",
+   "isRoot": false,
+   "label": "loamy sand",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:06105273",
+   "description": "Sand which is composed primarily of fine particles.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_06105273",
+   "isRoot": false,
+   "label": "fine sand",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

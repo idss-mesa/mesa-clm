@@ -1,0 +1,50 @@
+{
+ "args": {
+  "ontology_id": "iao",
+  "query": "identification references",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "IAO:0020015",
+   "description": "An identifier referring to an individual entity that is ascribed personhood by the user of the identifier.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0020015",
+   "isRoot": false,
+   "label": "personal name",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0020010",
+   "description": "A planned process that provides a reference to an individual entity shared by a group of subscribers to refer to that individual entity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0020010",
+   "isRoot": false,
+   "label": "identifier creating process",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0020000",
+   "description": "An information content entity that is the outcome of a dubbing process and is used to refer to one instance of entity shared by a group of people to refer to that individual entity.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0020000",
+   "isRoot": false,
+   "label": "identifier",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "OIO:hasDbXref",
+   "description": "An annotation property that links an ontology entity or a statement to a prefixed identifier or URI.",
+   "hasChildren": false,
+   "iri": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+   "isRoot": true,
+   "label": "has cross-reference",
+   "ontologyId": "iao",
+   "synonyms": []
+  }
+ ]
+}

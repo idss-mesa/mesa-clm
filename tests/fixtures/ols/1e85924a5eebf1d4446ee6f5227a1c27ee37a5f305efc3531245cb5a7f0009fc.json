@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "family",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:03501186",
+   "description": "A medical clinic which is used to provide family medicine services.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03501186",
+   "isRoot": false,
+   "label": "family practice clinic",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000884",
+   "description": "According to the NLCD 2011, areas of developed space under low intensity usage are dominated by vegetation such as lawn grasses and include collections of single-family housing units. Further, it is asserted that \"impervious surfaces\", most likely referring to concrete and related substances, cover between than 20 - 49% of the area. Such thresholds - which are themselves fuzzy - are not strictly asserted in this definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000884",
+   "isRoot": false,
+   "label": "area of developed space with low usage intensity",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000885",
+   "description": "According to the NLCD 2011, areas of developed space under medium intensity usage are dominated by vegetation such as lawn grasses and include collections of single-family housing units. Further, it is asserted that \"impervious surfaces\", most likely referring to concrete and related substances, cover between than 50 - 79% of the area. Such thresholds - which are themselves fuzzy - are not strictly asserted in this definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000885",
+   "isRoot": false,
+   "label": "area of developed space with medium usage intensity",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00005768",
+   "description": "Soil which has properties to which plants in the Family Orchidaceae have adapted, including increased levels of aeration and drainage.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00005768",
+   "isRoot": false,
+   "label": "orchid soil",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000059",
+   "description": "\"Seagrass beds are highly diverse and productive ecosystems, and can harbor hundreds of associated species from all phyla, for example juvenile and adult fish, epiphytic and free-living macroalgae and microalgae, mollusks, bristle worms, and nematodes. Few species were originally considered to feed directly on seagrass leaves (partly because of their low nutritional content), but scientific reviews and improved working methods have shown that seagrass herbivory is a highly important link in the food chain, with hundreds of species feeding on seagrasses worldwide, including green turtles, dugongs, manatees, fish, geese, swans, sea urchins and crabs.\" https://en.wikipedia.org/wiki/Seagrass 2016-01-18",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000059",
+   "isRoot": false,
+   "label": "sea grass bed",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000407",
+   "description": "The adjacency of water has many consequences including the generation of microclimates and impacts on the biology. This class is intended to capture littoral zones that are associated with marine, freshwater, and any other aquatic environments. Note that there is no single definition of the extent of the \"littoral zone\", associated with any water body. Here, we use definitions that will be more familiar to marine biologists rather than military organisations, although the latter can be added on request. This class will likely be superceded by a CMECs compliant class.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000407",
+   "isRoot": false,
+   "label": "littoral zone",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000480",
+   "description": "This class refers to all forms of glass. For the familiar form present in window panes and drinking glasses, consider silica-based glass.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000480",
+   "isRoot": false,
+   "label": "glass",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000792",
+   "description": "This class refers to all forms of \"wind\": from the familiar movement of air in the Earth's atmosphere to the solar wind. Use a subclass to be more precise.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000792",
+   "isRoot": false,
+   "label": "mass gaseous flow",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000883",
+   "description": "According to the NLCD 2011, areas of developed open space are dominated by vegetation such as lawn grasses and include large-lot single-family housing units, parks, golf courses. Further, it is asserted that \"impervious surfaces\", most likely referring to concrete and related substances, cover less than 20% of the area. Such thresholds - which are themselves fuzzy - are not asserted in this definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000883",
+   "isRoot": false,
+   "label": "area of developed open space",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000907",
+   "description": "Feasting pits had a wide variety of social functions throughout time, which extended in scope from the single family group to multiple tribes or villages.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000907",
+   "isRoot": false,
+   "label": "feasting pit site",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000927",
+   "description": "This is a kind of day care facility. A facility need not be a building.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000927",
+   "isRoot": false,
+   "label": "day care building",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001392",
+   "description": "Gill tissue material which is part of salt-water mussel in the family Mytilidae",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001392",
+   "isRoot": false,
+   "label": "mussel gill tissue material",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:03414460",
+   "description": "The *Cucurbitaceae*, also called cucurbits and the gourd family, are a plant family consisting of about 965 species in around 95 genera, the most important of which are: \n  *Cucurbita* - squash, pumpkin, zucchini, some gourds; \n  *Lagenaria* - calabash, and others that are inedible; \n  *Citrullus* - watermelon (*C. lanatus, C. colocynthis*) and others; \n  *Cucumis* - cucumber (*C. sativus*), various melons; \n  *Luffa* - luffa, loofah",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_03414460",
+   "isRoot": false,
+   "label": "gourd/squash family",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3563",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3563",
+   "isRoot": false,
+   "label": "Amaranthaceae",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:00001132",
+   "description": "Suidae is a family of artiodactyl mammals which are commonly called pigs, hogs or boars. In addition to numerous fossil species, 17 extant species are currently recognized (or 18 counting domestic pigs and wild boars separately), classified into between four and eight genera. The family includes the domestic pig, Sus scrofa domesticus or Sus domesticus, in addition to numerous species of wild pig, such as babirusas and warthogs. All suids, or swine, are native to the Old World, ranging from Asia to Europe and Africa.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_00001132",
+   "isRoot": false,
+   "label": "swine food product",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3367",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3367",
+   "isRoot": false,
+   "label": "Cupressaceae",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3954",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3954",
+   "isRoot": false,
+   "label": "Combretaceae",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:4710",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_4710",
+   "isRoot": false,
+   "label": "Arecaceae",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:33303",
+   "description": "Any p-block element belonging to the group 16 family of the periodic table.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_33303",
+   "isRoot": false,
+   "label": "chalcogen",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:50313",
+   "description": "Mononuclear cations derived by addition of a hydron to a mononuclear parent hydride of the pnictogen, chalcogen and halogen families.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_50313",
+   "isRoot": false,
+   "label": "onium cation",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "percent",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00050048",
+   "description": "A 2nd class borough located in the State of Alaska. The borough seat is Sand Point. It comprises the westernmost portion of the Alaska Peninsula, and a small number of the Aleutian Islands, from which the borough name derives. Also included are the Shumagin Islands, as well as the Pavlof Islands and the Sanak Islands. In all, about 63.9 percent of its land area comprises land on the Alaska Peninsula, while 36.1 percent is on the numerous islands. There are five incorporated cities and two unincorporated villages within the borough.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00050048",
+   "isRoot": true,
+   "label": "Aleutians East Borough",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00055427",
+   "description": "A group of mountain ranges located in British Columbia, and partially in Montana, Idaho, Washington. The mountain range covers 135,952 km2. The range is bounded by the Rocky Mountain Trench on the east, and the Kootenai River on the south; their western boundary is the edge of the Interior Plateau. Seventy-five percent of the range is located in Canada and the remaining twenty-five percent in the United States.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00055427",
+   "isRoot": true,
+   "label": "Columbia Mountains",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00172100",
+   "description": "An Indian Reservation that lies on the state line between Idaho and Nevada in the western United States. The reservation, which is in the shape of a square, is almost evenly divided in land area between the two states, with the northern 50.2 percent lying in southern Owyhee County, Idaho and the southern 49.8 percent lying in northwestern Elko County, Nevada.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00172100",
+   "isRoot": true,
+   "label": "Duck Valley Indian Reservation",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00212991",
+   "description": "An Indian reservation located in northeastern Wisconsin. For the most part it is conterminous with Menominee County and the town of Menominee. However, there are many small pockets of territory within the county (and its geographically equivalent town) that are not considered to be part of the reservation. These pockets amount to a fairly small 1.14 percent of the county's area, so that, essentially, the reservation is only about 98.86 percent of the county's area. The largest of these pockets is in the western part of the community of Keshena.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00212991",
+   "isRoot": true,
+   "label": "Menominee Indian Reservation",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002596",
+   "description": "A shallow, productive estuary through which water draining from approximately forty percent of California, flowing in the Sacramento and San Joaquin rivers from the Sierra Nevada mountains, enters the Pacific Ocean. Technically, both rivers flow into Suisun Bay, which flows through the Carquinez Strait to meet with the Napa River at the entrance to San Pablo Bay, which connects at its south end to San Francisco Bay, although the entire group of interconnected bays are often referred to as \"San Francisco Bay\".",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002596",
+   "isRoot": true,
+   "label": "San Francisco Bay",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003787",
+   "description": "A Region of Japan, in the middle E coast of Honshu Island. It encompasses seven prefectures which overlaps the Greater Tokyo Area: Gunma, Tochigi, Ibaraki, Saitama, Tokyo, Chiba, and Kanagawa. Within its boundaries, slightly more than 40 percent of the land area is the Kanto plain. The rest consists of the hills and mountains that form the land borders.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003787",
+   "isRoot": true,
+   "label": "Kanto Region",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00008135",
+   "description": "A lake located between Irkutsk Oblast to the northwest and the Buryat Republic to the southeast, near the city of Irkutsk. At 1,637 m, Lake Baikal is the deepest lake in the world and is the largest freshwater lake by volume (23,000 km2), containing approximately twenty percent of the world's total surface fresh water. Lake Baikal was formed in an ancient rift valley. It is in the south of Eastern Siberia, on the border between Irkutsk region and the Buryat Autonomous Republic, 1000 km inland. Lake Baikal lies between mountain ridges. (the Primorsky and the Baikalsky - are on the West side; the Barguzin - along the Eastern shore). It occupies the cleft between mountains.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00008135",
+   "isRoot": true,
+   "label": "Lake Baikal",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00052081",
+   "description": "A mine with gigantic porphyry copper-gold ore. 1.7-billion-tonne reserves averaging 1.1 weight percent copper and 1.2 grams-per-tonne gold.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00052081",
+   "isRoot": true,
+   "label": "Grasberg Mine",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00055366",
+   "description": "A basalt field that contains 5 maars and 5 small shield-shaped volcanoes. The shields are of Pleistocene age and form tundra-covered hills as tall as 240 m. The maars are younger than the shields and range in age from >0.12 Ma to ~7,000 year. The maars are 2 to 5 km in diameter and are filled by lakes with surfaces 60 to 80 m below surrounding topography and as much as 30 m deep. Tholeiitic and alkalic basalt of the maars contains up to several tens of percent xenoliths of basement metamorphic and sedimentary rocks as well as masses of unconsolidated Quaternary sediments which must have been frozen at the time of eruption.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00055366",
+   "isRoot": true,
+   "label": "Espenberg Maars",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00055479",
+   "description": "A Regional District in the Canadian province of British Columbia. The administrative seat and main population centre is the city of Kamloops, which accounts for almost 65 percent of the regional district's population. The only other city is Merritt; however, there are locally important communities such as the district municipality of Logan Lake, and the villages of Chase, Ashcroft, and Cache Creek.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00055479",
+   "isRoot": true,
+   "label": "Regional District of Thompson-Nicola",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00055997",
+   "description": "A mountain range in Pakistan and one of the bordering ranges between the Iranian Plateau and the Indian subcontinent. Bordering the Sulaiman Range to the north are the arid highlands of the Hindu Kush, with more than 50 percent of the lands there lying above 2,000 m. The highest peak of Sulaiman Mountains is Takht-e-Sulaiman (3,487 m) in Balochistan, Pakistan.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00055997",
+   "isRoot": true,
+   "label": "Sulaiman Mountains",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00057481",
+   "description": "A desert in Central Asia. It occupies about 70 percent, or 350,000 km2, of the area of Turkmenistan. It lies east of the Caspian Sea, with the Aral Sea to the north and the Amu Darya river and the Kyzyl Kum desert to the northeast.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00057481",
+   "isRoot": true,
+   "label": "Karakum Desert",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00069698",
+   "description": "One of the eighteen census divisions within the province, as defined by Statistics Canada. It occupies the northern portion of Saskatchewan, and it is the largest division in the province at 270,067.78 km2, almost 46 percent of the entire area of the province. The most populous community in this division is the town of La Ronge, at its centre. Other population centres include the town of Creighton and its adjacent interprovincial city of Flin Flon, at the Manitoba border on the east.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00069698",
+   "isRoot": true,
+   "label": "Census Division No. 18",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00074102",
+   "description": "A fresh water glacial lake located between Newport, Vermont, United States and Magog, Quebec, Canada. The lake is 27 miles long with 73 percent of the lake's surface area in Quebec, where it drains into the Magog River. However, three-quarters of its watershed, 489 square miles, is in Vermont.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00074102",
+   "isRoot": true,
+   "label": "Lake Memphremagog",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00133533",
+   "description": "A major ice shelf located on the northern coast of Ellesmere Island in Nunavut, Canada. It measured approximately 120 km2 until 60 percent of it broke away in two large sections during summer 2008.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00133533",
+   "isRoot": true,
+   "label": "Serson Ice Shelf",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00169400",
+   "description": "A system of two large and two smaller aqueducts in the State of California that supplies 90 percent of the water supply of the city of San Diego. The system is comprised of the First and Second San Diego Aqueducts, that carry water from the Colorado River west to reservoirs on the outskirts of San Diego.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00169400",
+   "isRoot": true,
+   "label": "San Diego Aqueduct",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00169763",
+   "description": "A national forest located in northern California, in the Sierra Nevada mountains. About 85 percent of the National Forest lies in Plumas County, but smaller portions are found in eastern Butte, northern Sierra, southern Lassen, and northeastern Yuba counties. Established 1907-03-04.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00169763",
+   "isRoot": true,
+   "label": "Plumas National Forest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00170872",
+   "description": "A major river draining northeastern California into the state's Central Valley. The longest tributary of the Sacramento River, it contributes as much as eighty percent of their combined water volume into Lake Shasta; the junction of their Lake Shasta arms is four miles northeast of Shasta Dam. The Pit River is approximately 507 km long measuring from its longest source. The 93 km South Fork Pit River - West Valley Creek - Cedar Creek source originates just southeast of Buck Mountain in the Warner Mountains in the extreme southeastern corner of the Modoc National Forest nine miles west of the Nevada border.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00170872",
+   "isRoot": true,
+   "label": "Pit River",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00171431",
+   "description": "A wilderness located in the Sonoran Desert in southwestern Arizona in the United States. Cabeza Prieta Wilderness Area has the distinction of being Arizona's largest Wilderness Area, encompassing nearly 93 percent of the Cabeza Prieta National Wildlife Refuge.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00171431",
+   "isRoot": true,
+   "label": "Cabeza Prieta Wilderness",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00180778",
+   "description": "An Indian Reservation located in parts of five counties in extreme northeastern South Dakota and parts of two counties in southeastern North Dakota, USA. Over 60 percent of its land area lies in Roberts County, South Dakota, but there are lesser amounts in Marshall, Day, Grant, and Codington Counties in South Dakota, as well as Sargent and Richland Counties in North Dakota.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00180778",
+   "isRoot": true,
+   "label": "Lake Traverse Indian Reservation",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

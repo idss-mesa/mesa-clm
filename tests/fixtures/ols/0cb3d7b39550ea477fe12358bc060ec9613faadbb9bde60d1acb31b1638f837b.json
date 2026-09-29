@@ -1,0 +1,200 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "genus",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01000244",
+   "description": "A pinyon juniper woodland is a conifer woodland which has a tree community primarily composed of trees of the subsection Cembroides of the genus Pinus and the genus Juniperus.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000244",
+   "isRoot": false,
+   "label": "pinyon juniper woodland",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00003964",
+   "description": "A tobacco warehouse is a warehouse used to store cured leaves of plants from the genus Nicotiana, primarily  N. tabacum and N. rustica.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00003964",
+   "isRoot": false,
+   "label": "tobacco warehouse",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00005770",
+   "description": "Soil which is part of a forest whose communites of arborescent plants are dominated the genus Fagus.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00005770",
+   "isRoot": false,
+   "label": "beech forest soil",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00005784",
+   "description": "Soil which is part of a forest whose communites of arborescent plants are dominated the genus Picea.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00005784",
+   "isRoot": false,
+   "label": "spruce forest soil",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00005787",
+   "description": "Soil which is part of a forest whose communites of arborescent plants are dominated the genus Eucalyptus.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00005787",
+   "isRoot": false,
+   "label": "eucalyptus forest soil",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000241",
+   "description": "A juniper woodland is a woodland which has a tree community primarily composed of trees of the genus Juniperus.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000241",
+   "isRoot": false,
+   "label": "juniper woodland",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000329",
+   "description": "A cypress dome swamp is a dome swamp which has a plant community dominated by Cupressaceae, often swamp cypresses. Swamp cypresses typically belong to the genus Taxodium or the species Glyptostrobus pensilis and Actinostrobus pyramidalis.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000329",
+   "isRoot": false,
+   "label": "cypress dome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000330",
+   "description": "A cypress strand swamp is a strand swamp which has a plant community dominated by Cupressaceae, often swamp cypresses. Swamp cypresses typically belong to the genus Taxodium or the species Glyptostrobus pensilis and Actinostrobus pyramidalis.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000330",
+   "isRoot": false,
+   "label": "cypress strand swamp",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000331",
+   "description": "A cypress swamp is a swamp which has a plant community dominated by Cupressaceae, often swamp cypresses. Swamp cypresses typically belong to the genus Taxodium or the species Glyptostrobus pensilis and Actinostrobus pyramidalis.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000331",
+   "isRoot": false,
+   "label": "cypress swamp",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001383",
+   "description": "An area which is dominated by dense accumulations of mussels, of the genus Modiolus, attached to a substrate other than conspecifics, including the associated faunal communities and predators present on the mussels (e.g., starfish).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001383",
+   "isRoot": false,
+   "label": "area of attached Modiolus assemblages",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001385",
+   "description": "An oceanic mussel reef which is primarily settled by mussels of the genus Bathymodiolus and primarily composed of self-adhered or conglomerated mussel shells",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001385",
+   "isRoot": false,
+   "label": "Bathymodiolus-dominated oceanic mussel reef",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001390",
+   "description": "An oceanic mussel bed which has mussel communities dominated by members of the genus Bathymodiolus.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001390",
+   "isRoot": false,
+   "label": "Bathymodiolus-dominated oceanic mussel bed",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001393",
+   "description": "Mussel gill tissue material which is part of a member of the genus Bathymodiolus.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001393",
+   "isRoot": false,
+   "label": "Bathymodiolus gill tissue material",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001417",
+   "description": "These special clouds will be given the name of the appropriate genus, followed by any appropriate species, variety and supplementary feature, and followed by the special cloud name “silvagenitus” (for example, Stratus silvagenitus).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001417",
+   "isRoot": false,
+   "label": "silvagenitus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:00001204",
+   "description": "Pachyrhizus erosus, commonly known as jicama Mexican yam bean, or Mexican turnip, is the name of a native Mexican vine, although the name most commonly refers to the plant's edible tuberous root. Jícama is a species in the genus Pachyrhizus in the bean family (Fabaceae). Plants in this genus are commonly referred to as yam bean, although the term \"yam bean\" can be another name for jícama.\n\nIn contrast to the root, the remainder of the jícama plant is very poisonous; the seeds contain the toxin rotenone, which is used to poison insects and fish.\n\nFAO: The yam bean is a legume but unlike its close relatives the soybean and other beans, the yam bean is cultivated for its large, tuberous roots.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_00001204",
+   "isRoot": false,
+   "label": "yam bean food product",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:00003341",
+   "description": "A genus of plants in the mustard family (Brassicaceae). The members of the genus are informally known as cruciferous vegetables, cabbages, or mustard plants.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_00003341",
+   "isRoot": false,
+   "label": "brassica food product",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:00001194",
+   "description": "A product of the dry seeds of plants of the genus Pisum.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_00001194",
+   "isRoot": false,
+   "label": "dry pea food product",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:00001198",
+   "description": "A product of the dry seeds of plants of the genus Vicia.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_00001198",
+   "isRoot": false,
+   "label": "broad bean (dried)",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:03414459",
+   "description": "Cucumis is a genus of twining, tendril-bearing plants in the *Cucurbitaceae* family which includes the cucumber (*Cucumis sativus*), muskmelons (*Cucumis melo*, including cantaloupe and honeydew), the horned melon (*Cucumis metuliferus*), and the West Indian gherkin (*Cucumis anguria*). [https://en.wikipedia.org/wiki/Cucumis]",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_03414459",
+   "isRoot": false,
+   "label": "cucumis species",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

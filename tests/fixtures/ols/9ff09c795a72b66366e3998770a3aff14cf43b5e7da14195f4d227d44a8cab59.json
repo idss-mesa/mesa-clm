@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001219",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01001217",
+   "description": "A stellar radiation process during which penetrating electromagnetic radiation is emitted by high-energy electrons as they fall into a lower state of energy.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001217",
+   "isRoot": false,
+   "label": "X-ray stellar radiation",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001218",
+   "description": "A stellar radiation process during which penetrating electromagnetic radiation is emitted from the radioactive decay (gamma decay) of atomic nuclei.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001218",
+   "isRoot": false,
+   "label": "gamma-ray stellar radiation",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

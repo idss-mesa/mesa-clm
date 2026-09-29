@@ -1,0 +1,170 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "family",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0070015",
+   "description": "A cell morphology that inheres in neurons which have a pyramidal shaped soma, a single axon, a large apical dendrite and multiple basal dendrites.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070015",
+   "isRoot": false,
+   "label": "pyramidal family morphology",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0070016",
+   "description": "A pyramidal family morphology that inheres in neurons which have an apical tree which is oriented parallel to the pia.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070016",
+   "isRoot": false,
+   "label": "horizontal pyramidal morphology",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0070017",
+   "description": "A pyramidal family morphology that inheres in neurons which have a standard pyramidal shape with its apical dendrite aligned vertically.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070017",
+   "isRoot": false,
+   "label": "standard pyramidal morphology",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000001012",
+   "description": "Category=gene. Requested by=CL.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000001012",
+   "isRoot": false,
+   "label": "integrin alpha-M",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000025796",
+   "description": "Category=family. Integrins are heterodimeric complexes of an alpha and a beta subunit. They are a structurally elaborate family of adhesion molecules that transmit signals bidirectionally across the plasma membrane by undergoing large-scale structural rearrangements. By regulating cell-cell and cell-matrix contacts, integrins participate in a wide-range of biological interactions including development, tissue repair, angiogenesis, inflammation and hemostasis. [PMID:10402956, PMID:11988479, PMID:9676575].",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000025796",
+   "isRoot": false,
+   "label": "integrin alpha",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR_P05555",
+   "description": "Category=organism-gene.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PR_P05555",
+   "isRoot": false,
+   "label": "integrin alpha-M (mouse)",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:33303",
+   "description": "Any p-block element belonging to the group 16 family of the periodic table.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_33303",
+   "isRoot": false,
+   "label": "chalcogen",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:50313",
+   "description": "Mononuclear cations derived by addition of a hydron to a mononuclear parent hydride of the pnictogen, chalcogen and halogen families.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_50313",
+   "isRoot": false,
+   "label": "onium cation",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000000001",
+   "description": "The definition above excludes protein complexes, which some also consider a protein. Those who wish to refer to a class representing both senses of the word are directed to CHEBI:36080. Note that the definition allows for experimentally-manipulated genes, and allows for artifically-produced derivatives that mimic those found naturally. Proteins (in the sense defined here) that descended from a common ancestor can be classified into families and superfamilies composed of products of evolutionarily-related genes. The domain architecture of a protein is described by the order of its constituent domains. Proteins with the same domains in the same order are defined as homeomorphic [PRO:WCB).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000000001",
+   "isRoot": false,
+   "label": "protein",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000001005",
+   "description": "Category=family.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000001005",
+   "isRoot": false,
+   "label": "integrin alpha with A domain",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000001018",
+   "description": "Category=family.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000001018",
+   "isRoot": false,
+   "label": "CD3 subunit with immunoglobulin domain",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000001022",
+   "description": "Category=family.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000001022",
+   "isRoot": false,
+   "label": "neural cell adhesion molecule",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000001023",
+   "description": "Category=family.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000001023",
+   "isRoot": false,
+   "label": "neural cell adhesion molecule NCAM",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000001327",
+   "description": "Category=family.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000001327",
+   "isRoot": false,
+   "label": "cadherin",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000001971",
+   "description": "Category=family.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000001971",
+   "isRoot": false,
+   "label": "vascular endothelial growth factor receptor",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000002976",
+   "description": "Category=family.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000002976",
+   "isRoot": false,
+   "label": "Ly-6-like protein",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

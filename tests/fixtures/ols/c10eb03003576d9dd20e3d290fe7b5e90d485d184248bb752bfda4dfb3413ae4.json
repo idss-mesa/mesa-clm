@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "specimen condition",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0000985",
+   "description": "A study design in which the independent variable is the environmental condition in which the specimen is growing",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000985",
+   "isRoot": false,
+   "label": "growth condition intervention design",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

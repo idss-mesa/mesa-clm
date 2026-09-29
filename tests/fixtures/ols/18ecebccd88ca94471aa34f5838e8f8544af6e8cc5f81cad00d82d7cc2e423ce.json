@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/IAO_0001000",
+  "ontology_id": "iao"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "IAO:0001000",
+  "description": "A data entity that consists of multiple data entities.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/IAO_0001000",
+  "isRoot": false,
+  "label": "data collection",
+  "ontologyId": "iao",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "damaged",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01001295",
+   "description": "A warm-core cyclone which occurs in the middle and high latitudes, primarily drawing energy from horizontal temperature contrasts between atmospheric fronts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001295",
+   "isRoot": false,
+   "label": "extra-tropical cyclone",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001840",
+   "description": "An environment in which material entities have a low likelihood of being damaged or destroyed.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001840",
+   "isRoot": false,
+   "label": "safe environment",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03600036",
+   "description": "The pathogenicity that is suppressed is typically directed towards plants, especially crops. Soils are typically classified as pathogen-suppressive if a pathogen 1) cannot establish itself or persist, 2) is able to establish itself, but causes little or no damage, or 3) is able to establishe itself, but only causes disease that does not result in long-term harm.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03600036",
+   "isRoot": false,
+   "label": "pathogen-suppressive soil",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

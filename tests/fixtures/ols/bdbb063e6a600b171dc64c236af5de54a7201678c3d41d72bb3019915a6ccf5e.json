@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "The minute of sampling within the point count period",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

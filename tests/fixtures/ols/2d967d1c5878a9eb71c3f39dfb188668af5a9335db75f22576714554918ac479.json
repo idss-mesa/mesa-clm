@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "How the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01000906",
+   "description": "In 1988, the FAO introduced a definition of aquaculture which reduces its confusion with capture fisheries: Aquaculture is the farming of aquatic organisms, including fish, molluscs, crustaceans and aquatic plants. Farming implies some form of intervention in the rearing process to enhance production, such as regular stocking, feeding, protection from predators, etc. Farming also implies individual or corporate ownership of the stock being cultivated. For statistical purposes, aquatic organisms which are harvested by an individual or corporate body which has owned them throughout their rearing period contribute to aquaculture, while aquatic organisms which are exploitable by the public as a common property resources, with or without appropriate licences, are the harvest of fisheries.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000906",
+   "isRoot": false,
+   "label": "aquaculture process",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001726",
+   "description": "A katabatic wind during which the low temperature and increased density of a cold mass of atmospheric gas accelerates its descent.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001726",
+   "isRoot": false,
+   "label": "fall wind",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000401",
+   "description": "A volcanic cone formed of molten lava ejected from a vent somewhat like taffy. Expanding gases in the lava fountains tear the liquid rock into irregular gobs that fall back to earth, forming a heap around the vent. The still partly liquid rock splashed down and over the sides of the developing mound is called spatter. Because spatter is not fully solid when it lands, the individual deposits are very irregular in shape and weld together as they cool, and in this way particularly differ from cinder and ash.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000401",
+   "isRoot": false,
+   "label": "spatter cone",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00005745",
+   "description": "Allotments gardens are so named as they are typically subdivisions (lots) of a larger piece of land.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00005745",
+   "isRoot": false,
+   "label": "allotment garden",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00010358",
+   "description": "A fomite is any inanimate object or substance capable of carrying infectious organisms (such as germs or parasites) and hence transferring them from one individual to another. A fomite can be anything such as a cloth or mop heads so when cleaning this is important to remember that this could aid when spreading pathogenic organisms.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00010358",
+   "isRoot": false,
+   "label": "fomite",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000036",
+   "description": "The oceanic mesopelagic zone biome comprises regions of the marine water column that occur offshore, beyond a continental shelf. This biome extends through the water column from approximately 200-1000 m depth - the maximal depth of light penetration in all but the clearest oligotrophic ocean regions. In comparison to the epipelagic zone, dominant forms of pelagic organisms do not change very much; however, there are marked changes in species composition and the proportion of smaller-sized individuals decreases.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000036",
+   "isRoot": false,
+   "label": "oceanic mesopelagic zone biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000043",
+   "description": "The neritic mesopelagic zone biome comprises the marine column that occurs above a continental shelf and extends from approximately 200 to 1000 m depth - the maximal depth of light penetration in all but the clearest oligotrophic ocean regions. In comparison to the epipelagic zone, dominant forms of pelagic organisms do not change very much; however, there are marked changes in species composition and the proportion of smaller-sized individuals decreases.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000043",
+   "isRoot": false,
+   "label": "neritic mesopelagic zone biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000845",
+   "description": "This class refers to a portion of crystal and not an individual crystal.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000845",
+   "isRoot": false,
+   "label": "crystal",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001160",
+   "description": "When present in aggregates, individual cirrus clouds are organised in patches or narrow bands. When organised in sheets of fibres they can give a silky sheen. When well-illuminated by sunlight (excluding during sunrise and sunset) cirrus clouds appear white or mostly white. Absence of any precipitation.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001160",
+   "isRoot": false,
+   "label": "cirrus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001242",
+   "description": "A vegetation layer which is formed by a collection of individual plant crowns, themselves constituting part of the aboveground portion of a plant community.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001242",
+   "isRoot": false,
+   "label": "canopy",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001280",
+   "description": "A road which is used for local access to one or more structures, and is privately owned and maintained by an individual or group.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001280",
+   "isRoot": false,
+   "label": "driveway",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001376",
+   "description": "A marine bed which is covered by animals which have benthic habitats, including attached, clinging, sessile, infaunal, burrowing, laying, interstitial, and slow-moving animals, but not animals that have created substrate.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001376",
+   "isRoot": false,
+   "label": "marine faunal bed",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001379",
+   "description": "A marine faunal bed which is dominated by mussels of the Mytilus or Modiolus genera either 1) resting on the sediment surface, 2)  partially embedded in the sediment, 3) attached to conspecifics (by using their byssal threads), or 4) attached to a piece of gravel in slightly gravelly fine sediments.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001379",
+   "isRoot": false,
+   "label": "mussel bed",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001407",
+   "description": "When present in aggregates, individual cirrocumulus clouds are merged or separate, and regularly arranged in a thin patch, sheet or layer. Most of the small structural elements have an apparent width of less than one degree. Strongly supercooled water droplets may occur but are usually rapidly replaced by ice crystals. When well-illuminated by sunlight (excluding during sunrise and sunset) cirrocumulus clouds appear white. Absence of any precipitation.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001407",
+   "isRoot": false,
+   "label": "cirrocumulus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001409",
+   "description": "Altocumulus clouds are sometimes fibrous or diffuse and may or may not be merged. When present in aggregates, individual altocumulus clouds are organised in patches, sheets or layers. Most of the regularly arranged small elements in this cloud type often have an apparent width of between one and five degrees. When well-illuminated by sunlight (excluding during sunrise and sunset) altocumulus clouds appear white, grey, or both white and grey, often with shading. The composition of altocumulus clouds leads to low transparency and sharp outlines of the elements. Absence of any precipitation.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001409",
+   "isRoot": false,
+   "label": "altocumulus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001412",
+   "description": "When present in aggregates, individual stratocumulus clouds are organised in patches, sheets or layers. Most of the regularly arranged small elements in this cloud type often have an apparent width of more than five degrees. When well-illuminated by sunlight (excluding during sunrise and sunset) stratocumulus clouds appear grey or whitish, or both grey and whitish in colour. The cloud almost always has dark parts. Fibrous structural elements may emerge when virga is formed. Stratocumulus can have weak falls of rain, snow or snow pellets. Stratocumulus may also be shaped into structural elements which are similar to but do not exactly resemble the ones noted in the definition.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001412",
+   "isRoot": false,
+   "label": "stratocumulus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001691",
+   "description": "An mass of environmental materials which has appreciable quantities of several individual materials, such that the removal of one would convert the mass into a different entity.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001691",
+   "isRoot": false,
+   "label": "mass of compounded environmental materials",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001827",
+   "description": "An ecological succession process during which 1) organisms in ecological communities possess high adaptation to the conditions in the ecosystem, 2) participant communities largely fill available niches, 3) individual organisms are typically replaced by others of the same species, 4) a near equilibrium is maintained between gross primary production and total respiration and across biogeochemical cycles.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001827",
+   "isRoot": false,
+   "label": "climactic ecological succession",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03400011",
+   "description": "Individual units of hail are called hailstones. Thunderstorms that are characterized by strong updrafts, large liquid water contents, large cloud-drop sizes, and great vertical height are favorable to hail formation. The destructive effects of hailstorms upon plant and animal life, buildings and property, and aircraft in flight render them a prime object of weather modification studies. In aviation weather observations, hail is encoded A. Smaller particles of similar origin, formerly called small hail, may be classed as either ice pellets or snow pellets.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03400011",
+   "isRoot": true,
+   "label": "hail",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03501336",
+   "description": "A human construction in which individuals or a group of people such as a congregation come to perform acts of devotion, veneration, or religious study.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03501336",
+   "isRoot": false,
+   "label": "place of worship",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

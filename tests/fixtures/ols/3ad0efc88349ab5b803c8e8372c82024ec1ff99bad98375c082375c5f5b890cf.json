@@ -1,0 +1,70 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "identification references",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "identificationReferences",
+   "description": "A list (concatenated and separated) of references (publication, global unique identifier, URI) used in the Identification.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/identificationReferences",
+   "isRoot": true,
+   "label": "Identification References",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "associatedReferences",
+   "description": "A list (concatenated and separated) of identifiers (publication, bibliographic reference, global unique identifier, URI) of literature associated with the Occurrence.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/associatedReferences",
+   "isRoot": true,
+   "label": "Associated References",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "nameAccordingTo",
+   "description": "The reference to the source in which the specific taxon concept circumscription is defined or implied - traditionally signified by the Latin \"sensu\" or \"sec.\" (from secundum, meaning \"according to\"). For taxa that result from identifications, a reference to the keys, monographs, experts and other sources should be given.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/nameAccordingTo",
+   "isRoot": true,
+   "label": "Name According To",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "taxonConceptID",
+   "description": "An identifier for the taxonomic concept to which the record refers - not for the nomenclatural details of a taxon.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/taxonConceptID",
+   "isRoot": true,
+   "label": "Taxon Concept ID",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "institutionID",
+   "description": "An identifier for the institution having custody of the object(s) or information referred to in the record.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/institutionID",
+   "isRoot": true,
+   "label": "Institution ID",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "DC:source",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.org/dc/elements/1.1/source",
+   "isRoot": true,
+   "label": "Source",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

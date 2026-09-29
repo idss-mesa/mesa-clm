@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GAZ_00057784",
+  "ontology_id": "gaz"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "GAZ:00057784",
+  "description": "A small desert located in southwestern Arizona near the United States-Mexico border. It is considered to be part of the Lower Colorado Valley region of the Sonoran Desert. It lies in a north-south direction between the Gila Mountains and The Cabeza Prieta Mountains, and almost entirely in the Barry M. Goldwater Air Force Range.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/GAZ_00057784",
+  "isRoot": true,
+  "label": "Lechuguilla Desert",
+  "ontologyId": "gaz",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/IAO_0000088",
+  "ontology_id": "iao"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "IAO:0000088",
+  "description": "A document assembled by an author for the purpose of providing information for the audience. A report is the output of a documenting process and has the objective to be consumed by a specific audience. Topic of the report is on something that has completed. A report is not a single figure. Examples of reports are journal article, patent application, grant progress report, case report (not patient record).",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/IAO_0000088",
+  "isRoot": false,
+  "label": "report",
+  "ontologyId": "iao",
+  "synonyms": []
+ }
+}

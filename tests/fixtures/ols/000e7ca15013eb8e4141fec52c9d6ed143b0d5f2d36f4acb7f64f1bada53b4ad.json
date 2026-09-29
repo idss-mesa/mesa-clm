@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/IAO_0000100",
+  "ontology_id": "iao"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "IAO:0000100",
+  "description": "A data item that is an aggregate of other data items of the same type that have something in common. Averages and distributions can be determined for data sets.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/IAO_0000100",
+  "isRoot": false,
+  "label": "homogenous data collection",
+  "ontologyId": "iao",
+  "synonyms": []
+ }
+}

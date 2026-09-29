@@ -1,0 +1,90 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "order",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "order",
+   "description": "The full scientific name of the order in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/order",
+   "isRoot": true,
+   "label": "Order",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000426",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000426",
+   "isRoot": true,
+   "label": "first order logic expression",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000671",
+   "description": "a material obtained from an organism in order to be a representative of the whole",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000671",
+   "isRoot": false,
+   "label": "sample from organism",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000811",
+   "description": "a quality of a DNA molecule that inheres in its bearer due to the order of its DNA nucleotide residues.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000811",
+   "isRoot": false,
+   "label": "primary structure of DNA macromolecule",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000845",
+   "description": "The primary structure of an RNA molecule that is completely defined by the set of its nucleic residue parts and the linear order induced by the peptide bonds that hold them together",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000845",
+   "isRoot": false,
+   "label": "primary structure of RNA molecule",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001108",
+   "description": "An device that is used to determine the order of nucleotides in nucleic acid sequences.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001108",
+   "isRoot": false,
+   "label": "nucleic acid sequencer",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001137",
+   "description": "An device that is used to determine the order of amino acids in protein sequences.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001137",
+   "isRoot": false,
+   "label": "protein sequencer",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0400103",
+   "description": "A DNA sequencer is an instrument that determines the order of deoxynucleotides in deoxyribonucleic acid sequences.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0400103",
+   "isRoot": false,
+   "label": "DNA sequencer",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

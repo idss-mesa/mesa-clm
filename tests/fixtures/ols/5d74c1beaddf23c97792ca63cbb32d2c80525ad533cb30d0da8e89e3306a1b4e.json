@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "order",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0000637",
+   "description": "A gas chromatography detector is a chromatography detector that locates in the dimensions of space and time, the positions of the components of a mixture that has been subjected to a gas chromatographic process and thus permits the senses to appreciate the nature of the separation. There is no LC detector that has an equivalent performance to the flame ionization detector (FID) used in GC. In general, LC detectors have sensitivities of two to three orders of magnitude less than their GC counterparts and linear dynamic ranges one to two orders of magnitude lower. Only highly specific LC detectors have sensitivities that can approach those of GC detectors.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000637",
+   "isRoot": false,
+   "label": "gas chromatography detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001877",
+   "description": "Random-access memory (RAM) is a form of computer data storage. A random-access device allows stored data to be accessed directly in any random order. In contrast, other data storage media such as hard disks, CDs, DVDs and magnetic tape, as well as early primary memory types such as drum memory, read and write data only in a predetermined order, consecutively, because of mechanical design limitations. Therefore, the time to access a given data location varies significantly depending on its physical location",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001877",
+   "isRoot": false,
+   "label": "random access memory",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200051",
+   "description": "A principal components analysis dimensionality reduction is a dimensionality reduction achieved by applying principal components analysis and by keeping low-order principal components and excluding higher-order ones.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200051",
+   "isRoot": false,
+   "label": "principal components analysis dimensionality reduction",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000014",
+   "description": "a regulatory role involved with making and/or enforcing relevant legislation and governmental orders",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000014",
+   "isRoot": false,
+   "label": "regulator role",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000016",
+   "description": "Regulation-assigned role is a regulatory role defined by legislation or governmental orders",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000016",
+   "isRoot": false,
+   "label": "regulation-assigned role",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000017",
+   "description": "a role which inheres in material entities and is realized in the processes of making, enforcing or being defined by legislation or orders issued by a governmental body.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000017",
+   "isRoot": false,
+   "label": "regulatory role",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000089",
+   "description": "a regulator involved with making and enforcing legislation and governmental orders relevant to chemical manufacture",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000089",
+   "isRoot": false,
+   "label": "role of regulator of chemical manufacturer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000158",
+   "description": "an eSource document is a digital document consisting of a logical collection of Source data and other eSource documents that can be presented in an ordered way and capture the time of completion, change, and any signatures",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000158",
+   "isRoot": false,
+   "label": "eSource document",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000273",
+   "description": "a regulator involved with making and enforcing legislation and governmental orders relevant to the development, testing, manufacture and use of food, drugs and medical devices",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000273",
+   "isRoot": false,
+   "label": "role of regulator of consumables and medical devices",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000403",
+   "description": "A sort function is a function to distinguish material components based on some associated physical quality or entity and to partition the separate components into distinct fractions according to a defined order.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000403",
+   "isRoot": false,
+   "label": "sort function",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000498",
+   "description": "An automatic cleaning system for NMR tubes that removes previous probe and sample residues in order to allow for tube recycling.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000498",
+   "isRoot": false,
+   "label": "NMR tube washing system",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000504",
+   "description": "An automated chromatography system that injects the sample into the chromatography columns in order to increase speed and minimize human involvement in the purification process for  better reproducibility.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000504",
+   "isRoot": false,
+   "label": "sample injection system",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000508",
+   "description": "A column jacket is a piece of column chromatography equipment that covers a column in order to ensure thermoisolation and create a controllable thermostatic microenvironment.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000508",
+   "isRoot": false,
+   "label": "column jacket",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000515",
+   "description": "A chromatofocusing column is a chromatography column in which a resin is equilibrated at one pH and eluted at a second pH. The use of a weak ion-exchange resin causes a pH gradient to be formed at the solvent front owing to the buffering action of the resin. This pH gradient in turn leads to an ordering of proteins by isoelectric point. Molecules of charge sign opposite the resin bind; those of charge sign like the resin do not bind.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000515",
+   "isRoot": false,
+   "label": "chromatofocusing column",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000520",
+   "description": "An analyte assay which uses analytical methods to produce measurements and data on the concentration of chemical parameters (analytes) present in a specimen collected from an organism in order to determine a phenotype of that organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000520",
+   "isRoot": false,
+   "label": "clinical chemistry assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000521",
+   "description": "A flame ionization detector is a GC detector that consist of a hydrogen/air flame and a collector plate which are normally heated independently of the chromatographic oven. Heating is necessary in order to prevent condensation of water generated by the flame and also to prevent any hold-up of solutes as they pass from the column to the flame. There is an electrode above the flame to collect the ions formed at a hydrogen/air flame. The number of ions hitting the collector is measured and a signal is generated. Flame ionization detectors are most widely used and generally applicable for gas chromatography and hence is used for routine and general purpose analysis. It is easy to use but destructive of the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000521",
+   "isRoot": false,
+   "label": "flame ionization detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000545",
+   "description": "For chromatography analyses, the ability to maintain a stable column environment regardless of ambient temperature fluctuations is critical for maintaining retention time precision. In order to ensure such stable conditions at different chromatography steps a column compartment can be installed that ensures e.g. stable temperature of the column in a given step.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000545",
+   "isRoot": false,
+   "label": "column compartment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000565",
+   "description": "The electrical conductivity detector measures the conductivity of the mobile phase. There is usually background conductivity which must be backed-off by suitable electronic adjustments. If the mobile phase contains buffers, the detector gives a base signal that completely overwhelms that from any solute usually making detection impossible. Thus, the electrical conductivity detector a bulk property detector. and senses all ions whether they are from a solute or from the mobile phase. In order to prevent polarization of the sensing electrodes, AC voltages must be used and so it is the impedance not the resistance of the electrode system that is actually measured. From a physical chemistry stand point the conductivity of a solution is more important than its resistance. However, it is the resistance (impedance) of the electrode system that determines the current across it. The resistance of any conductor varies directly as its length and inversely as its cross sectional area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000565",
+   "isRoot": false,
+   "label": "electrical conductivity detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000588",
+   "description": "The determination of sulfur or phosphorus containing compounds is the job of the flame photometric detector (FPD). This device uses the chemiluminescent reactions of these compounds in a hydrogen/air flame as a source of analytical information that is relatively specific for substances containing these two kinds of atoms. The emitting species for sulfur compounds is excited S2. The lambda max for emission of excited S2 is approximately 394 nm. The emitter for phosphorus compounds in the flame is excited HPO (lambda max = doublet 510-526 nm). In order to selectively detect one or the other family of compounds as it elutes from the GC column, an interference filter is used between the flame and the photomultiplier tube (PMT) to isolate the appropriate emission band. The drawback here being that the filter must be exchanged between chromatographic runs if the other family of compounds is to be detected.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000588",
+   "isRoot": false,
+   "label": "flame photometric detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000671",
+   "description": "a material obtained from an organism in order to be a representative of the whole",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000671",
+   "isRoot": false,
+   "label": "sample from organism",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

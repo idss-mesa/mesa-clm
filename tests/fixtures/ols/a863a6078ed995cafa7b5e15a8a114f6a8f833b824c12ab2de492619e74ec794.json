@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "ro",
+  "query": "number",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "RO:0002238",
+   "description": "X 'has component participant' Y means X 'has participant' Y and there is a cardinality constraint that specifies the numbers of Ys.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002238",
+   "isRoot": false,
+   "label": "has component participant",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002539",
+   "description": "Count of number of days intervening between the start of the stage and the time of fertilization according to a reference model. Note that the first day of development has the value of 0 for this property.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002539",
+   "isRoot": false,
+   "label": "start, days post fertilization",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002540",
+   "description": "Count of number of days intervening between the end of the stage and the time of fertilization according to a reference model. Note that the first day of development has the value of 1 for this property.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002540",
+   "isRoot": false,
+   "label": "end, days post fertilization",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002541",
+   "description": "Count of number of years intervening between the start of the stage and the time of birth according to a reference model. Note that the first year of post-birth development has the value of 0 for this property, and the period during which the child is one year old has the value 1.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002541",
+   "isRoot": false,
+   "label": "start, years post birth",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002542",
+   "description": "Count of number of years intervening between the end of the stage and the time of birth according to a reference model. Note that the first year of post-birth development has the value of 1 for this property, and the period during which the child is one year old has the value 2",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002542",
+   "isRoot": false,
+   "label": "end, years post birth",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002543",
+   "description": "Count of number of months intervening between the start of the stage and the time of birth according to a reference model. Note that the first month of post-birth development has the value of 0 for this property, and the period during which the child is one month old has the value 1.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002543",
+   "isRoot": false,
+   "label": "start, months post birth",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002544",
+   "description": "Count of number of months intervening between the end of the stage and the time of birth according to a reference model. Note that the first month of post-birth development has the value of 1 for this property, and the period during which the child is one month old has the value 2",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002544",
+   "isRoot": false,
+   "label": "end, months post birth",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002547",
+   "description": "Count of number of days intervening between the start of the stage and the time of coitum.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002547",
+   "isRoot": false,
+   "label": "start, days post coitum",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002548",
+   "description": "Count of number of days intervening between the end of the stage and the time of coitum.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002548",
+   "isRoot": false,
+   "label": "end, days post coitum",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0013001",
+   "description": "A relationship between a neuron and a region, where the neuron has a functionally relevant number of input and/or output synapses in that region.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0013001",
+   "isRoot": false,
+   "label": "has synaptic IO in region",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0013002",
+   "description": "A relationship between a neuron and a region, where the neuron has a functionally relevant number of input synapses in that region.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0013002",
+   "isRoot": false,
+   "label": "receives synaptic input in region",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0013003",
+   "description": "A relationship between a neuron and a region, where the neuron has a functionally relevant number of output synapses in that region.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0013003",
+   "isRoot": false,
+   "label": "sends synaptic output to region",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0013004",
+   "description": "A relationship between a neuron and a region, where the neuron has a functionally relevant number of input and/or output synapses distributed throughout that region (rather than confined to a subregion).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0013004",
+   "isRoot": false,
+   "label": "has synaptic IO throughout",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0013005",
+   "description": "A relationship between a neuron and a region, where the neuron has a functionally relevant number of input synapses distributed throughout that region (rather than confined to a subregion).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0013005",
+   "isRoot": false,
+   "label": "receives synaptic input throughout",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0013006",
+   "description": "A relationship between a neuron and a region, where the neuron has a functionally relevant number output synapses distributed throughout that region (rather than confined to a subregion).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0013006",
+   "isRoot": false,
+   "label": "sends synaptic output throughout",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0013008",
+   "description": "A relationship between an anatomical structure (including cells) and a neuron that has a functionally relevant number of chemical synapses to it.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0013008",
+   "isRoot": false,
+   "label": "receives synaptic input from neuron",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0013009",
+   "description": "A relationship between a neuron and a cell that it has a functionally relevant number of chemical synapses to.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0013009",
+   "isRoot": false,
+   "label": "sends synaptic output to cell",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0013010",
+   "description": "A relationship between a neuron and a region, where all of the functionally relevant input and output synapses are in that region.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0013010",
+   "isRoot": false,
+   "label": "synapses restricted to region",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0015015",
+   "description": "A relation between a cell and molecule or complex such that every instance of the cell has a high number of instances of that molecule expressed on the cell surface.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0015015",
+   "isRoot": false,
+   "label": "has high plasma membrane amount",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0015016",
+   "description": "A relation between a cell and molecule or complex such that every instance of the cell has a low number of instances of that molecule expressed on the cell surface.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0015016",
+   "isRoot": false,
+   "label": "has low plasma membrane amount",
+   "ontologyId": "ro",
+   "synonyms": []
+  }
+ ]
+}

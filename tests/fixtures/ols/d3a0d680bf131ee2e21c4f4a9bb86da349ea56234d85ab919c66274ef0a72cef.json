@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "point count minute",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

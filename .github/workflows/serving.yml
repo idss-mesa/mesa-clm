@@ -1,0 +1,32 @@
+name: Serving
+
+# CPU-only checks for the serve-venv side (serving/, deploy/), which never imports mesa_clm.
+# Skeleton until milestone M1 lands the patches, scripts and units it will check (plan §9).
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "serving/**"
+      - "deploy/**"
+      - ".github/workflows/serving.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: serving-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  serving:
+    name: serving checks (CPU only)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: TODO(M1) serving checks
+        run: |
+          echo "TODO(M1): clone Contrastive-LM/CLM@bb42c6c5 and 'git apply --check' serving/patches/0001-0006"
+          echo "TODO(M1): ruff + mypy --strict on serving/; shellcheck deploy/bin/*"
+          echo "TODO(M1): systemd-analyze --user verify deploy/systemd/*"
+          echo "TODO(M1): pytest the patched create_app and fallback_serve with a stub encoder (401 without key, refuse unkeyed non-loopback, constant-time compare)"

@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "native status code",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "sex",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "UBERON:0003133",
+   "description": "An organ involved in reproduction.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0003133",
+   "isRoot": false,
+   "label": "reproductive organ",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000001",
+   "description": "A collection of organisms, all of the same species, that live in the same place.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000001",
+   "isRoot": false,
+   "label": "population of organisms",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

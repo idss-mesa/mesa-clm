@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000202",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000202",
+  "description": "A broadleaf forest which is subject to temperate climate patterns.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000202",
+  "isRoot": false,
+  "label": "temperate broadleaf forest biome",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

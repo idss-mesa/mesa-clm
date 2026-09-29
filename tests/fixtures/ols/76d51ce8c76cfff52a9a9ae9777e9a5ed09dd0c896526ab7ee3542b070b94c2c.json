@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1239207",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:1239205",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1239205",
+   "isRoot": false,
+   "label": "Tribelocephalinae sp. 00052187",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

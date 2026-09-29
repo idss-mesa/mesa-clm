@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "percent",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "UO:0000187",
+   "description": "A dimensionless ratio unit which denotes numbers as fractions of 100.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000187",
+   "isRoot": false,
+   "label": "percent",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100845",
+   "description": "A data field which describes the percentage of the total number of reads identified as contamination (not belonging to the target organism) in a sequence dataset.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100845",
+   "isRoot": false,
+   "label": "percent read contamination",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100830",
+   "description": "A data field which describes the percentage of the assembly that consists of ambiguous bases (Ns).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100830",
+   "isRoot": false,
+   "label": "percent ns across total genome length",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100600",
+   "description": "A data item which is breadth of coverage datum as a percentage.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100600",
+   "isRoot": false,
+   "label": "breadth of coverage percentage",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100602",
+   "description": "A data item which is the number of matches (identical characters) in positions from an alignment of two molecular sequences as a percentage.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100602",
+   "isRoot": false,
+   "label": "sequence identity percentage",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100571",
+   "description": "A data item that describes sequence data in which the entire length of the genome is not sufficiently sequenced (low breadth of coverage).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100571",
+   "isRoot": false,
+   "label": "low percent genome captured datum",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001472",
+   "description": "A data field which describes the percentage of the reference genome covered by the sequenced data, to a prescribed depth.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001472",
+   "isRoot": false,
+   "label": "breadth of coverage value",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100844",
+   "description": "A data field which describes the percentage of expected genes identified in the genome being sequenced.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100844",
+   "isRoot": false,
+   "label": "genome completeness",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001563",
+   "description": "The 'genome size delta ratio' is a ratio of the difference between a sample's genome assembly size and the size of a given reference genome, over the reference genome size. \n\nThe formula:\n\n| (reference_genome_size - assembly_genome_size) | / reference_genome_size\n\nThis yeilds a decimal / percentage ranging from 0 = exact length, to say .1 which is equivalent to a 10% variance.  If the ratio is too far from a quality control ratio that depends on the species in question, this indicates a bad assembly or a mis-identified sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001563",
+   "isRoot": false,
+   "label": "genome size delta ratio",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100924",
+   "description": "A data field which describes the recovery efficiency of an extraction, calculated as the amount of a synthetic or endogenous compound identified in the sample relative to the amount expected.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100924",
+   "isRoot": false,
+   "label": "extraction recovery efficiency measurement value",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000163",
+   "description": "A dimensionless concentration unit which denotes the mass of a substance in a mixture as a percentage of the mass of the entire mixture.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000163",
+   "isRoot": false,
+   "label": "mass percentage",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000164",
+   "description": "A dimensionless concentration unit which denotes the mass of the substance in a mixture as a percentage of the volume of the entire mixture.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000164",
+   "isRoot": false,
+   "label": "mass volume percentage",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000163",
+   "description": "A dimensionless concentration unit which denotes the mass of a substance in a mixture as a percentage of the mass of the entire mixture.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000163",
+   "isRoot": false,
+   "label": "mass percentage",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000164",
+   "description": "A dimensionless concentration unit which denotes the mass of the substance in a mixture as a percentage of the volume of the entire mixture.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000164",
+   "isRoot": false,
+   "label": "mass volume percentage",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "STATO:0000587",
+   "description": "the percentage of variance is an output of principal component analysis (PCRA), which is obtained by forming the ratio of an eigen-value divided by the sum of all eigen-values. This produces a \"percentage of variance\" for each eigen-vector.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/STATO_0000587",
+   "isRoot": false,
+   "label": "percentage of variance",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "STATO:0000705",
+   "description": "Measurement accuracy refers to how close a measured value is to the true or accepted value of the quantity being measured.\nIt is a percentage in which the numerator represents the absolute value of one minus the difference between the true value and the observed value, and the denominator represents the true value.\n\n\nAccuracy is often expressed as a percentage of the true value, based on the relative error:\n\nAccuracy (%)= (1 −∣Measured Value−True Value∣/True Value)×100\n\nTrue Value: The reference or accepted value.\nMeasured Value: The value obtained during the measurement.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/STATO_0000705",
+   "isRoot": false,
+   "label": "measurement accuracy as a percentage",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000193",
+   "description": "A dimensionless percent unit which denotes the homogeneity of a biomaterial.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000193",
+   "isRoot": false,
+   "label": "purity percentage",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000194",
+   "description": "A dimensionless percent unit which denotes the density of an attached or monolayer culture (e.g., cell culture).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000194",
+   "isRoot": false,
+   "label": "confluence percentage",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000193",
+   "description": "A dimensionless percent unit which denotes the homogeneity of a biomaterial.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000193",
+   "isRoot": false,
+   "label": "purity percentage",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000194",
+   "description": "A dimensionless percent unit which denotes the density of an attached or monolayer culture (e.g., cell culture).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000194",
+   "isRoot": false,
+   "label": "confluence percentage",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

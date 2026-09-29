@@ -1,0 +1,70 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "identification references",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0002763",
+   "description": "An amplicon sequencing assay in which the amplicon is derived from universal primers used to amplify the 16S ribosomal RNA gene from isolate bacterial genomic DNA or metagenomic DNA from a microbioal community. Resulting sequences are compared to reference 16S sequence databases to identify or classify bacteria present within a given sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002763",
+   "isRoot": false,
+   "label": "16s ribosomal gene sequencing assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200098",
+   "description": "Soft independent modeling by class analogy (SIMCA) is a descriptive statistics method for supervised classification of data. The method requires a training data set consisting of samples (or objects) with a set of attributes and their class membership. The term soft refers to the fact the classifier can identify samples as belonging to multiple classes and not necessarily producing a classification of samples into non-overlapping classes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200098",
+   "isRoot": false,
+   "label": "soft independent modeling of class analogy analysis",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "DC:identifier",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.org/dc/elements/1.1/identifier",
+   "isRoot": true,
+   "label": "Resource Identifier",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OIO:hasDbXref",
+   "description": "An annotation property that links an ontology entity or a statement to a prefixed identifier or URI.",
+   "hasChildren": false,
+   "iri": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+   "isRoot": true,
+   "label": "has cross-reference",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "DC:relation",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.org/dc/elements/1.1/relation",
+   "isRoot": true,
+   "label": "Relation",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "DC:source",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.org/dc/elements/1.1/source",
+   "isRoot": true,
+   "label": "Source",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

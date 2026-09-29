@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_1000210",
+  "ontology_id": "uo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "UO:0000210",
+   "description": "A dimensionless count unit which a measure of viable bacterial numbers.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000210",
+   "isRoot": false,
+   "label": "colony forming unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  }
+ ]
+}

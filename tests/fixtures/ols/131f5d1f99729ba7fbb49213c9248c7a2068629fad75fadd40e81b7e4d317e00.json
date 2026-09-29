@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "meter",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00004061",
+   "description": "Not found. Not in GeoNames.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00004061",
+   "isRoot": true,
+   "label": "Campo Metereologico, Eneide Lake",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00181801",
+   "description": "A populated place. A township of Cavalier County, ND.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00181801",
+   "isRoot": true,
+   "label": "Van Meter Township",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00186687",
+   "description": "A protected area located along the Missouri River in Saline County in an area known locally as the Pinnacles. Established 1932.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00186687",
+   "isRoot": true,
+   "label": "Van Meter State Park",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00195081",
+   "description": "A populated place. A township of Dallas County, IA.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00195081",
+   "isRoot": true,
+   "label": "Van Meter Township",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00261364",
+   "description": "A populated place. A city in Dallas County, Iowa, United States.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00261364",
+   "isRoot": true,
+   "label": "City of Van Meter",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00325045",
+   "description": "A populated place.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00325045",
+   "isRoot": true,
+   "label": "Meterik",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00375762",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00375762",
+   "isRoot": true,
+   "label": "Commune of Meteren",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00425108",
+   "description": "A river.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00425108",
+   "isRoot": true,
+   "label": "Meteren Becque",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00597197",
+   "description": "A river.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00597197",
+   "isRoot": true,
+   "label": "Metergraben",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00049757",
+   "description": "A large bank of sand and coral, partially covered with seagrass, about 80 km south and southwest of Jamaica, rising steeply from a seabed of 800 meters depth. It slopes gently from Pedro Cays to the west and north with depths from 13 to 30 meters. The total area of the bank within the 100 meter isobath measures 8 040 km2. The area of a depth to 40 meters is triangular, 70 km long east-west, and 43 km wide. 2 400 km2 are less than 20 m deep.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00049757",
+   "isRoot": true,
+   "label": "Pedro Bank",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00043859",
+   "description": "One of the Isole Borromee of Lago Maggiore in north Italy. The island is situated in the Borromean Gulf 400 meters from the lakeside town of Stresa. Isola Bella is 320 meters long by 400 meters wide and is entirely occupied by the Palazzo Borromeo and its Italianate garden.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00043859",
+   "isRoot": true,
+   "label": "Isola Bella",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00057904",
+   "description": "A 400 meter long lake in Kazakstan that reaches depths near 30 meters in some areas. It is located 320 km from the city of Almaty and is 2,000 meters above sea level. It was created by the result of an enormous limestone landslide.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00057904",
+   "isRoot": true,
+   "label": "Kaindy Lake",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00058408",
+   "description": "A lake in northwestern Khovsgol Province, Mongolia, between the Tsagaannuur and Renchinlkhumbe sums. It is sometimes divided into the Targan, Dund, and Kharmai lakes. Targan nuur is 3.5 meters deep, Dund nuur 5 meters and Kharmai nuur 15 meters.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00058408",
+   "isRoot": true,
+   "label": "Dood Tsagaan Nuur",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00058498",
+   "description": "A 25 km diameter crater lake in the Pamir Mountains in Tajikistan, which lies at an altitude of 3,900 meters (13,000 feet) above mean sea level. A peninsula projecting from the south shore and an island off the north shore divide the lake into two basins, a smaller eastern one which is relatively shallow, between 13 to 19 meters, and a larger western one, with depths of 221 to 230 meters. It has no drainage outlet. Kara-Kul lake lies within a circular depression interpreted as a meteorite impact crater with a rim diameter of 45 km.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00058498",
+   "isRoot": true,
+   "label": "Kara-Kul",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00064502",
+   "description": "A mountain valley in the Swiss Alps. It connects the Pass dal Fuorn (Ofenpass, 2149 m) with South Tyrol and the Vinschgau-Val Venosta (914 m). The largest part of the valley is part of the Swiss canton of Graubunden. A small part lies within the region of Trentino-Alto Adige/Sudtirol. The border is located at approximately 1245 meter between Mustair (1247 meter) and Taufers-Tubre (1240 meter).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00064502",
+   "isRoot": true,
+   "label": "Val Mustair",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00089673",
+   "description": "A mountain range in northern Colombia located in the municipality of Uribia, Guajira Peninsula and part of the La Guajira Department. The Serrania de Macuira stands in the middle of the La Guajira Desert at 864 meters over sea level, isolated from the mountain ranges of Sierra Nevada de Santa Marta and the Cordillera Oriental of the Colombian Andes. The Serrania de Macuira is the most western and elevated mountain range of South America and meassures some 35 km in longitude and 10 km wide, at some 10 km from the Caribbean sea. The range is made up of three mountain massifs interconnected; the highest being Cerro Paluou (864 meters over sea level), Cerro de Jibome (753 meter over sea level) covering a total area of 250 km2.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00089673",
+   "isRoot": true,
+   "label": "Serrania de Macuira",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00285573",
+   "description": "An archaeological site located in southern New Mexico. It is a relatively small cave, only 5 meters wide, 12 meters deep, and having a maximum height of 3 meters. A number of early Native American artifacts have been found in the cave.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00285573",
+   "isRoot": true,
+   "label": "Pendejo Cave",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002623",
+   "description": "lat_lon: 68deg33minS, 78deg15minE.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002623",
+   "isRoot": true,
+   "label": "Vestfold Hills",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00011827",
+   "description": "A trough offshore of northern California and Oregon, the 3,300-meter deep trough extends northward from the Mendocino Fracture Zone for 150 km. It is covered for most of this length by as much as 1,000 meters of sediment shed from the Pacific continental margin of the United States. The combination of this sediment blanket (a thermal insulator), buried volcanic centers (a source of heat), and an abundant supply of fluid (seawater) results in favorable conditions for formation of large sediment-hosted polymetallic sulfide deposits.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00011827",
+   "isRoot": true,
+   "label": "Escanaba Trough",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00011852",
+   "description": "A fjord to the east of Lysekil, marking the border to Uddevalla. It is one of Sweden's most distinctive fjords: 25 km long, between 1-3 wide, with a maximum depth of 118.5 meters. The depth at the mouth is only 20-40 meters on average, leading to a distinctive marine life in the fjord.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00011852",
+   "isRoot": true,
+   "label": "Gullmarsfjorden",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

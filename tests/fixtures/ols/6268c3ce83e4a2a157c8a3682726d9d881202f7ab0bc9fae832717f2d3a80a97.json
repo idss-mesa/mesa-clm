@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003820",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0003821",
+   "description": "A cell migration assay that measures migration of an oligodendrocyte",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003821",
+   "isRoot": false,
+   "label": "oligodendrocyte migration assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003822",
+   "description": "A cell migration assay that measures migration of a radial glia cell",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003822",
+   "isRoot": false,
+   "label": "radial glial migration assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003823",
+   "description": "A cell migration assay that measures migration of a neuron",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003823",
+   "isRoot": false,
+   "label": "neuron migration assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003824",
+   "description": "A cell migration assay that measures migration of a neural crest cell",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003824",
+   "isRoot": false,
+   "label": "neural crest cell migration assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

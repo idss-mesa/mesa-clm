@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1351752",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:215456",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_215456",
+   "isRoot": false,
+   "label": "Parastagonospora avenae f. sp. avenae",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:54790",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_54790",
+   "isRoot": false,
+   "label": "Parastagonospora avenae f. sp. tritici",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

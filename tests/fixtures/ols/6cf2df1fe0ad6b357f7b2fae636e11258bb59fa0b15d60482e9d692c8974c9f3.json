@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001519",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001519",
+  "description": "A quality inhering in a bearer by virtue of vibration, as perceived by the sense of hearing.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001519",
+  "isRoot": false,
+  "label": "sound quality",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

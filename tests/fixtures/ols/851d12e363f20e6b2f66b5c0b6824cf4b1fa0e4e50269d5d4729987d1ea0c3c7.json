@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "decimal longitude",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001863",
+   "description": "A decimal longitude measurement in degrees in conformance with the ISO 6709 standard.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001863",
+   "isRoot": false,
+   "label": "longitude specification (ISO 6709)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

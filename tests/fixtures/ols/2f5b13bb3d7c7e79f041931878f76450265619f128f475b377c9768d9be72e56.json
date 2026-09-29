@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "Name of the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:00005745",
+   "description": "Allotments gardens are so named as they are typically subdivisions (lots) of a larger piece of land.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00005745",
+   "isRoot": false,
+   "label": "allotment garden",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

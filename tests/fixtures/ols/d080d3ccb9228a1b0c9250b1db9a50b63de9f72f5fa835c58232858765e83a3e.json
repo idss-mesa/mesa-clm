@@ -1,0 +1,70 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "taxon rank",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "taxonRank",
+   "description": "The taxonomic rank of the most specific name in the scientificName.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/taxonRank",
+   "isRoot": true,
+   "label": "Taxon Rank",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "verbatimTaxonRank",
+   "description": "The taxonomic rank of the most specific name in the scientificName as it appears in the original record.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/verbatimTaxonRank",
+   "isRoot": true,
+   "label": "Verbatim Taxon Rank",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "scientificName",
+   "description": "The full scientific name, with authorship and date information if known. When forming part of an Identification, this should be the name in lowest level taxonomic rank that can be determined. This term should not contain identification qualifications, which should instead be supplied in the IdentificationQualifier term.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/scientificName",
+   "isRoot": true,
+   "label": "Scientific Name",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "parentNameUsage",
+   "description": "The full name, with authorship and date information if known, of the direct, most proximate higher-rank parent taxon (in a classification) of the most specific element of the scientificName.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/parentNameUsage",
+   "isRoot": true,
+   "label": "Parent Name Usage",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "parentNameUsageID",
+   "description": "An identifier for the name usage (documented meaning of the name according to a source) of the direct, most proximate higher-rank parent taxon (in a classification) of the most specific element of the scientificName.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/parentNameUsageID",
+   "isRoot": true,
+   "label": "Parent Name Usage ID",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "higherClassification",
+   "description": "A list (concatenated and separated) of taxa names terminating at the rank immediately superior to the taxon referenced in the taxon record.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/higherClassification",
+   "isRoot": true,
+   "label": "Higher Classification",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

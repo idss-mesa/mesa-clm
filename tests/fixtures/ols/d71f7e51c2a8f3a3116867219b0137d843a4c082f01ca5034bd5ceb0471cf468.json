@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000407",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01000125",
+   "description": "The marine littoral zone is a littoral zone which extends, approximately, from the spray region above the high tide mark to the edge of the coninental shelf.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000125",
+   "isRoot": false,
+   "label": "marine littoral zone",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000409",
+   "description": "A freshwater littoral zone is a littoral zone which extends offshore from the shore of a freshwater body of water to the limit of occupancy of rooted plants.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000409",
+   "isRoot": false,
+   "label": "freshwater littoral zone",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

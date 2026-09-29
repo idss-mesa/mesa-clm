@@ -1,0 +1,80 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "sex or age",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0100452",
+   "description": "A host field which describes the name of the host at a certain stage of food production, which may depend on its age or stage of sexual maturity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100452",
+   "isRoot": false,
+   "label": "host (food production name)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C161324",
+   "description": "A population group that is characterized by a common descriptive factor such as age, sex, race, education, etc.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C161324",
+   "isRoot": false,
+   "label": "Demographic Group",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C17005",
+   "description": "A group of individuals united by a common factor (e.g., geographic location, ethnicity, disease, age, sex).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C17005",
+   "isRoot": false,
+   "label": "Population Group",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C91107",
+   "description": "An age group comprised of individuals who have reached sexual maturity but whose character and personality are still developing. In psychology this generally covers the age range of 20-40.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C91107",
+   "isRoot": false,
+   "label": "Young Adult",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "TRANS:0000001",
+   "description": "Direct and essentially immediate transfer of infectious agents to a receptive portal of entry through which human or animal infection may take place. This may be by direct contact such as touching, kissing, biting, or sexual intercourse or by the direct projection (droplet spread) of droplet spray onto the conjunctiva or the mucous membranes of the eyes, nose, or mouth. It may also be by direct exposure of susceptible tissue to an agent in soil, compost, or decaying vegetable matter or by the bite of a rabid animal. Transplacental transmission is another form of direct transmission.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/TRANS_0000001",
+   "isRoot": false,
+   "label": "direct transmission",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GSSO:000096",
+   "description": "Having a gender (identity) which is different from the sex one was assigned at birth: being assigned male at birth but having a female gender or vice versa; or, pertaining to such people.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GSSO_000096",
+   "isRoot": false,
+   "label": "transgender",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GSSO:000096",
+   "description": "Having a gender (identity) which is different from the sex one was assigned at birth: being assigned male at birth but having a female gender or vice versa; or, pertaining to such people.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GSSO_000096",
+   "isRoot": false,
+   "label": "transgender",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

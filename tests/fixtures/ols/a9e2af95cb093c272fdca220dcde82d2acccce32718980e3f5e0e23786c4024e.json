@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCIT_C81286",
+  "ontology_id": "ncit"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "NCIT:C81286",
+  "description": "The date on which the sample or data was collected.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/NCIT_C81286",
+  "isRoot": false,
+  "label": "Collection Date",
+  "ontologyId": "ncit",
+  "synonyms": []
+ }
+}

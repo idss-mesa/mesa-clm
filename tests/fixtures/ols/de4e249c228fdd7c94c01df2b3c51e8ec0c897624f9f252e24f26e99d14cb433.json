@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "The scientific name of the kingdom in which the taxon is classified",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "kingdom",
+   "description": "The full scientific name of the kingdom in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/kingdom",
+   "isRoot": true,
+   "label": "Kingdom",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

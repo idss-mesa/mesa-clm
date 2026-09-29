@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001555",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0001905",
+   "description": "The bearer of this quality has_part = n, where n is the normal amount for a comparable organism. Note that the bearer of the quality is the whole, not the part.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001905",
+   "isRoot": false,
+   "label": "has normal numbers of parts of type",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002083",
+   "description": "Having extra or fewer parts.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002083",
+   "isRoot": false,
+   "label": "altered number of",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

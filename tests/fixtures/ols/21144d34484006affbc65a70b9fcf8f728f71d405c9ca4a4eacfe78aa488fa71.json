@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GAZ_01000021",
+  "ontology_id": "gaz",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GAZ:01000022",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_01000022",
+   "isRoot": false,
+   "label": "Takhtajan's floristic provinces",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

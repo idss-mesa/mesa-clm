@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "How the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0002043",
+   "description": "A cross-linking immunoprecipitation high-throughput sequencing assay that identifies protein-RNA interactions using UV light to covalently bind proteins and RNA molecules, allowing for a very stringent purification of the linked protein-RNA complexes.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002043",
+   "isRoot": false,
+   "label": "individual-nucleotide resolution cross-linking and immunoprecipitation sequencing assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001141",
+   "description": "a CRID symbol used to distinguish one individual organism from another.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001141",
+   "isRoot": false,
+   "label": "individual organism identifier",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001176",
+   "description": "An immunization in which an individual epitope is administered into a host organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001176",
+   "isRoot": false,
+   "label": "Individual epitope immunization in vivo",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001448",
+   "description": "A study design where genotype, haplotype, or other individual genetic characteristics are compared.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001448",
+   "isRoot": false,
+   "label": "individual genetic characteristics comparison design",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002648",
+   "description": "A specimen composed of an individual organism to be studied in an investigation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002648",
+   "isRoot": false,
+   "label": "individual organism specimen",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003501",
+   "description": "A physical examination of an organism's ability to perform functional activities.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003501",
+   "isRoot": false,
+   "label": "functional assessment of individual",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003536",
+   "description": "A physical examination of an organism through visual assesment.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003536",
+   "isRoot": false,
+   "label": "observational assessment of individual",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000642",
+   "description": "Instead of measuring simple gas phase (carbon containing) ions created in a flame as with the flame ionization detector, or the change in background current because of electronegative element capture of thermal electrons as with the electron capture detector, the AED has a much wider applicability because it is based on the detection of atomic emissions. The strength of the AED lies in the detector's ability to simultaneously determine the atomic emissions of many of the elements in analytes that elute from a GC capillary column (called eluants or solutes in some books). As eluants come off the capillary column they are fed into a microwave powered plasma (or discharge) cavity where the compounds are destroyed and their atoms are excited by the energy of the plasma. The light that is emitted by the excited particles is separated into individual lines via a photodiode array. The associated computer then sorts out the individual emission lines and can produce chromatograms made up of peaks from eluants that contain only a specific element.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000642",
+   "isRoot": false,
+   "label": "atomic emission detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001200",
+   "description": "A study design that classifies an individual or group of individuals on the basis of alleles, haplotypes, SNPs using high througput sequencing techniques.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001200",
+   "isRoot": false,
+   "label": "genotyping by high throughput sequencing design",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001387",
+   "description": "A study design that classifies an individual or group of individuals on the basis of alleles, haplotypes, SNPs using microarray technology.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001387",
+   "isRoot": false,
+   "label": "genotyping by array design",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001444",
+   "description": "A study design that classifies an individual or group of individuals on the basis of alleles, haplotypes, SNPs.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001444",
+   "isRoot": false,
+   "label": "genotyping design",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001959",
+   "description": "A planned process which consists in running a set of samples as a pool on a sequencing instrument, while retaining the ability to associate individual results to each of the individual input samples through the use of a ligated oligonucleotide (the \"multiplex identifier sequence\"). This oligonucleotide is  introduced during the sequence library preparation, and is unique to and specific for all library fragments derived from each sample in a sample pool.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001959",
+   "isRoot": false,
+   "label": "multiplexed nucleotide library sequencing",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002120",
+   "description": "A cytometry assay where lymphocytes from two individuals are co-cultured with the lymphocytes from one of the allogeneic individuals (Responders) being labeled (with 3H Thymidine or BrdU) and the proliferation of the labeled cells is measured, which is thought to reflect recognition of histocompatibility antigens on the unlabeled cells (stimulators).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002120",
+   "isRoot": false,
+   "label": "mixed lymphocyte reaction assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002430",
+   "description": "An exclusion criterion defined as whether an individual has ever been diagnosed with metastatic cancer (cancer that spread beyond the initial site such as to other organs like brain bone or liver), which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002430",
+   "isRoot": false,
+   "label": "history of metastatic cancer exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002431",
+   "description": "An exclusion criterion defined as when an individual has a history of intravenous drug abuse for a specific timeframe, which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002431",
+   "isRoot": false,
+   "label": "intravenous drug use exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002432",
+   "description": "An exclusion criterion defined  as whether an individual has a history of sex with someone who has been diagnosed or at risk for a blood borne infections disease in a specified time frame, which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002432",
+   "isRoot": false,
+   "label": "history of sex with someone with a history of blood borne infection  exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002433",
+   "description": "An exclusion criterion defined  as whether an individual has a history of sex with someone who has used intravenous drugs in a specified time frame, which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002433",
+   "isRoot": false,
+   "label": "history of sex with someone with a history of intravenous drugs exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002434",
+   "description": "An exclusion criterion defined  as whether an individual has a history of repeatedly reactive screening assays for HIV-1 or HIV-2 antibody regardless of the results of supplemental assays, which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002434",
+   "isRoot": false,
+   "label": "HIV exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002435",
+   "description": "An exclusion criterion defined  as whether an individual has been exposed to a blood borne infections disease through needle sticks and/or contact with non-intact skin and/or contact with open wounds and/or contact with mucous membranes, which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002435",
+   "isRoot": false,
+   "label": "exposure to blood borne infectious disease exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002751",
+   "description": "A DNA sequencer that is manufactured by the Oxford Nanopore Technologies corporation, that can run and analyze up to five individual flow cells producing up to 150 Gb of data per run. The sequencer produces real-time results and utilizes nanopore technology with the option of running the flow cells concurrently or individually.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002751",
+   "isRoot": false,
+   "label": "Oxford Nanopore GridION Mk1",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

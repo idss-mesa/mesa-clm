@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000096",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000096",
+  "description": "A volume unit which is equal to the volume of a cube with edges one meter in length. One cubic meter equals to 1000 liters.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000096",
+  "isRoot": false,
+  "label": "cubic meter",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

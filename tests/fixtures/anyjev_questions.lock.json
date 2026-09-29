@@ -1,0 +1,264 @@
+{
+ "questions": {
+  "column.annotate": {
+   "kind": "noul",
+   "text": "Should this column receive an ontology-grounded annotation? Answer No for record identifiers, internal codes, timestamps and bookkeeping fields.",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "key": "8b8c7f14be35925d",
+   "twin": null
+  },
+  "column.aspect": {
+   "kind": "choice",
+   "text": "Which aspect of the dataset does this column describe?",
+   "options": [
+    "taxon: the organisms observed, sampled or identified",
+    "environment: the biome, habitat or environmental material at a site",
+    "method: the sampling protocol, device, assay or processing step",
+    "measurement: a measured quantity, quality or attribute of a thing",
+    "unit: the unit of measure of a measured quantity",
+    "data_type: the kind of record, identifier, dataset or information artifact",
+    "location: a named place, region, plot or geographic feature",
+    "other: none of the above or not an annotatable column"
+   ],
+   "key": "982e2baa2c1c7762",
+   "twin": null
+  },
+  "column.ontology": {
+   "kind": "choice",
+   "text": "Which ontology should be searched for a term that annotates this column?",
+   "options": [
+    "ENVO: environments, biomes, habitats and environmental materials",
+    "NCBITaxon: organisms and taxa at every rank",
+    "PATO: qualities and attributes of things (size, sex, age, colour)",
+    "UO: units of measurement (meter, degree Celsius, percent)",
+    "OBI: investigations, assays, protocols, devices and specimens",
+    "IAO: information artifacts, data items, identifiers and documents",
+    "PCO: populations, communities and their collective properties",
+    "BCO: biological collections, sampling and identification processes",
+    "GAZ: named geographic places and administrative regions",
+    "RO: relations between entities (part of, located in, participates in)",
+    "TAXRANK: taxonomic ranks (species, genus, family, order)",
+    "GENEPIO: sample collection, identification and metadata fields"
+   ],
+   "key": "2de03cc737b509ec",
+   "twin": "column.ontology_fits"
+  },
+  "column.ontology_fits": {
+   "kind": "noul",
+   "text": "Does the ontology described in the state contain the right kind of term for annotating this column?",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "key": "f45eb7fe2fbefdb5",
+   "twin": null
+  },
+  "term.fits": {
+   "kind": "noul",
+   "text": "Is the candidate ontology term a correct annotation for the described column, site or dataset: the right concept at an appropriate specificity, not merely related?",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "key": "0ccc8d141ffd30ff",
+   "twin": null
+  },
+  "term.fits.chooser": {
+   "kind": "noul",
+   "text": "Is the candidate ontology term the correct term for the value the user wants to annotate with: the right concept at an appropriate specificity, not merely related?",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "key": "2675e6ebec9d41e9",
+   "twin": null
+  },
+  "avu.value_kind": {
+   "kind": "choice",
+   "text": "What should the AVU value be?",
+   "options": [
+    "the term label",
+    "the site code",
+    "the column name",
+    "the most frequent data value"
+   ],
+   "key": "18a3a5159c3a8492",
+   "twin": null
+  },
+  "avu.keep": {
+   "kind": "noul",
+   "text": "Given the annotations already selected for this dataset, does this annotation add correct, non-redundant information worth keeping?",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "key": "926b627a33d6acb4",
+   "twin": null
+  },
+  "dataset.ontology_applies": {
+   "kind": "noul",
+   "text": "Does this ontology apply to the dataset as a whole: would at least one of its terms correctly describe what the dataset measures, observes, samples or records?",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "key": "23c65e1544eec463",
+   "twin": null
+  },
+  "datacite.resource_type_fits": {
+   "kind": "noul",
+   "text": "Is the DataCite ResourceTypeGeneral value the right general type for this resource?",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "key": "34ba6b90c7ed41ca",
+   "twin": null
+  },
+  "datacite.contributor_type": {
+   "kind": "choice",
+   "text": "Which DataCite ContributorType best describes this contributor's role?",
+   "options": [
+    "ContactPerson",
+    "DataCollector",
+    "DataCurator",
+    "DataManager",
+    "Distributor",
+    "Editor",
+    "HostingInstitution",
+    "Producer",
+    "ProjectLeader",
+    "ProjectManager",
+    "ProjectMember",
+    "RegistrationAgency",
+    "RegistrationAuthority",
+    "RelatedPerson",
+    "Researcher",
+    "ResearchGroup",
+    "RightsHolder",
+    "Sponsor",
+    "Supervisor",
+    "WorkPackageLeader",
+    "Other"
+   ],
+   "key": "72c60b3142999767",
+   "twin": "datacite.contributor_type_fits"
+  },
+  "datacite.contributor_type_fits": {
+   "kind": "noul",
+   "text": "Is the DataCite ContributorType value the right role for this contributor?",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "key": "bda632eeb093e252",
+   "twin": null
+  },
+  "datacite.relation_type": {
+   "kind": "choice",
+   "text": "Which DataCite RelationType describes how this resource relates to the related identifier?",
+   "options": [
+    "IsCitedBy",
+    "Cites",
+    "IsSupplementTo",
+    "IsSupplementedBy",
+    "IsContinuedBy",
+    "Continues",
+    "IsDescribedBy",
+    "Describes",
+    "IsPartOf",
+    "HasPart",
+    "IsReferencedBy",
+    "References",
+    "IsDocumentedBy",
+    "Documents",
+    "IsCompiledBy",
+    "Compiles",
+    "IsVariantFormOf",
+    "IsDerivedFrom",
+    "IsSourceOf",
+    "IsVersionOf",
+    "HasVersion",
+    "IsNewVersionOf",
+    "IsObsoletedBy"
+   ],
+   "key": "0814589b9c3976f5",
+   "twin": "datacite.relation_type_fits"
+  },
+  "datacite.relation_type_fits": {
+   "kind": "noul",
+   "text": "Is the DataCite RelationType value the right relation from this resource to the related identifier?",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "key": "034d76f39b50f2ab",
+   "twin": null
+  },
+  "datacite.date_type": {
+   "kind": "choice",
+   "text": "Which DataCite DateType describes this date?",
+   "options": [
+    "Accepted",
+    "Available",
+    "Copyrighted",
+    "Collected",
+    "Created",
+    "Issued",
+    "Submitted",
+    "Updated",
+    "Valid",
+    "Withdrawn"
+   ],
+   "key": "f86853ada1059d72",
+   "twin": "datacite.date_type_fits"
+  },
+  "datacite.date_type_fits": {
+   "kind": "noul",
+   "text": "Is the DataCite DateType value the right type for this date?",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "key": "4b5c1fcf9119a82e",
+   "twin": null
+  },
+  "datacite.description_type": {
+   "kind": "choice",
+   "text": "Which DataCite DescriptionType describes this description text?",
+   "options": [
+    "Abstract",
+    "Methods",
+    "SeriesInformation",
+    "TableOfContents",
+    "TechnicalInfo",
+    "Other"
+   ],
+   "key": "5cb007a4e7d28dbf",
+   "twin": null
+  }
+ },
+ "hosted_sql": {
+  "column.annotate": "prompt_jev(state_text, 'Should this column receive an ontology-grounded annotation? Answer No for record identifiers, internal codes, timestamps and bookkeeping fields.', noul := TRUE)",
+  "column.aspect": "prompt_jev(state_text, 'Which aspect of the dataset does this column describe?', choice := ['taxon: the organisms observed, sampled or identified', 'environment: the biome, habitat or environmental material at a site', 'method: the sampling protocol, device, assay or processing step', 'measurement: a measured quantity, quality or attribute of a thing', 'unit: the unit of measure of a measured quantity', 'data_type: the kind of record, identifier, dataset or information artifact', 'location: a named place, region, plot or geographic feature', 'other: none of the above or not an annotatable column'])",
+  "column.ontology": "prompt_jev(state_text, 'Which ontology should be searched for a term that annotates this column?', choice := ['ENVO: environments, biomes, habitats and environmental materials', 'NCBITaxon: organisms and taxa at every rank', 'PATO: qualities and attributes of things (size, sex, age, colour)', 'UO: units of measurement (meter, degree Celsius, percent)', 'OBI: investigations, assays, protocols, devices and specimens', 'IAO: information artifacts, data items, identifiers and documents', 'PCO: populations, communities and their collective properties', 'BCO: biological collections, sampling and identification processes', 'GAZ: named geographic places and administrative regions', 'RO: relations between entities (part of, located in, participates in)', 'TAXRANK: taxonomic ranks (species, genus, family, order)', 'GENEPIO: sample collection, identification and metadata fields'])",
+  "column.ontology_fits": "prompt_jev(state_text, 'Does the ontology described in the state contain the right kind of term for annotating this column?', noul := TRUE)",
+  "term.fits": "prompt_jev(state_text, 'Is the candidate ontology term a correct annotation for the described column, site or dataset: the right concept at an appropriate specificity, not merely related?', noul := TRUE)",
+  "term.fits.chooser": "prompt_jev(state_text, 'Is the candidate ontology term the correct term for the value the user wants to annotate with: the right concept at an appropriate specificity, not merely related?', noul := TRUE)",
+  "avu.value_kind": "prompt_jev(state_text, 'What should the AVU value be?', choice := ['the term label', 'the site code', 'the column name', 'the most frequent data value'])",
+  "avu.keep": "prompt_jev(state_text, 'Given the annotations already selected for this dataset, does this annotation add correct, non-redundant information worth keeping?', noul := TRUE)",
+  "dataset.ontology_applies": "prompt_jev(state_text, 'Does this ontology apply to the dataset as a whole: would at least one of its terms correctly describe what the dataset measures, observes, samples or records?', noul := TRUE)",
+  "datacite.resource_type_fits": "prompt_jev(state_text, 'Is the DataCite ResourceTypeGeneral value the right general type for this resource?', noul := TRUE)",
+  "datacite.contributor_type": "prompt_jev(state_text, 'Which DataCite ContributorType best describes this contributor''s role?', choice := ['ContactPerson', 'DataCollector', 'DataCurator', 'DataManager', 'Distributor', 'Editor', 'HostingInstitution', 'Producer', 'ProjectLeader', 'ProjectManager', 'ProjectMember', 'RegistrationAgency', 'RegistrationAuthority', 'RelatedPerson', 'Researcher', 'ResearchGroup', 'RightsHolder', 'Sponsor', 'Supervisor', 'WorkPackageLeader', 'Other'])",
+  "datacite.contributor_type_fits": "prompt_jev(state_text, 'Is the DataCite ContributorType value the right role for this contributor?', noul := TRUE)",
+  "datacite.relation_type": "prompt_jev(state_text, 'Which DataCite RelationType describes how this resource relates to the related identifier?', choice := ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy', 'IsContinuedBy', 'Continues', 'IsDescribedBy', 'Describes', 'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy', 'Compiles', 'IsVariantFormOf', 'IsDerivedFrom', 'IsSourceOf', 'IsVersionOf', 'HasVersion', 'IsNewVersionOf', 'IsObsoletedBy'])",
+  "datacite.relation_type_fits": "prompt_jev(state_text, 'Is the DataCite RelationType value the right relation from this resource to the related identifier?', noul := TRUE)",
+  "datacite.date_type": "prompt_jev(state_text, 'Which DataCite DateType describes this date?', choice := ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid', 'Withdrawn'])",
+  "datacite.date_type_fits": "prompt_jev(state_text, 'Is the DataCite DateType value the right type for this date?', noul := TRUE)",
+  "datacite.description_type": "prompt_jev(state_text, 'Which DataCite DescriptionType describes this description text?', choice := ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'TechnicalInfo', 'Other'])"
+ },
+ "lock_sha": "9f9370e0029e956afbeb0a5bbaa7ee8111c3b7de99a812672556bdad9785f742"
+}

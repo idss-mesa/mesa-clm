@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0103000",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0103000",
+  "description": "A quality of an entity that can be represented numerically, including anything that can be counted, measured, or given a numerical value.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0103000",
+  "isRoot": false,
+  "label": "quantitative",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

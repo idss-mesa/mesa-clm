@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001459",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01001461",
+   "description": "A high-elevation mountain which has a maximum elevation greater than 4500 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001461",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 1 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001462",
+   "description": "A high-elevation mountain which has a maximum elevation between 3500 and 4500 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001462",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 2 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001463",
+   "description": "A high-elevation mountain which has a maximum elevation between 2500 and 3500 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001463",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 3 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

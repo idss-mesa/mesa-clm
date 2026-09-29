@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "tribe",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01000907",
+   "description": "Feasting pits had a wide variety of social functions throughout time, which extended in scope from the single family group to multiple tribes or villages.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000907",
+   "isRoot": false,
+   "label": "feasting pit site",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0100051",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0100051",
+  "description": "A material entity that is collected for potential use as an input upon which measurements or observations are performed.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0100051",
+  "isRoot": false,
+  "label": "specimen",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

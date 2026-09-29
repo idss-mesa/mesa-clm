@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00000446",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:00000446",
+  "description": "A biome which is  primarily or completely situated on a landmass.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00000446",
+  "isRoot": false,
+  "label": "terrestrial biome",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

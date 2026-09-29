@@ -1,0 +1,70 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "start rh",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00008262",
+   "description": "A river that in the Swiss Alps in the canton of Graubunden, where its two main initial tributaries are called Vorderrhein and Hinterrhein. The Vorderrhein (anterior Rhine) springs from Lake Tuma near the Oberalp Pass and passes the impressive Ruinaulta (the Swiss Grand Canyon). The Hinterrhein (posterior Rhine) starts from the Paradies glacier near the Rheinquellhorn at the southern border of Switzerland. One of the latter tributaries originates in Val di Lei in Italy. Both tributaries meet near Reichenau, still in Graubunden. From Reichenau, the Rhine flows north as the Alpenrhein passing Chur and forming the frontier between Liechtenstein and then Austria on the east side, and canton St. Gallen of Switzerland on the west side, then discharging to Lake Constance. Emerging from Lake Constance, flowing generally westward as the Hochrhein it passes the Rhine Falls and is joined by the Aare river which more than doubles its water discharge to an average of nearly 1,000 cubic meters per second. Past Basel, as the Upper Rhine, it forms the southern part of the border between Germany and France in a wide valley, before entering Germany exclusively at Rheinstetten, near Karlsruhe. Between Bingen and Bonn, the Middle Rhine flows through the Rhine Gorge. After crssong the Netherlands border the Rhine turns west and enters the Netherlands, where together with the rivers Meuse and Scheldt it forms the extensive Rhine-Meuse-Scheldt delta, one of the larger river deltas in western Europe. Crossing the border into the Netherlands at Spijk, close to Nijmegen and Arnhem the Rhine is at its widest, but the river then splits into three main distributaries: the Waal, Nederrijn (\"Lower Rhine\") and IJssel. From here the situation becomes more complicated, as the Dutch name \"Rijn\" no longer coincides with the main flow of water. Most of the Rhine water (two thirds) flows farther west through the Waal and then via the Merwede and Nieuwe Merwede (Biesbosch) and, merging with the Meuse, through the Hollands Diep and Haringvliet estuaries into the North Sea. The Beneden Merwede branches off near Hardinxveld-Giessendam and continues as the Noord, to join the Lek near the village of Kinderdijk to form the Nieuwe Maas, then flows past Rotterdam and continues via Het Scheur and the Nieuwe Waterweg to the North Sea. The Oude Maas branches off near Dordrecht, farther down rejoining the Nieuwe Maas to form Het Scheur. The other third portion of the water flows through the Pannerdens Kanaal and redistributes in the IJssel and Nederrijn. The IJssel branch carries one ninth of the water volume north into the IJsselmeer (a former bay), while the Nederrijn flows west parallel to the Waal and carries approximately two ninths of the flow. However, at Wijk bij Duurstede the Nederrijn changes its name and becomes the Lek. It flows farther west to rejoin the Noord into the Nieuwe Maas and to the North Sea.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00008262",
+   "isRoot": false,
+   "label": "Rhine",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00436628",
+   "description": "It starts at the Pistyll Rhaeadr waterfall a few miles from the village of Llanrhaeadr-ym-Mochnant, where the Afon Disgynfa falls over a 73 m cliff-face, after which the river is known as the Afon Rhaeadr.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00436628",
+   "isRoot": true,
+   "label": "Afon Rhaeadr",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00533867",
+   "description": "A river. It starts at the Pistyll Rhaeadr waterfall a few miles from the village of Llanrhaeadr-ym-Mochnant, where the Afon Disgynfa falls over a 73 m cliff-face.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00533867",
+   "isRoot": true,
+   "label": "Afon Rhaeadr",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003501",
+   "description": "One of the 16 states (Bundeslander) of the Federal Republic of Germany. Situated in west-central Germany, Hesse borders on the German states (starting from the northwest and proceeding clockwise) of North Rhine-Westphalia, Lower Saxony, Thuringia, Bavaria, Baden-Wurttemberg and Rhineland-Palatinate.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003501",
+   "isRoot": true,
+   "label": "Land Hessen",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00444176",
+   "description": "A river. It starts near the village of Widdington in Essex flowing the 24 km north past Audley End House to merge with the Rhee a mile south of Grantchester.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00444176",
+   "isRoot": true,
+   "label": "River Granta [Essex]",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00395614",
+   "description": "A canal in northeastern France. The northern branch of the Canal de l'Est starts at Givet in the Ardennes department. It follows the Meuse upstream, passing through Fumay, Revin, Nouzonville, Charleville-Mezieres, Sedan, Stenay, Verdun, Saint-Mihiel and Commercy until it joins the Canal de la Marne au Rhin at Troussey.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00395614",
+   "isRoot": true,
+   "label": "Canal de la Meuse",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

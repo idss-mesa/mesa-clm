@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000179",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000179",
+  "description": "A desert ecosystem which is undergoing climactic ecological succession.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000179",
+  "isRoot": false,
+  "label": "desert biome",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

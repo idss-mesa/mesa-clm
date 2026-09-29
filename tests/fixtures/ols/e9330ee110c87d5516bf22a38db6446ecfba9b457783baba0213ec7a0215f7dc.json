@@ -1,0 +1,110 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000106",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0000124",
+   "description": "This is a model of the datums involved in an epidemiology investigation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000124",
+   "isRoot": false,
+   "label": "draft pathogenic epidemiology case investigation record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000144",
+   "description": "This is a set of datums involved in laboratory processing of whole-genome-sequenced isolates.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000144",
+   "isRoot": false,
+   "label": "draft whole genome sequencing lab test record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001000",
+   "description": "The Relational Sequencing TB Data Platform (ReSeqTB) catalogs a vast amount of genotypic, phenotypic and related metadata from Mycobacterium tuberculosis (Mtb) strains to enable the development of clinically useful, WHO-endorsed in vitro diagnostic assays for rapid drug susceptibility testing of Mtb.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001000",
+   "isRoot": false,
+   "label": "draft ReSeq Tuberculosis data platform standard",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001073",
+   "description": "The tuberculosis draft standard is a GenEpiO set of draft genomic and clinical data items related to Mycobacterium tuberculosis that various agencies are using in their own reporting.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001073",
+   "isRoot": false,
+   "label": "draft tuberculosis - specimen contextual data standard",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001100",
+   "description": "This is the minimal set of parameters for drug test results for a particular antimicrobial agent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001100",
+   "isRoot": false,
+   "label": "draft antibiogram drug test model",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001611",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001611",
+   "isRoot": false,
+   "label": "draft NCBI component model",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001741",
+   "description": "This class contains components under development for fulfilling GenEpiO and other standard data specifications. Components are relevant to epidemiological, laboratory, clinical or environmental pathogen sample data collection and analysis.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001741",
+   "isRoot": false,
+   "label": "draft GenEpiO component record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001777",
+   "description": "The draft tuberculosis contextual data standard is a data standard for the collection of contextual information of a given tuberculosis case that pertain to typing, clinical treatment, and potential research questions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001777",
+   "isRoot": false,
+   "label": "draft tuberculosis contextual data standard",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001778",
+   "description": "The PulseNet Canada Salmonella submission standard details the fields required in a PuseNet Canada pathogen submission report for Salmonella in spreadsheet format",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001778",
+   "isRoot": false,
+   "label": "draft PulseNet Canada Salmonella submission standard",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001829",
+   "description": "A standard established for use by the Integrated Rapid Infectious Disease Analysis (IRIDA) project, which is a Canadian-led initiative to build an open source, end-to-end platform for infectious disease genomic epidemiology.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001829",
+   "isRoot": false,
+   "label": "draft IRIDA standard",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

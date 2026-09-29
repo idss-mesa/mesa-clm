@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "order",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0000047",
+   "description": "An organismal quality inhering in a bearer by virtue of the bearer's ability to undergo sexual reproduction in order to differentiate the individuals or types involved.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000047",
+   "isRoot": false,
+   "label": "biological sex",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000625",
+   "description": "An oriented quality inhering in a bearer by virtue of the bearer's being reversed in position, order, or condition.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000625",
+   "isRoot": false,
+   "label": "inverted",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002066",
+   "description": "A solid configuration inhering in a material entity by virtue of its constituent atoms, molecules, or ions being arranged in an orderly repeating pattern extending in all three spatial dimensions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002066",
+   "isRoot": false,
+   "label": "crystal configuration",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0015006",
+   "description": "A complete coverage of this domain would subclasses homopolymeric, copolymeric, crystalline.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0015006",
+   "isRoot": false,
+   "label": "polymeric",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0043534",
+   "description": "The orderly movement of an endothelial cell into the extracellular matrix in order to form new blood vessels during angiogenesis.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0043534",
+   "isRoot": false,
+   "label": "blood vessel endothelial cell migration",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR:000000001",
+   "description": "The definition above excludes protein complexes, which some also consider a protein. Those who wish to refer to a class representing both senses of the word are directed to CHEBI:36080. Note that the definition allows for experimentally-manipulated genes, and allows for artifically-produced derivatives that mimic those found naturally. Proteins (in the sense defined here) that descended from a common ancestor can be classified into families and superfamilies composed of products of evolutionarily-related genes. The domain architecture of a protein is described by the order of its constituent domains. Proteins with the same domains in the same order are defined as homeomorphic [PRO:WCB).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000000001",
+   "isRoot": false,
+   "label": "protein",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:27027",
+   "description": "Any nutrient required in small quantities by organisms throughout their life in order to orchestrate a range of physiological functions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_27027",
+   "isRoot": false,
+   "label": "micronutrient",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:33937",
+   "description": "Any nutrient required in large quantities by organisms throughout their life in order to orchestrate a range of physiological functions. Macronutrients are usually chemical elements (carbon, hydrogen, nitrogen, oxygen, phosphorus and sulfur) that humans consume in the largest quantities. Calcium, sodium, magnesium and potassium are sometimes included as macronutrients because they are required in relatively large quantities compared with other vitamins and minerals.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_33937",
+   "isRoot": false,
+   "label": "macronutrient",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:65255",
+   "description": "Substances which are added to food in order to prevent decomposition caused by  microbial growth or by undesirable chemical changes.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_65255",
+   "isRoot": false,
+   "label": "food preservative",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "CL:0000525",
+   "description": "A cell from the outer syncytial layer of the trophoblast of an early mammalian embryo, directly associated with the maternal blood supply. It secretes hCG in order to maintain progesterone secretion and sustain a pregnancy.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/CL_0000525",
+   "isRoot": false,
+   "label": "syncytiotrophoblast cell",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0000785",
+   "description": "Chromosomes include parts that are not part of the chromatin. Examples include the kinetochore.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0000785",
+   "isRoot": false,
+   "label": "chromatin",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0003009",
+   "description": "A process in which force is generated within skeletal muscle tissue, resulting in a change in muscle geometry. Force generation involves a chemo-mechanical energy conversion step that is carried out by the actin/myosin complex activity, which generates force through ATP hydrolysis. In the skeletal muscle, the muscle contraction takes advantage of an ordered sarcomeric structure and in most cases it is under voluntary control.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0003009",
+   "isRoot": false,
+   "label": "skeletal muscle contraction",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0003253",
+   "description": "The orderly movement of a neural crest cell from one site to another that will contribute to the morphogenesis of the outflow tract.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0003253",
+   "isRoot": false,
+   "label": "cardiac neural crest cell migration involved in outflow tract morphogenesis",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0003260",
+   "description": "The orderly movement of a cardiac progenitor cell to form the heart field. Cardiac progenitor cells are non-terminally differentiated, mesoderm-derived cells that are committed to differentiate into cells of the heart. A cardioblast is a cardiac precursor cell. It is a cell that has been committed to a cardiac fate, but will undergo more cell division rather than terminally differentiating.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0003260",
+   "isRoot": false,
+   "label": "cardioblast migration",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0003273",
+   "description": "The orderly movement of a cell from one site to another that will contribute to the formation of an endocardial cushion. The endocardial cushion is a specialized region of mesenchymal cells that will give rise to the heart septa and valves.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0003273",
+   "isRoot": false,
+   "label": "cell migration involved in endocardial cushion formation",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0005581",
+   "description": "A protein complex consisting of three collagen chains assembled into a left-handed triple helix. These trimers typically assemble into higher order structures.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0005581",
+   "isRoot": false,
+   "label": "collagen trimer",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0005856",
+   "description": "A cellular structure that forms the internal framework of eukaryotic and prokaryotic cells. The cytoskeleton includes intermediate filaments, microfilaments, microtubules, the microtrabecular lattice, and other structures characterized by a polymeric filamentous nature and long-range order within the cell. The various elements of the cytoskeleton not only serve in the maintenance of cellular shape but also have roles in other cellular functions, including cellular movement, cell division, endocytosis, and movement of organelles.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0005856",
+   "isRoot": false,
+   "label": "cytoskeleton",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0008078",
+   "description": "The orderly movement of mesodermal cells from one site to another.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0008078",
+   "isRoot": false,
+   "label": "mesodermal cell migration",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0008347",
+   "description": "The orderly movement of a glial cell, non-neuronal cells that provide support and nutrition, maintain homeostasis, form myelin, and participate in signal transmission in the nervous system.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0008347",
+   "isRoot": false,
+   "label": "glial cell migration",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0008354",
+   "description": "The orderly movement of a cell specialized to produce haploid gametes through the embryo from its site of production to the place where the gonads will form.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0008354",
+   "isRoot": false,
+   "label": "germ cell migration",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

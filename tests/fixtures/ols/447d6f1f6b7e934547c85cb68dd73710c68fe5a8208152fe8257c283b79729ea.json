@@ -1,0 +1,50 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "shrubland",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00083325",
+   "description": "A tropical moist broadleaf forest ecoregion of north-central Brazil. The Maranhao Babacu forests cover an area of 142,300 km2 extending across northeastern and central Maranhao state and northern Piaui state. The ecoregion is bounded by the Maranhao mangroves and the Northeastern Brazil restingas along the coast to the north, the Tocantins-Araguaia-Maranhao moist forests of Amazonia across the Pindare River to the northwest and west, the Cerrado tropical savanna to the south, and the Caatingas xeric shrublands to the east.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00083325",
+   "isRoot": true,
+   "label": "Maranhao Babacu Forests",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00096079",
+   "description": "A biosphere reserve in the northern Mexican State of Coahuila. Maderas del Carmen encompasses the Sierra del Carmen, a segment of the Sierra Madre Oriental range. The reserve includes both dry Chihuahuan Desert shrublands and forested sky islands, high-elevation enclaves of Sierra Madre Oriental pine-oak forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00096079",
+   "isRoot": true,
+   "label": "Maderas del Carmen Biosphere Reserve",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00262590",
+   "description": "A protected area that includes the wet summit lands of the Kohala Mountains, with two rare kinds of montane bogs surrounded by `ohi`a forests, shrublands, and grasslands. The Reserve extends downslope to the Kohala sea cliffs and a coastal dry grassland. Established 1987-07-09.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00262590",
+   "isRoot": true,
+   "label": "Pu'u O 'Umi Natural Area Reserve",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00266279",
+   "description": "A protected area. A hill covered with dry shrubland located a few kilometers south of the city of Zacapa in Guatemala.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00266279",
+   "isRoot": true,
+   "label": "Parque Nacional Cerro Miramundo",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

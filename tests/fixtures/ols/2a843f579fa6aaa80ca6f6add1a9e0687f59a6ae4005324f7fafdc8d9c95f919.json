@@ -1,0 +1,110 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "sample condition",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0100779",
+   "description": "An environmental data field which describes the state of the atmosphere at a given place during sampling.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100779",
+   "isRoot": false,
+   "label": "sampling weather conditions",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100780",
+   "description": "An environmental data field which describes the weather conditions prior to collection that may affect the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100780",
+   "isRoot": false,
+   "label": "presampling weather conditions",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100950",
+   "description": "A composite sampler which is automated to collect multiple discrete samples over a defined period or condition and combine them into a single composite sample without manual intervention.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100950",
+   "isRoot": false,
+   "label": "automatic composite sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100941",
+   "description": "A specimen collection device which is used to collect a single discrete samples from a specific location.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100941",
+   "isRoot": false,
+   "label": "grab sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100277",
+   "description": "A data field which describes whether the sample was collected from an individual in quarantine.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100277",
+   "isRoot": false,
+   "label": "sample collected in quarantine",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102185",
+   "description": "A specimen collection device manufactured by Teledyne ISCO designed to collect discrete or composite samples from environmental media according to predefined time intervals, flow conditions, or external triggers.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102185",
+   "isRoot": false,
+   "label": "ISCO sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100942",
+   "description": "A specimen collection device designed to collect and combine multiple individual samples over a defined time period, flow interval, or spatial range into a single aggregated sample.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100942",
+   "isRoot": false,
+   "label": "composite sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100951",
+   "description": "A composite sampler that collects multiple samples at intervals proportional to the flow rate of the sampled medium, producing a composite sample representative of flow-weighted conditions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100951",
+   "isRoot": false,
+   "label": "automatic flow-proportional composite sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102184",
+   "description": "A sampling strategy in which environments are sampled in response to observations, complaints, or reports from the community regarding a change in environmental conditions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102184",
+   "isRoot": false,
+   "label": "community triggered environmental monitoring",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102181",
+   "description": "A sampling strategy in which surface waters are systematically sampled to assess overall water quality, detect contaminants, and identify emerging risks. Surveillance is broad and ongoing, aiming to establish baseline conditions and detect changes over time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102181",
+   "isRoot": false,
+   "label": "surface water quality surveillance sampling",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "subsample id list",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

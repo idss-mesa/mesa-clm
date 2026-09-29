@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000383",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0002365",
+   "description": "Female quality of having complete, unaltered reproductive organs",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002365",
+   "isRoot": false,
+   "label": "intact female",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040020",
+   "description": "Female quality of being incapable to reproduce because of functional loss of the ovaries and/or uterus from surgical removal.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040020",
+   "isRoot": false,
+   "label": "spayed female",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

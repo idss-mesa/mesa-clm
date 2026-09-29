@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001110",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001110",
+  "description": "This class will be primarily filled by inference, any environmental system which necessarily includes living parts should be autoclassified here.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001110",
+  "isRoot": false,
+  "label": "ecosystem",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

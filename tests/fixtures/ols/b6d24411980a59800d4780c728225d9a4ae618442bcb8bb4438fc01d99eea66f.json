@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001616",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001616",
+  "description": "A CRID symbol denotes a specimen and used to distinguish one specimen from another in an investigation.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001616",
+  "isRoot": false,
+  "label": "specimen identifier",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Harpalini",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:60759",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_60759",
+   "isRoot": false,
+   "label": "Harpalini",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:247444",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_247444",
+   "isRoot": false,
+   "label": "unclassified Harpalini",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3054033",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3054033",
+   "isRoot": false,
+   "label": "Harpalini sp.",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001340",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0070000",
+   "description": "Sequential hermaphrodity is generally characterized by an organism producing female gametes and male gametes during different life stages.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070000",
+   "isRoot": false,
+   "label": "sequential hermaphrodite",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

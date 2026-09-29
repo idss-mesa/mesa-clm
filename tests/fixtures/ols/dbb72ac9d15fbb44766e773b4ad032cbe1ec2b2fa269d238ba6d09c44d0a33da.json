@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "device integrity",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0003809",
+   "description": "A measurement device that measures monolayer barrier integrity via measurement of membrane potential and electrical resistance across a cell monolayer in culture.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003809",
+   "isRoot": false,
+   "label": "Transepithelial Electrical Resistance (TEER) device",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001067",
+   "description": "A device or system in which perfusion units are integrated.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001067",
+   "isRoot": false,
+   "label": "perfusion station",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

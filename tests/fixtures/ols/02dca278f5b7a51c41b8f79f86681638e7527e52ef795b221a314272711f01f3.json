@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000094",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000094",
+  "description": "A speed/velocity unit which is equal to the speed of an object traveling 1 meter distance in one second.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000094",
+  "isRoot": false,
+  "label": "meter per second",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

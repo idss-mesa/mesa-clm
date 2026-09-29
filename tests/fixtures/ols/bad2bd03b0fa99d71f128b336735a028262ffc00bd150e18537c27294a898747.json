@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102272",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0001438",
+   "description": "A data field which describes whether there was prior Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) treatment with an antiviral agent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001438",
+   "isRoot": false,
+   "label": "prior sarscov2 antiviral treatment",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100534",
+   "description": "A data field which describes the absence or presence of antiviral treatment for a prior Monkeypox infection.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100534",
+   "isRoot": false,
+   "label": "prior mpox antiviral treatment",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

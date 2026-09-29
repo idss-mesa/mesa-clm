@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000078",
+  "ontology_id": "pco",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PCO:0000081",
+   "description": "The density of seedlings in a population or organisms (a single species), often measured as the number of seedlings per area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000081",
+   "isRoot": false,
+   "label": "seedling density of a population",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000082",
+   "description": "The density of seedlings in an ecological community (multiple species), often measured as the number of plants per area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000082",
+   "isRoot": false,
+   "label": "seedling density of an ecological community",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

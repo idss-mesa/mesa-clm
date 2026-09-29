@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000006",
+  "ontology_id": "taxrank"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "TAXRANK:0000006",
+  "description": "",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000006",
+  "isRoot": false,
+  "label": "species",
+  "ontologyId": "taxrank",
+  "synonyms": []
+ }
+}

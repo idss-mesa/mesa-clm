@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000084",
+  "ontology_id": "bco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "BCO:0000084",
+  "description": "A data item that is the output of a taxonomic identification process and associates some organismal entity with a taxon or taxa.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000084",
+  "isRoot": false,
+  "label": "identification assertion",
+  "ontologyId": "bco",
+  "synonyms": []
+ }
+}

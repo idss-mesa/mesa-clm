@@ -1,0 +1,90 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "deciduous forest",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01000816",
+   "description": "According to the NLCD 2011, areas of deciduous forest are dominated by trees generally greater than 5 meters tall, and making up more than 20% of total vegetation cover. The NLCD 2011 continues to state that more than 75% of these trees should shed foliage simultaneously in response to seasonal change. Such thresholds - which are themselves fuzzy - are not asserted in this definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000816",
+   "isRoot": false,
+   "label": "area of deciduous forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000387",
+   "description": "A deciduous broadleaf forest which is subject to tropical climate patterns.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000387",
+   "isRoot": false,
+   "label": "tropical deciduous broadleaf forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000388",
+   "description": "A semi-deciduous broadleaf forest which is subject to tropical climate patterns.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000388",
+   "isRoot": false,
+   "label": "tropical semi-deciduous broadleaf forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000386",
+   "description": "A deciduous needleleaf forest which is subject to temperate climate patterns.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000386",
+   "isRoot": false,
+   "label": "temperate deciduous needleleaf forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000385",
+   "description": "A deciduous broadleaf forest which is subject to temperate climate patterns.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000385",
+   "isRoot": false,
+   "label": "temperate deciduous broadleaf forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000109",
+   "description": "Land having a cover of trees, shrubs, or both.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000109",
+   "isRoot": false,
+   "label": "woodland area",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00005790",
+   "description": "Red soil typically derives from crystalline rock in warm, temperate, moist climates under deciduous or mixed forest. It has thin organic and organic-mineral layers, a black brown leached layer resting on an illuvium red layer. The majority of red soils have a loamy texture. Their chemical composition varies across regions, but often includes non-soluble material 90.47%, iron 3.61%, aluminium 2.92%, organic matter 1.01%, magnesium 0.70%, lime 0.56%, carbon dioxide 0.30%, potash 0.24%, soda 0.12%, phosphorus 0.09% and nitrogen 0.08%. \n\nOn the uplands, they are thin, poor and gravelly, sandy, or stony and porous, light-colored soils on which food crops like bajra can be grown. In contrast, on the lower plains and valleys they are rich, deep, dark colored fertile loam on which, under irrigation, can produce excellent crops like cotton, wheat, pulses, tobacco, jowar, linseed, millet, potatoes and fruits.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00005790",
+   "isRoot": false,
+   "label": "red soil",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000855",
+   "description": "According to the NLCD 2011, areas of mixed forest are dominated by trees generally greater than 5 meters tall, and making up more than 20% of total vegetation cover. The NLCD 2011 continues to state that neither deciduous or evergreen trees make up more than 75% of the total tree cover. Such thresholds - which are themselves fuzzy - are not asserted in this definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000855",
+   "isRoot": false,
+   "label": "area of mixed forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

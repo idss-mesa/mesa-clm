@@ -1,0 +1,110 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002372",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0002373",
+   "description": "A clinical history in which there is a diagnosis of cancer in the female sibling of a parent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002373",
+   "isRoot": false,
+   "label": "aunt clinical history of cancer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002374",
+   "description": "A clinical history in which there is a diagnosis of cancer in a male sibling.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002374",
+   "isRoot": false,
+   "label": "brother clinical history of cancer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002375",
+   "description": "A clinical history in which there is a diagnosis of cancer in a person's female child.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002375",
+   "isRoot": false,
+   "label": "daughter clinical history of cancer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002376",
+   "description": "A clinical history in which there is a diagnosis of cancer in a male parent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002376",
+   "isRoot": false,
+   "label": "father clinical history of cancer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002377",
+   "description": "A clinical history in which there is a diagnosis of cancer in a female parent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002377",
+   "isRoot": false,
+   "label": "mother clinical history of cancer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002378",
+   "description": "A clinical history in which there is a diagnosis of cancer in a female sibling.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002378",
+   "isRoot": false,
+   "label": "sister clinical history of cancer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002379",
+   "description": "A clinical history in which there is a diagnosis of cancer in a person's male child.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002379",
+   "isRoot": false,
+   "label": "son clinical history of cancer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002380",
+   "description": "A clinical history in which there is a diagnosis of cancer in a male sibling of a parent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002380",
+   "isRoot": false,
+   "label": "uncle clinical history of cancer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002381",
+   "description": "A clinical history in which there is a diagnosis of cancer in a female parent of a parent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002381",
+   "isRoot": false,
+   "label": "grandmother clinical history of cancer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002382",
+   "description": "A clinical history in which there is a diagnosis of cancer in a male parent of a parent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002382",
+   "isRoot": false,
+   "label": "grandfather clinical history of cancer",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000431",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000431",
+  "description": "A class created to group GFM 2000 terms by the dominant vegetation type. Definitions pending. The subclasses of this class need to be checked: are they properly placed under other classes or is this corrected and the dominant form of mixed vegetation noted in the label?",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000431",
+  "isRoot": false,
+  "label": "mixed forest",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

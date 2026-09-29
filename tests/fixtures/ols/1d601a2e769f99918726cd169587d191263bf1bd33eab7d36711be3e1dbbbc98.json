@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/IAO_0000027",
+  "ontology_id": "iao"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "IAO:0000027",
+  "description": "An information content entity that is intended to be one or more truthful statement(s) about something (modulo, e.g., measurement precision or other systematic errors) and is constructed/acquired by a method which reliably tends to produce (approximately) truthful statements.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/IAO_0000027",
+  "isRoot": false,
+  "label": "data entity",
+  "ontologyId": "iao",
+  "synonyms": []
+ }
+}

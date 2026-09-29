@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "meter",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "UO:0000008",
+   "description": "A length unit which is equal to the length of the path traveled by light in vacuum during a time interval of 1/299 792 458 of a second.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000008",
+   "isRoot": false,
+   "label": "meter",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000008",
+   "description": "A length unit which is equal to the length of the path traveled by light in vacuum during a time interval of 1/299 792 458 of a second.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000008",
+   "isRoot": false,
+   "label": "meter",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102192",
+   "description": "A volumetric flow rate unit which is the measure of the volume of one cubic meter of matter crosses a given surface during the period of time equal to one second.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102192",
+   "isRoot": false,
+   "label": "cubic meter per second",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102193",
+   "description": "A volumetric flow rate unit which is the measure of the volume of one cubic meter of matter crosses a given surface during the period of time equal to one minute.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102193",
+   "isRoot": false,
+   "label": "cubic meter per minute",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102194",
+   "description": "A volumetric flow rate unit which is the measure of the volume of one cubic meter of matter crosses a given surface during the period of time equal to one hour.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102194",
+   "isRoot": false,
+   "label": "cubic meter per hour",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102185",
+   "description": "A specimen collection device manufactured by Teledyne ISCO designed to collect discrete or composite samples from environmental media according to predefined time intervals, flow conditions, or external triggers.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102185",
+   "isRoot": false,
+   "label": "ISCO sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000096",
+   "description": "A volume unit which is equal to the volume of a cube with edges one meter in length. One cubic meter equals to 1000 liters.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000096",
+   "isRoot": false,
+   "label": "cubic meter",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000096",
+   "description": "A volume unit which is equal to the volume of a cube with edges one meter in length. One cubic meter equals to 1000 liters.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000096",
+   "isRoot": false,
+   "label": "cubic meter",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000083",
+   "description": "A mass unit density which is equal to mass of an object in kilograms divided by the volume in cubic meters.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000083",
+   "isRoot": false,
+   "label": "kilogram per cubic meter",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000089",
+   "description": "A molar volume unit which is equal to 1 cubic meter occupied by one mole of a substance in the form of a solid, liquid, or gas.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000089",
+   "isRoot": false,
+   "label": "cubic meter per mole",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000093",
+   "description": "A specific volume unit which is equal to one cubic meter volume occupied by one kilogram of a particular substance.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000093",
+   "isRoot": false,
+   "label": "cubic meter per kilogram",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000094",
+   "description": "A speed/velocity unit which is equal to the speed of an object traveling 1 meter distance in one second.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000094",
+   "isRoot": false,
+   "label": "meter per second",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000083",
+   "description": "A mass unit density which is equal to mass of an object in kilograms divided by the volume in cubic meters.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000083",
+   "isRoot": false,
+   "label": "kilogram per cubic meter",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000089",
+   "description": "A molar volume unit which is equal to 1 cubic meter occupied by one mole of a substance in the form of a solid, liquid, or gas.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000089",
+   "isRoot": false,
+   "label": "cubic meter per mole",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000093",
+   "description": "A specific volume unit which is equal to one cubic meter volume occupied by one kilogram of a particular substance.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000093",
+   "isRoot": false,
+   "label": "cubic meter per kilogram",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000094",
+   "description": "A speed/velocity unit which is equal to the speed of an object traveling 1 meter distance in one second.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000094",
+   "isRoot": false,
+   "label": "meter per second",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000008",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000008",
+   "isRoot": false,
+   "label": "meter based unit",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000089",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000089",
+   "isRoot": false,
+   "label": "cubic meter per mole based unit",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000093",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000093",
+   "isRoot": false,
+   "label": "cubic meter per kilogram based unit",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000094",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000094",
+   "isRoot": false,
+   "label": "meter per second based unit",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

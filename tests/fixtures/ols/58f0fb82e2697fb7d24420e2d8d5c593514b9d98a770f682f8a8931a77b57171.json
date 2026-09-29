@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Carabus goryi",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:2680333",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2680333",
+   "isRoot": false,
+   "label": "Carabus goryi",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

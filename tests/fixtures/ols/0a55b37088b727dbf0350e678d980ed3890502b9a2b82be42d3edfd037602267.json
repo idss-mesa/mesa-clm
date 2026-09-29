@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000177",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000177",
+  "description": "A grassland ecosystem in which dominant ecological communities have reached their climax successional state.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000177",
+  "isRoot": false,
+  "label": "grassland biome",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

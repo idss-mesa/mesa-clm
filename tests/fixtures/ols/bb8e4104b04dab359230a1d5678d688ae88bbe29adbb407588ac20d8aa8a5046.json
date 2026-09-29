@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000032",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000032",
+  "description": "A time unit which is equal to 3600 seconds or 60 minutes.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000032",
+  "isRoot": false,
+  "label": "hour",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

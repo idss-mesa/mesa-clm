@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "The geographic latitude",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "decimalLatitude",
+   "description": "The geographic latitude (in decimal degrees, using the spatial reference system given in geodeticDatum) of the geographic center of a Location. Positive values are north of the Equator, negative values are south of it. Legal values lie between -90 and 90, inclusive.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/decimalLatitude",
+   "isRoot": true,
+   "label": "Decimal Latitude",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

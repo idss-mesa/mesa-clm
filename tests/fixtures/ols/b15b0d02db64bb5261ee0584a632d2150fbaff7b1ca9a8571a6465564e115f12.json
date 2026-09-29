@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "A standard term to express the determiner's doubts about the Identification",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

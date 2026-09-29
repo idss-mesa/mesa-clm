@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "decimal latitude",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001862",
+   "description": "A decimal latitude measurement in degrees in conformance with the ISO 6709 standard.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001862",
+   "isRoot": false,
+   "label": "latitude specification (ISO 6709)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

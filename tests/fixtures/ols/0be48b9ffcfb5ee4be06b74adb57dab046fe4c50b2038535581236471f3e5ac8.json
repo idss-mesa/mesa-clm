@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_1000213",
+  "ontology_id": "uo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "UO:0000213",
+   "description": "A colony forming unit which a measure of viable bacterial numbers in one milliliter.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000213",
+   "isRoot": false,
+   "label": "colony forming unit per milliliter",
+   "ontologyId": "uo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,120 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "laboratory name",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0100512",
+   "description": "A data field which describes the name of the lab within the organization that performed the antimicrobial resistance (AMR) testing.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100512",
+   "isRoot": false,
+   "label": "AMR testing by laboratory name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100462",
+   "description": "A data field which describes the specific laboratory affiliation of the individual who performed the isolation procedure.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100462",
+   "isRoot": false,
+   "label": "isolated by laboratory name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100428",
+   "description": "A data field which describes the specific laboratory affiliation of the sample collector.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100428",
+   "isRoot": false,
+   "label": "sample collected by laboratory name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100470",
+   "description": "A data field which describes the specific laboratory affiliation of those responsible for sequencing the isolate's genome.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100470",
+   "isRoot": false,
+   "label": "sequenced by laboratory name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001202",
+   "description": "A data field which describes the name of the third party company or laboratory that provided services.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001202",
+   "isRoot": false,
+   "label": "third party laboratory service provider name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000151",
+   "description": "A laboratory sequencing datum which describes the name of the bioinformatics pipeline used.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000151",
+   "isRoot": false,
+   "label": "bioinformatics pipeline name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002131",
+   "description": "The laboratory protocol used to determine virulence phenotypes and markers.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002131",
+   "isRoot": false,
+   "label": "virulence testing protocol name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001255",
+   "description": "A data field which describes the name and description of the laboratory host used to propagate the source organism or material from which the sample was obtained.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001255",
+   "isRoot": false,
+   "label": "lab host",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100454",
+   "description": "A data field which describes the laboratory method used to grow, prepare, and/or isolate the microbial isolate.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100454",
+   "isRoot": false,
+   "label": "microbiological method",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100528",
+   "description": "An antimicrobial resistance (AMR) field which describes the specific name and version of the plate, panel, or other platform used for antibiotic susceptibility testing.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100528",
+   "isRoot": false,
+   "label": "AMR laboratory typing platform version",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "ARO:3004366",
+   "description": "On January 1, 2005 the National Committee on Clinical Laboratory Standards (NCCLS) changed its name to CLSI",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ARO_3004366",
+   "isRoot": false,
+   "label": "Clinical and Laboratory Standards Institute (CLSI)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

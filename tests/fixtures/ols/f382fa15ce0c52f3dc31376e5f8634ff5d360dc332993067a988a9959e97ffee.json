@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000659",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0000659",
+  "description": "A planned process with the objective to obtain a material entity for potential use as an input upon which measurements or observations are performed.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000659",
+  "isRoot": false,
+  "label": "specimen collection process",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

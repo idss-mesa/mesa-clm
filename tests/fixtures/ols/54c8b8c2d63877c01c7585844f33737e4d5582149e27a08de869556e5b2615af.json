@@ -1,0 +1,9 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/RO_HOM0000030",
+  "ontology_id": "ro",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": []
+}

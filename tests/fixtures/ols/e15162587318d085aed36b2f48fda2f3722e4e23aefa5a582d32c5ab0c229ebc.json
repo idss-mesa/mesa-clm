@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0010066",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0010066",
+  "description": "A length unit which is equal to one thousand meters.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0010066",
+  "isRoot": false,
+  "label": "kilometer",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

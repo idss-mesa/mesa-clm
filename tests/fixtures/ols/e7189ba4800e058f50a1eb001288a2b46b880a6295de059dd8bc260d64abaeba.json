@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "Name of the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

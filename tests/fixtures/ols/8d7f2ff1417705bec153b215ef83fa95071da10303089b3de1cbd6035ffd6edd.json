@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "National Land Cover Database Vegetation Type Name",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "taxrank",
+  "query": "subspecies",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "TAXRANK:0000023",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000023",
+   "isRoot": false,
+   "label": "subspecies",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  },
+  {
+   "curie": "TAXRANK:0000055",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000055",
+   "isRoot": false,
+   "label": "subspecificaggregate",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  }
+ ]
+}

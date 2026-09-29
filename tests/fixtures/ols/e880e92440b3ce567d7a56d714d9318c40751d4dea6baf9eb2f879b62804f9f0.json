@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "class",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01001467",
+   "description": "This is an odd class, as it's not a mountain in itself but is used to classify elevated basins and plateaus surrounded by mountains.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001467",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 7 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000205",
+   "description": "A subtropical condition is an environmental condition in which an envrionmental system receives more solar irradiance than those with temperate conditions, but less than those with tropical conditions. At low elevations, this typically results in eight months of the year having average temperatures greater than or equal to 10 degrees Celsius with the coldest monthly temperature averaging between 2 and 13 degrees Celsius.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000205",
+   "isRoot": false,
+   "label": "subtropical",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000403",
+   "description": "This class corresponds to  the \"Tropical Mixed needleleaf / broadleaf forest\" category of the updated Global Forest Map classification (GFM 2000). To reconstruct the original class, an aggregate class with this and the \"tropical mixed needleleaf forest\" class can be made.\n\nThe relationship between this \"forest\" class and the mangrove swamp must be clarified.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000403",
+   "isRoot": false,
+   "label": "tropical mangrove",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000387",
+   "description": "A deciduous broadleaf forest which is subject to tropical climate patterns.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000387",
+   "isRoot": false,
+   "label": "tropical deciduous broadleaf forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000388",
+   "description": "A semi-deciduous broadleaf forest which is subject to tropical climate patterns.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000388",
+   "isRoot": false,
+   "label": "tropical semi-deciduous broadleaf forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000389",
+   "description": "A temperate mixed forest which has communities of trees composed primarily of species with broad leaves.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000389",
+   "isRoot": false,
+   "label": "temperate mixed broadleaf forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000390",
+   "description": "A temperate mixed forest which has communities of trees composed primarily of species with needle-like leaves (e.g. conifers).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000390",
+   "isRoot": false,
+   "label": "temperate mixed needleleaf forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000401",
+   "description": "A mixed needleleaf forest which has communities of trees composed primarily of species with needle-like leaves (e.g. conifers).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000401",
+   "isRoot": false,
+   "label": "tropical mixed needleleaf forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000402",
+   "description": "A tropical mixed broadleaf forest which has communities of trees composed primarily of species with broad leaves.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000402",
+   "isRoot": false,
+   "label": "tropical mixed broadleaf forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001461",
+   "description": "A high-elevation mountain which has a maximum elevation greater than 4500 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001461",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 1 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001462",
+   "description": "A high-elevation mountain which has a maximum elevation between 3500 and 4500 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001462",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 2 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001463",
+   "description": "A high-elevation mountain which has a maximum elevation between 2500 and 3500 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001463",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 3 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001464",
+   "description": "A mid-elevation mountain which has a maximum elevation between 1500 and 2499 metres above sea level and a slope greater than or equal to two degrees.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001464",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 4 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001465",
+   "description": "A mid-elevation mountain which has a maximum elevation between 1000 and 1499 metres above sea level and either 1) a slope greater than or equal to five degrees or 2) a local elevation range, within a 7 kilometre radius, of greater than 300 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001465",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 5 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001466",
+   "description": "A mid-elevation mountain which has a maximum elevation between 300 and 999 metres above sea level and a local elevation range, within a 7 kilometre radius, of greater than 300 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001466",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 6 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000813",
+   "description": "Material parts of astronomical bodies generally have boundaries formed by discontinuities in qualities, composition, or other physical characterisitcs. These boundaries are sometimes sharp, and sometimes diffuse, with different classification systems and communities declaring varying thresholds (e.g. for where a shoreline, forest, or other entity begins and ends). However, some boundaries are declared by fiat - that is, by arbitrary human convention or decree - particularly by regulatory or other authorities and communities of practice. The classes in this hierarchy attempt to offer generalisable definitions that allow multiple classfiication systems to map to and interoperate through. If desired, we can create classes that declare thresholds used by a given authority or community under the more generic ones, annotated with source information.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000813",
+   "isRoot": false,
+   "label": "astronomical body part",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001339",
+   "description": "A tidal flow process which occurs once per day in ocean waters where a second daily oscillation is blocked by land masses or ocean basin geometry.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001339",
+   "isRoot": false,
+   "label": "diurnal marine tidal flow process",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001343",
+   "description": "A marine tidal flow process which occurs twice per day, resulting in two high and two low tides per day, both of roughly equal amplitude.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001343",
+   "isRoot": false,
+   "label": "semi-diurnal marine tidal flow process",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001382",
+   "description": "An area which is dominated by dense accumulations of mussels attached to a substrate other than conspecifics, including the associated faunal communities and predators present on the mussels (e.g., starfish).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001382",
+   "isRoot": false,
+   "label": "area of attached mussel assemblages",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001383",
+   "description": "An area which is dominated by dense accumulations of mussels, of the genus Modiolus, attached to a substrate other than conspecifics, including the associated faunal communities and predators present on the mussels (e.g., starfish).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001383",
+   "isRoot": false,
+   "label": "area of attached Modiolus assemblages",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

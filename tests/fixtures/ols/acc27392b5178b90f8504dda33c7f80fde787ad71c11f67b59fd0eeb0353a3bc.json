@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "meter",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01001067",
+   "description": "An impact event during which a meteoroid collides with another astronomical body.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001067",
+   "isRoot": false,
+   "label": "meterorite impact",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000195",
+   "description": "A natural depression or hole in the surface topography caused by the removal of soil or bedrock, often both, by water. Sinkholes may vary in size from less than a meter to several hundred meters both in diameter and depth, and vary in form from soil-lined bowls to bedrock-edged chasms.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000195",
+   "isRoot": false,
+   "label": "sinkhole",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000264",
+   "description": "A mountain rising from the ocean seafloor that does not reach to the water's surface (sea level), and thus is not an island. Typically formed from volcanoes that rise abruptly and are usually found rising from a seafloor of 1,000 - 4,000 meters depth. Independent features that rise to at least 1,000 meters above the seafloor.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000264",
+   "isRoot": false,
+   "label": "seamount",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001369",
+   "description": "A shrubland biome which is densely vegetated by dwarf or short mangroves (and associates) that are generally less than 6 meters in height, is tidally influenced,  is located in tropical or subtropical areas.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001369",
+   "isRoot": false,
+   "label": "tidal mangrove shrubland",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001522",
+   "description": "A mass of sea ice which 1) is less than 2 meters in thickness and 2) forms along the coast, where it is attached to the shore, to an ice wall, to an ice front, or between shoals or grounded icebergs.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001522",
+   "isRoot": false,
+   "label": "fast ice",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001546",
+   "description": "An ice mass which has broken away from a larger ice mass on land, such as a glacier or ice shelf, and may be either afloat or aground.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001546",
+   "isRoot": false,
+   "label": "iceberg",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03600068",
+   "description": "The ice itself can measure up to 3–4 meters in length at ground level can extend downwards into the ground up to several meters.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03600068",
+   "isRoot": false,
+   "label": "ice wedge",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000081",
+   "description": "A mountain is generally steeper than a hill, but there is no universally accepted standard definition for the height of a mountain or a hill although a mountain usually has an identifiable summit. The USGS had previously defined mountains as localised elevations of more than 300 meters; however, the organisation has accepted there are no technical definitions in the US. In ENVO, we primarily use the UNEP-WCMC classification to be compliant with SDG monitoring, but we can host other classifications on request: http://www.fao.org/sustainable-development-goals/indicators/1542/en/",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000081",
+   "isRoot": false,
+   "label": "mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000190",
+   "description": "Feature on the ocean floor at a depth of 3500 - 6000 meters.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000190",
+   "isRoot": false,
+   "label": "abyssal feature",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000218",
+   "description": "A hydrothermal vent found on the ocean floor. The vents are formed in fields hundreds of meters wide when superheated water from below the Earth's crust comes through the ocean floor. The superheated water is rich in dissolved minerals from the crust, most notably sulfides, which crystallize to create a chimney-like structure around each vent. When the superheated water in the vent comes in contact with the cold ocean water, many minerals are precipitated, creating the distinctive black color. The metal sulfides that are deposited can become massive sulfide ore deposits in time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000218",
+   "isRoot": false,
+   "label": "black smoker",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000310",
+   "description": "For the moment, no distinction is made between meteroids, lithometeors, or meteorites in this class. These can be added if needed.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000310",
+   "isRoot": false,
+   "label": "meteor impact crater",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000380",
+   "description": "An ice mass which 1) is attached to the coast 2) at least 2 meters in thickness 3) forms where a glacier or ice mass flows down to a coastline and onto the ocean surface and 4) grows by annual snow accumulation or by the seaward extension of land glaciers.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000380",
+   "isRoot": false,
+   "label": "ice shelf",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000408",
+   "description": "A linear volcanic vent through which lava erupts, usually without any explosive activity. The vent is usually a few meters wide and may be many kilometers long. Fissure vents can cause large flood basalts and hannels. The volcano can usually be seen as a crack in the ground or on the ocean floor. Narrow fissures can be filled in with lava that hardens.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000408",
+   "isRoot": false,
+   "label": "volcanic fissure",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000498",
+   "description": "An intrusive igneous body. Its thickness is usually much smaller than its other two dimensions. Thickness can vary from sub-centimeter scale to many meters in thickness and the lateral dimensions can extend over many kilometers. A dike is an intrusion into a cross-cutting fissure, meaning a dike cuts across other pre-existing layers or bodies of rock, this means that a dike is always younger than the rocks that contain it. Dikes are usually high angle to near vertical in orientation, but subsequent tectonic deformation may rotate the sequence of strata through which the dike lies so that the latter becomes horizontal.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000498",
+   "isRoot": false,
+   "label": "volcanic dike",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00001998",
+   "description": "An environmental material which is primarily composed of minerals, varying proportions of sand, silt, and clay, organic material such as humus, interstitial gases, liquids, and a broad range of resident micro- and macroorganisms.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00001998",
+   "isRoot": false,
+   "label": "soil",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000058",
+   "description": "Kelp forests and beds may extend many meters above the sea floor, thus should not be considered a type of \"bed\".",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000058",
+   "isRoot": false,
+   "label": "kelp forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000103",
+   "description": "A warm water, narrow marine surface current flowing from the equator to high latitudes at speeds between 40 and 120 kilometers per day. Western boundary currents are the deepest ocean surface flows, usually extending 1000 meters below the ocean surface.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000103",
+   "isRoot": false,
+   "label": "western boundary current",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000126",
+   "description": "The marine sublittoral zone is part of the marine littoral zone which is permanently covered by seawater. In physical oceanography, the sublittoral zone refers to coastal regions with significant tidal flows and energy dissipation, including non-linear flows, internal waves, river outflows and oceanic fronts. In practice, this typically extends to the edge of the continental shelf, with depths around 200 meters. In marine biology, the sublittoral refers to the areas where sunlight reaches the ocean floor, that is, where the water is never so deep as to take it out of the photic zone.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000126",
+   "isRoot": false,
+   "label": "marine sub-littoral zone",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000816",
+   "description": "According to the NLCD 2011, areas of deciduous forest are dominated by trees generally greater than 5 meters tall, and making up more than 20% of total vegetation cover. The NLCD 2011 continues to state that more than 75% of these trees should shed foliage simultaneously in response to seasonal change. Such thresholds - which are themselves fuzzy - are not asserted in this definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000816",
+   "isRoot": false,
+   "label": "area of deciduous forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000843",
+   "description": "According to the NLCD 2011, areas of evergreen forest are dominated by trees generally greater than 5 meters tall, and making up more than 20% of total vegetation cover. The NLCD 2011 continues to state that more than 75% of these trees should maintain their foliage despite seasonal change - the canopy is never without green foliage. Such thresholds - which are themselves fuzzy - are not asserted in this definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000843",
+   "isRoot": false,
+   "label": "area of evergreen forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00000264",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:00000265",
+   "description": "A flat-topped seamount.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000265",
+   "isRoot": false,
+   "label": "guyot",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

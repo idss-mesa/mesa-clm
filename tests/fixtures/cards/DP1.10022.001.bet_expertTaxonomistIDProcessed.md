@@ -1,0 +1,42 @@
+# Dataset: DP1.10022.001 / bet_expertTaxonomistIDProcessed
+Product: DP1.10022.001 — Ground beetles sampled from pitfall traps. Taxonomically identified ground beetles and the plots and times from which they were collected.
+Source: NEON (National Ecological Observatory Network) Data API, basic package, stacked across site-months.
+Sites: HARV (Harvard Forest & Quabbin Watershed NEON, Massachusetts, domain D01 Northeast; temperate deciduous/mixed forest) and SRER (Santa Rita Experimental Range NEON, Arizona, domain D14 Desert Southwest; semi-arid desert grassland/shrubland).
+Rows: 1526; months covered: 2020-07 to 2024-10 (29 distinct months).
+
+## Columns (name | NEON description | type | unit | profile)
+- uid | Unique ID within NEON database; an identifier for the record | string | - | (identifier; not profiled)
+- namedLocation | Name of the measurement location in the NEON database | string | - | 20 distinct; top: SRER_006.basePlot.bet (153), HARV_002.basePlot.bet (126), HARV_005.basePlot.bet (117), SRER_005.basePlot.bet (112), HARV_021.basePlot.bet (100), SRER_002.basePlot.bet (100), SRER_001.basePlot.bet (94), HARV_006.basePlot.bet (77)
+- domainID | Unique identifier of the NEON domain | string | - | 2 distinct; top: D01 (784), D14 (742)
+- siteID | NEON site code | string | - | 2 distinct; top: HARV (784), SRER (742)
+- plotID | Plot identifier (NEON site code_XXX) | string | - | 20 distinct; top: SRER_006 (153), HARV_002 (126), HARV_005 (117), SRER_005 (112), HARV_021 (100), SRER_002 (100), SRER_001 (94), HARV_006 (77)
+- setDate | Date that trap was set | dateTime | - | 92 distinct; top: 2022-07-26 (61), 2022-04-19 (56), 2022-06-28 (51), 2020-07-15 (40), 2022-07-12 (38), 2021-08-04 (36), 2021-07-27 (35), 2022-06-14 (33)
+- collectDate | Date of the collection event | dateTime | - | 93 distinct; top: 2022-08-09 (61), 2022-05-03 (56), 2022-07-12 (51), 2020-07-29 (40), 2022-07-26 (38), 2021-08-18 (36), 2021-08-10 (35), 2022-06-28 (33)
+- identifiedDate | Date on which the sample, individual, or specimen was identified | dateTime | - | 29 distinct; top: 2022-10-04 (229), 2023-08-21 (193), 2024-12-18 (161), 2021-09-20 (135), 2024-11-21 (126), 2022-05-30 (101), 2023-09-01 (94), 2025-10-30 (70)
+- individualID | Domain-level unique identifier for an individual: NEON.MOD.D##.###### | string | - | 1526 distinct; top: NEON.BET.D01.005872 (1), NEON.BET.D01.006049 (1), NEON.BET.D01.005918 (1), NEON.BET.D01.006055 (1), NEON.BET.D01.005874 (1), NEON.BET.D01.005946 (1), NEON.BET.D01.005898 (1), NEON.BET.D01.005896 (1)
+- taxonID | Species code, based on one or more sources | string | - | 65 distinct; top: DISROB1 (171), SELAEN (123), CARGOR (100), SYNIMP (88), APRTUC (84), SPHSTE1 (71), PTETRI3 (66), PTEROS (59)
+- kingdom | The scientific name of the kingdom in which the taxon is classified | string | - | 1 distinct; top: Animalia (1526)
+- phylum | The scientific name of the phylum or division in which the taxon is classified | string | - | 1 distinct; top: Arthropoda (1526)
+- class | The scientific name of the class in which the taxon is classified | string | - | 1 distinct; top: Insecta (1526)
+- order | The scientific name of the order in which the taxon is classified | string | - | 1 distinct; top: Coleoptera (1526)
+- family | The scientific name of the family in which the taxon is classified | string | - | 1 distinct; top: Carabidae (1526)
+- subfamily | The scientific name of the subfamily in which the organism is classified | string | - | 6 distinct; top: Harpalinae (1138), Carabinae (326), Nebriinae (48), Trechinae (7), Cicindelinae (5), Scaritinae (2)
+- tribe | The scientific name of the tribe in which the taxon is classified | string | - | 17 distinct; top: Harpalini (512), Pterostichini (210), Cychrini (169), Lebiini (158), Carabini (157), Sphodrini (88), Chlaeniini (55), Notiophilini (48)
+- genus | The scientific name of the genus in which the organism is classified | string | - | 36 distinct; top: Selenophorus (237), Discoderus (218), Pterostichus (193), Sphaeroderus (169), Carabus (118), Synuchus (88), Apristus (84), Chlaenius (55)
+- subgenus | The scientific name of the subgenus in which the taxon is classified. Values should include the genus to avoid homonym confusion | string | - | 38 distinct; top: Selenophorus (174), Carabus (100), Hypherpes (78), Cylindrocharis (59), Bothriopterus (45), Crossonychus (39), Carabosoma (36), Celiamorphus (36)
+- specificEpithet | The specific epithet (second part of the species name) of the scientific name applied to the taxon | string | - | 60 distinct; top: robustus (171), aeneopiceus (123), goryi (100), stenostomus (91), impunctatus (88), tuckeri (84), canadensis (78), tristis (66)
+- infraspecificEpithet | The infraspecific epithet (scientific name below the rank of species) of the scientific name applied to the taxon | string | - | 4 distinct; top: lecontei (71), canadensis (58), lucidula (20), platicollis (3)
+- scientificName | Scientific name, associated with the taxonID. This is the name of the lowest level taxonomic rank that can be determined | string | - | 65 distinct; top: Discoderus robustus (171), Selenophorus aeneopiceus (123), Carabus goryi (100), Synuchus impunctatus (88), Apristus tuckeri (84), Sphaeroderus stenostomus lecontei (71), Pterostichus tristis (66), Pterostichus rostratus (59)
+- scientificNameAuthorship | Name of the individual(s) who designated the scientific name of the taxon | string | - | 21 distinct; top: Dejean (332), Casey (300), Say (188), Horn (173), LeConte (83), Chaudoir (81), Newman (68), Schaeffer (51)
+- taxonRank | The lowest level taxonomic rank that can be determined for the individual or specimen | string | - | 3 distinct; top: species (1352), subspecies (152), genus (22)
+- identificationQualifier | A standard term to express the determiner's doubts about the Identification | string | - | all blank
+- sex | M for male, F for female, U for unknown | string | - | 3 distinct; top: F (800), M (715), U (11)
+- morphospeciesID | Identifier for morphospecies | string | - | 3 distinct; top: TKW.2024.MorphF (17), TKW.2017.MorphG (4), TKW.2024.MorphH (1)
+- identificationReferences | A list of sources (concatenated and semicolon separated) used to derive the specific taxon concept; including field guide editions, books, or versions of NEON keys used | string | - | 22 distinct; top: Lindroth, C. H. 1969. The ground-beetles (Carabidae, excl. C (566), Messer, P. W., and B. T. Raber. 2021. A review of Nearctic S (237), Other (163), Barr Jr., T. C. 1974a. Key to species and subspecies of Spha (98), Casey, T.L. 1920. Memoirs on the Coleoptera. IX. The New Era (84), Barr Jr., T. C. 1971c. The North American Pterostichus of th (59), Bell, R. T. 1960. A Revision of the Genus Chlaenius Bonelli  (55), Perrault, G. G. 1973. A taxonomic review of the eastern Near (53)
+- identifiedBy | An identifier for the technician who identified the specimen | string | - | 2 distinct; top: Kipling Will (995), Robert L. Davidson (531)
+- nativeStatusCode | The process by which the taxon became established in the location | string | - | 3 distinct; top: N (1444), UNK (81), I (1)
+- laboratoryName | Name of the laboratory or facility that is processing the sample | string | - | 2 distinct; top: Essig Museum of Entomology (995), Carnegie Museum of Invertebrate Zoology (531)
+- identificationRemarks | Comments or notes about the identification | string | - | 6 distinct; top: comparison to EMEC specimens (109), EMEC specimen comparison (33), comparison to CAS Hieke Ided specimens (23), comparison to EMEC Ided specimens (8), aedeagal apex examined (2), compared to previous ID-ed specimens in Essig (1)
+- sampleCondition | Condition of a sample | string | - | all blank
+- remarks | Technician notes; free text comments accompanying the record | string | - | 14 distinct; top: nr. robustus (17), teneral (10), nr. pedicularis (4), abdomen missing (2), right metaleg missing (2), front legs missing (1), infected with Laboulbeniales fungi on left protibia (1), badly damaged and repaired with glue (1)
+- identificationHistoryID | Identifier for linking records related to this identification history | string | - | 7 distinct; top: a3c2692c-d09b-4e9c-a54c-427f6385153f (1), 2603db42-b848-42a4-9e8d-7a95cf53b924 (1), 80a2b0c8-3e62-42dc-a10b-eb4ab27fa651 (1), c4db4acd-631d-4742-a4ee-d0f1f020e73f (1), 6c382caa-cb11-41fc-bd1c-9a4cd789ef89 (1), da886623-2b60-4b7c-99a3-6d62d0e965cf (1), 139d92cf-8c2f-4534-8949-21650ad1c717 (1)

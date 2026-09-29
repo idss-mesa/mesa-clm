@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00002983",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01000551",
+   "description": "A fuel oil which is 1) composed primarily of alkanes having between 5-15 carbon atoms with the general formula CnH2n+2, 2) is generally odorless or has only a slight odor, 3) produces only small amounts of soot relative to other fuel oils, 4) is highly refined.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000551",
+   "isRoot": false,
+   "label": "paraffin oil",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001608",
+   "description": "For speakers of British English, kerosene is often referred to as paraffin.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001608",
+   "isRoot": false,
+   "label": "kerosene oil",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "distance",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0000040",
+   "description": "A quality that is the extent of space between two entities.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000040",
+   "isRoot": false,
+   "label": "distance",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000374",
+   "description": "A distance which is greater relative to the normal or average.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000374",
+   "isRoot": false,
+   "label": "increased distance",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000375",
+   "description": "A distance which is lesser relative to the normal or average.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000375",
+   "isRoot": false,
+   "label": "decreased distance",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0045014",
+   "description": "A distance which is relatively normal or average.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0045014",
+   "isRoot": false,
+   "label": "normal distance",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000052",
+   "description": "Shapes are invariant on size transformations. Shapes can be subdivided into 2D and 3D shapes, We can also make a distinction between shapes of complete self-connected objects, and shapes of parts of objects.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000052",
+   "isRoot": false,
+   "label": "shape",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000122",
+   "description": "Length often refers to the longer or longest dimension of an object, however, this is not always true. See https://github.com/pato-ontology/pato/issues/337 for full discussion.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000122",
+   "isRoot": false,
+   "label": "length",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000921",
+   "description": "Width often refers to the dimension that is greater than the extent in only one of the other two orthogonal dimensions, however, this is not always true. See https://github.com/pato-ontology/pato/issues/337 for full discussion.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000921",
+   "isRoot": false,
+   "label": "width",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001242",
+   "description": "A physical quality which is equal to the distance between repeating units of a wave pattern.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001242",
+   "isRoot": false,
+   "label": "wavelength",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001609",
+   "description": "A spatial pattern inhering in a bearer by virtue of the bearer's being scattered; spread irregularly, and at a distance from each other.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001609",
+   "isRoot": false,
+   "label": "sparse",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001687",
+   "description": "A positional quality inhering in a bearer by virtue of the bearer's vertical distance of a point above or below a reference surface.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001687",
+   "isRoot": false,
+   "label": "elevation",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001711",
+   "description": "An 1-D extent quality inhering in two-dimensional bearer by virtue of being equal to the distance around it.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001711",
+   "isRoot": false,
+   "label": "perimeter",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002207",
+   "description": "A quality that is the distance between the end of the inserted object and the surface of the object into which it penetrates.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002207",
+   "isRoot": false,
+   "label": "insertion depth",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002272",
+   "description": "A spatial quality inhering in a bearer by virtue of the bearer's being located at the same continuous distance relative to another object.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002272",
+   "isRoot": false,
+   "label": "parallel to",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002485",
+   "description": "A shape quality inhering in a bearer by virtue of the bearer's possessing two sides that are at the same continuous distance relative to each other.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002485",
+   "isRoot": false,
+   "label": "parallel-sided",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040032",
+   "description": "A distance traveled in a specific time that is relatively high.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040032",
+   "isRoot": false,
+   "label": "increased linear velocity",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040033",
+   "description": "A distance traveled in a specific time that is relatively low.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040033",
+   "isRoot": false,
+   "label": "decreased linear velocity",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0070006",
+   "description": "This is specific to cortical bipolar cells and are distinguished from retinal bipolar cell morphology which has an axon and dendrite emerging from opposite ends of the soma.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070006",
+   "isRoot": false,
+   "label": "cortical bipolar morphology",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0070019",
+   "description": "A pyramidal cell morphology that inheres in neurons which lack a clear tuft formation but extend to large radial distances.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070019",
+   "isRoot": false,
+   "label": "untufted pyramidal morphology",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0070020",
+   "description": "A pyramidal cell morphology that inheres in neurons which lack a tuft formation but extend to small radial distances forming a star-like shape.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070020",
+   "isRoot": false,
+   "label": "stellate pyramidal morphology",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0095008",
+   "description": "An organismal quality inhering in a bearer by virtue of the bearer's morphological and physiological adaptation for participating in long-distance movement of conspecifics, usually on a seasonal basis.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0095008",
+   "isRoot": false,
+   "label": "migratory",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

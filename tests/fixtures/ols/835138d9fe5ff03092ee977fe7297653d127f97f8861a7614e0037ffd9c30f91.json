@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000001",
+  "ontology_id": "pco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PCO:0000001",
+  "description": "A collection of organisms, all of the same species, that live in the same place.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000001",
+  "isRoot": false,
+  "label": "population of organisms",
+  "ontologyId": "pco",
+  "synonyms": []
+ }
+}

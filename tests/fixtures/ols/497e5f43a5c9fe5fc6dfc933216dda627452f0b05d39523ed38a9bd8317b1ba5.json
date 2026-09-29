@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GO_0007601",
+  "ontology_id": "go"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "GO:0007601",
+  "description": "The series of events required for an organism to receive a visual stimulus, convert it to a molecular signal, and recognize and characterize the signal. Visual stimuli are detected in the form of photons and are processed to form an image.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/GO_0007601",
+  "isRoot": false,
+  "label": "visual perception",
+  "ontologyId": "go",
+  "synonyms": []
+ }
+}

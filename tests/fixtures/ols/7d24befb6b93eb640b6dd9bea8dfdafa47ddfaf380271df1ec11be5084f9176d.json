@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000663",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0000700",
+   "description": "A support vector machine is a data transformation with a class prediction objective based on the construction of a separating hyperplane that maximizes the margin between two data sets of vectors in n-dimensional space.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000700",
+   "isRoot": false,
+   "label": "support vector machine",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200099",
+   "description": "Discriminant function analysis is a form of discriminant analysis used to determine which variables discriminate between two or more naturally occurring groups. Analysis is used to determine which variable(s) are the best predictors of a particular outcome.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200099",
+   "isRoot": false,
+   "label": "discriminant function analysis",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200101",
+   "description": "Linear discriminant functional analysis (LDFA) is a multivariate technique used in special applications where there are several intact groups (random assignment may be impossible) and they have been measured on several independent measures. Thus, you will want to describe how these groups differ on the basis of these measures. In this case, classification and prediction is the main objective.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200101",
+   "isRoot": false,
+   "label": "linear discriminant functional analysis",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200113",
+   "description": "A similarity calculation is a data transformation that attaches to each pair of objects in the input a number that is meant to reflect how 'close' or 'similar' those objects are.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200113",
+   "isRoot": false,
+   "label": "similarity calculation",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

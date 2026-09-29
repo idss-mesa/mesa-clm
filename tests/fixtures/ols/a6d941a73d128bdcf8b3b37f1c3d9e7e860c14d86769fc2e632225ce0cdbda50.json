@@ -1,0 +1,60 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001687",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0001688",
+   "description": "An elevation which is relatively high.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001688",
+   "isRoot": false,
+   "label": "increased elevation",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001689",
+   "description": "An elevation which is relatively low.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001689",
+   "isRoot": false,
+   "label": "decreased elevation",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002416",
+   "description": "Flattened from above downward; below the normal level or the level of the surrounding parts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002416",
+   "isRoot": false,
+   "label": "sunken",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002515",
+   "description": "An elevation quality inhering in a bearer by virtue the bearer's being in a high position relative to another entity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002515",
+   "isRoot": false,
+   "label": "increased elevation relative to",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0045043",
+   "description": "An elevation which is relatively normal or average",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0045043",
+   "isRoot": false,
+   "label": "normal elevation",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

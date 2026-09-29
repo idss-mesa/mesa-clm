@@ -1,0 +1,80 @@
+{
+ "args": {
+  "ontology_id": "taxrank",
+  "query": "species",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "TAXRANK:0000006",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000006",
+   "isRoot": false,
+   "label": "species",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  },
+  {
+   "curie": "TAXRANK:0000011",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000011",
+   "isRoot": false,
+   "label": "species_subgroup",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  },
+  {
+   "curie": "TAXRANK:0000010",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000010",
+   "isRoot": false,
+   "label": "species_group",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  },
+  {
+   "curie": "TAXRANK:0000012",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000012",
+   "isRoot": false,
+   "label": "species_complex",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  },
+  {
+   "curie": "TAXRANK:0000049",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000049",
+   "isRoot": false,
+   "label": "specialform",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  },
+  {
+   "curie": "TAXRANK:0000050",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000050",
+   "isRoot": false,
+   "label": "speciesaggregate",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  },
+  {
+   "curie": "TAXRANK:0001005",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0001005",
+   "isRoot": false,
+   "label": "forma specialis",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  }
+ ]
+}

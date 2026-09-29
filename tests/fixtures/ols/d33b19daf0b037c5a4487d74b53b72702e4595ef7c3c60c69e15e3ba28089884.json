@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100003",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0100023",
+   "description": "A research sampling strategy in which individuals are sampled in order to perform a viral passage experiment.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100023",
+   "isRoot": false,
+   "label": "viral passage experiment strategy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100024",
+   "description": "A research sampling strategy in which samples are collected in order to test a method or protocol.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100024",
+   "isRoot": false,
+   "label": "protocol testing sampling",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

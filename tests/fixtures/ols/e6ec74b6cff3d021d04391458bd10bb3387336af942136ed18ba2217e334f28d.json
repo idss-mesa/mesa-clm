@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_306852",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:306855",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_306855",
+   "isRoot": false,
+   "label": "Eucoilinae gen. H sp. 1 MB404",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:306856",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_306856",
+   "isRoot": false,
+   "label": "Eucoilinae gen. H sp. 2 MB353",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

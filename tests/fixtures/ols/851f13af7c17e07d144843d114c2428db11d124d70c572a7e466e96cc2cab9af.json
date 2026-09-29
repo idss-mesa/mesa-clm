@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "Indicator of whether a sample was collected",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

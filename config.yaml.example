@@ -1,0 +1,80 @@
+# mesa-clm configuration (YAML form of .env.example). Load with `mesa-clm --config FILE`.
+# Every value below is the default; delete what you do not change. Precedence (highest wins):
+# CLI flag > MESA_CLM_<SECTION>__<FIELD> environment variable > this file > defaults.
+# Secrets: put a key in *_api_key only when MESA_CLM_SECRETS=env|auto suits you; a 0600 key
+# file (*_api_key_file) or the system keyring (service mesa-clm) keeps it out of files like this.
+# Paths keep their ~ (expanded on use) so the config hash does not depend on the home directory.
+
+clm:                                   # clm-serve (heads over the encoder), plan §6.2
+  base_url: http://127.0.0.1:8700      # loopback; remote needs allow_remote AND https (D16)
+  api_key: null                        # or MESA_CLM_CLM__API_KEY / CLM_API_KEY; never commit one
+  api_key_file: null                   # e.g. ~/.mesa/clm/secrets/clm.key (mode 0600)
+  model: clm-latest                    # clm-latest | clm-raw | a promoted head's unique name
+  timeout: 120.0
+  allow_remote: false                  # one switch for clm and encoder URLs (plan §6.4)
+encoder:                               # vLLM pooling server, Qwen3-8B last-token, plan §6.1
+  url: http://127.0.0.1:8090
+  api_key: null                        # or MESA_CLM_ENCODER__API_KEY
+  api_key_file: null                   # e.g. ~/.mesa/clm/secrets/encoder.key
+  model: qwen3-8b                      # --served-model-name of the encoder unit
+  max_len: 4096                        # --max-model-len; the token guard abstains above max_len-16
+  timeout: 120.0
+decider:
+  tier: auto                           # auto | zero_shot | calibrated | probe | head (D6)
+planner:                               # plans, never decides (D22)
+  kind: static                         # static | gateway | claude
+  gateway_base_url: http://127.0.0.1:8000   # loopback tunnel to the CARC LiteLLM gateway; no /v1
+  gateway_api_key: null                # or MESA_CLM_PLANNER__GATEWAY_API_KEY / MESA_LLM_API_KEY
+  gateway_api_key_file: null
+  gateway_model: carc-tools
+  claude_model: claude-opus-5
+  claude_effort: high                  # low | medium | high | xhigh | max
+  timeout: 600.0
+claude:                                # second opinion only, never auto (D22); key via the SDK
+  model: claude-opus-5
+  effort: low
+  max_tokens: 1024
+  second_opinion: false
+  second_opinion_top_k: 8
+policy:
+  profile: prod                        # prod | dev (§4.7)
+  policy_path: null                    # null = the packaged policy_defaults.yaml (D9)
+  max_candidates: 12
+  max_avus: 25
+  proposal_size: 8
+  max_wait_s: 30.0                     # wait for the decider lock before DeciderBusy
+  specificity: true                    # child replaces parent when p_fit gains >= delta (D24)
+  specificity_delta: 0.10
+artifacts:
+  dir: ~/.mesa/clm/artifacts
+  strict: true                         # refuse fingerprint mismatches and stale keys (§5.5)
+features:
+  dir: ~/.mesa/clm/features            # <dir>/<encoder_fp>/features.duckdb (§5.2)
+provenance:                            # the mesa_clm sidecar (D11)
+  dsn: duckdb:///~/.mesa/clm/provenance.duckdb
+  ttl_days: 30                         # abandoned runs pruned after this (§7.3 step 9)
+ducklake:                              # history direct mode and the local CLI/test lake
+  catalog_dsn: duckdb:///~/.mesa/clm/ducklake-catalog.duckdb   # the shared MESA catalog must be named explicitly
+  cache_dir: ~/.mesa/clm/ducklake-cache
+  cache_cap_bytes: 268435456           # 256 MiB; removed after close; 0 is refused
+  local_project_root: /local/mesa-clm
+  local_zone: local
+history:                               # D12
+  backend: auto                        # direct | spool | none | auto (plugin: always spool)
+  multiwriter: false                   # DuckDB 2.0 switch
+  spool_root: ~/.mesa/clm/spool        # batches land in <spool_root>/<vm_id>/ (mesa-spool/1)
+  lock_path: ~/.mesa/locks/mesa-catalog.lock   # default follows $MESA_HOME when set
+  neon_lock_path: null                 # <NEON_DUCKLAKE_ROOT>/work/locks/mesa-tag.lock when neon shares the catalog
+apply:
+  max_calls_per_s: 5.0                 # token bucket over iRODS write calls (§7.3 step 5)
+ols:
+  base_url: https://www.ebi.ac.uk/ols4/api/v2
+  fixtures: "off"                      # off | record | replay | auto (quote off: YAML reads a bare off as false)
+  fixtures_dir: tests/fixtures/ols
+neon:
+  root: null                           # neon-ducklake root for the 0.2.0 adapter (§7.4)
+card:
+  max_bytes: 1048576                   # 1 MiB; cards stream from iRODS in memory (D29)
+eval_root: null                        # the neon-avu-eval checkout; or MESA_CLM_EVAL_ROOT
+secrets: auto                          # auto | env | file | keyring (MESA_CLM_SECRETS)
+# vm_id: <hostname>                    # this host on runs and spool batches; default the hostname

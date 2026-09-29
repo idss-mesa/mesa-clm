@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "family",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0100243",
+   "description": "A human social event in which human family members congregate.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100243",
+   "isRoot": false,
+   "label": "family gathering exposure datum",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100244",
+   "description": "A human social event in which many human members of an extended family congregate.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100244",
+   "isRoot": false,
+   "label": "family reunion exposure datum",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001191",
+   "description": "A data field which describes the taxonomic name of the organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001191",
+   "isRoot": false,
+   "label": "organism",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002008",
+   "description": "A Mycobacterium tuberculosis lineage is a named family of strains of tuberculosis, named usually with reference to their shared geographic origin.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002008",
+   "isRoot": false,
+   "label": "Mycobacterium tuberculosis lineage",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102049",
+   "description": "PCDS: The target taxonomic name refers to the specific species, genus, or other taxonomic classification that the assay or diagnostic test is designed to identify, detect, or characterize. This may include the full binomial name (Genus species) or a higher taxonomic rank (i.e., genus, family) when species-level identification is not applicable. Avoid abbreviations. Search for taxonomic names here: ncbi.nlm.nih.gov/taxonomy.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102049",
+   "isRoot": false,
+   "label": "target taxonomic name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03501186",
+   "description": "A medical clinic which is used to provide family medicine services.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03501186",
+   "isRoot": false,
+   "label": "family practice clinic",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C41256",
+   "description": "Any of the individuals who are descended from a common progenitor, related by marriage or other legal tie, or by a feeling of closeness.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C41256",
+   "isRoot": false,
+   "label": "Family Member",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:00005684",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_00005684",
+   "isRoot": false,
+   "label": "deer family material",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:9615",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_9615",
+   "isRoot": false,
+   "label": "Canis lupus familiaris",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C40975",
+   "description": "A word or group of words indicating a person's last (family) name.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C40975",
+   "isRoot": false,
+   "label": "Last Name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "HP:0003745",
+   "description": "Cases of the disease in question occur without a previous family history, i.e., as isolated cases without being transmitted from a parent and without other siblings being affected.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/HP_0003745",
+   "isRoot": false,
+   "label": "Sporadic",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:5280",
+   "description": "A monocarboxylic acid that is 4-oxo-1,4-dihydroquinoline-3-carboxylic acid which is substituted on the nitrogen by a cyclopropyl group and at positions 6, 7, and 8 by fluoro, 3-methylpiperazin-1-yl, and methoxy groups, respectively. Gatifloxacin is an antibiotic of the fourth-generation fluoroquinolone family, that like other members of that family, inhibits the bacterial topoisomerase type-II enzymes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_5280",
+   "isRoot": false,
+   "label": "gatifloxacin",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:00001132",
+   "description": "Suidae is a family of artiodactyl mammals which are commonly called pigs, hogs or boars. In addition to numerous fossil species, 17 extant species are currently recognized (or 18 counting domestic pigs and wild boars separately), classified into between four and eight genera. The family includes the domestic pig, Sus scrofa domesticus or Sus domesticus, in addition to numerous species of wild pig, such as babirusas and warthogs. All suids, or swine, are native to the Old World, ranging from Asia to Europe and Africa.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_00001132",
+   "isRoot": false,
+   "label": "swine food product",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C25191",
+   "description": "A word or group of words indicating the identity of a person usually consisting of a first (personal) name and a last (family) name with an optional middle name. In some cultural traditions the family name comes first.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C25191",
+   "isRoot": false,
+   "label": "Person Name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:22907",
+   "description": "A glycopeptide produced by the bacterium <em>Streptomyces verticillus</em>. The term, 'bleomycin' refers to a family of structurally related compounds. When used as an anti-cancer agent, the chemotherapeutical forms are primarily bleomycin A<small><sub>2</sub></small> and B<small><sub>2</sub></small>.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_22907",
+   "isRoot": false,
+   "label": "bleomycin",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:62764",
+   "description": "A family of nitrogen molecular entities which are highly reactive and derived from nitric oxide (•NO) and superoxide (O<small><sub>2</sub></small>•<small><sup>−</small></sup>) produced via the enzymatic activity of inducible nitric oxide synthase 2 (NOS2) and NADPH oxidase respectively.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_62764",
+   "isRoot": false,
+   "label": "reactive nitrogen species",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:63276",
+   "description": "Name for a family of macrolide antibiotics with more than twenty members produced by the rare actinomycete <em>Micromonospora griseorubida</em>.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_63276",
+   "isRoot": false,
+   "label": "mycinamicin",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:71960",
+   "description": "Any member of a family of aminoglycosidic antibiotics produced by the bacterium <em>Streptomyces lividus</em>. Note that one member of this class, lividomycin A, is also known as lividomycin.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_71960",
+   "isRoot": false,
+   "label": "lividomycins",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000480",
+   "description": "Glass is an amorphous (non-crystalline) solid which is often transparent.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000480",
+   "isRoot": false,
+   "label": "glass",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000927",
+   "description": "A building which is used to care for a human child during the working day by a person, outside the child's immediate family, other than that child's legal guardians.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000927",
+   "isRoot": false,
+   "label": "day care building",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

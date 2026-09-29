@@ -1,0 +1,131 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "parent_iri": "http://purl.obolibrary.org/obo/ENVO_00000428",
+  "query": "grassland",
+  "size": 20
+ },
+ "method": "search_term_descendants",
+ "response": [
+  {
+   "curie": "ENVO:01000194",
+   "description": "A montane grassland biome is a grassland biome which occurs in regions elevated above sea level and which has community structure determined by elevation-dependent environmental conditions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000194",
+   "isRoot": false,
+   "label": "montane grassland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000177",
+   "description": "A grassland ecosystem in which dominant ecological communities have reached their climax successional state.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000177",
+   "isRoot": false,
+   "label": "grassland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000191",
+   "description": "A subtropical grassland in which dominant ecological communities have reached their climax successional state.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000191",
+   "isRoot": false,
+   "label": "subtropical grassland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000224",
+   "description": "A subtropical grassland biome which includes communities adapted to hot to warm, dry summers, mild to cold, rainy winters, and the influence of large, usually marine, bodies of water.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000224",
+   "isRoot": false,
+   "label": "mediterranean grassland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000106",
+   "description": "An area in which grasses (Graminae) are a significant component of the vegetation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000106",
+   "isRoot": false,
+   "label": "grassland area",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000192",
+   "description": "Preliminary definition. The semantics and definitions of \"mediterranean\", \"subtropical\", \"tropical\", \"temperate\", \"polar\", and similar climate types may be transferred to an \"environmental condition\" class once the semantics of this class have been established.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000192",
+   "isRoot": false,
+   "label": "tropical grassland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000193",
+   "description": "Preliminary definition. The semantics and definitions of \"mediterranean\", \"subtropical\", \"tropical\", \"temperate\", \"polar\", and similar climate types may be transferred to an \"environmental condition\" class once the semantics of this class have been established.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000193",
+   "isRoot": false,
+   "label": "temperate grassland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000195",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000195",
+   "isRoot": false,
+   "label": "flooded grassland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000261",
+   "description": "A grassland of the tropics or subtropics with scattered trees.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000261",
+   "isRoot": false,
+   "label": "savanna",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000260",
+   "description": "An area of land of low topographic relief that historically supported grasses and herbs, with few trees, and having generally a mesic (moderate or temperate) climate. Dominated by tall grasses (contrast steppe).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000260",
+   "isRoot": false,
+   "label": "prairie",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000262",
+   "description": "A plain without trees (apart from those near rivers and lakes); it is similar to a prairie, although a prairie is generally considered as being dominated by tall grasses, while short grasses are said to be normal in the steppe. It may be semi-desert, or covered with grass or shrubs or both, depending on the season and latitude.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000262",
+   "isRoot": false,
+   "label": "steppe",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000888",
+   "description": "According to the NLCD 2011, at least 80% of these areas are covered by grasslands or non-woody, herbaceous plants.  Such thresholds - which are themselves fuzzy - are not strictly asserted in this definition. The NLCD description also notes that, while no \"intensive\" management such as tilling is performed in these areas, they may be used for grazing.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000888",
+   "isRoot": false,
+   "label": "area of gramanoid or herbaceous vegetation",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

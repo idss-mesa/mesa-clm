@@ -1,0 +1,71 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "parent_iri": "http://purl.obolibrary.org/obo/ENVO_00000428",
+  "query": "mixed forest",
+  "size": 20
+ },
+ "method": "search_term_descendants",
+ "response": [
+  {
+   "curie": "ENVO:01000855",
+   "description": "According to the NLCD 2011, areas of mixed forest are dominated by trees generally greater than 5 meters tall, and making up more than 20% of total vegetation cover. The NLCD 2011 continues to state that neither deciduous or evergreen trees make up more than 75% of the total tree cover. Such thresholds - which are themselves fuzzy - are not asserted in this definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000855",
+   "isRoot": false,
+   "label": "area of mixed forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000198",
+   "description": "A mixed forest in which dominant ecological communities have reached their climax successional state.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000198",
+   "isRoot": false,
+   "label": "mixed forest biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000212",
+   "description": "A temperate mixed forest in which dominant ecological communities have reached their climax successional state.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000212",
+   "isRoot": false,
+   "label": "temperate mixed forest biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001798",
+   "description": "A tropical mixed forest in which dominant ecological communities have reached their climax successional state.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001798",
+   "isRoot": false,
+   "label": "tropical mixed forest biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000390",
+   "description": "A temperate mixed forest which has communities of trees composed primarily of species with needle-like leaves (e.g. conifers).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000390",
+   "isRoot": false,
+   "label": "temperate mixed needleleaf forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000389",
+   "description": "A temperate mixed forest which has communities of trees composed primarily of species with broad leaves.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000389",
+   "isRoot": false,
+   "label": "temperate mixed broadleaf forest",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

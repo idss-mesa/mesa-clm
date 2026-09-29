@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002043",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0002111",
+   "description": "An iCLIP assay that is enhanced to robustly identify protein-RNA interactions with high efficiency through improvements in library preparation of RNA fragments.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002111",
+   "isRoot": false,
+   "label": "enhanced cross-linking immunoprecipitation high-throughput sequencing assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "Name of the laboratory or facility that is processing the sample",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

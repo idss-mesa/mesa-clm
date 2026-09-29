@@ -1,0 +1,97 @@
+# Write-policy thresholds per task (DESIGN D8, D9; plan §4.7). This file is the ONE source of
+# `min_weight`: the bench reads it too (D9), so a task's class counts at its policy weight are
+# the counts the published cell was fitted on (`tests/unit/test_labels.py`).
+#
+# stat: which statistic the threshold reads. rank_fit tasks (term.fits, column.ontology_fits)
+#   -> p_fit, the calibrated per-candidate fit probability, never `confidence`; closed-choice
+#   tasks -> confidence = max(probs), computed locally (D7).
+# auto: null means proposed-only, nothing auto-writes. A numeric `auto` MUST cite a
+#   pre-registered, nested-selection, fingerprint-matched LOCO cell as
+#   `bench/results/<date>/<file>.json#<task>.<tier>.<framing>` whose `beats_lookup_novel` is
+#   true, and must sit at or above that cell's `threshold_cp[risk]` (D8; the citation test lands
+#   with policy.py in M1). Shipped with every `auto: null`.
+# propose / margin: carried from mesa-anyjev `policy_defaults.yaml` (6159281).
+# min_level: the lowest tier that may reach `auto`; `zero_shot` never autos (D6), so every task
+#   floors at `calibrated` (mesa-anyjev's L0 entries for column.annotate and avu.value_kind are
+#   raised to that floor).
+# min_weight: the lowest label weight that enters a fit and the bench for this task (D9):
+#   0.5 admits the consensus negatives (0.5) without which column.annotate has no No, value_kind
+#   no class 3 and column.ontology_fits no No; 0.6 for column.aspect, whose labels are all 0.6.
+# risk: the one-sided 95% Clopper-Pearson error bound a numeric `auto` must respect (D8).
+# ols_rank_top: in the degraded `ols_rank` method (D28) the OLS rank that is still proposed.
+tasks:
+  column.annotate:                # choice K=2 over ANNOTATE_OPTIONS (plan §4.2 Q1)
+    stat: confidence
+    auto: null
+    propose: 0.5
+    margin: 0.0
+    min_level: calibrated
+    min_weight: 0.5
+    risk: 0.05
+    cite: null
+    ols_rank_top: 1
+  column.aspect:                  # choice K=8
+    stat: confidence
+    auto: null
+    propose: 0.45
+    margin: 0.10
+    min_level: calibrated
+    min_weight: 0.6
+    risk: 0.05
+    cite: null
+    ols_rank_top: 1
+  column.ontology:                # choice K=12; kept for key parity, asked as ontology_fits
+    stat: confidence
+    auto: null
+    propose: 0.40
+    margin: 0.0
+    min_level: calibrated
+    min_weight: 0.6
+    risk: 0.05
+    cite: null
+    ols_rank_top: 1
+  column.ontology_fits:           # rank_fit over the 12 registry entries + anchor (Q3)
+    stat: p_fit
+    auto: null
+    propose: 0.40
+    margin: 0.0
+    min_level: calibrated
+    min_weight: 0.5
+    risk: 0.05
+    cite: null
+    ols_rank_top: 1
+  term.fits:                      # rank_fit over <= 12 OLS candidates + anchor (Q4-Q6)
+    stat: p_fit
+    auto: null
+    propose: 0.50
+    margin: 0.15
+    min_level: calibrated
+    min_weight: 0.5
+    risk: 0.05
+    cite: null
+    ols_rank_top: 1
+  avu.value_kind:                 # choice K=4 over VALUE_KINDS (Q7)
+    stat: confidence
+    auto: null
+    propose: 0.50
+    margin: 0.0
+    min_level: calibrated
+    min_weight: 0.5
+    risk: 0.05
+    cite: null
+    ols_rank_top: 1
+# Profiles (plan §4.7). `prod` may auto-write only calibrated tiers with a passing audit;
+# `dev` proposes everything and never auto-writes, and may run without a history backend.
+profiles:
+  prod:
+    min_level_write: calibrated
+    auto_calibrations: [platt, temperature]
+    auto_requires_audit: true
+    allow_auto_write: true
+    allow_history_none: false
+  dev:
+    min_level_write: zero_shot
+    auto_calibrations: [platt, temperature]
+    auto_requires_audit: false
+    allow_auto_write: false
+    allow_history_none: true

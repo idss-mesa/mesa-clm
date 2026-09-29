@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "wetland",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00122679",
+   "description": "A national park in The Gambia. Established 1996. Wetland Reserve is located on the north Bank of the River Gambia, approximately 100 km (52 nautical miles) from the river mouth. Established 1993-01-01.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00122679",
+   "isRoot": true,
+   "label": "Bao Bolong Wetland Reserve",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00005308",
+   "description": "A national park located on the east coast of KwaZulu-Natal, South Africa about 275 km north of Durban. It spans 280 km of coastline, from the Mozambican border in the north to Mapelane south of the Saint Lucia estuary. A World Heritage Site. A Ramsar Site.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00005308",
+   "isRoot": true,
+   "label": "iSimangaliso Wetland Park",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00068829",
+   "description": "A nature reserve, part of the Arenal Huetar Norte Conservation Area, in the northern part of Costa Rica near the small town of Sardinal, Sarapiqui in the province of Heredia. It has been included as part of the proposed Maquenque National Park.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00068829",
+   "isRoot": true,
+   "label": "Laguna Maquenque Wetlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00150197",
+   "description": "A complex of natural and human-made wetlands lying east of the city of Calcutta (Kolkata),West Bengal in India. The wetlands cover 125 km2 and include salt marshes and salt meadows, as well as sewage farms and settling ponds. A Ramsar Site.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00150197",
+   "isRoot": true,
+   "label": "East Calcutta Wetlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00052246",
+   "description": "A wetland reserve managed by the Wildfowl and Wetlands Trust at Slimbridge, Gloucestershire, England, on the estuary of the river Severn.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00052246",
+   "isRoot": true,
+   "label": "Wildfowl and Wetlands Trust Slimbridge",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00160624",
+   "description": "A protected area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00160624",
+   "isRoot": true,
+   "label": "Saint Laurent Wetlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00250685",
+   "description": "A wetland complex. Located on the coast 130 km west of Gorontalo, in the western part of North Sulawesi. It consists of one large area (Randangan) and two small areas (Panua Nature Reserve and proposed Wildlife Reserve Tanjung Panjang). The wetlands in the area are mainly situated in the two small (coastal) areas, with mangrove forest, beach vegetation and 1,000 ha of freshwater swamp forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00250685",
+   "isRoot": true,
+   "label": "Marisa Wetlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00253582",
+   "description": "A wetland. A vast area of riverine marshes and floodplain wetlands, including several small lakes, along the lower Mambare River, and extensive intertidal flats, mangrove swamps and numerous small tidal creeks in the delta.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00253582",
+   "isRoot": true,
+   "label": "Mambare Wetland",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00253583",
+   "description": "A wetland. A vast area of floodplain wetlands including levees and back swamps along the lower Musa River, and a large area of intertidal flats, mangrove swamps and small tidal creeks near the river mouth in Dyke Ackland Bay.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00253583",
+   "isRoot": true,
+   "label": "Musa Wetland",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00049225",
+   "description": "A wetland. Located in the Bangweulu Basin, which lies on an ancient craton, in a shallow depression which has been filled with alluvium. It is situated in NE Zambia to the NW of the Luangwa Valley and Muchinga Escarpment.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00049225",
+   "isRoot": true,
+   "label": "Bangweulu Wetlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00058248",
+   "description": "A wetland. A Ramsar Site.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00058248",
+   "isRoot": true,
+   "label": "Javalkheti Wetlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00058328",
+   "description": "A wetland that consists of two lakes located in the city of Bhopal. A Ramsar Site.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00058328",
+   "isRoot": true,
+   "label": "Bhoj Wetland",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00058392",
+   "description": "A complex of natural wetlands located in Changnyeong County, South Korea, near the Nakdong River. It is located in portions of Yueo-myeon, Ibang-myeon and Daehap-myeon. A Ramsar Site.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00058392",
+   "isRoot": true,
+   "label": "Upo Wetlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00066031",
+   "description": "A wetland in El Tarf Province, Algeria.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00066031",
+   "isRoot": true,
+   "label": "Garaet el Mekhada Wetland",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00068754",
+   "description": "An area that protects the extensive river mouth delta systems, estuaries and wetlands between the Terraba River and the Sierpe River on the Pacific Coast of Costa Rica, north of Drake Bay.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00068754",
+   "isRoot": true,
+   "label": "Terraba-Sierpe National Wetlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00068801",
+   "description": "A nature reserve, part of the Guanacaste Conservation Area and Tempisque Conservation Area in northwestern Costa Rica, which protects low wetlands around the Quebrada Grande and the Ahogados River in the Tempisque River watershed.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00068801",
+   "isRoot": true,
+   "label": "Riberino Zapandi Wetlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00068832",
+   "description": "A nature reserve, part of the Arenal Huetar Norte Conservation Area, in the northern part of Costa Rica about 80 miles north of San Jose, to the east of Boca Tapada. It protects wetland forest areas near the border with Nicaragua, and is part of the proposed Maquenque National Park.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00068832",
+   "isRoot": true,
+   "label": "Lacustrino de Tamborcito Wetlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00068871",
+   "description": "An area tha protects lowland areas in the foothills of the southern Talamanca Mountain region. These wetlands are east of the town of San Vito de Coto Brus.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00068871",
+   "isRoot": true,
+   "label": "San Vito Wetlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00090166",
+   "description": "A national park in Malaysia. It is the remains of the former Sarawak Mangrove Forest Reserve which covered 170 km2. Located 30 km from Kuching, the Wetlands National Park was gazetted in 1992 and covers an area of 66.1 km2 on the estuarine reaches of the Sibu Laut and Salak rivers.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00090166",
+   "isRoot": true,
+   "label": "Kuching Wetlands National Park",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00106221",
+   "description": "A nature reserve located in the Northwest area of Singapore. It is the first wetlands reserve to be gazetted in Singapore in the year 2002.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00106221",
+   "isRoot": true,
+   "label": "Sungei Buloh Wetland Reserve",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

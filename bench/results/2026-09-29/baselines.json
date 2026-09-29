@@ -1,0 +1,605 @@
+{
+ "cells": {
+  "neon_annotate.baseline.lookup_prob": {
+   "baselines": {
+    "beats_lookup_novel": null,
+    "lookup_acc": 0.7959183673469388,
+    "lookup_key": "(task_id, scope, target: column name | site code | '' for the dataset, option_key)",
+    "lookup_nll": 0.5060886602324474,
+    "lookup_prob_acc": 0.7959183673469388,
+    "lookup_rule": "most common training label of the key; ties -> the label of the alphabetically first training card carrying the key; unseen key -> training majority",
+    "lopo": {
+     "acc": 0.7244897959183674,
+     "majority_acc": 0.6428571428571429,
+     "n": 98,
+     "n_folds": 2,
+     "nll": 0.5997846976253848,
+     "novel_n": 58
+    },
+    "majority_acc": 0.6428571428571429,
+    "novel_key": {
+     "acc": 0.6153846153846154,
+     "auroc": 0.4583333333333333,
+     "auroc_ci": {
+      "B": 2000,
+      "alpha": 0.05,
+      "lower": 0.4142857142857143,
+      "n_clusters": 7,
+      "n_valid": 2000,
+      "point": 0.4583333333333333,
+      "seed": 0,
+      "upper": 0.5625
+     },
+     "brier": 0.478145672553606,
+     "class_counts": {
+      "0": 24,
+      "1": 15
+     },
+     "majority_acc": 0.6153846153846154,
+     "n": 39,
+     "nll": 0.6715433734333013
+    }
+   },
+   "counts": {
+    "class_counts": {
+     "0": 63,
+     "1": 35
+    },
+    "n": 98,
+    "n_neg": 35,
+    "n_nonmodal": 35
+   },
+   "diagnostics": {
+    "excluded": {},
+    "laplace_alpha": 1.0,
+    "n_conflicting_keys": 3,
+    "n_novel": 39,
+    "n_tied_keys": 0,
+    "per_fold_n": {
+     "DP1.10003.001.brd_countdata": 12,
+     "DP1.10003.001.brd_perpoint": 20,
+     "DP1.10022.001.bet_archivepooling": 6,
+     "DP1.10022.001.bet_expertTaxonomistIDProcessed": 21,
+     "DP1.10022.001.bet_fielddata": 17,
+     "DP1.10022.001.bet_parataxonomistID": 10,
+     "DP1.10022.001.bet_sorting": 12
+    }
+   },
+   "exploratory": false,
+   "feature_spec": null,
+   "fingerprint": null,
+   "fold_choices": {},
+   "framing": "lookup_prob",
+   "guard_skipped_folds": {
+    "DP1.10003.001.brd_countdata": "insufficient_heldout_per_class {0: 8, 1: 4}",
+    "DP1.10003.001.brd_perpoint": "insufficient_train_per_class {0: 54, 1: 24}",
+    "DP1.10022.001.bet_archivepooling": "insufficient_heldout_per_class {0: 5, 1: 1}",
+    "DP1.10022.001.bet_expertTaxonomistIDProcessed": "insufficient_train_per_class {0: 50, 1: 27}",
+    "DP1.10022.001.bet_parataxonomistID": "insufficient_heldout_per_class {0: 7, 1: 3}",
+    "DP1.10022.001.bet_sorting": "insufficient_heldout_per_class {0: 9, 1: 3}"
+   },
+   "label_sources": {
+    "consensus_majority": 63,
+    "consensus_negative": 35
+   },
+   "labels_content_sha256": "5c60a8a69cf71d90df776cc331ba1347a8f7f3f074e75dca6ee6f95efb987b2b",
+   "labels_sha256": "aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+   "loco": true,
+   "mask": null,
+   "masked": true,
+   "metrics": {
+    "acc": 0.7959183673469388,
+    "aurc": 0.1134149715893231,
+    "auroc": 0.8294784580498866,
+    "auroc_ci": {
+     "B": 2000,
+     "alpha": 0.05,
+     "lower": 0.7837837837837838,
+     "n_clusters": 7,
+     "n_valid": 2000,
+     "point": 0.8294784580498866,
+     "seed": 0,
+     "upper": 0.9176955306361959
+    },
+    "brier": 0.3281892075581811,
+    "cov@10%": 0.3163265306122449,
+    "cov@5%": 0.2653061224489796,
+    "ece": 0.13074882156798548,
+    "macro_f1": 0.75,
+    "nll": 0.5060886602324474,
+    "threshold_cp": {
+     "0.05": null,
+     "0.10": null
+    }
+   },
+   "min_weight": 0.5,
+   "n_folds": 7,
+   "notes": "98 labelled targets from the eval; class counts {0: 63, 1: 35}",
+   "pre_registered": true,
+   "question_key": null,
+   "selection": "none",
+   "servable": false,
+   "skipped_folds": {},
+   "task": "neon_annotate",
+   "task_id": "column.annotate",
+   "task_key": "8b8c7f14be35925d",
+   "teacher": false,
+   "teacher_in_test": false,
+   "tier": "baseline"
+  },
+  "neon_aspect.baseline.lookup_prob": {
+   "baselines": {
+    "beats_lookup_novel": null,
+    "lookup_acc": 0.55,
+    "lookup_key": "(task_id, scope, target: column name | site code | '' for the dataset, option_key)",
+    "lookup_nll": 1.610199316622518,
+    "lookup_prob_acc": 0.5833333333333334,
+    "lookup_rule": "most common training label of the key; ties -> the label of the alphabetically first training card carrying the key; unseen key -> training majority",
+    "lopo": {
+     "acc": 0.35,
+     "majority_acc": 0.1,
+     "n": 60,
+     "n_folds": 2,
+     "nll": 3.176515201297938,
+     "novel_n": 42
+    },
+    "majority_acc": 0.3,
+    "novel_key": {
+     "acc": 0.21428571428571427,
+     "auroc": null,
+     "auroc_ci": null,
+     "brier": 0.8929892948868972,
+     "class_counts": {
+      "0": 5,
+      "1": 1,
+      "2": 6,
+      "3": 10,
+      "4": 5,
+      "5": 1
+     },
+     "majority_acc": 0.21428571428571427,
+     "n": 28,
+     "nll": 1.993065278565507
+    }
+   },
+   "counts": {
+    "class_counts": {
+     "0": 12,
+     "1": 10,
+     "2": 18,
+     "3": 11,
+     "4": 6,
+     "5": 3
+    },
+    "n": 60,
+    "n_neg": null,
+    "n_nonmodal": 42
+   },
+   "diagnostics": {
+    "excluded": {},
+    "laplace_alpha": 1.0,
+    "n_conflicting_keys": 2,
+    "n_novel": 28,
+    "n_tied_keys": 2,
+    "per_fold_n": {
+     "DP1.10003.001.brd_countdata": 6,
+     "DP1.10003.001.brd_perpoint": 9,
+     "DP1.10022.001.bet_archivepooling": 5,
+     "DP1.10022.001.bet_expertTaxonomistIDProcessed": 13,
+     "DP1.10022.001.bet_fielddata": 11,
+     "DP1.10022.001.bet_parataxonomistID": 7,
+     "DP1.10022.001.bet_sorting": 9
+    }
+   },
+   "exploratory": false,
+   "feature_spec": null,
+   "fingerprint": null,
+   "fold_choices": {},
+   "framing": "lookup_prob",
+   "guard_skipped_folds": {},
+   "label_sources": {
+    "consensus_majority": 60
+   },
+   "labels_content_sha256": "5c60a8a69cf71d90df776cc331ba1347a8f7f3f074e75dca6ee6f95efb987b2b",
+   "labels_sha256": "aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+   "loco": true,
+   "mask": null,
+   "masked": true,
+   "metrics": {
+    "acc": 0.5833333333333334,
+    "aurc": 0.35907084963668423,
+    "auroc": null,
+    "auroc_ci": null,
+    "brier": 0.7198600248566838,
+    "cov@10%": 0.21666666666666667,
+    "cov@5%": 0.2,
+    "ece": 0.4007457294790826,
+    "macro_f1": 0.5073099415204679,
+    "nll": 1.610199316622518,
+    "threshold_cp": {
+     "0.05": null,
+     "0.10": null
+    }
+   },
+   "min_weight": 0.6,
+   "n_folds": 7,
+   "notes": "60 labelled targets from the eval; class counts {0: 12, 1: 10, 2: 18, 3: 11, 4: 6, 5: 3}",
+   "pre_registered": true,
+   "question_key": null,
+   "selection": "none",
+   "servable": false,
+   "skipped_folds": {},
+   "task": "neon_aspect",
+   "task_id": "column.aspect",
+   "task_key": "982e2baa2c1c7762",
+   "teacher": false,
+   "teacher_in_test": false,
+   "tier": "baseline"
+  },
+  "neon_ontology_fits.baseline.lookup_prob": {
+   "baselines": {
+    "beats_lookup_novel": null,
+    "lookup_acc": 0.8,
+    "lookup_key": "(task_id, scope, target: column name | site code | '' for the dataset, option_key)",
+    "lookup_nll": 0.521642039402755,
+    "lookup_prob_acc": 0.8052631578947368,
+    "lookup_rule": "most common training label of the key; ties -> the label of the alphabetically first training card carrying the key; unseen key -> training majority",
+    "lopo": {
+     "acc": 0.7210526315789474,
+     "majority_acc": 0.6,
+     "n": 190,
+     "n_folds": 2,
+     "nll": 0.59144147649379,
+     "novel_n": 149
+    },
+    "majority_acc": 0.6,
+    "novel_key": {
+     "acc": 0.6666666666666666,
+     "auroc": 0.39600550964187325,
+     "auroc_ci": {
+      "B": 2000,
+      "alpha": 0.05,
+      "lower": 0.3684164934164934,
+      "n_clusters": 7,
+      "n_valid": 2000,
+      "point": 0.39600550964187325,
+      "seed": 0,
+      "upper": 0.5000369549150037
+     },
+     "brier": 0.4598124849226669,
+     "class_counts": {
+      "0": 33,
+      "1": 66
+     },
+     "majority_acc": 0.6666666666666666,
+     "n": 99,
+     "nll": 0.6526831643335154
+    }
+   },
+   "counts": {
+    "class_counts": {
+     "0": 76,
+     "1": 114
+    },
+    "n": 190,
+    "n_neg": 114,
+    "n_nonmodal": 76
+   },
+   "diagnostics": {
+    "excluded": {},
+    "laplace_alpha": 1.0,
+    "n_conflicting_keys": 8,
+    "n_novel": 99,
+    "n_tied_keys": 2,
+    "per_fold_n": {
+     "DP1.10003.001.brd_countdata": 21,
+     "DP1.10003.001.brd_perpoint": 27,
+     "DP1.10022.001.bet_archivepooling": 17,
+     "DP1.10022.001.bet_expertTaxonomistIDProcessed": 44,
+     "DP1.10022.001.bet_fielddata": 28,
+     "DP1.10022.001.bet_parataxonomistID": 21,
+     "DP1.10022.001.bet_sorting": 32
+    }
+   },
+   "exploratory": false,
+   "feature_spec": null,
+   "fingerprint": null,
+   "fold_choices": {},
+   "framing": "lookup_prob",
+   "guard_skipped_folds": {},
+   "label_sources": {
+    "consensus_majority": 76,
+    "consensus_negative": 114
+   },
+   "labels_content_sha256": "5c60a8a69cf71d90df776cc331ba1347a8f7f3f074e75dca6ee6f95efb987b2b",
+   "labels_sha256": "aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+   "loco": true,
+   "mask": "aspect",
+   "masked": true,
+   "metrics": {
+    "acc": 0.8052631578947368,
+    "aurc": 0.11014178170067013,
+    "auroc": 0.818213296398892,
+    "auroc_ci": {
+     "B": 2000,
+     "alpha": 0.05,
+     "lower": 0.771875,
+     "n_clusters": 7,
+     "n_valid": 2000,
+     "point": 0.818213296398892,
+     "seed": 0,
+     "upper": 0.8698168276972624
+    },
+    "brier": 0.33973270413222006,
+    "cov@10%": 0.5421052631578948,
+    "cov@5%": 0.46842105263157896,
+    "ece": 0.15170511043973162,
+    "macro_f1": 0.7756788665879575,
+    "nll": 0.521642039402755,
+    "threshold_cp": {
+     "0.05": null,
+     "0.10": null
+    }
+   },
+   "min_weight": 0.5,
+   "n_folds": 7,
+   "notes": "190 labelled targets from the eval; class counts {0: 76, 1: 114}",
+   "pre_registered": true,
+   "question_key": null,
+   "selection": "none",
+   "servable": false,
+   "skipped_folds": {},
+   "task": "neon_ontology_fits",
+   "task_id": "column.ontology_fits",
+   "task_key": "f45eb7fe2fbefdb5",
+   "teacher": false,
+   "teacher_in_test": false,
+   "tier": "baseline"
+  },
+  "neon_term_fits.baseline.lookup_prob": {
+   "baselines": {
+    "beats_lookup_novel": null,
+    "lookup_acc": 0.7719298245614035,
+    "lookup_key": "(task_id, scope, target: column name | site code | '' for the dataset, option_key)",
+    "lookup_nll": 0.5551402675310558,
+    "lookup_prob_acc": 0.7543859649122807,
+    "lookup_rule": "most common training label of the key; ties -> the label of the alphabetically first training card carrying the key; unseen key -> training majority",
+    "lopo": {
+     "acc": 0.7228070175438597,
+     "majority_acc": 0.6982456140350877,
+     "n": 285,
+     "n_folds": 2,
+     "nll": 0.5838736137483711,
+     "novel_n": 224
+    },
+    "majority_acc": 0.6982456140350877,
+    "novel_key": {
+     "acc": 0.7169811320754716,
+     "auroc": 0.42358674463937623,
+     "auroc_ci": {
+      "B": 2000,
+      "alpha": 0.05,
+      "lower": 0.4101985397231876,
+      "n_clusters": 7,
+      "n_valid": 2000,
+      "point": 0.42358674463937623,
+      "seed": 0,
+      "upper": 0.4674208852360927
+     },
+     "brier": 0.40813225741546033,
+     "class_counts": {
+      "0": 45,
+      "1": 114
+     },
+     "majority_acc": 0.7169811320754716,
+     "n": 159,
+     "nll": 0.5985107315139783
+    }
+   },
+   "counts": {
+    "class_counts": {
+     "0": 86,
+     "1": 199
+    },
+    "n": 285,
+    "n_neg": 199,
+    "n_nonmodal": 86
+   },
+   "diagnostics": {
+    "excluded": {},
+    "laplace_alpha": 1.0,
+    "n_conflicting_keys": 30,
+    "n_novel": 159,
+    "n_tied_keys": 6,
+    "per_fold_n": {
+     "DP1.10003.001.brd_countdata": 37,
+     "DP1.10003.001.brd_perpoint": 40,
+     "DP1.10022.001.bet_archivepooling": 41,
+     "DP1.10022.001.bet_expertTaxonomistIDProcessed": 48,
+     "DP1.10022.001.bet_fielddata": 45,
+     "DP1.10022.001.bet_parataxonomistID": 33,
+     "DP1.10022.001.bet_sorting": 41
+    }
+   },
+   "exploratory": false,
+   "feature_spec": null,
+   "fingerprint": null,
+   "fold_choices": {},
+   "framing": "lookup_prob",
+   "guard_skipped_folds": {},
+   "label_sources": {
+    "consensus_all": 16,
+    "consensus_majority": 70,
+    "consensus_negative": 199
+   },
+   "labels_content_sha256": "5c60a8a69cf71d90df776cc331ba1347a8f7f3f074e75dca6ee6f95efb987b2b",
+   "labels_sha256": "aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+   "loco": true,
+   "mask": null,
+   "masked": true,
+   "metrics": {
+    "acc": 0.7543859649122807,
+    "aurc": 0.2162845564486185,
+    "auroc": 0.6219469440224378,
+    "auroc_ci": {
+     "B": 2000,
+     "alpha": 0.05,
+     "lower": 0.5914129353328795,
+     "n_clusters": 7,
+     "n_valid": 2000,
+     "point": 0.6219469440224378,
+     "seed": 0,
+     "upper": 0.6633332019601624
+    },
+    "brier": 0.3683710924749546,
+    "cov@10%": 0.07368421052631578,
+    "cov@5%": 0.0,
+    "ece": 0.06967956953722738,
+    "macro_f1": 0.6512237762237763,
+    "nll": 0.5551402675310558,
+    "threshold_cp": {
+     "0.05": null,
+     "0.10": null
+    }
+   },
+   "min_weight": 0.5,
+   "n_folds": 7,
+   "notes": "285 labelled targets from the eval; class counts {0: 86, 1: 199}",
+   "pre_registered": true,
+   "question_key": null,
+   "selection": "none",
+   "servable": false,
+   "skipped_folds": {},
+   "task": "neon_term_fits",
+   "task_id": "term.fits",
+   "task_key": "0ccc8d141ffd30ff",
+   "teacher": false,
+   "teacher_in_test": false,
+   "tier": "baseline"
+  },
+  "neon_value_kind.baseline.lookup_prob": {
+   "baselines": {
+    "beats_lookup_novel": null,
+    "lookup_acc": 0.6798561151079137,
+    "lookup_key": "(task_id, scope, target: column name | site code | '' for the dataset, option_key)",
+    "lookup_nll": 0.9665486533399094,
+    "lookup_prob_acc": 0.6762589928057554,
+    "lookup_rule": "most common training label of the key; ties -> the label of the alphabetically first training card carrying the key; unseen key -> training majority",
+    "lopo": {
+     "acc": 0.5431654676258992,
+     "majority_acc": 0.4784172661870504,
+     "n": 278,
+     "n_folds": 2,
+     "nll": 1.1419703747492238,
+     "novel_n": 133
+    },
+    "majority_acc": 0.4784172661870504,
+    "novel_key": {
+     "acc": 0.5625,
+     "auroc": null,
+     "auroc_ci": null,
+     "brier": 0.6623194249668869,
+     "class_counts": {
+      "0": 45,
+      "1": 2,
+      "2": 16,
+      "3": 17
+     },
+     "majority_acc": 0.5625,
+     "n": 80,
+     "nll": 1.2892731212660193
+    }
+   },
+   "counts": {
+    "class_counts": {
+     "0": 133,
+     "1": 62,
+     "2": 24,
+     "3": 59
+    },
+    "n": 278,
+    "n_neg": null,
+    "n_nonmodal": 145
+   },
+   "diagnostics": {
+    "excluded": {},
+    "laplace_alpha": 1.0,
+    "n_conflicting_keys": 157,
+    "n_novel": 80,
+    "n_tied_keys": 10,
+    "per_fold_n": {
+     "DP1.10003.001.brd_countdata": 34,
+     "DP1.10003.001.brd_perpoint": 38,
+     "DP1.10022.001.bet_archivepooling": 35,
+     "DP1.10022.001.bet_expertTaxonomistIDProcessed": 46,
+     "DP1.10022.001.bet_fielddata": 47,
+     "DP1.10022.001.bet_parataxonomistID": 35,
+     "DP1.10022.001.bet_sorting": 43
+    }
+   },
+   "exploratory": false,
+   "feature_spec": null,
+   "fingerprint": null,
+   "fold_choices": {},
+   "framing": "lookup_prob",
+   "guard_skipped_folds": {},
+   "label_sources": {
+    "consensus_majority": 219,
+    "consensus_negative": 59
+   },
+   "labels_content_sha256": "5c60a8a69cf71d90df776cc331ba1347a8f7f3f074e75dca6ee6f95efb987b2b",
+   "labels_sha256": "aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+   "loco": true,
+   "mask": null,
+   "masked": true,
+   "metrics": {
+    "acc": 0.6762589928057554,
+    "aurc": 0.26629210676622056,
+    "auroc": null,
+    "auroc_ci": null,
+    "brier": 0.5093969512916935,
+    "cov@10%": 0.0,
+    "cov@5%": 0.0,
+    "ece": 0.14177782258991045,
+    "macro_f1": 0.5591325668191275,
+    "nll": 0.9665486533399094,
+    "threshold_cp": {
+     "0.05": null,
+     "0.10": null
+    }
+   },
+   "min_weight": 0.5,
+   "n_folds": 7,
+   "notes": "278 labelled targets from the eval; class counts {0: 133, 1: 62, 2: 24, 3: 59}",
+   "pre_registered": true,
+   "question_key": null,
+   "selection": "none",
+   "servable": false,
+   "skipped_folds": {},
+   "task": "neon_value_kind",
+   "task_id": "avu.value_kind",
+   "task_key": "18a3a5159c3a8492",
+   "teacher": false,
+   "teacher_in_test": false,
+   "tier": "baseline"
+  }
+ },
+ "date": "2026-09-29",
+ "environment": {
+  "duckdb": "1.5.6",
+  "host": "sparky-1.hpc.unm.edu",
+  "mesa_clm": "0.1.0.dev0",
+  "numpy": "2.4.6",
+  "platform": "Linux-6.17.0-1029-nvidia-aarch64-with-glibc2.39",
+  "python": "3.11.16"
+ },
+ "format": "mesa-clm/bench-results/1",
+ "labels_content_sha256": "5c60a8a69cf71d90df776cc331ba1347a8f7f3f074e75dca6ee6f95efb987b2b",
+ "labels_sha256": "aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+ "mesa_clm": "0.1.0.dev0",
+ "name": "baselines",
+ "notes": [
+  "No-model controls (plan \u00a75.4, X2). `lookup_acc` copies the most common training label of (task, scope, target, option_key) from the other cards; `lookup_prob` is its Laplace(\u03b1=1) frequency with the training prior on unseen keys. Novel keys are the held-out items no training card had a key for; `lopo` holds out a whole NEON product.",
+  "Every cell is a leave-one-card-out pool over all 7 cards (a lookup needs no fit guard); `guard_skipped_folds` lists the folds a fitted tier would skip under the 30/5 guards."
+ ]
+}

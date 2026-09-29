@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Seiurus aurocapilla",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:182946",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_182946",
+   "isRoot": false,
+   "label": "Seiurus aurocapilla",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

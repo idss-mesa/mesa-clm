@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "detection method",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ARO:3004395",
+   "description": "Microbes exposed to antimicrobial agents are then stained with the intercalating agent propidium iodide. Damaged cells emit a positive signal that is detected by flow cytometry analysis. Flow cytometry can also be used to discriminate between dead, damaged and live cells.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ARO_3004395",
+   "isRoot": false,
+   "label": "flow cytofluorometric method",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

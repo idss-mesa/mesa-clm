@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "elevation",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0001687",
+   "description": "A positional quality inhering in a bearer by virtue of the bearer's vertical distance of a point above or below a reference surface.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001687",
+   "isRoot": false,
+   "label": "elevation",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000176",
+   "description": "A landform elevated above the surrounding area.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000176",
+   "isRoot": false,
+   "label": "elevated landform",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001459",
+   "description": "On Earth, mountains in this category cross the atmospheric oxycline above which oxygen concentrations fall below the physiological tolerance threshold of most humans. Note that the threshold elevations are inconsistent between the various reports which list this classification: while some have overlapping thresholds, others are non-overlapping. The latter model is used in ENVO for coherence and to adhere to the Kapos et al. 2000 reference.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001459",
+   "isRoot": false,
+   "label": "high-elevation mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001460",
+   "description": "On Earth, mountains in this category are below the atmospheric oxycline above which oxygen concentrations fall below the physiological tolerance threshold of most humans. Note that the threshold elevations are inconsistent between the various reports which list this classification: while some have overlapping thresholds, others are non-overlapping. The latter model is used in ENVO for coherence and to adhere to the Kapos et al. 2000 reference.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001460",
+   "isRoot": false,
+   "label": "mid-elevation mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001491",
+   "description": "An elevation which is flattened across its highest surface.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001491",
+   "isRoot": false,
+   "label": "flattened elevation",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000185",
+   "description": "A montane desert biome is a desert biome which occurs in regions elevated above sea level and which has community structure determined by elevation-dependent environmental conditions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000185",
+   "isRoot": false,
+   "label": "montane desert biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000194",
+   "description": "A montane grassland biome is a grassland biome which occurs in regions elevated above sea level and which has community structure determined by elevation-dependent environmental conditions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000194",
+   "isRoot": false,
+   "label": "montane grassland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000216",
+   "description": "A montane shrubland biome is a shrubland biome which occurs in regions elevated above sea level and which has community structure determined by elevation-dependent environmental conditions.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000216",
+   "isRoot": false,
+   "label": "montane shrubland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000223",
+   "description": "A montane savanna biome is a savanna biome which occurs in regions elevated above sea level and which has community structure determined by elevation-dependent environmental conditions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000223",
+   "isRoot": false,
+   "label": "montane savanna biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001465",
+   "description": "A mid-elevation mountain which has a maximum elevation between 1000 and 1499 metres above sea level and either 1) a slope greater than or equal to five degrees or 2) a local elevation range, within a 7 kilometre radius, of greater than 300 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001465",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 5 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001466",
+   "description": "A mid-elevation mountain which has a maximum elevation between 300 and 999 metres above sea level and a local elevation range, within a 7 kilometre radius, of greater than 300 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001466",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 6 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000022",
+   "description": "A stream which, through permanent or seasonal flow processes, moves from elevated land towards lower elevations through a definite channel and empties either into a sea, lake, or another river or ends on land as bed seepage and evapotranspiration exceed water supply.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000022",
+   "isRoot": false,
+   "label": "river",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00002195",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002195",
+   "isRoot": false,
+   "label": "pyritic acid mine drainage",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000341",
+   "description": "An altitudinal condition which inheres in a bearer by virtue of the bearer being located at an altitude immediately below the tree line of an elevation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000341",
+   "isRoot": false,
+   "label": "subalpine",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001377",
+   "description": "A elevation quality which inheres in a marine water body by virtue of the position of that water body's surface layer (adjacent to an atmosphere) relative to some reference elevation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001377",
+   "isRoot": false,
+   "label": "sea surface height",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001461",
+   "description": "A high-elevation mountain which has a maximum elevation greater than 4500 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001461",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 1 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001462",
+   "description": "A high-elevation mountain which has a maximum elevation between 3500 and 4500 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001462",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 2 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001463",
+   "description": "A high-elevation mountain which has a maximum elevation between 2500 and 3500 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001463",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 3 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001464",
+   "description": "A mid-elevation mountain which has a maximum elevation between 1500 and 2499 metres above sea level and a slope greater than or equal to two degrees.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001464",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 4 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001467",
+   "description": "This is an odd class, as it's not a mountain in itself but is used to classify elevated basins and plateaus surrounded by mountains.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001467",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 7 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

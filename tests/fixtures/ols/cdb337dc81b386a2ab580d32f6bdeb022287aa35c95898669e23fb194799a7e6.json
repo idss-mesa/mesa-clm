@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Number of individuals in a cluster",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

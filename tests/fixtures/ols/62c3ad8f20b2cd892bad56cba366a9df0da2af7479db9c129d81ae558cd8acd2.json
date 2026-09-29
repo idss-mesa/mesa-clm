@@ -1,0 +1,50 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "genus",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "genus",
+   "description": "The full scientific name of the genus in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/genus",
+   "isRoot": true,
+   "label": "Genus",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "genericName",
+   "description": "The genus part of the scientificName without authorship.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/genericName",
+   "isRoot": true,
+   "label": "Generic Name",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "infragenericEpithet",
+   "description": "The infrageneric part of a binomial name at ranks above species but below genus.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/infragenericEpithet",
+   "isRoot": true,
+   "label": "Infrageneric Epithet",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "subgenus",
+   "description": "The full scientific name of the subgenus in which the taxon is classified. Values should include the genus to avoid homonym confusion.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/subgenus",
+   "isRoot": true,
+   "label": "Subgenus",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

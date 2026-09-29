@@ -1,0 +1,100 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "named location",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "municipality",
+   "description": "The full, unabbreviated name of the next smaller administrative region than county (city, municipality, etc.) in which the Location occurs. Do not use this term for a nearby named place that does not contain the actual location.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/municipality",
+   "isRoot": true,
+   "label": "Municipality",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "continent",
+   "description": "The name of the continent in which the Location occurs.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/continent",
+   "isRoot": true,
+   "label": "Continent",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "islandGroup",
+   "description": "The name of the island group in which the Location occurs.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/islandGroup",
+   "isRoot": true,
+   "label": "Island Group",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "waterBody",
+   "description": "The name of the water body in which the Location occurs.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/waterBody",
+   "isRoot": true,
+   "label": "Water Body",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "island",
+   "description": "The name of the island on or near which the Location occurs.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/island",
+   "isRoot": true,
+   "label": "Island",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "country",
+   "description": "The name of the country or major administrative unit in which the Location occurs.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/country",
+   "isRoot": true,
+   "label": "Country",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "georeferencedBy",
+   "description": "A list (concatenated and separated) of names of people, groups, or organizations who determined the georeference (spatial representation) for the Location.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/georeferencedBy",
+   "isRoot": true,
+   "label": "Georeferenced By",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "county",
+   "description": "The full, unabbreviated name of the next smaller administrative region than stateProvince (county, shire, department, etc.) in which the Location occurs.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/county",
+   "isRoot": true,
+   "label": "County",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "stateProvince",
+   "description": "The name of the next smaller administrative region than country (state, province, canton, department, region, etc.) in which the Location occurs.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/stateProvince",
+   "isRoot": true,
+   "label": "State Province",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

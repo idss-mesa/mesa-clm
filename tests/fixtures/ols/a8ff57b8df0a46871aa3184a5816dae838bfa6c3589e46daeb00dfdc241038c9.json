@@ -1,0 +1,130 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "Type of sample",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0000620",
+   "description": "For medical, biological and material sciences research, avance imaging systems provide optimal object handling and performance with a variety of samples types. Two classes of imaging probes are available: in vivo probes for handling and sustaining live objects such as animals and plants, and conventional imaging probes for materials samples.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000620",
+   "isRoot": false,
+   "label": "Bruker micro imaging probe",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000361",
+   "description": "An ion source is a device that is part of a mass spectrometer that ionizes the material under analysis. The ions are then transported by magnetic or electric fields to the mass analyzer.  Techniques for ionization have been key to determining what types of samples can be analyzed by mass spectrometry. Electron ionization and chemical ionization are used for gases and vapors. In chemical ionization sources, the material is ionized by chemical ion-molecule reactions during collisions in the source. Two techniques often used with liquid and solid biological samples include electrospray ionization (due to John Fenn PMID 2675315.) and matrix-assisted laser desorption/ionization (MALDI, due to M. Karas and F. Hillenkamp (Measuring Mass: From Positive Rays to Proteins by Michael A. Grayson (Editor) (ISBN 0-941901-31-9))).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000361",
+   "isRoot": false,
+   "label": "ion source",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0500010",
+   "description": "A reference experiment design type is where all samples are compared to a common reference.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0500010",
+   "isRoot": false,
+   "label": "reference design",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0400043",
+   "description": "Aparatus in the fluidic subsystem where the sheath and sample meet. Can be one of several types; jet-in-air, quartz cuvette, or a hybrid of the two. The sample flows through the center of a fluid column of sheath fluid in the flow cell.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0400043",
+   "isRoot": false,
+   "label": "flow cell",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000470",
+   "description": "An assay that identifies the amount and type of material entities present in a sample by fragmenting the sample and measuring the mass-to-charge ratio of the resulting particles.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000470",
+   "isRoot": false,
+   "label": "mass spectrometry assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002957",
+   "description": "A type of protein state assay where tissue or cell samples are lysed and then spotted onto a slide which is probed with antibodies specific to proteins with and without post-translational modifications.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002957",
+   "isRoot": false,
+   "label": "reverse phase protein array profiling assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001271",
+   "description": "A type of transcription profiling assay where transcripts are extracted from a sample, usually (but not always) transformed into cDNA, and then sequenced. Sequence reads are generally mapped to a reference and quantified to establish levels of gene transcription.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001271",
+   "isRoot": false,
+   "label": "transcription profiling by RNA sequencing assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000516",
+   "description": "Part of an NMR instrument that detects the signals emitted from a sample. No single probe can perform the full range of experiments, and probes that are designed to perform more than one type of measurement usually suffer from performance compromises. The probe represents a rather fragile single point of failure that can render an NMR system completely unusable if the probe is dropped or otherwise damaged. Probes are usually characterised by Sample diameter and Frequency.n  alt The instrument that transmits and receives radiofrequency to and from the NMR sample.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000516",
+   "isRoot": false,
+   "label": "NMR probe",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000590",
+   "description": "Over the past few years there has been a significantly growing demand for miniaturization in all areas ofmodern research and development. Evoked by many exciting applications, there is a need for analytical methods which require less amounts of sample. Bruker BioSpin meets this challenge with a revolutionary NMR probe design: The 1mm MicroProbe. It operates with disposable 1mm capillary sample tubes and the sample volume of 5 microliters enables the use of lowest amounts of sample to run all high resolution NMR experiments with outstanding sensitivity and up to 16 times faster measurements. Due to the TXI-type probe design, the z-gradient coil and the automatic matching and tuning accessory, the 1mm MicroProbe can be used for a wide variety of NMR experiments. The key advantages of this probe include:n   up to 4 times higher mass sensitivity than 5mm conventional probes (with respect to the same sample amount)n   excellent solvent suppression propertiesn   virtually no salt effectn   discrete samples in tubes that can be sealed and storedn   automation accessory for sample preparation and handling available.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000590",
+   "isRoot": false,
+   "label": "Bruker 1mm MicroProbe",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000164",
+   "description": "Mixed population of cDNAs (complementaryDNA) made from mRNA from a defined source, usually a specific cell type. This term should be associated only to nucleic acid interactors not to their proteins product. For instance in 2h screening use living cells (MI:0349) as sample process.\n\nALT DEF (PRS):: a cDNA library is a collection of host cells, typically E.Coli cells but not exclusively. modified by transfer of plasmid DNA molecule used as vector containing a fragment or totality of cDNA molecule (the insert) .  cDNA library may have an array of role and applications.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000164",
+   "isRoot": false,
+   "label": "clonal cDNA library",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002968",
+   "description": "A type of metabolic profiling assay which employs a hybrid dual quadrupole linear ion trap mass spectrometer for steady-state profiling of endogenous polar metabolites from organic extractions from biological samples.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002968",
+   "isRoot": false,
+   "label": "positive/negative ion switching metabolite profiling assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0400029",
+   "description": "A CytoSub is a flow_cytometer_analyser manufactured by Cyto Buoy Inc. They are a single laser, multi parameter instrument. Various types of micro-laser are offered; available measuring parameters are forward light scatter, side scatter, and fluorescence (max. 9 colour bands). The current series have 5 parameters. The CytoSub is the submersible version equipped with a high pressure sample inlet loop and a high pressure housing to allow underwater operation down to 200 m, lowered on a cable or mounted on a flooded underwater vehicle.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0400029",
+   "isRoot": false,
+   "label": "CytoSub",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

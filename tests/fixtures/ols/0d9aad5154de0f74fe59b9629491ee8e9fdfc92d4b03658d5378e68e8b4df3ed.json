@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Synuchus impunctatus",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:536895",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_536895",
+   "isRoot": false,
+   "label": "Synuchus impunctatus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

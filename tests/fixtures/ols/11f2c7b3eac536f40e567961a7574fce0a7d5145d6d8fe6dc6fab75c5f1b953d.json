@@ -1,0 +1,80 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "meter",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "coordinateUncertaintyInMeters",
+   "description": "The horizontal distance (in meters) from the given decimalLatitude and decimalLongitude describing the smallest circle containing the whole of the Location. Leave the value empty if the uncertainty is unknown, cannot be estimated, or is not applicable (because there are no coordinates). Zero is not a valid value for this term.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/coordinateUncertaintyInMeters",
+   "isRoot": true,
+   "label": "Coordinate Uncertainty In Meters",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "maximumDepthInMeters",
+   "description": "The greater depth of a range of depth below the local surface, in meters.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/maximumDepthInMeters",
+   "isRoot": true,
+   "label": "Maximum Depth In Meters",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "maximumDistanceAboveSurfaceInMeters",
+   "description": "The greater distance in a range of distance from a reference surface in the vertical direction, in meters. Use positive values for locations above the surface, negative values for locations below. If depth measures are given, the reference surface is the location given by the depth, otherwise the reference surface is the location given by the elevation.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/maximumDistanceAboveSurfaceInMeters",
+   "isRoot": true,
+   "label": "Maximum Distance Above Surface In Meters",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "maximumElevationInMeters",
+   "description": "The upper limit of the range of elevation (altitude, usually above sea level), in meters.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/maximumElevationInMeters",
+   "isRoot": true,
+   "label": "Maximum Elevation In Meters",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "minimumDepthInMeters",
+   "description": "The lesser depth of a range of depth below the local surface, in meters.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/minimumDepthInMeters",
+   "isRoot": true,
+   "label": "Minimum Depth In Meters",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "minimumDistanceAboveSurfaceInMeters",
+   "description": "The lesser distance in a range of distance from a reference surface in the vertical direction, in meters. Use positive values for locations above the surface, negative values for locations below. If depth measures are given, the reference surface is the location given by the depth, otherwise the reference surface is the location given by the elevation.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/minimumDistanceAboveSurfaceInMeters",
+   "isRoot": true,
+   "label": "Minimum Distance Above Surface In Meters",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "minimumElevationInMeters",
+   "description": "The lower limit of the range of elevation (altitude, usually above sea level), in meters.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/minimumElevationInMeters",
+   "isRoot": true,
+   "label": "Minimum Elevation In Meters",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

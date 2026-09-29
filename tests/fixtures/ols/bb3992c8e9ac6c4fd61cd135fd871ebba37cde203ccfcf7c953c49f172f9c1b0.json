@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "How the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0100357",
+   "description": "A type of contact in which an individual comes in contact with an infected person, either directly or indirectly.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100357",
+   "isRoot": false,
+   "label": "contact with infected individual",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000017",
+   "description": "The American HIPPA Protected Health Information (PHI) guidelines cover information, including demographic information, which relates to:\n\n- the individual’s past, present, or future physical or mental health or condition,\n- the provision of health care to the individual, or\n- the past, present, or future payment for the provision of health care to the individual, and that identifies the individual or for which there is a reasonable basis to believe can be used to identify the individual. Protected health information includes many common identifiers (e.g., name, address, birth date, Social Security Number) when they can be associated with the health information listed above.\"",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000017",
+   "isRoot": false,
+   "label": "American HIPPA Protected Health Information (PHI) guidelines",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001553",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001553",
+   "isRoot": false,
+   "label": "exposure to individual with diarrhea",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002177",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002177",
+   "isRoot": true,
+   "label": "_test_individual",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100513",
+   "description": "A data field which describes the name of the individual or the individual's role in the organization that performed the antimicrobial resistance (AMR) testing.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100513",
+   "isRoot": false,
+   "label": "AMR testing by contact name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100514",
+   "description": "A data field which describes the email of the individual or the individual's role in the organization that performed the antimicrobial resistance (AMR) testing.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100514",
+   "isRoot": false,
+   "label": "AMR testing by contact email",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001517",
+   "description": "A data field which describes the names of individuals contributing to the processes of sample collection, sequence generation, analysis, and data submission.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001517",
+   "isRoot": false,
+   "label": "data authors",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100009",
+   "description": "A priority surveillance strategy in which subsets of a defined population can be identified who are, have been, or in the future may be exposed or not exposed - or exposed in different degrees - to a disease of interest and are selected to under go repeat sampling over a defined period of time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100009",
+   "isRoot": false,
+   "label": "longitudinal surveillance strategy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100141",
+   "description": "A DNA sequencer that is manufactured by the Oxford Nanopore Technologies corporation, that can run and analyze up to five individual flow cells producing up to 150 Gb of data per run. The sequencer produces real-time results and utilizes nanopore technology with the option of running the flow cells concurrently or individual",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100141",
+   "isRoot": false,
+   "label": "Oxford Nanopore GridION",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100247",
+   "description": "A type of indirect contact where an individual sustains unprotected exposure by being within 6 feet of an infected individual over a sustained period of time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100247",
+   "isRoot": false,
+   "label": "close indirect contact",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102079",
+   "description": "PCDS: Enter the name of the individual responsible for managing and overseeing the data. As names can change when there is staff turnover, the position of the responsible individual can be provided instead.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102079",
+   "isRoot": false,
+   "label": "data steward contact name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102080",
+   "description": "PCDS: Enter the name of the individual responsible for managing and overseeing the data. As the applicable address can change when there is staff turnover, a general contact email or the email tied to the responsible individual's position, can be provided instead.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102080",
+   "isRoot": false,
+   "label": "data steward contact email",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000114",
+   "description": "Age unit of the age measurement of a subject (individual organism).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000114",
+   "isRoot": false,
+   "label": "subject age - unit",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000128",
+   "description": "An epidemiology contact network model is a definition of the information necessary to connect pathogen transmission patterns between individuals or animals in connection with an outbreak investigation.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000128",
+   "isRoot": false,
+   "label": "epidemiology contact network model",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000138",
+   "description": "A lab test requestor is the individual or agency requesting that one or more tests be performed on a specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000138",
+   "isRoot": false,
+   "label": "contact specification - lab test requester",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001051",
+   "description": "Identification or description of the specific individual from which this sample was obtained",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001051",
+   "isRoot": false,
+   "label": "NCBI BioSample isolate (human name or description)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001079",
+   "description": "A serotype or serovar is a distinct variation within a species of bacteria or virus or among immune cells of different individuals. These microorganisms, viruses, or cells are classified together based on their cell surface antigens, allowing the epidemiologic classification of organisms to the sub-species level",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001079",
+   "isRoot": false,
+   "label": "serovar/serotype common name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001131",
+   "description": "An identifier field which describes the identifer assigned to a sequenced isolate in Integrated Rapid Infectious Disease Analysis (IRIDA) bioinformatics platform.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001131",
+   "isRoot": false,
+   "label": "IRIDA sample ID",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001156",
+   "description": "A data field which describes the email address of the contact responsible for follow-up regarding the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001156",
+   "isRoot": false,
+   "label": "sample collector contact email",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001165",
+   "description": "A data field which describes the email address of the agency responsible for submission of the sequence.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001165",
+   "isRoot": false,
+   "label": "sequence submitter contact email",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

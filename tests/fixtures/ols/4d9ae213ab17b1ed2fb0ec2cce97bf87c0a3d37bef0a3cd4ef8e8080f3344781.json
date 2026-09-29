@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000498",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0000475",
+   "description": "NMR tubes are often used once and discarded, creating needless waste. With the Bruker BioSpin Autoclean system you can now recycle 5mm, 3mm, or 5mm/3mm step-down (Wilmad 520-1B) NMR tubes. AutoClean NMR Tube Washing System is a simple way to recoup the substantial investment your organization makes in quality NMR tubes, and cut back on needless waste material.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000475",
+   "isRoot": false,
+   "label": "Bruker AutoClean system",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

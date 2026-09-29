@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001174",
+  "ontology_id": "genepio"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "GENEPIO:0001174",
+  "description": "A data field which describes the date on which the sample was collected.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001174",
+  "isRoot": false,
+  "label": "sample collection start date",
+  "ontologyId": "genepio",
+  "synonyms": []
+ }
+}

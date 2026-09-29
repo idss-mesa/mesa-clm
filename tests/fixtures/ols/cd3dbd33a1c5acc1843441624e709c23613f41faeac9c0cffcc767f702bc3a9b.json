@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000001",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000001",
+  "description": "A unit which is a standard measure of the distance between two points.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000001",
+  "isRoot": false,
+  "label": "length unit",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

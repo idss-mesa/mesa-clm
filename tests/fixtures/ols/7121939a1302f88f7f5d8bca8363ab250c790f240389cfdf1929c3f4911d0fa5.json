@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "end rh",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0003395",
+   "description": "A DNA microarray manufactured by Affymetrix,which is a single-labeled high-density oligonucleotide array, designed to study gene expression in the rhesus animal model and to interrogate rhesus transcripts orthologous to the 3' end of human transcripts. The array consists of over 52,000 probe sets representing more than 20,000 genes, and several relevant viral organisms for studying host-disease immune response.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003395",
+   "isRoot": false,
+   "label": "Affymetrix Rhesus Macaque Genome Array",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

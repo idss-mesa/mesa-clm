@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1623480",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:1623481",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1623481",
+   "isRoot": false,
+   "label": "uncultured Clostridiales Family III bacterium",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

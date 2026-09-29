@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002913",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0002913",
+  "description": "A specimen collection process that has the objective of collecting arthropods as specimens.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002913",
+  "isRoot": false,
+  "label": "arthropod specimen collection process",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

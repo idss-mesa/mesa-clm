@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000128",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0000582",
+   "description": "A weight which is relatively high.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000582",
+   "isRoot": false,
+   "label": "increased weight",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000583",
+   "description": "A weight which is relatively low.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000583",
+   "isRoot": false,
+   "label": "decreased weight",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

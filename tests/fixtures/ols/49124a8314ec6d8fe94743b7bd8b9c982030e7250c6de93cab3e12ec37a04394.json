@@ -1,0 +1,60 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "Name of the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00023263",
+   "description": "A large group of high mountains and individually named ranges and ridges in NE Victoria Land which are bounded by the sea, and by the Dennistoun, Ebbe, and Tucker Glaciers.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00023263",
+   "isRoot": true,
+   "label": "Admiralty Mountains",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00023343",
+   "description": "That part of the Ross Ice Shelf bounded by McMurdo Sound and Ross Island on the north and Minna Bluff on the south. Studies show this feature has characteristics quite distinct from the Ross Ice Shelf and merits individual naming.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00023343",
+   "isRoot": true,
+   "label": "McMurdo Ice Shelf",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00056612",
+   "description": "A 1,500 km long system of mountain ranges and escarpments in Southeastern Brazil, which runs in parallel to the Atlantic Ocean coast, from the State of Espirito Santo to Santa Catarina. The main escarpment forms the boundary between the sea-level littoral and the inland plateau (planalto), which has a mean altitude of 500 to 1300 m. The mountain ranges are discontinuous in several places and receive individual names, such as Serra de Bocaina, Serra de Paranapiacaba, Serra Negra, Serra dos Orgaos, etc. It also extends to some large islands near the coastline, such as Ilhabela and Ilha Grande. The highest point of Serra do Mar is the Pico das Salinas, located in the Parque Estadual dos Tres Picos in the State of Rio de Janeiro in a municipality of Nova Friburgo, with a height of 2,316 m.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00056612",
+   "isRoot": true,
+   "label": "Serra do Mar",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00016657",
+   "description": "The largest island of the Butaritari Atoll, on the S, with Tanimaiki, Tabonugea and Tabononobi as named regions in the E, central and W respectively (individual islands?).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00016657",
+   "isRoot": true,
+   "label": "Butaritari Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00063811",
+   "description": "A network of mostly navigable rivers and lakes (known locally as broads) in the English counties of Norfolk and Suffolk. The lakes (Broads) themselves are ancient artificial features, resulting from the flooding of early peat excavations. The Broads largely follows the line of the rivers and natural navigations of the area. There are seven navigable rivers, the River Yare and its (direct and indirect) tributaries the Rivers Bure, Thurne, Ant, Waveney, Chet and Wensum. There are no locks on any of the rivers (except for Mutford lock in Oulton Broad that links to the saltwater Lake Lothing in Lowestoft), all the waterways are subject to tidal influence. The tidal range decreases with distance from the sea, with highly tidal areas such as Breydon Water contrasted with effectively non-tidal reaches such as the River Ant upstream of Barton Broad. The broads themselves range in size from small pools to the large expanses of Hickling Broad, Barton Broad and Breydon Water. The broads are unevenly distributed, with far more broads in the northern half of Broadland (the Rivers Bure, Thurne and Ant) than in the central and southern portions (the Rivers Yare, Waveney, Chet and Wensum). Individual broads may lie directly on the river, or are more often situated to one side and connected to the river by an artificial channel or dyke.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00063811",
+   "isRoot": true,
+   "label": "The Broads",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

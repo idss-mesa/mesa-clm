@@ -1,0 +1,50 @@
+{
+ "args": {
+  "ontology_id": "uo",
+  "query": "kilometer",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "UO:0010066",
+   "description": "A length unit which is equal to one thousand meters.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0010066",
+   "isRoot": false,
+   "label": "kilometer",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0010066",
+   "description": "A length unit which is equal to one thousand meters.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0010066",
+   "isRoot": false,
+   "label": "kilometer",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0010008",
+   "description": "A speed/velocity unit which is equal to the speed of an object traveling 1 kilometer distance in one hour.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0010008",
+   "isRoot": false,
+   "label": "kilometer per hour",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0010008",
+   "description": "A speed/velocity unit which is equal to the speed of an object traveling 1 kilometer distance in one hour.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0010008",
+   "isRoot": false,
+   "label": "kilometer per hour",
+   "ontologyId": "uo",
+   "synonyms": []
+  }
+ ]
+}

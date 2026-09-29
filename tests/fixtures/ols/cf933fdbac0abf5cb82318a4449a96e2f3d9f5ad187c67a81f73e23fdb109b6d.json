@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100014",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0100015",
+   "description": "An international travel-associated surveillance strategy in which individuals are selected if they have a travel history of crossing an international border via air travel or ground transport.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100015",
+   "isRoot": false,
+   "label": "surveillance of international border crossing by air travel or ground transport strategy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100016",
+   "description": "An international travel-associated surveillance strategy in which individuals are selected if they have a travel history of crossing an international border via air travel.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100016",
+   "isRoot": false,
+   "label": "surveillance of international border crossing by air travel strategy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100017",
+   "description": "An international travel-associated surveillance strategy in which individuals are selected if they have a travel history of crossing an international border via ground transport.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100017",
+   "isRoot": false,
+   "label": "surveillance of international border crossing by ground transport strategy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100018",
+   "description": "A travel-associated surveillance strategy in which individuals are selected if they have a travel history outside of the reporting country in a specified number of days before onset of symptoms.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100018",
+   "isRoot": false,
+   "label": "surveillance from international worker testing strategy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "number",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00173769",
+   "description": "A reservoir fed by a canal from Wheatland Reservoir Number 2 and the Laramie River.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00173769",
+   "isRoot": true,
+   "label": "Wheatland Reservoir Number 3",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00217222",
+   "description": "A reservoir. Impounded by Kettle Brook Reservoir Number 4 Dam.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00217222",
+   "isRoot": true,
+   "label": "Kettle Brook Reservoir Number Four",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00217223",
+   "description": "A reservoir. Impounded by Kettle Brook Reservoir Number 3 Dam.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00217223",
+   "isRoot": true,
+   "label": "Kettle Brook Reservoir Number Three",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00217224",
+   "description": "A reservoir. Impounded by Kettle Brook Reservoir Number 2 Dam.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00217224",
+   "isRoot": true,
+   "label": "Kettle Brook Reservoir Number Two",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00217225",
+   "description": "A reservoir. Impounded by Kettle Brook Reservoir Number 1 Dam.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00217225",
+   "isRoot": true,
+   "label": "Kettle Brook Reservoir Number One",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00217226",
+   "description": "A dam. Impounding Kettle Brook Reservoir Number Two.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00217226",
+   "isRoot": true,
+   "label": "Kettle Brook Reservoir Number 2 Dam",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00217227",
+   "description": "A dam. Impounding Kettle Brook Reservoir Number Three.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00217227",
+   "isRoot": true,
+   "label": "Kettle Brook Reservoir Number 3 Dam",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00217228",
+   "description": "A dam. Impounding Kettle Brook Reservoir Number Four.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00217228",
+   "isRoot": true,
+   "label": "Kettle Brook Reservoir Number 4 Dam",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00217229",
+   "description": "A dam. Impounding Kettle Brook Reservoir Number One.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00217229",
+   "isRoot": true,
+   "label": "Kettle Brook Reservoir Number 1 Dam",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00090521",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00090521",
+   "isRoot": false,
+   "label": "Number 10 Patches",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00090528",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00090528",
+   "isRoot": false,
+   "label": "Number 10 Patches, 14-152",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00090529",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00090529",
+   "isRoot": false,
+   "label": "Number 10 Patches, 14-151",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00090530",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00090530",
+   "isRoot": false,
+   "label": "Number 10 Patches, 14-153a",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00090531",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00090531",
+   "isRoot": false,
+   "label": "Number 10 Patches, 14-153b",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00148273",
+   "description": "A dam and associated reservoir 2 km NE of Mount Morgan, Queensland.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00148273",
+   "isRoot": true,
+   "label": "Number 7 Dam",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00159793",
+   "description": "A state forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00159793",
+   "isRoot": true,
+   "label": "State Forest Rensselaer Number 3",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00164812",
+   "description": "A populated place. A township of Avery County.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00164812",
+   "isRoot": true,
+   "label": "Newland Number 1 Township",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00166465",
+   "description": "A reservoir.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00166465",
+   "isRoot": true,
+   "label": "Shawnee Twin Lake Number 1",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00166466",
+   "description": "A reservoir.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00166466",
+   "isRoot": true,
+   "label": "Shawnee Twin Lake Number 2",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00166473",
+   "description": "A reservoir.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00166473",
+   "isRoot": true,
+   "label": "Lake Talawanda Number 1",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

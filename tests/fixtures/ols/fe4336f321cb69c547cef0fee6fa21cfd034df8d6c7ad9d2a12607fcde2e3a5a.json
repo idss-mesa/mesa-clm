@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "number",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PCO:0000054",
+   "description": "A count data item of the number of steps in the line of descent from a common ancestor for a multicellular organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000054",
+   "isRoot": false,
+   "label": "number of generations of multicellular organism",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000004",
+   "description": "A quality that inheres in a community.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000004",
+   "isRoot": false,
+   "label": "quality of an ecological community",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000010",
+   "description": "The number of different species represented in an ecological community.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000010",
+   "isRoot": false,
+   "label": "community species richness",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000011",
+   "description": "A process that leads to a change in the number of individuals (positive or negative) in a population.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000011",
+   "isRoot": false,
+   "label": "population growth",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000012",
+   "description": "A population process that leads to an increase in the numbers of individuals in a population following a logistic (S-shaped) curve. Generally occurs when the population has a carrying capacity in a particular habitat.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000012",
+   "isRoot": false,
+   "label": "logistic population growth",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000013",
+   "description": "A population growth process that leads to an exponential increase in the number of individuals in a population.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000013",
+   "isRoot": false,
+   "label": "exponential population growth",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000019",
+   "description": "The Shannon Index and Simpson Index are examples of ways in which species diversity is quantified.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000019",
+   "isRoot": false,
+   "label": "community species diversity",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000020",
+   "description": "A domestic group, or a number of domestic groups linked through descent (demonstrated or stipulated) from a common ancestor, marriage, or adoption.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000020",
+   "isRoot": false,
+   "label": "family",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000062",
+   "description": "A community species diversity metric that accounts for both the abundance and evenness of the species present quantified via the following formula: the negative sum of, the product of the proportion of species i relative to the total number of species (pi) multiplied by the natural logarithm of this proportion (ln pi).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000062",
+   "isRoot": false,
+   "label": "Shannon diversity index",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000063",
+   "description": "A community species diversity metric that is quantified via the following formula: the reciprocal of the sum of squared proportion of species i relative to the total number of species (pi).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000063",
+   "isRoot": false,
+   "label": "Simpson diversity index",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000064",
+   "description": "A community species diversity metric that is quantified via the following formula: the sum of squared proportion of species i relative to the total number of species (pi).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000064",
+   "isRoot": false,
+   "label": "inverse Simpson diversity index",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000078",
+   "description": "The density of seedlings in an ecological community or population, often measured as the number of seedlings per area.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000078",
+   "isRoot": false,
+   "label": "seedling density",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000079",
+   "description": "The density of plants in a population or organisms (a single species), often measured as the number of plants per area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000079",
+   "isRoot": false,
+   "label": "plant density of a population",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000080",
+   "description": "The density of plants in an ecological community (multiple species), often measured as the number of plants per area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000080",
+   "isRoot": false,
+   "label": "plant density of an ecological community",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000081",
+   "description": "The density of seedlings in a population or organisms (a single species), often measured as the number of seedlings per area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000081",
+   "isRoot": false,
+   "label": "seedling density of a population",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000082",
+   "description": "The density of seedlings in an ecological community (multiple species), often measured as the number of plants per area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000082",
+   "isRoot": false,
+   "label": "seedling density of an ecological community",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001555",
+   "description": "The number of parts of a particular type that the bearer entity has. This is a relational quality, and thus holds between two entities: the bearer of the quality, and the type of parts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001555",
+   "isRoot": false,
+   "label": "has number of",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000070",
+   "description": "This term was originally named \"presence\". It has been renamed to reduce ambiguity. Consider annotating with the reciprocal relation,PATO:0001555, has_number_of. For example, rather than E=fin ray Q=count in organism C=10, say E=organism Q=has number of E2= fin ray C=10.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000070",
+   "isRoot": false,
+   "label": "amount",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000470",
+   "description": "An amount which is relatively high.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000470",
+   "isRoot": false,
+   "label": "increased amount",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001997",
+   "description": "An amount which is relatively low.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001997",
+   "isRoot": false,
+   "label": "decreased amount",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

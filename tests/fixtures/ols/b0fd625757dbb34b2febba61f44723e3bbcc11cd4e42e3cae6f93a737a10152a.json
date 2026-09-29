@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002919",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0002919",
+  "description": "An arthropod specimen collection process meant to collect live specimens.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002919",
+  "isRoot": false,
+  "label": "live arthropod specimen collection process",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

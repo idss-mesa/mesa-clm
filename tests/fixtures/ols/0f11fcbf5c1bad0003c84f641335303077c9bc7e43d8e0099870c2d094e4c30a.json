@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102274",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0001435",
+   "description": "A data field which describes whether there was prior Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) infection.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001435",
+   "isRoot": false,
+   "label": "prior sarscov2 infection status",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100532",
+   "description": "A data field which describes the absence or presence of a prior Monkeypox infection.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100532",
+   "isRoot": false,
+   "label": "prior mpox infection status",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102275",
+   "description": "A data field which describes the absence or presence of a prior measles infection.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102275",
+   "isRoot": false,
+   "label": "prior measles infection status",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

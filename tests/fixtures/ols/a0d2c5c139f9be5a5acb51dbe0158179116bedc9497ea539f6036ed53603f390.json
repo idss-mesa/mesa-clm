@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "number",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0001555",
+   "description": "The number of parts of a particular type that the bearer entity has. This is a relational quality, and thus holds between two entities: the bearer of the quality, and the type of parts.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001555",
+   "isRoot": false,
+   "label": "has number of",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002001",
+   "description": "Example: [E=hand Q=has_fewer_parts_of_type E2=digit] - applies to an organism that has no less fingers than is normal for organisms of that type.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002001",
+   "isRoot": false,
+   "label": "has fewer parts of type",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000070",
+   "description": "This term was originally named \"presence\". It has been renamed to reduce ambiguity. Consider annotating with the reciprocal relation,PATO:0001555, has_number_of. For example, rather than E=fin ray Q=count in organism C=10, say E=organism Q=has number of E2= fin ray C=10.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000070",
+   "isRoot": false,
+   "label": "amount",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001905",
+   "description": "The bearer of this quality has_part = n, where n is the normal amount for a comparable organism. Note that the bearer of the quality is the whole, not the part.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001905",
+   "isRoot": false,
+   "label": "has normal numbers of parts of type",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002083",
+   "description": "Having extra or fewer parts.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002083",
+   "isRoot": false,
+   "label": "altered number of",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000470",
+   "description": "An amount which is relatively high.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000470",
+   "isRoot": false,
+   "label": "increased amount",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001997",
+   "description": "An amount which is relatively low.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001997",
+   "isRoot": false,
+   "label": "decreased amount",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002002",
+   "description": "In polydactyly, the bearer of the quality is the hand, and the entity type being counted is 'finger'. In EQ syntax, E=hand, Q=<this> E2=finger.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002002",
+   "isRoot": false,
+   "label": "has extra parts of type",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0005001",
+   "description": "A variability quality inhering in the bearer by virtue of the bearer having a variable number or count of an entity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0005001",
+   "isRoot": false,
+   "label": "variability of count",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001392",
+   "description": "A polyploidy quality inhering in a bearer by virtue of the bearer's chromosome number being increased by endomitosis and for which the degree of ploidy is proportional to the number of times that endomitosis has taken place.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001392",
+   "isRoot": false,
+   "label": "endopolyploid",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001394",
+   "description": "The exact number may be one or two different from the 2n number and still be classified as diploidy (although with aneuploidy). Nearly all mammals are diploid organisms, although all individuals have some small fraction of cells that are polyploidy.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001394",
+   "isRoot": false,
+   "label": "diploid",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001999",
+   "description": "The bearer of this quality has_part < n of the indicated entity type, where n is the normal amount for a comparable organism. Note that the bearer of the quality is the whole, not the part. Formally: If a bearer entity e has fewer parts of type X at time t, then the number of instances x of X at t such that x part_of e is < n, where n is either the normal number for comparable entities, or n is stated explicitly. This case includes the limit case, where the bearer lacks all parts of the specified type.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001999",
+   "isRoot": false,
+   "label": "lacks parts or has fewer parts of type",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002050",
+   "description": "An amount which normal.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002050",
+   "isRoot": false,
+   "label": "normal amount",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002193",
+   "description": "A molecular quality that inheres in a molecular entity by virtue of the overall electric charge of the molecule, which is due to a comparison between the total number of electrons and the total number of protons.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002193",
+   "isRoot": false,
+   "label": "electric charge",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0050000",
+   "description": "The number of repeated events per unit time, occurring in a repeating series. (e.g. the number of heart beats occurring over 1 minute)",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0050000",
+   "isRoot": false,
+   "label": "rate of occurence",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000044",
+   "description": "A physical quality which inheres in a bearer by virtue of the number of the bearer's repetitive actions in a particular time.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000044",
+   "isRoot": false,
+   "label": "frequency",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000169",
+   "description": "An organismal quality inhering in a bearer or a population by virtue of the bearer's disposition to survive and develop normally or the number of surviving individuals in a given population.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000169",
+   "isRoot": false,
+   "label": "viability",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000273",
+   "description": "A reproductive quality inhering in an organism or population by virtue of the bearer's potential reproductive capacity ad measured by the number of gametes.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000273",
+   "isRoot": false,
+   "label": "fecundity",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000276",
+   "description": "A reproductive quality inhering in the young of an animal by virtue of their number.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000276",
+   "isRoot": false,
+   "label": "brood size",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000644",
+   "description": "A physical quality inhering in an organ or tissue by virtue of the bearer's exhibiting an increased number of cells, typically associated with an increase in size.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000644",
+   "isRoot": false,
+   "label": "hyperplastic",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

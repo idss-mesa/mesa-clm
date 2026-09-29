@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000016",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0000092",
+   "description": "a role of which inheres in a Homo sapiens and realized during administration and oversight of the daily activities of Institutional Review Boards (IRBs) in the USA",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000092",
+   "isRoot": false,
+   "label": "role of certified IRB professional",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000196",
+   "description": "a role which inheres in a Homo sapiens and is realized during a clinical trial - the impartial witness is independent of the trial and cannot be unfairly influenced by people involved with the trial",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000196",
+   "isRoot": false,
+   "label": "role of impartial witness",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000215",
+   "description": "a role which inheres in a human or organization who are able subject to applicable law to consent, on behalf of a prospective subject, to the subject`s participation in as clinical trial.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000215",
+   "isRoot": false,
+   "label": "role of legally acceptable representative",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

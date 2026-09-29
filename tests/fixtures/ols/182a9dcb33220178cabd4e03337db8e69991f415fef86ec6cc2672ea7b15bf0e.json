@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "ro",
+  "query": "phylum",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "RO:0002806",
+   "description": "An arbuscular mycorrhiza (AM) (plural mycorrhizae) is a type of mycorrhiza in which the symbiont fungus (Arbuscular mycorrhizal fungi, or AMF) penetrates the cortical cells of the roots of a vascular plant forming arbuscules. Arbuscular mycorrhiza is a type of endomycorrhiza along with ericoid mycorrhiza and orchid mycorrhiza (not to be confused with ectomycorrhiza). They are characterized by the formation of unique tree-like structures, the arbuscules. In addition, globular storage structures called vesicles are often encountered. Arbuscular mycorrhizae are formed by fungi in the subphylum Glomeromycotina and some fungi from the Mucoromycotina. These subphyla, along with the Mortierellomycotina, form the phylum Mucoromycota, a sister clade of the more well-known and diverse dikaryan fungi. AM fungi help plants to capture nutrients such as phosphorus, sulfur, nitrogen and micronutrients from the soil. It is believed that the development of the arbuscular mycorrhizal symbiosis played a crucial role in the initial colonisation of land by plants and in the evolution of the vascular plants. It has been said that it is quicker to list the plants that do not form endomycorrhizae than those that do. This symbiosis is a highly evolved mutualistic relationship found between fungi and plants, the most prevalent plant symbiosis known, and AMF is found in 80% of vascular plant families in existence today.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002806",
+   "isRoot": false,
+   "label": "arbuscular mycorrhizal host of",
+   "ontologyId": "ro",
+   "synonyms": []
+  }
+ ]
+}

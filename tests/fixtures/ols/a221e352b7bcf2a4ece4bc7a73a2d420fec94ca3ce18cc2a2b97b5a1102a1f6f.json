@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0002083",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0001999",
+   "description": "The bearer of this quality has_part < n of the indicated entity type, where n is the normal amount for a comparable organism. Note that the bearer of the quality is the whole, not the part. Formally: If a bearer entity e has fewer parts of type X at time t, then the number of instances x of X at t such that x part_of e is < n, where n is either the normal number for comparable entities, or n is stated explicitly. This case includes the limit case, where the bearer lacks all parts of the specified type.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001999",
+   "isRoot": false,
+   "label": "lacks parts or has fewer parts of type",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002002",
+   "description": "In polydactyly, the bearer of the quality is the hand, and the entity type being counted is 'finger'. In EQ syntax, E=hand, Q=<this> E2=finger.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002002",
+   "isRoot": false,
+   "label": "has extra parts of type",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,110 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00003861",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:00002214",
+   "description": "A power plant is a building which contains one or more generators which convert mechanical energy into electrical energy through the relative motion between a magnetic field and a conductor. The energy source harnessed to turn the generator varies widely.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002214",
+   "isRoot": false,
+   "label": "power plant",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00002272",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002272",
+   "isRoot": false,
+   "label": "waste treatment plant",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00003323",
+   "description": "A tannery is a building in which the skins of animals are treated with chemicals to alter the structure of their constituent proteins, creating leather.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00003323",
+   "isRoot": false,
+   "label": "tannery",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00003862",
+   "description": "'Terminology differs between countries. For example, in the United States, the entire dairy farm is commonly called a \"dairy.\" The building or farm area where milk is harvested from the cow is often called a \"milking parlor\" or \"parlor.\" The farm area where milk is stored in bulk tanks is known as the farm's \"milk house.\" Milk is then hauled (usually by truck) to a \"dairy plant,\" also referred to as a \"dairy\", where raw milk is further processed and prepared for commercial sale of dairy products. In New Zealand, farm areas for milk harvesting are also called \"milking parlours\", and are historically known as \"milking sheds.\"' https://en.wikipedia.org/wiki/Dairy",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00003862",
+   "isRoot": false,
+   "label": "dairy",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00003863",
+   "description": "A food processing building is a building in which materials that contain or consist of essential body nutrients - such as carbohydrates, fats, proteins, vitamins, or minerals - and may be ingested and assimilated by an organism to produce energy, stimulate growth, and maintain life are converted alternative forms.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00003863",
+   "isRoot": false,
+   "label": "food processing building",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00003864",
+   "description": "A bakery is a food processing building and a 'food shop' at the same time. This needs to be resolved.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00003864",
+   "isRoot": false,
+   "label": "bakery",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00003885",
+   "description": "A brewery is a building in which alcoholic beverages are produced by brewing, that is, steeping a starch source (commonly cereal grains) in water and fermenting the resulting sweet liquid with yeast. At times, the products are also sold from the brewery.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00003885",
+   "isRoot": false,
+   "label": "brewery",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00004638",
+   "description": "A building within which logs are cut into lumber products.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00004638",
+   "isRoot": false,
+   "label": "sawmill",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000536",
+   "description": "A factory (previously manufactory) or manufacturing plant is an industrial site, usually consisting of buildings and machinery, or more commonly a complex having several buildings, where workers manufacture goods or operate machines processing one product into another.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000536",
+   "isRoot": false,
+   "label": "factory",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000925",
+   "description": "A facility in which non-human animals are slaughtered and processed for human consumption.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000925",
+   "isRoot": false,
+   "label": "abattoir",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

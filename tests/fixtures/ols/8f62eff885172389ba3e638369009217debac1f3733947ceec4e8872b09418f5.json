@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "percent",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:06105272",
+   "description": "Soil which is primarily composed of sand with silt and clay in progressively smaller proportions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_06105272",
+   "isRoot": false,
+   "label": "loamy sand",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:06105242",
+   "description": "The basic cation exchange capacity is often expressed as the percentage of the total exchangeable cations which are basic, known as the percentage base saturation. The percentage base saturation is expressed as follows: %BS = [(Ca2+ + Mg2+ + K+)/CEC] × 100",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_06105242",
+   "isRoot": false,
+   "label": "basic cation exchange capacity",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000017",
+   "description": "Particulate environmental material which is composed primarily of particles of sand with only minor proportions of other substances.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000017",
+   "isRoot": false,
+   "label": "sand",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:06105274",
+   "description": "Loam which has a high proportion of sand in its composition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_06105274",
+   "isRoot": false,
+   "label": "sandy loam",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000111",
+   "description": "The definitions of forest can vary greatly, and different classes will be needed to support the major categories. Tree cover alone is not enough to distinguish between forests and plantations. The international definition proposed by the 2010 FAO Forestry Resource Assessment: \"land spanning more than 0.5 ha with trees higher than 5 metres and canopy cover of more than 10 percent, or trees able to reach these thresholds in situ . It does not include land that is predominantly under agricultural or urban land use.\" - FAO.  2010. Global forest resources assessment 2010, Main report, FAO Forestry Paper 163. Rome.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000111",
+   "isRoot": false,
+   "label": "forested area",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00002235",
+   "description": "Cambisols combine soils with at least an incipient subsurface soil formation. Transformation of parent material is evident from structure formation and mostly brownish discoloration, increasing clay percentage, and/or carbonate removal.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002235",
+   "isRoot": false,
+   "label": "cambisol",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00002247",
+   "description": "Nitisols are deep, well-drained, red, tropical soils with diffuse horizon boundaries and a subsurface horizon with more than 30 percent clay and moderate to strong angular blocky structure elements that easily fall apart into characteristic shiny, polyhedric (nutty) elements. Weathering is relatively advanced but Nitisols are far more productive than most other red, tropical soils.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002247",
+   "isRoot": false,
+   "label": "nitisol",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000232",
+   "description": "Felsic lava is lava which is high in silica (> 69 percent by weight), aluminium, potassium, sodium, and calcium, forming a polymerized liquid rich in feldspar and quartz. Felsic lava has a  higher viscosity than other magma types. Felsic magmas can erupt at temperatures as low as 650 to 750 °C. Unusually hot (>950 °C) rhyolite lavas, however, may flow for distances of many tens of kilometres",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000232",
+   "isRoot": false,
+   "label": "felsic lava",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000233",
+   "description": "Intermediate lava is lava which, relative to felsic lava, is lower in aluminium and silica (between 52 and 63 percent by weight), and usually somewhat richer in magnesium and iron. The temperature of intermediate lava ranges from 750 to 950 degrees Celsius, destroying polymerized bonds and promoting more fluid behaviour relative to felsic lavas and also a greater tendency to form phenocrysts. Higher iron and magnesium tends to manifest as a darker groundmass, and also occasionally amphibole or pyroxene phenocrysts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000233",
+   "isRoot": false,
+   "label": "intermediate lava",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000234",
+   "description": "Mafic lava generally erupts at temperatures in excess of 950 degrees Celsius. The high temperature and low polymerisation in mafic lava favors low viscosity and chemical diffusion, promoting the formation of large, well-formed phenocrysts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000234",
+   "isRoot": false,
+   "label": "mafic lava",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000235",
+   "description": "Ultramafic lava generally erupts at temperatures of 1600 degrees Celsius. Due to its high temperature and composition, the viscosity of ultramafic lava is very low.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000235",
+   "isRoot": false,
+   "label": "ultramafic lava",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000272",
+   "description": "There is debate on the usage of mudstone and mudrock, and some ambiguity is to be expected. https://en.wikipedia.org/wiki/ The terminology of \"mudstone\" is not to be confused with the Dunham classification scheme for limestones. In Dunham's classification, a mudstone is any limestone containing less than ten percent carbonate grains. Note, a siliciclastic mudstone does not deal with carbonate grains. Friedman, Sanders, and Kopaska-Merkel (1992) suggest the use of \"lime mudstone\" to avoid confusion with siliciclastic rocks.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000272",
+   "isRoot": false,
+   "label": "mudstone",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000273",
+   "description": "https://en.wikipedia.org/wiki/ The terminology of \"mudstone\" is not to be confused with the Dunham classification scheme for limestones. In Dunham's classification, a mudstone is any limestone containing less than ten percent carbonate grains. Note, a siliciclastic mudstone does not deal with carbonate grains. Friedman, Sanders, and Kopaska-Merkel (1992) suggest the use of \"lime mudstone\" to avoid confusion with siliciclastic rocks.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000273",
+   "isRoot": false,
+   "label": "lime mudstone",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000441",
+   "description": "In a general sense, it is the intermediate type between basalt and dacite, and ranges from 57 to 63 percent silicon dioxide as illustrated in TAS diagrams. The mineral assemblage is typically dominated by plagioclase plus pyroxene and/or hornblende. Magnetite, zircon, apatite, ilmenite, biotite, and garnet are common accessory minerals. Alkali feldspar may be present in minor amounts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000441",
+   "isRoot": false,
+   "label": "andesite",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000552",
+   "description": "Natural gas is a hydrocarbon gas mixture consisting primarily of methane, but commonly includes varying amounts of other higher alkanes and sometimes a usually lesser percentage of carbon dioxide, nitrogen, and/or hydrogen sulfide. Natural gas is a fossil fuel formed when layers of buried plants and gases are exposed to intense heat and pressure over thousands of years.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000552",
+   "isRoot": false,
+   "label": "natural gas",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000557",
+   "description": "Liquefied natural gas (LNG) is natural gas (predominantly methane, CH4) that has been converted to liquid form for ease of storage or transport. It takes up about 1/600th the volume of natural gas in the gaseous state. It is odorless, colorless, non-toxic and non-corrosive. LNG achieves a higher reduction in volume than compressed natural gas (CNG) so that the (volumetric) energy density of LNG is 2.4 times greater than that of CNG or 60 percent of that of diesel fuel.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000557",
+   "isRoot": false,
+   "label": "liquefied natural gas",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001243",
+   "description": "The definitions of forest can vary greatly, and different classes will be needed to support the major categories. Tree cover alone is not enough to distinguish between forests and plantations. The international definition proposed by the 2010 FAO Forestry Resource Assessment: \"land spanning more than 0.5 ha with trees higher than 5 metres and canopy cover of more than 10 percent, or trees able to reach these thresholds in situ . It does not include land that is predominantly under agricultural or urban land use.\" - FAO.  2010. Global forest resources assessment 2010, Main report, FAO Forestry Paper 163. Rome.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001243",
+   "isRoot": false,
+   "label": "forest ecosystem",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03000145",
+   "description": "Land which is covered or partially covered by snow.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03000145",
+   "isRoot": false,
+   "label": "snow-covered land",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03400003",
+   "description": "1. The areal extent of snow-covered ground, usually expressed as percent of total area in a given region. 2. In general, a layer of snow on the ground surface. Compare snowfield, snowpack. 3. The depth of snow on the ground, usually expressed in inches or centimeters.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03400003",
+   "isRoot": false,
+   "label": "snow cover",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03501354",
+   "description": "A manufactured product which is an alloy of iron and which typically contains a few tenths of a percent of carbon.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03501354",
+   "isRoot": false,
+   "label": "steel",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

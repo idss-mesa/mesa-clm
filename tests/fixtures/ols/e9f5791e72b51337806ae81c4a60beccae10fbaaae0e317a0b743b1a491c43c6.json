@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "sampling point",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00055168",
+   "description": "A stratovolcanic complex forming the eastern half of the dumbbell-shaped Chuginadak Island, opposite the dramatic conical Cleveland stratovolcano, is composed of two prominent E-W-trending volcanoes. The complex shows evidence of glacial erosion, but the observation on satellite imagery of highly irregular coastlines forming peninsulas west of Applegate Cove on the NW side of the complex and Concord Point on the south side imply lava flows of mid- to late-Holocene age. Prominent lava flow levees are visible near Concord Point, where a low-silica rhyolite sample was obtained. The undissected cone and youthful crater forming the western summit also imply a post-glacial age, and youthful cinder cones also lie east of the isthmus between Cleveland and Tana volcanoes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00055168",
+   "isRoot": true,
+   "label": "Tana Volcano",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

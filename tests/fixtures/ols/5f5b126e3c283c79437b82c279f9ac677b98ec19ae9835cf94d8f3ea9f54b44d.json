@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "class",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0003635",
+   "description": "An antibody purification of MHC class I protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of pig MHC class I protein complex, cattle MHC class I protein complex, and/or human MHC class I protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003635",
+   "isRoot": false,
+   "label": "antibody purification of pig MHC class I protein complex, cattle MHC class I protein complex, and/or human MHC class I protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003646",
+   "description": "An antibody purification of MHC class II protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of mouse MHC class II protein complex and/or rat MHC class II protein complex with RT1-A haplotype, while others contain impurities and are not of interest.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003646",
+   "isRoot": false,
+   "label": "antibody purification of mouse MHC class II protein complex and/or rat MHC class II protein complex with RT1-A haplotype",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200098",
+   "description": "Soft independent modeling by class analogy (SIMCA) is a descriptive statistics method for supervised classification of data. The method requires a training data set consisting of samples (or objects) with a set of attributes and their class membership. The term soft refers to the fact the classifier can identify samples as belonging to multiple classes and not necessarily producing a classification of samples into non-overlapping classes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200098",
+   "isRoot": false,
+   "label": "soft independent modeling of class analogy analysis",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200178",
+   "description": "A class discovery objective (sometimes called unsupervised classification) is a data transformation objective where the aim is to organize input data  (typically vectors of attributes) into classes, where the number of classes and their specifications are not known a priori. Depending on usage, the class assignment can be definite or probabilistic.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200178",
+   "isRoot": false,
+   "label": "class discovery objective",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200179",
+   "description": "A class prediction objective (sometimes called supervised classification) is a data transformation objective where the aim is to create a predictor from training data through a machine learning technique. The training data consist of pairs of objects (typically vectors of attributes) and\nclass labels for these objects. The resulting predictor can be used to attach class labels to any valid novel input object. Depending on usage, the prediction can be definite or probabilistic. A classification is learned from the training data and can then be tested on test data.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200179",
+   "isRoot": false,
+   "label": "class prediction objective",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000663",
+   "description": "A class prediction data transformation (sometimes called supervised classification) is a data transformation that has objective class prediction.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000663",
+   "isRoot": false,
+   "label": "class prediction data transformation",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200175",
+   "description": "A class discovery data transformation (sometimes called unsupervised classification) is a data transformation that has objective class discovery.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200175",
+   "isRoot": false,
+   "label": "class discovery data transformation",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000023",
+   "description": "A data set that is produced as the output of a class prediction data transformation and consists of a data set with assigned class labels.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000023",
+   "isRoot": false,
+   "label": "classified data set",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003617",
+   "description": "An antibody purification of MHC class I protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of human MHC class I protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003617",
+   "isRoot": false,
+   "label": "antibody purification of human MHC class I protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003624",
+   "description": "An antibody purification of MHC class I protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of pig MHC class I protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003624",
+   "isRoot": false,
+   "label": "antibody purification of pig MHC class I protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003625",
+   "description": "An antibody purification of MHC class I protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of cattle MHC class I protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003625",
+   "isRoot": false,
+   "label": "antibody purification of cattle MHC class I protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003626",
+   "description": "An antibody purification of MHC class I protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of rat MHC class I protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003626",
+   "isRoot": false,
+   "label": "antibody purification of rat MHC class I protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003627",
+   "description": "An antibody purification of MHC class I protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of mouse MHC class I protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003627",
+   "isRoot": false,
+   "label": "antibody purification of mouse MHC class I protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003633",
+   "description": "An antibody purification of mouse MHC class I protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of mouse MHC class I protein complex with H2-b haplotype and/or mouse MHC protein complex with H2-p haplotype while others contain impurities and are not of interest.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003633",
+   "isRoot": false,
+   "label": "antibody purification of mouse MHC class I protein complex with H2-b haplotype and/or mouse MHC protein complex with H2-p haplotype",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003637",
+   "description": "An antibody purification of MHC class II protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of cattle MHC class II protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003637",
+   "isRoot": false,
+   "label": "antibody purification of cattle MHC class II protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003638",
+   "description": "An antibody purification of MHC class II protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of human MHC class II protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003638",
+   "isRoot": false,
+   "label": "antibody purification of human MHC class II protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003642",
+   "description": "An antibody purification of MHC class II protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of mouse MHC class II protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003642",
+   "isRoot": false,
+   "label": "antibody purification of mouse MHC class II protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003616",
+   "description": "An antibody purification of MHC protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of MHC class I protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003616",
+   "isRoot": false,
+   "label": "antibody purification of MHC class I protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003636",
+   "description": "An antibody purification of MHC protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of MHC class II protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003636",
+   "isRoot": false,
+   "label": "antibody purification of MHC class II protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200192",
+   "description": "A data visualization which has input of a classified data set and produces an output of a report graph which is capable of rendering data of this type.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200192",
+   "isRoot": false,
+   "label": "classified data visualization",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

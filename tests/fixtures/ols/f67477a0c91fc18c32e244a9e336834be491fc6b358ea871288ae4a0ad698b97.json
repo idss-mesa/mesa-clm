@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_11048",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:300015",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_300015",
+   "isRoot": false,
+   "label": "Lactate dehydrogenase elevating virus C",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:300016",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_300016",
+   "isRoot": false,
+   "label": "Lactate dehydrogenase elevating virus Plagemann",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

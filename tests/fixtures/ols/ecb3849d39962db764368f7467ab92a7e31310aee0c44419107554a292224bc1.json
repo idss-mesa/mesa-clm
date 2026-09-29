@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0400043",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0400088",
+   "description": "A flow cell in which the laser irradiates the cell as it passes through a quartz cuvette. A quartz cuvette flow chamber can be used to allow the laser to irradiate cells.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0400088",
+   "isRoot": false,
+   "label": "quartz cuvette flow chamber",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,150 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "elevation",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0100089",
+   "description": "A diagnosis of Kawasaki disease (KD) based on the fulfillment of a set of clinical signs including fever of five or more days' duration with at least four of the following five signs: (i) bilateral conjunctival injection, (ii) cervical lymphadenopathy, (iii) polymorphous skin rash, (iv) changes in the lips or oral mucosa, and (v) changes of the distal extremities.Usual laboratory findings in KD patients include elevated erythrocyte sedimentation rate and C-reactive protein, hypoalbuminemeia, elevated serum hepatic transaminases and leukocytosis with thrombocytosis noted later in the course of the illness.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100089",
+   "isRoot": false,
+   "label": "complete Kawasaki disease",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001827",
+   "description": "The GeoNames geographical database covers all countries and contains over eleven million placenames that are available for download free of charge.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001827",
+   "isRoot": false,
+   "label": "Geonames",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100085",
+   "description": "A disease process that results in acute hypoxia secondary to a rapid deterioration in respiratory status.Increased capillary permeability and changes in pressure gradients within the pulmonary capillaries and vasculature are mechanisms for which noncardiogenic pulmonary edema occurs. To differentiate from cardiogenic pulmonary edema, pulmonary capillary wedge pressure is not elevated and remains less than 18 mmHg.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100085",
+   "isRoot": false,
+   "label": "noncardiogenic pulmonary edema",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "MONDO:0041656",
+   "description": "A very serious type of heart attack during which one of the heart’s major arteries (one of the arteries that supplies oxygen and nutrient-rich blood to the heart muscle) is blocked. ST-segment elevation is an abnormality detected on the 12-lead ECG.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/MONDO_0041656",
+   "isRoot": false,
+   "label": "ST-elevation myocardial infarction",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000022",
+   "description": "A stream which, through permanent or seasonal flow processes, moves from elevated land towards lower elevations through a definite channel and empties either into a sea, lake, or another river or ends on land as bed seepage and evapotranspiration exceed water supply.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000022",
+   "isRoot": false,
+   "label": "river",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "HP:0001945",
+   "description": "Body temperature elevated above the normal range.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/HP_0001945",
+   "isRoot": false,
+   "label": "Fever",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "DOID:1025",
+   "description": "A leprosy that results in one erythematous large plaque with well-defined borders that are elevated and that slope down into an atrophic center.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/DOID_1025",
+   "isRoot": false,
+   "label": "tuberculoid leprosy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00002000",
+   "description": "A solid astronomical body part which is part of the planetary surface between the peak of an elevation or the bottom of a depression and relatively flat surrounding land.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002000",
+   "isRoot": false,
+   "label": "slope",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "HP:0000822",
+   "description": "Hypertension is sustained elevation of resting systolic BP (140 mm Hg or higher), diastolic BP (90 mm Hg or higher), or both.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/HP_0000822",
+   "isRoot": false,
+   "label": "Hypertension",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "HP:0001635",
+   "description": "The presence of an abnormality of cardiac function that is responsible for the failure of the heart to pump blood at a rate that is commensurate with the needs of the tissues or a state in which abnormally elevated filling pressures are required for the heart to do so. Heart failure is frequently related to a defect in myocardial contraction.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/HP_0001635",
+   "isRoot": false,
+   "label": "Congestive heart failure",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "HP:0200039",
+   "description": "A small elevation of the skin containing cloudy or purulent material usually consisting of necrotic inflammatory cells.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/HP_0200039",
+   "isRoot": false,
+   "label": "Pustule",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "MONDO:0009061",
+   "description": "Autosomal recessive disorder caused by pathogenic variants in the CFTR gene (cystic fibrosis transmembrane conductance regulator), which encodes a chloride and bicarbonate channel expressed in epithelial cells, and follow the diagnosis criteria. Diagnosis requires evidence of CFTR dysfunction, defined as a sweat chloride concentration of 60 mmol/L or greater, or identification of two CF-causing CFTR pathogenic variants, or an abnormal nasal potential difference measurement. CF is a progressive, multi-organ disease characterized by chronic obstructive lung disease with recurrent infections, exocrine pancreatic insufficiency, intestinal obstruction (including meconium ileus in neonates), male infertility due to obstructive azoospermia, hepatobiliary complications, and elevated sweat chloride concentrations.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/MONDO_0009061",
+   "isRoot": false,
+   "label": "cystic fibrosis",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "MONDO:0100319",
+   "description": "A inflammatory syndrome in adults infected by the SARS-CoV-2 with severe illness requiring hospitalization in a person aged ≥21 years; a positive test result for current or previous SARS-CoV-2 infection (nucleic acid, antigen, or antibody) during admission or in the previous 12 weeks; severe dysfunction of one or more extrapulmonary organ systems (e.g., hypotension or shock, cardiac dysfunction, arterial or venous thrombosis or thromboembolism, or acute liver injury); laboratory evidence of severe inflammation (e.g., elevated CRP, ferritin, D-dimer, or interleukin-6); and absence of severe respiratory illness (to exclude patients in which inflammation and organ dysfunction might be attributable simply to tissue hypoxia).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/MONDO_0100319",
+   "isRoot": false,
+   "label": "COVID-19–associated multisystem inflammatory syndrome in adults",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "SYMP:0000009",
+   "description": "A skin and integumentary tissue symptom that is characterized by a fluid-filled elevation of the epidermis.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/SYMP_0000009",
+   "isRoot": false,
+   "label": "blister",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

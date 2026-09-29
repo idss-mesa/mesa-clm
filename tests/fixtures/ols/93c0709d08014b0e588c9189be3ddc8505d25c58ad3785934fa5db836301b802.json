@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "kingdom",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00002637",
+   "description": "A sovereign island country located off the northwestern coast of mainland Europe comprising of the four constituent countries; England, Scotland, Wales and Northern Ireland. It comprises the island of Great Britain, the northeast part of the island of Ireland and many small islands. Apart from Northern Ireland the UK is surrounded by the Atlantic Ocean, the North Sea, the English Channel and the Irish Sea. The largest island, Great Britain, is linked to France by the Channel Tunnel.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002637",
+   "isRoot": true,
+   "label": "United Kingdom",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002699",
+   "description": "A country and constitutional monarchy in Northern Europe that occupies the western portion of the Scandinavian Peninsula. It is bordered by Sweden, Finland, and Russia. The Kingdom of Norway also includes the Arctic island territories of Svalbard and Jan Mayen. Norwegian sovereignty over Svalbard is based upon the Svalbard Treaty, but that treaty does not apply to Jan Mayen. Bouvet Island in the South Atlantic Ocean and Peter I Island and Queen Maud Land in Antarctica are external dependencies, but those three entities do not form part of the kingdom.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002699",
+   "isRoot": false,
+   "label": "Kingdom of Norway",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00167001",
+   "description": "A state park located west of Mineral Wells in Palo Pinto County; adjacent to Possum Kingdom Lake.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00167001",
+   "isRoot": true,
+   "label": "Possum Kingdom State Park",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00000591",
+   "description": "A country located in southwestern Europe on the Iberian Peninsula, plus the Balearic Islands in the Mediterranean, the Canary Islands in the Atlantic Ocean off the African coast, and two autonomous cities in North Africa that border Morocco. Spain is politically organized into 17 Autonomous Communities (comunidades autonomas) and 2 autonomous cities (ciudades autonomas) - Ceuta and Melilla. Administratively Spain also comprises fifty provinces. Seven autonomous communities are composed of only one province: Asturias, Balearic Islands, Cantabria, La Rioja, Madrid, Murcia, and Navarre. Historically, some provinces are also divided into comarcas (roughly equivalent to a US \"county\" or an English district). The lowest administrative division of Spain is the municipality (municipio).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00000591",
+   "isRoot": false,
+   "label": "Kingdom of Spain",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00001549",
+   "description": "An association with federal characteristics (federacy), based on a political compact, which consists of three constituent countries: the Netherlands in Western Europe, and the Netherlands Antilles and Aruba in the Caribbean.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00001549",
+   "isRoot": false,
+   "label": "Kingdom of the Netherlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002065",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002065",
+   "isRoot": false,
+   "label": "South African Kingdom",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002067",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002067",
+   "isRoot": false,
+   "label": "Australian Kingdom",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002071",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002071",
+   "isRoot": false,
+   "label": "Antarctic Kingdom",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002635",
+   "description": "A nation situated in Scandinavia in northern Europe (Metropolitan Denmark) plus its two autonomous provinces, Greenland and The Faroe Islands. Denmark is divided into five regions and a total of 98 municipalities, plus two autonomous provinces.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002635",
+   "isRoot": false,
+   "label": "Kingdom of Denmark",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00008606",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00008606",
+   "isRoot": false,
+   "label": "United Kingdom Sector",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00010231",
+   "description": "A state in Malaysia. It lies at the northern part of the west coast of Peninsular Malaysia and has Satun and Songkhla Provinces of Thailand on its northern border.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00010231",
+   "isRoot": true,
+   "label": "Kingdom of Perlis",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00143237",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00143237",
+   "isRoot": true,
+   "label": "Northeast Atlantic Ocean coastal waters of the United Kingdom",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00144349",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00144349",
+   "isRoot": true,
+   "label": "North Sea coastal waters of the United Kingdom",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00151538",
+   "description": "A state park located in Harlan County near the city of Cumberland and is situated atop Pine Mountain.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00151538",
+   "isRoot": true,
+   "label": "Kingdom Come State Park",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00160479",
+   "description": "A state forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00160479",
+   "isRoot": true,
+   "label": "The Kingdom State Forest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00163466",
+   "description": "A protected area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00163466",
+   "isRoot": true,
+   "label": "Satan's Kingdom Wildlife Management Area",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00166665",
+   "description": "A reservoir located primarily in Palo Pinto County Texas. Impounded by the Morris Sheppard Dam. Constructed 1938-1941.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00166665",
+   "isRoot": true,
+   "label": "Possum Kingdom Lake",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00264074",
+   "description": "A populated place. A village in Callaway County, Missouri, United States.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00264074",
+   "isRoot": true,
+   "label": "Village of Kingdom City",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00494597",
+   "description": "A former nuclear reactor research and development center. Closed 1995.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00494597",
+   "isRoot": true,
+   "label": "United Kingdom Atomic Energy Authority Winfrith",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:01000021",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_01000021",
+   "isRoot": false,
+   "label": "floristic kingdom",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

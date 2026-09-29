@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100584",
+  "ontology_id": "genepio"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "GENEPIO:0100584",
+  "description": "A data field which describes the details of the process used to determine the taxonomic identification of an organism.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100584",
+  "isRoot": false,
+  "label": "taxonomic identification process details",
+  "ontologyId": "genepio",
+  "synonyms": []
+ }
+}

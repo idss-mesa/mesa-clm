@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "taxon id",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0001960",
+   "description": "An assay that dteremines taxonomic and community diversity information by sequencing specific genomic regions used as marker of identity or diversity.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001960",
+   "isRoot": false,
+   "label": "taxonomic diversity assessment by targeted gene survey",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "tribe",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00061815",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00061815",
+   "isRoot": true,
+   "label": "Tribec Mountains",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00177310",
+   "description": "A municipality in Zlate Moravce District of the Nitra Region, in western-central Slovakia.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00177310",
+   "isRoot": true,
+   "label": "Municipality of Kostolany pod Tribecom",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00243574",
+   "description": "A neighborhood of Manhattan.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00243574",
+   "isRoot": true,
+   "label": "TriBeCa",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00252485",
+   "description": "An administrative part of Parbat District.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00252485",
+   "isRoot": true,
+   "label": "Tribeni Village Development Committee",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00266424",
+   "description": "An Indian Reservation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00266424",
+   "isRoot": true,
+   "label": "Cherokee Tribe of Northeast Alabama Lands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00285837",
+   "description": "An Indian reservation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00285837",
+   "isRoot": true,
+   "label": "Paiute Indian Tribe Reservation",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00351937",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00351937",
+   "isRoot": true,
+   "label": "Commune of Tribehou",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00605896",
+   "description": "A populated place. A City.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00605896",
+   "isRoot": true,
+   "label": "Stadt Triberg im Schwarzwald",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00605986",
+   "description": "A populated place. A City district (Stadtteil).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00605986",
+   "isRoot": true,
+   "label": "Triberg im Schwarzwald",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00173354",
+   "description": "An Indian Reservation located in northeastern Utah, USA. It is the homeland of the Northern Ute tribe, and is the largest of three Indian reservations inhabited by members of the Ute Tribe of Native Americans. It lies in parts of seven counties; in descending order of land area they are: Uintah, Duchesne, Wasatch, Grand, Carbon, Utah, and Emery.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00173354",
+   "isRoot": true,
+   "label": "Uintah and Ouray Indian Reservation",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00188303",
+   "description": "Lands belonging to the Ho-Chunk Sovereign Nation. The tribe does not have a formal reservation; however, the tribe owns 18.625 km2 scattered across parts of 12 counties in Wisconsin and one county in Minnesota. The largest concentrations are in Jackson County, Clark County, and Monroe County in Wisconsin. Smaller areas lie in Adams, Crawford, Dane, Juneau, La Crosse, Marathon, Sauk, Shawano, and Wood Counties in Wisconsin, as well as Houston County, Minnesota.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00188303",
+   "isRoot": true,
+   "label": "Ho-Chunk Sovereign Nation Lands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00197101",
+   "description": "An intermittent river, approximately 177 km long, in the desert of northwestern Nevada in the United States. It drains an enclosed basin inside the larger Great Basin. It rises in northeastern Humboldt County, on the west side of the Santa Rosa Range, just south of the Oregon state line. Its course flows southwest, through the main Nevada lands of the Fort McDermitt Paiute-Shoshone Tribe of Nevada and Oregon and then south and southwest receiving the Kings River flowing south from Kings River Valley. The Quinn River evaporates in a sink at the Black Rock Desert approximately 100 km northwest of Winnemucca on the Hog John Ranch of the Fort McDermitt Paiute-Shoshone Tribe of Nevada and Oregon.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00197101",
+   "isRoot": false,
+   "label": "Quinn River",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00018564",
+   "description": "A tribal area in FATA region of Pakistan. The agency was created in 1951 before which the Mohmand Tribes were administered by the Deputy Commissioner based in Peshawar, North-West Frontier Province, Pakistan.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00018564",
+   "isRoot": true,
+   "label": "Mohmand Agency",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00020863",
+   "description": "A district in the Nitra Region of western Slovakia. Until 1918, the district formed mostly part of the Hungarian county of Tekov, apart from a small area in the west around Kostolany pod Tribecom which formed part of the county of Nitra.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00020863",
+   "isRoot": true,
+   "label": "Zlate Moravce District",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00061865",
+   "description": "A mountain range in central Slovakia, which is part of the Slovenske stredohorie Mountains and part of the Inner Western Carpathians. It is bordered in the west, north and northeast by the upper Nitra basin, Strazov Mountains and Ziar, in the east by the Kremnica Mountains and Ziar basin, and in the south by Tribec and the Stiavnica Mountains.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00061865",
+   "isRoot": true,
+   "label": "Vtacnik Mountains",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00123599",
+   "description": "One of the 47 woredas in the Somali Region of Ethiopia. It is named after one of the 12 major tribes of the Oromo people, the Babille Oromo.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00123599",
+   "isRoot": true,
+   "label": "Babille Woreda",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00150444",
+   "description": "A spacious lowland in the middle of the European Russia. It is named after the Finno-Ugric Meshchera tribe, which used to live there. It occupies parts of Moscow Oblast, Vladimir Oblast and Ryazan Oblast. Meshchera is a plain of roughly triangular shape bounded by rivers Oka from the South, Moskva River from the Southwest, Klyazma from the North and Sudogda and Kolp/Kolpna from the East.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00150444",
+   "isRoot": true,
+   "label": "Meshchera Lowlands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00159051",
+   "description": "An Indian reservation of the Seneca tribe, located partly in Chautauqua County, New York, United States. The remainder of the reservation is in Erie County and Cattaraugus County.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00159051",
+   "isRoot": true,
+   "label": "Cattaraugus Reservation",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00162087",
+   "description": "An Indian reservation for the Penobscot tribe in Penobscot County, Maine, United States. It occupies about 146 islands in the Penobscot River as well as other area in Penobscot County. A small, uninhabited part of the reservation is in Aroostook County.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00162087",
+   "isRoot": true,
+   "label": "Penobscot Indian Island Reservation",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00167690",
+   "description": "An Indian reservation in the eastern part of the State of Washington, inhabited and managed by Confederated Tribes of the Colville Reservation. The reservation is located in the southeastern section of Okanogan County and the southern half of Ferry County, but there are pieces of trust land throughout Eastern Washington, including lands located in Chelan County, just to the northwest of the city of Chelan.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00167690",
+   "isRoot": true,
+   "label": "Colville Indian Reservation",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

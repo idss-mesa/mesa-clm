@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000047",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0001894",
+   "description": "An organismal quality inhering in a bearer by virtue of the bearer's physical expression of sexual characteristics.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001894",
+   "isRoot": false,
+   "label": "phenotypic sex",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001895",
+   "description": "A biological sex quality inhering in an individual or a population that undergo sexual reproduction.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001895",
+   "isRoot": false,
+   "label": "mating type",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0020000",
+   "description": "Note that the chromosomal constitution of genotypic sex varies in different organisms. In human, we have XY, XX, though abnormal XXY, X0, XYY, and other combinations are possible.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0020000",
+   "isRoot": false,
+   "label": "genotypic sex",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

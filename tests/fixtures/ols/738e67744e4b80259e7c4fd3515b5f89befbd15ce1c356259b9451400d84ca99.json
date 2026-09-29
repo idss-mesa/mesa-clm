@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "latitude",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0001620",
+   "description": "A measurement datum that is the measure of the latitude coordinate of a site.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001620",
+   "isRoot": false,
+   "label": "latitude coordinate measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

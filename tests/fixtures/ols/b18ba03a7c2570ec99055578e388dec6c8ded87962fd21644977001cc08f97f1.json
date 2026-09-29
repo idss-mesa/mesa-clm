@@ -1,0 +1,70 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001997",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0001163",
+   "description": "A concentration which is lower relative to the normal or average.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001163",
+   "isRoot": false,
+   "label": "decreased concentration",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001656",
+   "description": "A osmolarity which is relatively low.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001656",
+   "isRoot": false,
+   "label": "decreased osmolarity",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001843",
+   "description": "An acidity which is relatively low.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001843",
+   "isRoot": false,
+   "label": "decreased acidity",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002001",
+   "description": "Example: [E=hand Q=has_fewer_parts_of_type E2=digit] - applies to an organism that has no less fingers than is normal for organisms of that type.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002001",
+   "isRoot": false,
+   "label": "has fewer parts of type",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002028",
+   "description": "An osmolality which is relatively low.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002028",
+   "isRoot": false,
+   "label": "decreased osmolality",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0103005",
+   "description": "A total amount which is relatively low.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0103005",
+   "isRoot": false,
+   "label": "decreased total amount",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

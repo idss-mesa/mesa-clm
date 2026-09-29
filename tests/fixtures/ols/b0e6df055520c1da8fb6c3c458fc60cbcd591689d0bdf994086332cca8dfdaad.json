@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "visual detection",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0003087",
+   "description": "A fluorescence detection assay in which the light that is naturally emitted by a sample is visualized after excitation of the sample with light at a suitable wavelength.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003087",
+   "isRoot": false,
+   "label": "autofluorescence assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001547",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001547",
+  "description": "A physical quality inhering in a bearer by virtue of the bearer's exhibiting the physical characteristics of an entity consisting of particles that have neither a defined volume nor defined shape.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001547",
+  "isRoot": false,
+  "label": "quality of a gas",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

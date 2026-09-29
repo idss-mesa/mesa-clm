@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000003",
+  "ontology_id": "bco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "BCO:0000003",
+  "description": "An observing process is distinguished from a specimen collecting process in by having an information content entity as an output rather than a specimen. The information artifact may be written or recorded or just be stored in someone's head (specifically depenedent upon that person). In the context of a taxonomic inventory, an observing process may be called a sighting, which is an ad hoc reporting of, typically, a single taxon occurrence, usually motivated by rarity, individual interest in the taxon, or atypicality of circumstances.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000003",
+  "isRoot": false,
+  "label": "observing process",
+  "ontologyId": "bco",
+  "synonyms": []
+ }
+}

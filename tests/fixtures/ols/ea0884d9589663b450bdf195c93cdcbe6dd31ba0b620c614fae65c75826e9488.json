@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "wind speed",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0000483",
+   "description": "The APOLLO is a compact, modular, multiple-DSP, Windows XP Professional-based console that can be equipped with up to 8 DDS-based RF transmitter channels configurable from 2 kHz to 3.5 GHz. Each transmitter channel produces a nominal 1V output and has the most agile frequency, phase and amplitude control of any system on the market. An array of additional options are available including multiple RF transmitters, linear high-power RF amplifiers, digital receiver arrays, low noise figure preamplifiers, a gradient control system, shim unit, MAS spin-speed controller, variable temperature unit, digital lock system and probe/coil interface. With its numerous options, the Apollo can be configured for any NMR, NQR or MRI application.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000483",
+   "isRoot": false,
+   "label": "APOLLO console",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

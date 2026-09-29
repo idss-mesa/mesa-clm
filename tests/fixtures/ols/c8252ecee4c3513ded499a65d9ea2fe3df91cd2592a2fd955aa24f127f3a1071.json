@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "tribe",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "AfPO:0000380",
+   "description": "'The Birked live north and east of Dago and Bayko, between Gebel Harayz and Rizaykat and are much larger tribe then either.' from a: A History of the Arabs in the Sudan. Written by De H. A. MacMichael.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/AfPO_0000380",
+   "isRoot": false,
+   "label": "Birged",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "HANCESTRO:0875",
+   "description": "Individuals who self-identify or are reported by authors as belonging to the Shipibo-Conibo indigenous population along the Ucayali River in the Amazon rainforest in Peru. Formerly two groups, they eventually became one tribe through intermarriage and communal rituals and are currently known as the Shipibo-Conibo people.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/HANCESTRO_0875",
+   "isRoot": false,
+   "label": "Shipibo-Conibo",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

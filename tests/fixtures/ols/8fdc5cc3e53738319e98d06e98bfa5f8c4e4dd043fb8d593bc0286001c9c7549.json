@@ -1,0 +1,150 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "How the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PCO:0000005",
+   "description": "A process that has as primary participant a population. Includes processes such as population growth, extinction, evolution, selection, and adaptation. Population processes may depend on the processes of individual organisms {e.g., population growth reflects the cumulative multicellular organism reproduction (GO:0032504) and death (GO:0016265) of all individuals in a population}, but cannot be described for an individual organism. Some of these processes (e.g., evolution, extinction) can also occur at the species level, so PCO distinguishes between, for example, population extinction and species extinction.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000005",
+   "isRoot": false,
+   "label": "population process",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000004",
+   "description": "A quality that inheres in a community.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000004",
+   "isRoot": false,
+   "label": "quality of an ecological community",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000001",
+   "description": "A collection of organisms, all of the same species, that live in the same place.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000001",
+   "isRoot": false,
+   "label": "population of organisms",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000003",
+   "description": "A quality that inheres in a population of organisms.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000003",
+   "isRoot": false,
+   "label": "quality of a population",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000011",
+   "description": "A process that leads to a change in the number of individuals (positive or negative) in a population.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000011",
+   "isRoot": false,
+   "label": "population growth",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000012",
+   "description": "A population process that leads to an increase in the numbers of individuals in a population following a logistic (S-shaped) curve. Generally occurs when the population has a carrying capacity in a particular habitat.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000012",
+   "isRoot": false,
+   "label": "logistic population growth",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000013",
+   "description": "A population growth process that leads to an exponential increase in the number of individuals in a population.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000013",
+   "isRoot": false,
+   "label": "exponential population growth",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000021",
+   "description": "A population process that ultimately leads to the death of all individuals in a population.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000021",
+   "isRoot": false,
+   "label": "population extinction",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000022",
+   "description": "A process that ultimately leads to the death of all individuals in a population.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000022",
+   "isRoot": false,
+   "label": "species extinction",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "CARO:0000012",
+   "description": "Anatomical structure that is an individual member of a clade and, at some point in its life-cycle, consists of more than one cell.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/CARO_0000012",
+   "isRoot": false,
+   "label": "multicellular organism",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "CARO:0001010",
+   "description": "Material anatomical entity that is a member of an individual species or is a viral or viroid particle.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CARO_0001010",
+   "isRoot": false,
+   "label": "organism or virus or viroid",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "CARO:0010004",
+   "description": "A general term for organism that is agnostic about single cell vs multi-cellular.  Note that this is a subclass of 'anatomical structure', meaning that an organism must be a connected structure.  So, if I take one plant and make a rooted cutting from a it, I now have two (clonally related) organisms.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CARO_0010004",
+   "isRoot": false,
+   "label": "organism",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0007610",
+   "description": "1. Note that this term is in the subset of terms that should not be used for direct gene product annotation. Instead, select a child term or, if no appropriate child term exists, please request a new term. Direct annotations to this term may be amended during annotation reviews.\n2. While a broader definition of behavior encompassing plants and single cell organisms would be justified on the basis of some usage (see PMID:20160973 for discussion), GO uses a tight definition that limits behavior to animals and to responses involving the nervous system, excluding plant responses that GO classifies under development, and responses of unicellular organisms that has general classifications for covering the responses of cells in multicellular organisms (e.g. cell chemotaxis).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0007610",
+   "isRoot": false,
+   "label": "behavior",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0035176",
+   "description": "Behavior such as predation which involves members of different species is not social. Communication between members of different species is also not social behavior.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0035176",
+   "isRoot": false,
+   "label": "social behavior",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

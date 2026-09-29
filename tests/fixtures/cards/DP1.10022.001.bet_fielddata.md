@@ -1,0 +1,36 @@
+# Dataset: DP1.10022.001 / bet_fielddata
+Product: DP1.10022.001 — Ground beetles sampled from pitfall traps. Taxonomically identified ground beetles and the plots and times from which they were collected.
+Source: NEON (National Ecological Observatory Network) Data API, basic package, stacked across site-months.
+Sites: HARV (Harvard Forest & Quabbin Watershed NEON, Massachusetts, domain D01 Northeast; temperate deciduous/mixed forest) and SRER (Santa Rita Experimental Range NEON, Arizona, domain D14 Desert Southwest; semi-arid desert grassland/shrubland).
+Rows: 3228; months covered: 2020-03 to 2024-10 (40 distinct months).
+
+## Columns (name | NEON description | type | unit | profile)
+- uid | Unique ID within NEON database; an identifier for the record | string | - | (identifier; not profiled)
+- namedLocation | Name of the measurement location in the NEON database | string | - | 20 distinct; top: SRER_005.basePlot.bet (231), SRER_003.basePlot.bet (231), SRER_001.basePlot.bet (231), SRER_004.basePlot.bet (231), SRER_006.basePlot.bet (231), SRER_002.basePlot.bet (231), HARV_002.basePlot.bet (153), HARV_021.basePlot.bet (153)
+- domainID | Unique identifier of the NEON domain | string | - | 2 distinct; top: D14 (1938), D01 (1290)
+- siteID | NEON site code | string | - | 2 distinct; top: SRER (1938), HARV (1290)
+- plotID | Plot identifier (NEON site code_XXX) | string | - | 20 distinct; top: SRER_005 (231), SRER_003 (231), SRER_001 (231), SRER_004 (231), SRER_006 (231), SRER_002 (231), HARV_002 (153), HARV_021 (153)
+- trapID | Identifier for trap | string | - | 3 distinct; top: S (1076), E (1076), W (1076)
+- plotType | NEON plot type in which sampling occurred: tower, distributed or gradient | string | - | 1 distinct; top: distributed (3228)
+- nlcdClass | National Land Cover Database Vegetation Type Name | string | - | 4 distinct; top: shrubScrub (1938), deciduousForest (645), evergreenForest (399), mixedForest (246)
+- decimalLatitude | The geographic latitude (in decimal degrees, WGS84) of the geographic center of the reference area | real | decimalDegree | 20 distinct; top: 31.828844 (231), 31.840609 (231), 31.862142 (231), 31.906778 (231), 31.795656 (231), 31.870334 (231), 42.478565 (153), 42.452430 (153)
+- decimalLongitude | The geographic longitude (in decimal degrees, WGS84) of the geographic center of the reference area | real | decimalDegree | 20 distinct; top: -110.823985 (231), -110.917189 (231), -110.818853 (231), -110.815262 (231), -110.910239 (231), -110.856598 (231), -72.259572 (153), -72.250472 (153)
+- geodeticDatum | Model used to measure horizontal position on the earth | string | - | 1 distinct; top: WGS84 (3228)
+- coordinateUncertainty | The horizontal distance (in meters) from the given decimalLatitude and decimalLongitude describing the smallest circle containing the whole of the Location. Zero is not a valid value for this term | real | meter | 3 distinct; top: 20.1 (2505), 20.2 (492), 20.0 (231)
+- elevation | Elevation (in meters) above sea level | real | meter | 20 distinct; top: 1261.1 (231), 974.5 (231), 1172.1 (231), 1044.5 (231), 1048.6 (231), 1032.0 (231), 193.6 (153), 175.1 (153)
+- elevationUncertainty | Uncertainty in elevation values (in meters) | real | meter | 4 distinct; top: 0.1 (2199), 0.2 (546), 0.3 (252), 0.0 (231)
+- setDate | Date that trap was set | dateTime | - | 128 distinct; top: 2020-04-22 (30), 2020-05-06 (30), 2020-05-20 (30), 2020-06-03 (30), 2020-06-17 (30), 2020-07-01 (30), 2020-07-15 (30), 2020-07-29 (30)
+- collectDate | Date of the collection event | dateTime | - | 129 distinct; top: 2020-05-06 (30), 2020-05-20 (30), 2020-06-03 (30), 2020-06-17 (30), 2020-07-01 (30), 2020-07-15 (30), 2020-07-29 (30), 2020-08-12 (30)
+- eventID | An identifier for the set of information associated with the event, which includes information about the place and time of the event | string | - | 128 distinct; top: HARV.2020.17 (30), HARV.2020.19 (30), HARV.2020.21 (30), HARV.2020.23 (30), HARV.2020.25 (30), HARV.2020.27 (30), HARV.2020.29 (30), HARV.2020.31 (30)
+- trappingDays | Decimal days between trap setting and collecting events | real | nominalDay | 2 distinct; top: 14 (3225), 15 (3)
+- sampleCollected | Indicator of whether a sample was collected | string | - | 2 distinct; top: Y (2087), N (1141)
+- sampleID | Identifier for sample | string | - | 2087 distinct; top: HARV_022.S.20200715 (1), HARV_008.E.20200715 (1), HARV_010.W.20200715 (1), HARV_001.E.20200715 (1), HARV_008.W.20200715 (1), HARV_013.W.20200715 (1), HARV_010.E.20200715 (1), HARV_001.W.20200715 (1)
+- sampleCode | Barcode of a sample | string | - | 2085 distinct; top: A00000126334 (1), A00000126459 (1), A00000126351 (1), A00000126495 (1), A00000126460 (1), A00000126529 (1), A00000126385 (1), A00000126478 (1)
+- sampleCondition | Condition of a sample | string | - | 4 distinct; top: OK (1974), sample incomplete (8), damaged, analysis affected (4), other (described in remarks) (3)
+- cupStatus | Indicator of whether the cup of the trap was disturbed or missing during the sampling bout | string | - | 4 distinct; top: Ok (1943), Disturbed (139), Disturbed, cup previously flooded (26), Missing (2)
+- lidStatus | Indicator of whether the lid of the trap was disturbed or missing during the sampling bout | string | - | 5 distinct; top: Ok (1913), Disturbed (157), Ok, washer used (31), Disturbed, washer used (6), Missing (5)
+- fluidLevel | Fluid level in the trap when it was collected; High (above line); Low (below line) or Ok | string | - | 4 distinct; top: Ok (1412), Low (533), High (130), None (37)
+- samplingProtocolVersion | The NEON document number and version where detailed information regarding the sampling method used is available; format NEON.DOC.######vX | string | - | 3 distinct; top: NEON.DOC.014050vN (1698), NEON.DOC.014050vM (1527), NEON.DOC.014050vK (3)
+- samplingImpractical | Samples and/or measurements were not collected due to the indicated circumstance | string | - | 3 distinct; top: OK (2105), logistical (1113), management (3)
+- recordedBy | An identifier for the technician who recorded the data | string | - | 63 distinct; top: 0000-0003-4194-7703 (261), 0000-0002-5964-2409 (252), 0000-0002-9823-2170 (240), 0000-0001-7548-3359 (144), 0000-0002-7459-3860 (132), 0000-0001-8260-4067 (123), 0000-0002-6694-2717 (120), 0000-0001-6901-0272 (117)
+- remarks | Technician notes; free text comments accompanying the record | string | - | 60 distinct; top: COVID19 (689), Reduced resources in AY22 budget (90), Fluid level high likely from rain (3), Rain the night before (3), Cup mostly full of dirt (2), Fluid level high and cup full of debris/soil (1), Lid lifted up on one side; fluid level slightly above 150ml (1), Washers added. Ground is soft. (1)

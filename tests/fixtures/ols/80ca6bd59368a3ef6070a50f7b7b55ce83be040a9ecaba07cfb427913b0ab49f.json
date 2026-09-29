@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000054",
+  "ontology_id": "bco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "BCO:0000054",
+  "description": "Can be highly targeted and or baited (pheromone trap), or general (pitfall). Trap events can either be \"triggered\" but of long-term deployment, or rigorously temporally specified (left out overnight). ",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000054",
+  "isRoot": false,
+  "label": "trap or sample taxonomic inventory process",
+  "ontologyId": "bco",
+  "synonyms": []
+ }
+}

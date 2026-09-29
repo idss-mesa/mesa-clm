@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "The horizontal distance",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "UBERON:0002114",
+   "description": "The first part of the small intestine. At the junction of the stomach and the duodenum the alimentary canal is inflected. The duodenum first goes anteriorly for a short distance, turns dorsally, and eventually caudally, thus it is a U-shaped structure with two horizontal sections (a ventral and a dorsal one).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0002114",
+   "isRoot": false,
+   "label": "duodenum",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

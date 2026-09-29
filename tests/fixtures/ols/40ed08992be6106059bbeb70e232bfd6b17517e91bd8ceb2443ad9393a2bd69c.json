@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001206",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001206",
+  "description": "An ecosystem in which grasses (Graminae) are the dominant form of vegetation and determine the system's structure and dynamics.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001206",
+  "isRoot": false,
+  "label": "grassland ecosystem",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

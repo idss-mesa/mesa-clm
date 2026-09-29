@@ -1,0 +1,60 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100941",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0100943",
+   "description": "A grab sampler designed to extract a continuous, cylindrical section of material from a substrate preserving vertical structure and stratification.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100943",
+   "isRoot": false,
+   "label": "core sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100944",
+   "description": "A grab sampler that takes a sample at a designated depth with minimal disturbance to surrounding layers.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100944",
+   "isRoot": false,
+   "label": "vacuum sludge sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100945",
+   "description": "A grab sampler that has a controlled valve that opens to take a sample from a specific depth, then closes to bring the sample out.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100945",
+   "isRoot": false,
+   "label": "cone-shaped sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100946",
+   "description": "A grab sampler in which the container for the sample is mounted on the end of a rod, which is suitable for collecting discharge from a pipe or truck.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100946",
+   "isRoot": false,
+   "label": "horizontal grab sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100947",
+   "description": "A grab sampler in which the container for the sample is mounted on the end of a rod, which is suitable for collecting waste from a tank.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100947",
+   "isRoot": false,
+   "label": "vertical grab sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

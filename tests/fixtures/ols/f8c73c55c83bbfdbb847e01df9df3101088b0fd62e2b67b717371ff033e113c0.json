@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000449",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:00000154",
+   "description": "An area of grassland or pasture beside a river, subject to seasonal flooding.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000154",
+   "isRoot": false,
+   "label": "flood meadow ecosystem",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

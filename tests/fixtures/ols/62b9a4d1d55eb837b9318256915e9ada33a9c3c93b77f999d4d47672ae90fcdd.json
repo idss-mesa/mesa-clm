@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "ro",
+  "query": "Technician notes",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

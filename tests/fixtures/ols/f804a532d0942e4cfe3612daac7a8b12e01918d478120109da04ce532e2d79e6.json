@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "observed habitat",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

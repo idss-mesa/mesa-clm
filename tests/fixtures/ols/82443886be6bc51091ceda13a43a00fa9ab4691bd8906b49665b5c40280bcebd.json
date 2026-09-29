@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002648",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0002648",
+  "description": "A specimen composed of an individual organism to be studied in an investigation.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002648",
+  "isRoot": false,
+  "label": "individual organism specimen",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

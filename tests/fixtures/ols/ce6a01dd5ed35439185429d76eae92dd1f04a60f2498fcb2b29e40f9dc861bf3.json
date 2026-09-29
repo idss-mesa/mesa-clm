@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_303574",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:303575",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_303575",
+   "isRoot": false,
+   "label": "Eucoilinae gen. Schick sp. 1 MB340",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:303576",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_303576",
+   "isRoot": false,
+   "label": "Eucoilinae gen. Schick sp. 2 MB099",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:303577",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_303577",
+   "isRoot": false,
+   "label": "Eucoilinae gen. Schick sp. 3 MB201",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:303578",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_303578",
+   "isRoot": false,
+   "label": "Eucoilinae gen. Schick sp. 4 MB390",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

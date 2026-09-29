@@ -1,0 +1,160 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "wetland",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:1325974",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1325974",
+   "isRoot": false,
+   "label": "wetland metagenome",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2706601",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2706601",
+   "isRoot": false,
+   "label": "Chironomidae sp. CH02 Cuihu Wetland Park 1",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2706602",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2706602",
+   "isRoot": false,
+   "label": "Chironomidae sp. CH02 Cuihu Wetland Park 2",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2706603",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2706603",
+   "isRoot": false,
+   "label": "Chironomidae sp. CH02 Cuihu Wetland Park 3",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2706604",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2706604",
+   "isRoot": false,
+   "label": "Chironomidae sp. CH02 Cuihu Wetland Park 4",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2706605",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2706605",
+   "isRoot": false,
+   "label": "Chironomidae sp. CH02 Cuihu Wetland Park 5",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2706606",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2706606",
+   "isRoot": false,
+   "label": "Chironomidae sp. CH02 Cuihu Wetland Park 6",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2706704",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2706704",
+   "isRoot": false,
+   "label": "Hydrellia sp. CH02 Cuihu Wetland Park 1",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2706705",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2706705",
+   "isRoot": false,
+   "label": "Hydrellia sp. CH02 Cuihu Wetland Park 2",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2706706",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2706706",
+   "isRoot": false,
+   "label": "Hydrellia sp. CH02 Cuihu Wetland Park 3",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3078311",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3078311",
+   "isRoot": false,
+   "label": "Wetland metagenome associated alphacytorhabdovirus 1",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3080002",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3080002",
+   "isRoot": false,
+   "label": "Sclerocactus wetlandicus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3366332",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3366332",
+   "isRoot": false,
+   "label": "Wetland virus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3080001",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3080001",
+   "isRoot": false,
+   "label": "Sclerocactus brevispinus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:693387",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_693387",
+   "isRoot": false,
+   "label": "Solanum tampicense",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

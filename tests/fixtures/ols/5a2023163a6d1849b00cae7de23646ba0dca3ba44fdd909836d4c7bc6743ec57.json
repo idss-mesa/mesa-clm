@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "Number of the sampling bout within a calendar year, beginning with 1",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

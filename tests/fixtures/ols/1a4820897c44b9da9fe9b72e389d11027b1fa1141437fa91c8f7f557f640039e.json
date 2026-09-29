@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001629",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001629",
+  "description": "A spatial pattern inhering in a bearer by virtue of the bearer's being gathered or tending to gather into a mass or whole.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001629",
+  "isRoot": false,
+  "label": "aggregated",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

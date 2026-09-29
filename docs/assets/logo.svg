@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="neon-mcp" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Original neon-mcp glyph (monochrome, inherits the header colour): a leaf whose midrib is a flux-tower mast with crossarms. -->
+  <path d="M32 6 C46 14 52 30 48 46 C42 56 36 58 32 58 C28 58 22 56 16 46 C12 30 18 14 32 6 Z"/>
+  <path d="M32 14 V52"/>
+  <path d="M22 26 H42"/>
+  <path d="M20 36 H44"/>
+  <path d="M24 46 H40"/>
+</svg>

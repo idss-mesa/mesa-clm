@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "taxon rank",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PCO:0000059",
+   "description": "A collection of organisms that has as members every organism of a taxon and no organisms of any other equal or higher ranked taxon. The taxon may be at any level. If the taxon is species, then this is the same as the class species as a collection of organisms. When defining a taxon, it is generally understood that members include both living organisms and dead organisms that are known through specimens or observations.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000059",
+   "isRoot": false,
+   "label": "taxon as collection of organisms",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

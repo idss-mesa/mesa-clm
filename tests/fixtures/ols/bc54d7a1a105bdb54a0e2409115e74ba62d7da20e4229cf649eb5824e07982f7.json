@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "Observer assessment of dominant habitat at the sampling point at sampling time",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

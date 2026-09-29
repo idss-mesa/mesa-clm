@@ -1,0 +1,50 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Pterostichini",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:879230",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_879230",
+   "isRoot": false,
+   "label": "Pterostichini",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1213608",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1213608",
+   "isRoot": false,
+   "label": "Pterostichini sp. CYR01",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3054026",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3054026",
+   "isRoot": false,
+   "label": "unclassified Pterostichini",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3054027",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3054027",
+   "isRoot": false,
+   "label": "Pterostichini sp.",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "subfamily",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "MONDO:0020753",
+   "description": "Infectious disease causes by viruses in the subfamily Orthocoronavirinae (coronaviruses). In humans, coronaviruses cause respiratory tract infections that can be mild, such as some cases of the common cold (among other possible causes, predominantly rhinoviruses), and others that can be lethal, such as SARS, MERS, and COVID-19.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/MONDO_0020753",
+   "isRoot": false,
+   "label": "Orthocoronavirinae infectious disease",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

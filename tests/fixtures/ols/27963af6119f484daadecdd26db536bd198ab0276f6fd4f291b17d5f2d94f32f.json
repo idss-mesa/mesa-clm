@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "Name of the measurement location in the NEON database",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0070015",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0070016",
+   "description": "A pyramidal family morphology that inheres in neurons which have an apical tree which is oriented parallel to the pia.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070016",
+   "isRoot": false,
+   "label": "horizontal pyramidal morphology",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0070017",
+   "description": "A pyramidal family morphology that inheres in neurons which have a standard pyramidal shape with its apical dendrite aligned vertically.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0070017",
+   "isRoot": false,
+   "label": "standard pyramidal morphology",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

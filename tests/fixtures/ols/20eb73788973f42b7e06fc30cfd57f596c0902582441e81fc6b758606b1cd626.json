@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "scientific name",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "scientific_name",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ncbitaxon#scientific_name",
+   "isRoot": false,
+   "label": "scientific name",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

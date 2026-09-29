@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "class",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "class",
+   "description": "The full scientific name of the class in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/class",
+   "isRoot": true,
+   "label": "Class",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "RDFS:Class",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://www.w3.org/2000/01/rdf-schema#Class",
+   "isRoot": true,
+   "label": "Class",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "BCO:0000031",
+   "description": "An object aggregate that has as member part a material sample that is located in museum as a result of a process of curation.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/BCO_0000031",
+   "isRoot": false,
+   "label": "museum collection",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "BCO:0000059",
+   "description": "A museum may make its collections available for public viewing through exhibits that may be permanent or temporary. The class museum has meaning that is much broader than biological collecitons. It may be better to import this term from another, more general ontology and create a specific subclass for natural history museum.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/BCO_0000059",
+   "isRoot": false,
+   "label": "museum",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000420",
+   "description": "A defined class is a class that is defined by a set of logically necessary and sufficient conditions but is not a universal",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000420",
+   "isRoot": false,
+   "label": "defined class",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000421",
+   "description": "A named class expression is a logical expression that is given a name. The name can be used in place of the expression.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000421",
+   "isRoot": false,
+   "label": "named class expression",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OIO:ObsoleteClass",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://www.geneontology.org/formats/oboInOwl#ObsoleteClass",
+   "isRoot": true,
+   "label": "Obsolete Class",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "higherClassification",
+   "description": "A list (concatenated and separated) of taxa names terminating at the rank immediately superior to the taxon referenced in the taxon record.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/higherClassification",
+   "isRoot": true,
+   "label": "Higher Classification",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000122",
+   "description": "Class has undergone final review, is ready for use, and will be included in the next release. Any class lacking \"ready_for_release\" should be considered likely to change place in hierarchy, have its definition refined, or be obsoleted in the next release.  Those classes deemed \"ready_for_release\" will also derived from a chain of ancestor classes that are also \"ready_for_release.\"",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000122",
+   "isRoot": false,
+   "label": "ready for release",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:8000009",
+   "description": "A subset ontology that is largely comprised of a single layer or strata in an ontology class hierarchy. The purpose is typically for rolling up for visualization. The classes in the layer need not be disjoint.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_8000009",
+   "isRoot": false,
+   "label": "single layer subset ontology module",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000120",
+   "description": "Class has all its metadata, but is either not guaranteed to be in its final location in the asserted IS_A hierarchy or refers to another class that is not complete.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000120",
+   "isRoot": false,
+   "label": "metadata complete",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000115",
+   "description": "The official OBI definition, explaining the meaning of a class or property. Shall be Aristotelian, formalized and normalized. Can be augmented with colloquial definitions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000115",
+   "isRoot": true,
+   "label": "definition",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:8000007",
+   "description": "A subset ontology that is intended as a whitelist for curators using the ontology. Such a subset will exclude classes that curators should not use for curation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_8000007",
+   "isRoot": false,
+   "label": "curation subset ontology module",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:8000010",
+   "description": "A subset of an ontology that is intended to be excluded for some purpose. For example, a blacklist of classes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_8000010",
+   "isRoot": false,
+   "label": "exclusion subset ontology module",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001933",
+   "description": "An information content entity that specifies a value within a classification scheme or on a quantitative scale.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001933",
+   "isRoot": false,
+   "label": "value specification",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0100060",
+   "description": "A processed material comprised of a collection of cultured cells that has been continuously maintained together in culture and shares a common propagation history.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0100060",
+   "isRoot": false,
+   "label": "cultured cell population",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0600036",
+   "description": "A 'cell culture' as used here referes to a new lineage of cells in culture deriving from a single biological source.. New cultures are established through the initial isolation and culturing of cells from an organismal source, or through changes in an existing cell culture or line that result in a new culture with unique characteristics.  This can occur through the passaging/selection of a primary culture into a secondary culture or line, or experimental modifications of an existing cell culture or line such as an immortalization process or other stable genetic modification. This class covers establishment of cultures of either multicellular organism cells or unicellular organisms.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0600036",
+   "isRoot": false,
+   "label": "establishing cell culture",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000123",
+   "description": "Class is being worked on; however, the metadata (including definition) are not complete or sufficiently clear to the branch editors.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000123",
+   "isRoot": false,
+   "label": "metadata incomplete",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000124",
+   "description": "Nothing done yet beyond assigning a unique class ID and proposing a preferred term.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000124",
+   "isRoot": false,
+   "label": "uncurated",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000125",
+   "description": "All definitions, placement in the asserted IS_A hierarchy and required minimal metadata are complete. The class is awaiting a final review by someone other than the term editor.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000125",
+   "isRoot": false,
+   "label": "pending final vetting",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

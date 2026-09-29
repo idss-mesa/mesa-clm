@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000042",
+  "ontology_id": "bco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "BCO:0000042",
+  "description": "A planned process by which an organismal entity is associated with a taxon or taxa.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000042",
+  "isRoot": false,
+  "label": "taxonomic identification process",
+  "ontologyId": "bco",
+  "synonyms": []
+ }
+}

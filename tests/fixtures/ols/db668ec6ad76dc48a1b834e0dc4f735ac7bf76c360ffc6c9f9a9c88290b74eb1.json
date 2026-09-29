@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003715",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0003716",
+   "description": "A vital sign assay that determines the blood pressure (force of blood against the artery walls) of an organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003716",
+   "isRoot": false,
+   "label": "blood pressure assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003718",
+   "description": "A vital sign assay that measures the heart beat rate of an organism.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003718",
+   "isRoot": false,
+   "label": "pulse rate assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003719",
+   "description": "A vital sign assay that measures the quality of respiration / respiratory system of an organism",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003719",
+   "isRoot": false,
+   "label": "respiratory assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

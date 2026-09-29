@@ -1,0 +1,100 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0200175",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0000701",
+   "description": "A self-organizing map (SOM) is an artificial neural network with objective class discovery that uses a neighborhood function to preserve the topological properties of a dataset to produce low-dimensional (typically 2) discretized representation of the training data set. A set of artificial neurons learn to map points in an input space to coordinates in an output space. The input space can have different dimensions and topology from the output space, and the SOM will attempt to preserve these.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000701",
+   "isRoot": false,
+   "label": "self-organizing map",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000727",
+   "description": "A k-nearest neighbors is a data transformation which achieves a class discovery or partitioning objective, in which an input data object with vector y is assigned to a class label based upon the k closest training data set points to y; where k is the largest value that class label is assigned.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000727",
+   "isRoot": false,
+   "label": "k-nearest neighbors",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200041",
+   "description": "A k-means clustering is a data transformation which achieves a class discovery or partitioning objective, which takes as input a collection of objects (represented as points in multidimensional space) and which partitions them into a specified number k of clusters. The algorithm attempts to find the centers of natural clusters in the data. The most common form of the algorithm starts by partitioning the input points into k initial sets, either at random or using some heuristic data. It then calculates the mean point, or centroid, of each set. It constructs a new partition by associating each point with the closest centroid. Then the centroids are recalculated for the new clusters, and the algorithm repeated by alternate applications of these two steps until convergence, which is obtained when the points no longer switch clusters (or alternatively centroids are no longer changed).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200041",
+   "isRoot": false,
+   "label": "k-means clustering",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200042",
+   "description": "A hierarchical clustering is a data transformation which achieves a class discovery objective, which takes as input data item and builds a hierarchy of clusters. The traditional representation of this hierarchy is a tree (visualized by a dendrogram), with the individual input objects at one end (leaves) and a single cluster containing every object at the other (root).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200042",
+   "isRoot": false,
+   "label": "hierarchical clustering",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200050",
+   "description": "A dimensionality reduction is data partitioning which transforms each input m-dimensional vector (x_1, x_2, ..., x_m) into an output n-dimensional vector (y_1, y_2, ..., y_n), where n is smaller than m.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200050",
+   "isRoot": false,
+   "label": "dimensionality reduction",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200099",
+   "description": "Discriminant function analysis is a form of discriminant analysis used to determine which variables discriminate between two or more naturally occurring groups. Analysis is used to determine which variable(s) are the best predictors of a particular outcome.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200099",
+   "isRoot": false,
+   "label": "discriminant function analysis",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200101",
+   "description": "Linear discriminant functional analysis (LDFA) is a multivariate technique used in special applications where there are several intact groups (random assignment may be impossible) and they have been measured on several independent measures. Thus, you will want to describe how these groups differ on the basis of these measures. In this case, classification and prediction is the main objective.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200101",
+   "isRoot": false,
+   "label": "linear discriminant functional analysis",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200104",
+   "description": "The Principal Component Regression method is a regression analysis method that combines the Principal Component Analysis (PCA)spectral decomposition with an Inverse Least Squares (ILS) regression method to create a quantitative model for complex samples. Unlike quantitation methods based directly on Beer's Law which attempt to calculate the absorbtivity coefficients for the constituents of interest from a direct regression of the constituent concentrations onto the spectroscopic responses, the PCR method regresses the concentrations on the PCA scores.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200104",
+   "isRoot": false,
+   "label": "principal component regression",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200113",
+   "description": "A similarity calculation is a data transformation that attaches to each pair of objects in the input a number that is meant to reflect how 'close' or 'similar' those objects are.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200113",
+   "isRoot": false,
+   "label": "similarity calculation",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000040",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0000040",
+  "description": "A quality that is the extent of space between two entities.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000040",
+  "isRoot": false,
+  "label": "distance",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

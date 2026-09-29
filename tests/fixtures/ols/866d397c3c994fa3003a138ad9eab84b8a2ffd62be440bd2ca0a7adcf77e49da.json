@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "air temperature",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

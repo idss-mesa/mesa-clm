@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/IAO_0020000",
+  "ontology_id": "iao",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "IAO:0000578",
+   "description": "An information content entity that consists of a CRID symbol and additional information about the CRID registry to which it belongs.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000578",
+   "isRoot": false,
+   "label": "centrally registered identifier",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000646",
+   "description": "An identifier that denotes some postal delivery route, some aggregate of postal delivery routes or a geographical region and was created for the purpose of sorting and delivering mail.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000646",
+   "isRoot": false,
+   "label": "postal code",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0020015",
+   "description": "An identifier referring to an individual entity that is ascribed personhood by the user of the identifier.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0020015",
+   "isRoot": false,
+   "label": "personal name",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0020017",
+   "description": "An identifier that is typically a part of a person's name which has been passed, according to law or custom, from one or both parents to their children.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0020017",
+   "isRoot": false,
+   "label": "family name",
+   "ontologyId": "iao",
+   "synonyms": []
+  }
+ ]
+}

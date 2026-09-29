@@ -1,0 +1,90 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000516",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0000479",
+   "description": "An NMR probe that is designed to hold a solid sample.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000479",
+   "isRoot": false,
+   "label": "solid NMR probe",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000491",
+   "description": "An NMR probe designed to allow the direct detection of acquisition nuclei.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000491",
+   "isRoot": false,
+   "label": "direct detection NMR probe",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000519",
+   "description": "An NMR probe that allows the automatized flow-through of a sample. The sample is aspirated via a syringe pump into the Flow probe, the NMR spectrum is acquired and when the experiment is complete, the sample is returned to back to an external source (well plate) or flushed to waste. Sometimes pulsed field gradients (PFG) can be established in flow probes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000519",
+   "isRoot": false,
+   "label": "flow probe",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000529",
+   "description": "An NMR probe that is manufactured by JEOL.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000529",
+   "isRoot": false,
+   "label": "JEOL NMR probe",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000539",
+   "description": "An NMR probe that is designed for generating pictures from sample states via NMR imaging.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000539",
+   "isRoot": false,
+   "label": "imaging NMR probe",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000559",
+   "description": "An NMR probe that is designed to hold a liquid sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000559",
+   "isRoot": false,
+   "label": "liquid NMR probe",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000561",
+   "description": "An NMR probe that is manufactured by Bruker.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000561",
+   "isRoot": false,
+   "label": "Bruker NMR probe",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000640",
+   "description": "An NMR probe designed to allow the indirect detection of acquisition nuclei.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000640",
+   "isRoot": false,
+   "label": "indirect detection probe",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

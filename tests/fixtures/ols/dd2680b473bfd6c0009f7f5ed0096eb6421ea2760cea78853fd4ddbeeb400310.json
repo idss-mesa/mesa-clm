@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001357",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001357",
+  "description": "A landform which has been rendered barren or partially barren by environmental extremes, especially by low rainfall, and which loses more liquid water by evapotranspiration than is supplied by precipitation.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001357",
+  "isRoot": false,
+  "label": "desert",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

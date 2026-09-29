@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "age",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0000011",
+   "description": "A time quality inhering in a bearer by virtue of how long the bearer has existed.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000011",
+   "isRoot": false,
+   "label": "age",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001156",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since planting, the process of placing a plant in media (e.g. soil) to allow it to grow, which excludes sowing.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001156",
+   "isRoot": false,
+   "label": "age since planting measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001157",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since hatching, the process of emergence from an egg.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001157",
+   "isRoot": false,
+   "label": "age since hatching measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001159",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since egg laying, the process of the production of egg(s) by an organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001159",
+   "isRoot": false,
+   "label": "age since egg laying measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001161",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since germination, the process consisting of physiological and developmental changes by a seed, spore, pollen grain (microspore), or zygote that occur after release from dormancy, and encompassing events prior to and including the first visible indications of growth.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001161",
+   "isRoot": false,
+   "label": "age since germination measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001163",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since eclosion, the process of emergence of an adult insect from its pupa or cocoon.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001163",
+   "isRoot": false,
+   "label": "age since eclosion measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001164",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since sowing, the process of placing a seed or spore in some media with the intention to invoke germination.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001164",
+   "isRoot": false,
+   "label": "age since sowing measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001165",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since coitus, the process of copulation that occurs during the process of sexual reproduction.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001165",
+   "isRoot": false,
+   "label": "age since coitus measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001168",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since fertilization, the process of the union of gametes of opposite sexes during the process of sexual reproduction to form a zygote.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001168",
+   "isRoot": false,
+   "label": "age since fertilization measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001169",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since birth, the process of emergence and separation of offspring from the mother.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001169",
+   "isRoot": false,
+   "label": "age since birth measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002465",
+   "description": "An age measurement datum that is the result of the measurement of the age of a cell since cultured (the process of seeding cells onto a culture dish).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002465",
+   "isRoot": false,
+   "label": "age since culture seeding measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002556",
+   "description": "A value specifcation that specifies the youngest age when specifying an age range.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002556",
+   "isRoot": false,
+   "label": "minimum age value specification",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002557",
+   "description": "A value specifcation that specifies the oldest age when specifying an age range.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002557",
+   "isRoot": false,
+   "label": "maximum age value specification",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003844",
+   "description": "An age determination assay which determines the age of the subject at the time of the change from a state where it did not have a developmental stage marker to one in which it does.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003844",
+   "isRoot": false,
+   "label": "developmental marker age of attainment assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:1110024",
+   "description": "Is a process in which an infectious agent is in direct contact with a potential host organism in its habitat. This is preceded by proximity to the infectious agent",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_1110024",
+   "isRoot": false,
+   "label": "environmental exposure to infectious agent",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000450",
+   "description": "A regulatory agency is a organization that has responsibility over or for  the legislation (acts and regulations) for a given sector of the government.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000450",
+   "isRoot": false,
+   "label": "regulatory agency",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001167",
+   "description": "A time measurement datum that is the result of measurement of age of an organism",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001167",
+   "isRoot": false,
+   "label": "age measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001187",
+   "description": "An assay that measures the presence or amount of an infectious agent in an evaluant",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001187",
+   "isRoot": false,
+   "label": "infectious agent detection assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002396",
+   "description": "An age measurement datum performed on a female when her first biological child was born.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002396",
+   "isRoot": false,
+   "label": "age when gave birth to first child",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002423",
+   "description": "An inclusion criterion that uses the age of majority for a state or institution, where one is generally considered to be an adult, which if met, makes an individual suitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002423",
+   "isRoot": false,
+   "label": "age of majority inclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

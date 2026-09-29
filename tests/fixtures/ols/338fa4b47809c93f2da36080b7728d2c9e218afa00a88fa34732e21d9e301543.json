@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "The infraspecific epithet",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "infraspecificEpithet",
+   "description": "The name of the lowest or terminal infraspecific epithet of the scientificName, excluding any rank designation.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/infraspecificEpithet",
+   "isRoot": true,
+   "label": "Infraspecific Epithet",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

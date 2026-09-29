@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2020826",
+  "ontology_id": "ncbitaxon"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "NCBITaxon:2020826",
+  "description": "",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2020826",
+  "isRoot": false,
+  "label": "environmental samples <beetles,order Coleoptera>",
+  "ontologyId": "ncbitaxon",
+  "synonyms": []
+ }
+}

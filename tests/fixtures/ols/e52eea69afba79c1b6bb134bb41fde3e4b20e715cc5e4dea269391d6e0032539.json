@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000001",
+  "ontology_id": "pco",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PCO:0000053",
+   "description": "A population of organisms consisting of only microbes of the same species, that live in the same place.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000053",
+   "isRoot": false,
+   "label": "microbial population",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:1000000",
+   "description": "A population which is participating in a migration process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_1000000",
+   "isRoot": false,
+   "label": "migratory population",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "ground beetle",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:7065",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_7065",
+   "isRoot": false,
+   "label": "Tenebrionidae",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:134639",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_134639",
+   "isRoot": false,
+   "label": "Amara alpina",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:41073",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_41073",
+   "isRoot": false,
+   "label": "Carabidae",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

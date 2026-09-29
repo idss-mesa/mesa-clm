@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002920",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0002920",
+  "description": "A device designed to catch arthropods.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002920",
+  "isRoot": false,
+  "label": "arthropod trap",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,50 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "laboratory name",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00006091",
+   "description": "A research laboratory.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00006091",
+   "isRoot": true,
+   "label": "Laboratory of Phytopathology and Plant Protection",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00052866",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00052866",
+   "isRoot": true,
+   "label": "Swire Institute of Marine Science",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00710017",
+   "description": "A marine biological research institution.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00710017",
+   "isRoot": true,
+   "label": "Marine Biological Association Laboratory",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00457439",
+   "description": "A former military base.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00457439",
+   "isRoot": true,
+   "label": "Royal Air Force Station Oxenhope Moor",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

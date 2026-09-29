@@ -1,0 +1,70 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002650",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0002654",
+   "description": "A biopsy that uses a hollow needle to extract cells.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002654",
+   "isRoot": false,
+   "label": "needle biopsy",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002657",
+   "description": "A biopsy involving a surgical incision into an organism to access the biopsy material.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002657",
+   "isRoot": false,
+   "label": "surgical biopsy",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002660",
+   "description": "A biopsy involving the collection of a small part of the abdominal wall fat pad.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002660",
+   "isRoot": false,
+   "label": "abdominal wall fat pad biopsy",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002661",
+   "description": "A biopsy involving the collection of the tip of a mamallian tail.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002661",
+   "isRoot": false,
+   "label": "tail biopsy",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002662",
+   "description": "A biopsy where a small amount of bone and a small amount of fluid and bone marrow are collected.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002662",
+   "isRoot": false,
+   "label": "bone marrow biopsy",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002663",
+   "description": "A biopsy that involves the collection of a cylinder of skin (including epidermis, dermis and superficial fat) using a punch tool.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002663",
+   "isRoot": false,
+   "label": "skinpunch biopsy",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}
