@@ -129,6 +129,11 @@ leave-one-card-out over 7 cards): `neon_term_fits.L2` accuracy 0.765, ECE 0.058,
 risk 0.088 (n 285, 199 negatives); `neon_ontology_fits.L2` accuracy 0.837, ECE 0.078, coverage
 at 5% risk 0.547 (n 190, 114 negatives).
 
+mesa-clm reports ECE, coverage at risk and AURC with tie-invariant versions of those metrics
+(DESIGN D33): tied confidences share their group's mean correctness, so a cell no longer depends
+on how a platform's sort orders ties. On tie-free probabilities such as AnyJev L2's the values are
+identical, so the numbers above stay directly comparable.
+
 The first mesa-clm cells are the M0 no-model controls in
 `bench/results/2026-09-29/baselines.json` (five `<task>.baseline.lookup_prob` cells, snapshot
 `bench/snapshots/2026-09-29.parquet`): `lookup_acc` 0.772 (term.fits, n 285), 0.800

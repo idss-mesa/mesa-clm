@@ -45,6 +45,7 @@ import numpy as np
 import numpy.typing as npt
 
 from mesa_clm.bench import _metrics, stats
+from mesa_clm.bench import metrics as tie_metrics
 from mesa_clm.bench.results import (
     BenchCell,
     BenchResults,
@@ -367,7 +368,7 @@ def pooled_metrics(
 ) -> CellMetrics:
     """The plan §5.4 metrics block over pooled held-out probabilities (any tier)."""
     y = stats.as_list(labels)
-    summary = _metrics.summarize(probs, y)
+    summary = tie_metrics.summarize(probs, y)
     auroc = stats.metric_value("auroc", probs, labels) if task.binary else None
     ci = (
         _ci_model(stats.metric_ci("auroc", probs, labels, cards, B=B, seed=seed))
@@ -381,7 +382,7 @@ def pooled_metrics(
         nll=float(summary["nll"]),
         ece=float(summary["ece"]),
         cov_at_5=float(summary["cov@5%"]),
-        cov_at_10=float(_metrics.coverage_at_risk(probs, y, target=0.10)),
+        cov_at_10=float(tie_metrics.coverage_at_risk(probs, y, target=0.10)),
         aurc=float(summary["aurc"]),
         auroc=finite(auroc),
         auroc_ci=ci,

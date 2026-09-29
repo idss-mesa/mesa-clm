@@ -35,6 +35,7 @@ import numpy as np
 import numpy.typing as npt
 
 from mesa_clm.bench import _metrics
+from mesa_clm.bench import metrics as tie_metrics
 
 Metric = Literal["acc", "nll", "brier", "auroc", "ece"]
 
@@ -114,7 +115,7 @@ def metric_value(
     if metric == "brier":
         return _metrics.brier(p, as_list(y))
     if metric == "ece":
-        return _metrics.ece(p, as_list(y))
+        return tie_metrics.ece(p, as_list(y))
     raise ValueError(f"unknown metric {metric!r}")
 
 
@@ -154,7 +155,7 @@ def weighted_metric(
         out = np.empty(len(w))
         for b in range(len(w)):
             idx = np.repeat(np.arange(n), w[b].astype(np.int64))
-            out[b] = _metrics.ece(probs[idx], as_list(labels[idx])) if len(idx) else np.nan
+            out[b] = tie_metrics.ece(probs[idx], as_list(labels[idx])) if len(idx) else np.nan
         return out
     if metric == "auroc":
         if probs.shape[1] != 2:
