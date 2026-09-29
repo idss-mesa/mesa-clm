@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000042",
+  "ontology_id": "bco",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "Identification",
+   "description": "A taxonomic determination (e.g., the assignment to a taxon).",
+   "hasChildren": true,
+   "iri": "http://rs.tdwg.org/dwc/terms/Identification",
+   "isRoot": false,
+   "label": "Identification",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

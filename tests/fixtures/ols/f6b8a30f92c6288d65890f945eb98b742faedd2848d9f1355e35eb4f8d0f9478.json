@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001242",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01001239",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001239",
+   "isRoot": false,
+   "label": "forest canopy",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001240",
+   "description": "A canopy which is part of a woodland ecosystem.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001240",
+   "isRoot": false,
+   "label": "woodland canopy",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001241",
+   "description": "A canopy which is composed of the aboveground portion, or crowns, of a community of crop plants.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001241",
+   "isRoot": false,
+   "label": "crop canopy",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,60 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000004",
+  "ontology_id": "pco",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PCO:0000010",
+   "description": "The number of different species represented in an ecological community.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000010",
+   "isRoot": false,
+   "label": "community species richness",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000019",
+   "description": "The Shannon Index and Simpson Index are examples of ways in which species diversity is quantified.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000019",
+   "isRoot": false,
+   "label": "community species diversity",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000023",
+   "description": "A quality of an ecological community that reflects how close in abundance all species in a community are.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000023",
+   "isRoot": false,
+   "label": "community species evenness",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000080",
+   "description": "The density of plants in an ecological community (multiple species), often measured as the number of plants per area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000080",
+   "isRoot": false,
+   "label": "plant density of an ecological community",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000082",
+   "description": "The density of seedlings in an ecological community (multiple species), often measured as the number of plants per area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000082",
+   "isRoot": false,
+   "label": "seedling density of an ecological community",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

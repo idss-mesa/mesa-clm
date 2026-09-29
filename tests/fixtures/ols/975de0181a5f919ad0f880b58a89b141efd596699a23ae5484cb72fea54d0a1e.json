@@ -1,0 +1,100 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "meter",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "UO:0000008",
+   "description": "A length unit which is equal to the length of the path traveled by light in vacuum during a time interval of 1/299 792 458 of a second.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000008",
+   "isRoot": false,
+   "label": "meter",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001047",
+   "description": "A device that is used to measure the pH (acidity or alkalinity) of a liquid.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001047",
+   "isRoot": false,
+   "label": "pH meter",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000015",
+   "description": "A length unit which is equal to one hundredth of a meter or 10^[-2] m.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000015",
+   "isRoot": false,
+   "label": "centimeter",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000016",
+   "description": "A length unit which is equal to one thousandth of a meter or 10^[-3] m.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000016",
+   "isRoot": false,
+   "label": "millimeter",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000017",
+   "description": "A length unit which is equal to one millionth of a meter or 10^[-6] m.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000017",
+   "isRoot": false,
+   "label": "micrometer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000018",
+   "description": "A length unit which is equal to one thousandth of one millionth of a meter or 10^[-9] m.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000018",
+   "isRoot": false,
+   "label": "nanometer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000097",
+   "description": "A volume unit which is equal to one millionth of a cubic meter or 10^[-9] m^[3], or to 1 ml.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000097",
+   "isRoot": false,
+   "label": "cubic centimeter",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000099",
+   "description": "A volume unit which is equal to one thousandth of a cubic meter or 10^[-3] m^[3], or to 1 decimeter.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000099",
+   "isRoot": false,
+   "label": "liter",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000100",
+   "description": "A volume unit which is equal to one thousand of a cubic meter or 10^[-3] m^[3], or to 1 L.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000100",
+   "isRoot": false,
+   "label": "cubic decimeter",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

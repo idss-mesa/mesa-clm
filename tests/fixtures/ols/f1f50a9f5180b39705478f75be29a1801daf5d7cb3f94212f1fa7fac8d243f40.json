@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000809",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01000803",
+   "description": "This class is hard to define and is sometimes treated as equivalent to 'minor planet'.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000803",
+   "isRoot": false,
+   "label": "asteroid",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000808",
+   "description": "Considerable debate on this definition exists.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000808",
+   "isRoot": false,
+   "label": "dwarf planet",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

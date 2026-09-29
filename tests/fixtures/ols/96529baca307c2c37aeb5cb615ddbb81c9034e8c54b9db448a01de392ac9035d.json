@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "class",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00307806",
+   "description": "A protected area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00307806",
+   "isRoot": true,
+   "label": "Sitio Classificado dos Acudes de Monte da Barca e Agolada",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00122148",
+   "description": "Une foret protegee de l'ouest du Senegal, situee dans le departement de Foundiougne (region de Fatick), a proximite de la frontiere avec la Gambie.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00122148",
+   "isRoot": true,
+   "label": "Foret classee de Patako",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00122149",
+   "description": "Une foret protegee du Senegal, situee a l'entree du Sine-Saloum, au sud-est de Joal-Fadiouth.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00122149",
+   "isRoot": true,
+   "label": "Foret classee de Samba Dia",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231289",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231289",
+   "isRoot": true,
+   "label": "Foret Classee de Zindiga",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231290",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231290",
+   "isRoot": true,
+   "label": "Foret Classee de Djidara",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231291",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231291",
+   "isRoot": true,
+   "label": "Foret Classee de Mozonga",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231292",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231292",
+   "isRoot": true,
+   "label": "Foret Classee de Baria",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231293",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231293",
+   "isRoot": true,
+   "label": "Foret Classee de Fangala",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231294",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231294",
+   "isRoot": true,
+   "label": "Foret Classee de Nafadji",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231295",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231295",
+   "isRoot": true,
+   "label": "Foret Classee de Nafadye",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231296",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231296",
+   "isRoot": true,
+   "label": "Foret Classee de Torokoro- Kassaro",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231297",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231297",
+   "isRoot": true,
+   "label": "Foret Classee du Dag Dag",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231298",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231298",
+   "isRoot": true,
+   "label": "Foret Classee du Lorack-Bane",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231299",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231299",
+   "isRoot": true,
+   "label": "Foret Classee de Tinienko",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231300",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231300",
+   "isRoot": true,
+   "label": "Foret Classee de Sebekoro",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231301",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231301",
+   "isRoot": true,
+   "label": "Foret Classee de Siguiferi",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231302",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231302",
+   "isRoot": true,
+   "label": "Foret Classee de Nioro",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231303",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231303",
+   "isRoot": true,
+   "label": "Foret Classee de Kobiri",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231304",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231304",
+   "isRoot": true,
+   "label": "Foret Classee de Kayaba",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00231305",
+   "description": "A protected forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00231305",
+   "isRoot": true,
+   "label": "Foret Classee de Gangara",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

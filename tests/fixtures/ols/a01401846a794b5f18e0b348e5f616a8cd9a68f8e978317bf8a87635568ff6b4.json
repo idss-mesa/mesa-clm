@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "The average wind speed measured with a handheld weather meter, in kilometers per",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

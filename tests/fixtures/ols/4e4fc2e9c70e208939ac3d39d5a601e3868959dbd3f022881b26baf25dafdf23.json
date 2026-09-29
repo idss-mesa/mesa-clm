@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000273",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0000006",
+   "description": "the role of a human being that is realized by enforcing regulations to ensure consumer safety",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000006",
+   "isRoot": false,
+   "label": "role of being consumer safety officer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000056",
+   "description": "Notified body is regulator of consumables and medical devices charged by the Competent Authority with verifying compliance of medical devices (not drugs) with the applicable Essential Requirements stated in the Medical Device Directive",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000056",
+   "isRoot": false,
+   "label": "notified body role",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

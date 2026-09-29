@@ -1,0 +1,60 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001160",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01001159",
+   "description": "A cloud which is cirriform and is formed by condensation events centred on an aircraft's contrail.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001159",
+   "isRoot": false,
+   "label": "cirrus homogenitus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001418",
+   "description": "The species-level term, 'fibratus', applies mainly to clouds of the Cirrus and Cirrostratus genera",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001418",
+   "isRoot": false,
+   "label": "cirrus fibratus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001421",
+   "description": "A cirrus cloud which does not have grey parts and which is often shaped like a comma, terminating at its highest point in a hook, or in a tuft, the upper part of which is not in the form of a rounded protuberance.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001421",
+   "isRoot": false,
+   "label": "cirrus uncinus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001422",
+   "description": "Cirrus spissatus often originates from the upper part of a Cumulonimbus.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001422",
+   "isRoot": false,
+   "label": "cirrus spissatus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001425",
+   "description": "The species-level term, 'castellanus', applies to Cirrus, Cirrocumulus, Altocumulus and Stratocumulus genera. The castellanus character is especially evident when the clouds are seen from the side.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001425",
+   "isRoot": false,
+   "label": "cirrus castellanus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

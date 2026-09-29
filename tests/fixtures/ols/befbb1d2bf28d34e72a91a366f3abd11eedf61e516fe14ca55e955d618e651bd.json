@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000073",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0000073",
+  "description": "A sample_preparation_for_assay is a protocol_application including material_enrollments and biomaterial_transformations. definition_source: OBI.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000073",
+  "isRoot": false,
+  "label": "sample preparation for assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

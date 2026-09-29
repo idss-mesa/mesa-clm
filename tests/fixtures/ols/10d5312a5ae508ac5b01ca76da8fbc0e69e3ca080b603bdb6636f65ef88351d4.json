@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "sex or age",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0001168",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since fertilization, the process of the union of gametes of opposite sexes during the process of sexual reproduction to form a zygote.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001168",
+   "isRoot": false,
+   "label": "age since fertilization measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001165",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since coitus, the process of copulation that occurs during the process of sexual reproduction.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001165",
+   "isRoot": false,
+   "label": "age since coitus measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

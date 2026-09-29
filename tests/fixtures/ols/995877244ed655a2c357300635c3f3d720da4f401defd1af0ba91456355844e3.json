@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "taxrank",
+  "query": "kingdom",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "TAXRANK:0000017",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000017",
+   "isRoot": false,
+   "label": "kingdom",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  }
+ ]
+}

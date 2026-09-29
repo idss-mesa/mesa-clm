@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "sex",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00008498",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00008498",
+   "isRoot": true,
+   "label": "Sexey-les-Bois",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00119872",
+   "description": "A commune in the Arrondissement of Toul.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00119872",
+   "isRoot": true,
+   "label": "Commune of Sexey-les-Bois",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00369768",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00369768",
+   "isRoot": true,
+   "label": "Commune of Sexey-aux-Forges",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00130490",
+   "description": "One of eleven districts of the province Santa Cruz in Peru.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00130490",
+   "isRoot": true,
+   "label": "Sexi District",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00069124",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00069124",
+   "isRoot": true,
+   "label": "Pablo Sexto Canton",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00092731",
+   "description": "A rock E of Cape York.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00092731",
+   "isRoot": true,
+   "label": "Sextant Rock, 10-313",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00150605",
+   "description": "One of the Highgate Ponds.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00150605",
+   "isRoot": true,
+   "label": "Mixed-sex Pond",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00206826",
+   "description": "A river. A tributary of the South Branch Ecorse River.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00206826",
+   "isRoot": true,
+   "label": "Sexton and Kilfoil Drain",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00244009",
+   "description": "An island in Great South Bay.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00244009",
+   "isRoot": true,
+   "label": "Sexton Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00284783",
+   "description": "A populated place. A town in northern Alberta, Canada.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00284783",
+   "isRoot": true,
+   "label": "Town of Sexsmith",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00359587",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00359587",
+   "isRoot": true,
+   "label": "Commune of Sexfontaines",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00359629",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00359629",
+   "isRoot": true,
+   "label": "Commune of Ormoy-les-Sexfontaines",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00368938",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00368938",
+   "isRoot": true,
+   "label": "Commune of Sexcles",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00455302",
+   "description": "A Civil Parish.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00455302",
+   "isRoot": true,
+   "label": "Civil Parish of Sexhow",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00493735",
+   "description": "A peninsula. It forms a natural breakwater to the Harbour of Watermouth Bay.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00493735",
+   "isRoot": true,
+   "label": "Sexton's Burrows",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00555824",
+   "description": "A populated place. A village.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00555824",
+   "isRoot": true,
+   "label": "Sexnappa",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00597920",
+   "description": "A populated place. A municipality (Gemeinde).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00597920",
+   "isRoot": true,
+   "label": "Municipality of Sexau",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00614790",
+   "description": "A populated place. A district (Ortsteil).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00614790",
+   "isRoot": true,
+   "label": "Sextlgrub",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00018655",
+   "description": "A municipality.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00018655",
+   "isRoot": true,
+   "label": "Municipality of Sighisoara",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00062249",
+   "description": "A commune (municipality) in the Province of Belluno, located about 120 km north of Venice and about 50 km northeast of Belluno. Auronzo di Cadore borders the following municipalities: Calalzo di Cadore, Comelico Superiore, Cortina d'Ampezzo, Danta di Cadore, Toblach-Dobbiaco, Domegge di Cadore, Lozzo di Cadore, San Vito di Cadore, Santo Stefano di Cadore, Sexten-Sesto, Vigo di Cadore.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00062249",
+   "isRoot": true,
+   "label": "Auronzo di Cadore",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

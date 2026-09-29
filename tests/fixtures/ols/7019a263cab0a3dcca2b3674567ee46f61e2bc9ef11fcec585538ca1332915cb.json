@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0600016",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0600016",
+  "description": "physical combination of several instances of like material",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0600016",
+  "isRoot": false,
+  "label": "pooling specimens",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

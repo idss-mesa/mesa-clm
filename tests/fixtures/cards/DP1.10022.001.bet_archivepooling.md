@@ -1,0 +1,27 @@
+# Dataset: DP1.10022.001 / bet_archivepooling
+Product: DP1.10022.001 — Ground beetles sampled from pitfall traps. Taxonomically identified ground beetles and the plots and times from which they were collected.
+Source: NEON (National Ecological Observatory Network) Data API, basic package, stacked across site-months.
+Sites: HARV (Harvard Forest & Quabbin Watershed NEON, Massachusetts, domain D01 Northeast; temperate deciduous/mixed forest) and SRER (Santa Rita Experimental Range NEON, Arizona, domain D14 Desert Southwest; semi-arid desert grassland/shrubland).
+Rows: 761; months covered: 2020-07 to 2024-10 (29 distinct months).
+
+## Columns (name | NEON description | type | unit | profile)
+- uid | Unique ID within NEON database; an identifier for the record | string | - | (identifier; not profiled)
+- namedLocation | Name of the measurement location in the NEON database | string | - | 20 distinct; top: SRER_002.basePlot.bet (60), SRER_004.basePlot.bet (54), SRER_003.basePlot.bet (53), SRER_001.basePlot.bet (50), SRER_006.basePlot.bet (50), SRER_005.basePlot.bet (48), HARV_005.basePlot.bet (47), HARV_002.basePlot.bet (45)
+- domainID | Unique identifier of the NEON domain | string | - | 2 distinct; top: D14 (390), D01 (371)
+- siteID | NEON site code | string | - | 2 distinct; top: SRER (390), HARV (371)
+- plotID | Plot identifier (NEON site code_XXX) | string | - | 20 distinct; top: SRER_002 (60), SRER_004 (54), SRER_003 (53), SRER_001 (50), SRER_006 (50), SRER_005 (48), HARV_005 (47), HARV_002 (45)
+- setDate | Date that trap was set | dateTime | - | 92 distinct; top: 2022-04-19 (14), 2022-05-03 (14), 2022-06-28 (14), 2021-07-27 (13), 2020-07-29 (12), 2021-08-18 (12), 2022-06-14 (12), 2022-07-12 (12)
+- collectDate | Date of the collection event | dateTime | - | 93 distinct; top: 2022-05-03 (14), 2022-05-17 (14), 2022-07-12 (14), 2021-08-10 (13), 2020-08-12 (12), 2021-09-01 (12), 2022-06-28 (12), 2022-07-26 (12)
+- processingDate | Date that sample was processed (i.e., sorted or pinned) in the domain lab | dateTime | - | 224 distinct; top: 2024-07-08 (15), 2022-12-21 (13), 2024-04-22 (12), 2024-07-22 (11), 2022-11-15 (11), 2023-09-25 (11), 2022-07-19 (10), 2023-07-05 (10)
+- subsampleIDList | List of subsampleIDs | string | - | 761 distinct; top: Lp8M7PrSWwD156oR9fE5rMG3YwvfByJYTtVgkQgx01IWTN4xwlKCMCkcBUCW (1), vt05/1/XT7Mm9PJg7/gpztFl1u4yQnOMuZN0JmL1dCyKv4vkJr6jP3zhUrlF (1), lFumUD6T2rm3SwyUniN2yLo2tvOvbz1V9sv32hwYswO0Sl8pPaYRGh4ViGN5 (1), VYbX3k7w1wbO7qlLMTJpQCIOMFhiYY8QcVZj1DvpeXI0nLNvVsRmjKFADpuO (1), aC3QojVI9eztxDaOYKw9zG51WIzHmrej7v8MqrtRUcUw+cciHe+oht74ZNfZ (1), nqQHSOkEpR3O+5Zdv8LxhMmczlskcIPkIq575l8zIpjl8L9IIWTtjX+Ug9Bh (1), Z0yx2oXOdlAjhy8gU82tgwZmsnqwNDhdVuUs4oonvV36BKB9HxcpWmaHkRMj (1), IKTBBoKzvae3sVuL8sEiWqjzZ6K9qkACL8uuGR5Pm9uD9irtVLomWixE+X06 (1)
+- subsampleCode | Barcode of a subsample | string | - | 285 distinct; top: || (442), | (36), A00000157743|A00000157712 (1), A00000154706|A00000154165|A00000154151 (1), A00000154152|A00000154509|A00000154153 (1), A00000154857|A00000154707|A00000154856 (1), A00000158865|A00000158866|A00000158900 (1), A00000154162|A00000154164|A00000154172 (1)
+- archiveVialID | Identifier for the vial containing specimens for archive | string | - | 761 distinct; top: Lp8M7PrSWwAtZJP+Oho48NxL6S785HMz (1), vt05/1/XT7Pvkvru4lOAa+XlNnjef339 (1), lFumUD6T2rk6Cz9iEisNKK+T7Gx1H0zS (1), VYbX3k7w1wZdioTpEQpHM5h35cyFmMQ4 (1), aC3QojVI9exrA0GWkxDfmuGrnC2ltOT8 (1), nqQHSOkEpR1QGkV6VqxwXsRTrAgAjFlE (1), Z0yx2oXOdlBZJru0TFMB6dwRNZzDC2po (1), IKTBBoKzvaeTIH728sROC0BQKK5eJopp (1)
+- archiveSampleCode | Barcode of archive sample | string | - | 761 distinct; top: A00000126672 (1), A00000126577 (1), A00000126489 (1), A00000126546 (1), A00000126578 (1), A00000126641 (1), A00000126490 (1), A00000126526 (1)
+- sampleCondition | Condition of a sample | string | - | 2 distinct; top: OK (673), sample incomplete (1)
+- sampleType | Type of sample | string | - | 3 distinct; top: invert bycatch (699), carabid (59), vert bycatch herp (3)
+- scientificName | Scientific name, associated with the taxonID. This is the name of the lowest level taxonomic rank that can be determined | string | - | 11 distinct; top: Discoderus robustus (31), Apristus tuckeri (9), Synuchus impunctatus (5), Carabus goryi (5), Plethodon cinereus (3), Selenophorus aeneopiceus (3), Discoderus obsidianus (2), Harpalus obliquus (1)
+- taxonID | Species code, based on one or more sources | string | - | 11 distinct; top: DISROB1 (31), APRTUC (9), SYNIMP (5), CARGOR (5), PLECIN (3), SELAEN (3), DISOBS (2), HAROBL (1)
+- recordedBy | An identifier for the technician who recorded the data | string | - | 65 distinct; top: 0000-0002-0026-7595 (59), 0000-0001-6825-4902 (45), 0000-0001-6901-0272 (38), 0000-0003-4194-7703 (36), 0009-0001-8331-7796 (35), 0009-0004-0301-9767 (33), 0000-0002-5964-2409 (31), 0000-0003-1265-2180 (28)
+- remarks | Technician notes; free text comments accompanying the record | string | - | 4 distinct; top: Specimens discovered in pooled invertebrate bycatch while pe (3), HARV_002.W subsample was incomplete due to tray spilling and (1), Spilled ~3ml ethanol from top of vial (1), Specimen from S trap was discovered in pooled invertebrate b (1)
+- pooledFromMultiplePlots | Data quality flag indicating when composite samples, pooled samples, or sample mixtures are derived from more than one plot at a site | string | - | 1 distinct; top: N (761)
+- identificationHistoryID | Identifier for linking records related to this identification history | string | - | all blank

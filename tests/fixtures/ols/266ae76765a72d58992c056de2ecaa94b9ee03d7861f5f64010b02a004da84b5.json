@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "order",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00285998",
+   "description": "A populated place. A town in Kane County, Utah, United States.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00285998",
+   "isRoot": true,
+   "label": "Town of Orderville",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00297342",
+   "description": "A protected area. Located on the east side of the Sustut River and above the Bear River. Established by order-in-council in 2001, the park has an area of 75,037 ha. The park protects the Hogem Ranges and the Connelly Range and is in the traditional territories of the Tsay Keh Dene First Nation and the Gitxsan First Nation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00297342",
+   "isRoot": true,
+   "label": "Sustut Provincial Park and Protected Area",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00477417",
+   "description": "A park.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00477417",
+   "isRoot": true,
+   "label": "Park Kolejowy",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00000910",
+   "description": "A country in western Africa, and one of the smallest nations in continental Africa. It is bordered by Senegal to the north, and Guinea to the south and east, with the Atlantic Ocean to its west. Formerly the Portuguese colony of Portuguese Guinea, upon independence, the name of its capital, Bissau, was added to the country's name in order to prevent confusion between itself and the Republic of Guinea.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00000910",
+   "isRoot": true,
+   "label": "Guinea-Bissau",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003536",
+   "description": "A first-order administrative division. One of the nine states or Bundeslander of Austria. Its capital is Linz. Upper Austria borders on Germany and the Czech Republic, as well as on the other Austrian states of Lower Austria, Styria, and Salzburg.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003536",
+   "isRoot": true,
+   "label": "Oberosterreich Land",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003537",
+   "description": "A first-order administrative division. A state or Land of Austria with an area of 7,154 km2, located adjacent to the German border. It lies between Upper Austria, Styria, Carinthia, Tyrol and Bavaria (Germany).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003537",
+   "isRoot": true,
+   "label": "Salzburg Land",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003538",
+   "description": "A first-order administrative division. A state or Bundesland, located in the southeast of Austria. It borders Slovenia as well as the other Austrian states of Upper Austria, Lower Austria, Salzburg, Burgenland, and Carinthia.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003538",
+   "isRoot": true,
+   "label": "Steiermark Land",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003539",
+   "description": "A first-order administrative division. One of the nine states in Austria. The capital of Lower Austria (since 1986) is Sankt Polten. Prior to 1986, the capital of Lower Austria was Vienna, even though Vienna is not properly part of Lower Austria. Located east of Upper Austria, Lower Austria derives its name from where it is situated on the Danube River, which flows from west to east. The state borders on Slovakia, the Czech Republic, and on the other Austrian states of Upper Austria, Styria and Burgenland. The state surrounds Vienna.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003539",
+   "isRoot": true,
+   "label": "Niederosterreich Land",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003540",
+   "description": "A first-order administrative division. A state or Bundesland, located in the west of Austria. It comprises the Austrian part of the historical region of Tyrol. North Tyrol borders Bavaria (Germany) in the north, the State of Vorarlberg in the west, Italy and Switzerland in the south and Salzburg in the east. East Tyrol also borders Carinthia in the east. The state is split into two parts, called North Tyrol and East Tyrol, by a 20 km-wide strip of land where the State of Salzburg borders directly on the Italian Province of Bolzano-Bozen (Alto Adige/South Tyrol).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003540",
+   "isRoot": true,
+   "label": "Tyrol Land",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003541",
+   "description": "A first-order administrative division. One of the States of Austria. Coterminous with the city of Vienna.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003541",
+   "isRoot": true,
+   "label": "Wien Land",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003542",
+   "description": "A first-order administrative division. The westernmost state (Land) of Austria. It borders three countries: Germany (Bavaria); Switzerland (Graubunden and St. Gallen) and Liechtenstein, and Tyrol Land.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003542",
+   "isRoot": true,
+   "label": "Vorarlberg Land",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003543",
+   "description": "A first-order administrative division. The southernmost Austrian state or Land. It is situated within the Eastern alps.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003543",
+   "isRoot": true,
+   "label": "Karnten Land",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003544",
+   "description": "A first-order administrative division. The easternmost and least populous state or Land of Austria. To the west it borders the Austrian provinces of Niederosterreich and Steiermark. To the northeast it borders Slovakia, Hungary to the east and Slovenia to the farthest south.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003544",
+   "isRoot": true,
+   "label": "Burgenland Land",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003556",
+   "description": "A first-order administrative division. One of the three official regions of the Kingdom of Belgium. It occupies the northern part of Belgium.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003556",
+   "isRoot": true,
+   "label": "Flemish Region",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003557",
+   "description": "A first-order administrative division. One of the three official regions of the Kingdom of Belgium.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003557",
+   "isRoot": true,
+   "label": "Walloon Region",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003558",
+   "description": "A first-order administrative division. One of the three official regions of the Kingdom of Belgium.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003558",
+   "isRoot": true,
+   "label": "Brussels-Capital Region",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003620",
+   "description": "A first-order administrative division. One of the Provinces of Ireland, lies in the east of Ireland and comprises the counties of Carlow, Dublin, Kildare, Kilkenny, Laois, Longford, Louth, Meath, Offaly, Westmeath, Wexford and Wicklow.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003620",
+   "isRoot": true,
+   "label": "Leinster",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003623",
+   "description": "A first-order administrative division.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003623",
+   "isRoot": true,
+   "label": "Dublin City",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003941",
+   "description": "First-order administrative divisions of France. The French overseas collectivities include some former French overseas territories and other French overseas entities with a particular status, all of which were given the name collectivites d'outre-mer by constitutional reform on 2003-03-28.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003941",
+   "isRoot": true,
+   "label": "Collectivite d'outre-mer",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00004642",
+   "description": "One of Chile's 15 first order administrative divisions. It is the southernmost, largest and second least populated region of Chile. Limita al norte con la XI Region de Aisen del General Carlos Ibanez del Campo, al este con la Republica Argentina y al oeste con el Oceano Pacifico.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00004642",
+   "isRoot": false,
+   "label": "Region of Magallanes y de la Antartica Chilena",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

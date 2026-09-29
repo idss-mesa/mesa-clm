@@ -1,0 +1,140 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "damaged",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0001167",
+   "description": "A structural quality inhering in a bearer by virtue of the bearer being harmed or injured or spoiled, such that its functionality is impaired.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001167",
+   "isRoot": false,
+   "label": "damaged",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001020",
+   "description": "A structural quality inhering in a bearer by virtue of whether the bearer has been harmed or injured or spoiled.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001020",
+   "isRoot": false,
+   "label": "damage",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001362",
+   "description": "A structural quality inhering in a bearer by virtue of the bearer's disposition to being easily damaged or destroyed.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001362",
+   "isRoot": false,
+   "label": "fragile",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001662",
+   "description": "A structural quality inhering in a bearer by virtue of the bearer's disposition to being damaged or destroyed.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001662",
+   "isRoot": false,
+   "label": "fragility",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001803",
+   "description": "A photosensitivity quality inhering in a bearer by virtue of the bearer's disposition to being susceptible to damage by light.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001803",
+   "isRoot": false,
+   "label": "phototoxic",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002082",
+   "description": "A broken quality inhering in a bearer by virtue of the bearer's being still one contiguous whole but structurally damaged such that in danger of become two or more.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002082",
+   "isRoot": false,
+   "label": "partially broken",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040025",
+   "description": "A structural quality which is held by a bearer where a localized pathological or traumatic structural change, damage, deformity, or discontinuity of tissue, organ, or body part is present.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040025",
+   "isRoot": false,
+   "label": "lesioned",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0006915",
+   "description": "A programmed cell death process which begins when a cell receives an internal (e.g. DNA damage) or external signal (e.g. an extracellular death ligand), and proceeds through a series of biochemical events (signaling pathway phase) which trigger an execution phase. The execution phase is the last step of an apoptotic process, and is typically characterized by rounding-up of the cell, retraction of pseudopodes, reduction of cellular volume (pyknosis), chromatin condensation, nuclear fragmentation (karyorrhexis), plasma membrane blebbing and fragmentation of the cell into apoptotic bodies. When the execution phase is completed, the cell has died.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0006915",
+   "isRoot": false,
+   "label": "apoptotic process",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0006952",
+   "description": "Reactions, triggered in response to the presence of a foreign body or the occurrence of an injury, which result in restriction of damage to the organism attacked or prevention/recovery from the infection caused by the attack.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0006952",
+   "isRoot": false,
+   "label": "defense response",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0007409",
+   "description": "Note that 'axonogenesis' differs from 'axon development' in that the latter also covers other processes, such as axon regeneration (regrowth after loss or damage, not necessarily of the whole axon).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0007409",
+   "isRoot": false,
+   "label": "axonogenesis",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0019233",
+   "description": "The series of events required for an organism to receive a painful stimulus, convert it to a molecular signal, and recognize and characterize the signal. A painful stimulus is any physical or chemical event that has the potential to cause tissue damage (actual or perceived) and activates the nociceptive system.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0019233",
+   "isRoot": false,
+   "label": "sensory perception of pain",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0098542",
+   "description": "Reactions triggered in response to the presence of another organism that act to protect the cell or organism from damage caused by that organism.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0098542",
+   "isRoot": false,
+   "label": "defense response to other organism",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "UBERON:0010243",
+   "description": "An exocrine gland whose secretions are excreted via exocytosis from secretory cells into an epithelial-walled duct or ducts and thence onto a bodily surface or into the lumen; the gland releases its product and no part of the gland is lost or damaged.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0010243",
+   "isRoot": false,
+   "label": "merocrine gland",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

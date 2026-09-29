@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "family",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PCO:0000020",
+   "description": "A domestic group, or a number of domestic groups linked through descent (demonstrated or stipulated) from a common ancestor, marriage, or adoption.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000020",
+   "isRoot": false,
+   "label": "family",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000032",
+   "description": "A collection of organisms of the same species whose members are all either genealogically related to each other or have mated with each other.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000032",
+   "isRoot": false,
+   "label": "biological family",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000024",
+   "description": "An organismal entity that consists of one or more people who live in the same dwelling and also share at meals or living accommodation, and may consist of a single family or some other grouping of people.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000024",
+   "isRoot": false,
+   "label": "household",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

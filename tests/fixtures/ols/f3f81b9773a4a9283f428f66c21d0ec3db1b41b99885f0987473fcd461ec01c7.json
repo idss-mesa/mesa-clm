@@ -1,0 +1,200 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "air temperature",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:09200001",
+   "description": "The temperature of some air.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_09200001",
+   "isRoot": false,
+   "label": "temperature of air",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:09200031",
+   "description": "The amplitude of some temperature of air.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_09200031",
+   "isRoot": false,
+   "label": "amplitude of temperature of air",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03000139",
+   "description": "Fog which is composed of particles of ice.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03000139",
+   "isRoot": false,
+   "label": "ice fog",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000896",
+   "description": "A surface temperature inversion is usually required. In such an inversion, the surface must have a temperature below freezing, while the temperature of the atmosphere where the precipitation forms is above freezing. Alternately, if the temperature of the ground surface and glazed objects is typically near or below freezing (0C or 32F), it is necessary that the water drops be supercooled before striking. Freezing rain can sometimes occur on surfaces exposed to the air (such as tree limbs) with air temperatures slightly above freezing in strong winds. Local evaporational cooling may result in freezing. Freezing rain frequently occurs, therefore, as a transient condition between the occurrence of rain and ice pellets (sleet). When encountered by an aircraft in flight, freezing rain can cause a dangerous accretion of clear icing. In aviation weather observations, this hydrometeor is encoded ZR by NOAA.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000896",
+   "isRoot": false,
+   "label": "freezing rainfall",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001850",
+   "description": "In British usage, a day on which the minimum temperature at the level of the ground or on the tops of low, close-growing vegetation falls to -0.9C (30.4F) or below (also called a \"day with ground frost\").  In more general usage, \"frost\" can refer to the condition that exists when the temperature of the Earth's surface and Earthbound objects fall below the melting point of water (0 degrees Celsius or 32 degrees Fahrenheit). Depending upon the actual values of ambient-air temperature, dewpoint, and the temperature attained by surface objects, frost may occur in a variety of forms. These include a general freeze, hoarfrost (or white frost), and dry freeze (or black frost). If a frost period is sufficiently severe to end the growing season (or delay its beginning), it is commonly referred to as a killing frost.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001850",
+   "isRoot": false,
+   "label": "frost",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03000137",
+   "description": "A fog the droplets of which freeze upon contact with exposed objects, forming a coating of rime or glaze.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03000137",
+   "isRoot": false,
+   "label": "freezing fog",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001859",
+   "description": "A temperature of air at which air become saturated with water vapour and below which airborne water vapour will condense to form liquid water (dew).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001859",
+   "isRoot": false,
+   "label": "dew point",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001681",
+   "description": "A gaseous front which separates two masses of air with different densities and is a principal cause of meteorological phenomena.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001681",
+   "isRoot": false,
+   "label": "weather front",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03400006",
+   "description": "Snowfall which 1) is localized, 2) is convective, and 3) occurs as a result of a cold, dry air mass absorbing heat and moisture as it flows over a lake with warmer waters.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03400006",
+   "isRoot": false,
+   "label": "lake-effect snowfall",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001717",
+   "description": "An occluded front which is 1) adjacent to a cold and a warm front with no appreciable difference between the temperatures of their bordering air masses and 2) which creates a pressure trough, a wind-shift line, a band of cloudiness, and precipitation at the surface of the astronomical body.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001717",
+   "isRoot": false,
+   "label": "neutral occluded front",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001718",
+   "description": "The direction of motion determines whether fronts are \"cold\", \"warm\", etc. A front is said to be cold if it's moving in the direction of the warmer air mass it is adjacent to. From the perspective of an observer on the ground, this appears as though the colder air \"replaces\" the warmer air mass.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001718",
+   "isRoot": false,
+   "label": "secondary cold front",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000502",
+   "description": "An unburnt brick is a brick which has been air dried rather than dried at an elvated temperature in a kiln, furnace, or with similar technology .",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000502",
+   "isRoot": false,
+   "label": "unburnt brick",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001672",
+   "description": "As stated in the AMS Glossary, this is one interpretation of the term \"front\", namely \"frontal surfaces across which the horizontal density gradient is discontinuous (frontal surface usually refers specifically to the warmer side of the frontal zone);\"",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001672",
+   "isRoot": false,
+   "label": "frontal surface of a weather front",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001882",
+   "description": "When buried by snowfall, surface hoar may be considered depth hoar. The crystals formed by surface hoar are usually leaf-, fern- or plate-shaped and facetted. Two types of surface hoar are the fernlike ice crystals deposited directly on a snow surface and the hoarfrost that has grown primarily in two dimensions, as on a window or other smooth surface.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001882",
+   "isRoot": false,
+   "label": "surface hoar",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001848",
+   "description": "Rime is denser and harder than hoarfrost, but lighter, softer, and less transparent than glaze. Rime is composed essentially of discrete ice granules and has densities as low as 0.2-0.3 g cm-3. Glaze is generally continuous but with some air pockets and has much higher densities. Factors that favor rime formation are small drop size, slow accretion, a high degree of supercooling, and rapid dissipation of latent heat of fusion. The opposite effects favor glaze formation. Both rime and glaze occur when supercooled water drops strike an object at a temperature below freezing. Such formation on terrestrial objects constitutes an ice storm; on aircraft, it is called aircraft icing (where rime is known as rime ice). Either rime or glaze may form on snow crystals, droxtals, or other ice particles in the atmosphere. When such a deposit is wholly or chiefly of rime, snow pellets result; when most or all of the deposit is glaze, ordinary hail or ice pellets result. The alternating clear and opaque layers of some hailstones represent glaze and rime, deposited under varying conditions around the growing hailstone.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001848",
+   "isRoot": false,
+   "label": "rime",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000277",
+   "description": "Water ice can appear transparent or opaque bluish-white color, depending on the presence of impurities or air inclusions. The addition of other materials such as soil may further alter its appearance.\n\nWhen speaking about ice on Earth, usually water ice is meant - the solid, crystalline form of water found in the atmosphere as snow crystals, hail, ice pellets, etc., and on the earth's surface in forms such as hoarfrost, rime, glaze, sea ice, glacier ice, ground ice, frazil, anchor ice, etc.\n\nThis form of water is, strictly speaking, called ice Ih, the Roman numeral I distinguishing it from more than a dozen other phases and the letter h distinguishing it from the metastable cubic phase ice Ic. Ice Ih is the only one of the several known phases of water ice that is stable at commonly occurring temperatures and pressures. (Some of the other forms have very unusual properties, ice VII, for example, being stable only at pressures above 22 400 kg/cm^2, but then existing at temperatures up to about 100C.)\n\nIt has an open structure with a specific gravity of 0.9166 which is slightly less than water; because the water molecules bond to their neighbors covalently only in four directions; it therefore floats on higher density water, where broken molecular bonds permit closer packing. All commonly occurring forms of ice are crystalline, although large single crystals are relatively rare except in glaciers. The ice crystal lattice possesses hexagonal symmetry that manifests itself in the gross forms of such single crystals as are sometimes found in snow. At an air pressure of one atmosphere, ice melts at 0 C by definition of the Celsius temperature scale. (Strictly speaking the equilibrium point among water, ice, and vapor occurs at +0.01C, the triple point.) On the other hand, ice does not invariably form in liquid water cooled below this temperature; it has a tendency to supercool, more so in the absence of ice nuclei.\n\nIn permafrost regions, ice may occupy voids in soils and rocks and may develop in a variety of forms. Ice may be colourless to pale blue or greenish-blue. It may appear white due to included gas bubbles; in exposures, ground ice may also appear black.\n\nIn nature ice is formed either by: (a) the freezing of water, (b) the condensation of atmospheric water vapour direct into ice crystals, (c) the compaction of snow with or without the motion of a glacier, or (d) the impregnation of porous snow masses with water which subsequently freeze.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000277",
+   "isRoot": false,
+   "label": "water ice",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03000130",
+   "description": "An atmospheric wind during which air masses over an ocean flow towards a land mass, driven by disequilibria between land and ocean surface temperatures.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03000130",
+   "isRoot": false,
+   "label": "monsoon wind",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000829",
+   "description": "Air which has a partial pressure of water vapour equal or near equal to its equilibrium vapor pressure at a given temperature.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000829",
+   "isRoot": false,
+   "label": "water vapour saturated air",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001726",
+   "description": "A katabatic wind during which the low temperature and increased density of a cold mass of atmospheric gas accelerates its descent.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001726",
+   "isRoot": false,
+   "label": "fall wind",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

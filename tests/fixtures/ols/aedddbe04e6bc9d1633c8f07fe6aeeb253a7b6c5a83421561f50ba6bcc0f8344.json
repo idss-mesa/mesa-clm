@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001624",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001624",
+  "description": "An organism detection assay that identifies the organism species in a specimen.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001624",
+  "isRoot": false,
+  "label": "organism species detection assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

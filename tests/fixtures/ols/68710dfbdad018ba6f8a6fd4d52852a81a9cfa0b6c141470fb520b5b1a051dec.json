@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "individual count",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "individualCount",
+   "description": "The number of individuals present at the time of the Occurrence.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/individualCount",
+   "isRoot": true,
+   "label": "Individual Count",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

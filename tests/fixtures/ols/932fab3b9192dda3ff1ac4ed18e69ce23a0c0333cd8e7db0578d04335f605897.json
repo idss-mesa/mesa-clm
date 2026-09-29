@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001079",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0001081",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001081",
+   "isRoot": false,
+   "label": "Salmonella serovar name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Condition of a sample",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

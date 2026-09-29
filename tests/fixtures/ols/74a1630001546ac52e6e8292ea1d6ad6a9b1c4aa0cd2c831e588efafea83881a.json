@@ -1,0 +1,90 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001894",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0000383",
+   "description": "A biological sex quality inhering in an individual or a population that only produces gametes that can be fertilised by male gametes.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000383",
+   "isRoot": false,
+   "label": "female",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000384",
+   "description": "A biological sex quality inhering in an individual or a population whose sex organs contain only male gametes.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000384",
+   "isRoot": false,
+   "label": "male",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001340",
+   "description": "A biological sex quality inhering in an organism or a population with both male and female sexual organs in one individual.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001340",
+   "isRoot": false,
+   "label": "hermaphrodite",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001827",
+   "description": "A biological sex quality inhering in an individual or a population by virtue of having internal reproductive organs of one sex and external sexual characteristics of the other sex.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001827",
+   "isRoot": false,
+   "label": "pseudohermaphrodite",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040049",
+   "description": "A biological sex quality inhering in an individual or a population who are otherwise male of a non-hermaphroditic species who has ambiguous or atypical congenital development of the reproductive system.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040049",
+   "isRoot": false,
+   "label": "male with DSD",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040050",
+   "description": "A phenotypic sex quality inhering in a  plant organism or a population of plants in which the flowers have two stamens.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040050",
+   "isRoot": false,
+   "label": "diandrous",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040051",
+   "description": "A phenotypic sex quality inhering in a  plant organism or a population of plants in which the flowers have only one stamen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040051",
+   "isRoot": false,
+   "label": "monandrous",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040056",
+   "description": "A biological sex quality inhering in an individual or a population who are otherwise female of a non-hermaphroditic species who has ambiguous or atypical congenital development of the reproductive system.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040056",
+   "isRoot": false,
+   "label": "female with DSD",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

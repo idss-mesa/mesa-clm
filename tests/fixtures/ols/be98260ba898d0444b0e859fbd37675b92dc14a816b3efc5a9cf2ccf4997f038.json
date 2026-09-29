@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003693",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0003693",
+  "description": "An investigation in which subjects are monitored in the absence of any active intervention by experimentalists.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003693",
+  "isRoot": false,
+  "label": "observational investigation",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

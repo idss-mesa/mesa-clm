@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002939",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0002939",
+  "description": "An arthropod trap that is designed to be attractive to an arthropod as a place to rest during a period of inactivity.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002939",
+  "isRoot": false,
+  "label": "resting arthropod trap",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

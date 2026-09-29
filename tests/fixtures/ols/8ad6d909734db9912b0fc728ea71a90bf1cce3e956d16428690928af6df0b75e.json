@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "sampling impractical",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

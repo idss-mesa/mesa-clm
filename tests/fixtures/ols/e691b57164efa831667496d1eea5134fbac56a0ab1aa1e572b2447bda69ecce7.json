@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "pooled from multiple plots",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

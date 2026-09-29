@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Animalia",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:33208",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_33208",
+   "isRoot": false,
+   "label": "Metazoa",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

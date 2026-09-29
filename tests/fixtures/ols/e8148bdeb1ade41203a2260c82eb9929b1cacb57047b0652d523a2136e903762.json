@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000005",
+  "ontology_id": "pco",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PCO:0000011",
+   "description": "A process that leads to a change in the number of individuals (positive or negative) in a population.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000011",
+   "isRoot": false,
+   "label": "population growth",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000021",
+   "description": "A population process that ultimately leads to the death of all individuals in a population.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000021",
+   "isRoot": false,
+   "label": "population extinction",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:1000001",
+   "description": "A population process during which a population moves from one area to another.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_1000001",
+   "isRoot": false,
+   "label": "population migration",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

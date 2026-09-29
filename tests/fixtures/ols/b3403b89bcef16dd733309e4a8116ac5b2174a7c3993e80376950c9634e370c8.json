@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000099",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000099",
+  "description": "A volume unit which is equal to one thousandth of a cubic meter or 10^[-3] m^[3], or to 1 decimeter.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000099",
+  "isRoot": false,
+  "label": "liter",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

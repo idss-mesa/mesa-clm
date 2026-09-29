@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_54790",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:1200774",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1200774",
+   "isRoot": false,
+   "label": "Parastagonospora avenae f. sp. tritici 3 MM-2012",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2814595",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2814595",
+   "isRoot": false,
+   "label": "Parastagonospora avenae f. sp. tritici 18332-5",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2974598",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2974598",
+   "isRoot": false,
+   "label": "Phaeosphaeria avenaria f. sp. tritici 5 FG-2022",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2974599",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2974599",
+   "isRoot": false,
+   "label": "Phaeosphaeria avenaria f. sp. tritici 1 FG-2022",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "scientific name",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0003074",
+   "description": "A textual entity refers to a taxon or organism that is based on the normal language of everyday life; this kind of name is often contrasted with the scientific name for the same organism, which is Latinized.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003074",
+   "isRoot": false,
+   "label": "common name of organism",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

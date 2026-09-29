@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "ground beetle",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

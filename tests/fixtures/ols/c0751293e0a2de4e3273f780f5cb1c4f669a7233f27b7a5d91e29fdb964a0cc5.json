@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_100741",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:100742",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_100742",
+   "isRoot": false,
+   "label": "uncultured Sulfolobales MS1",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:100743",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_100743",
+   "isRoot": false,
+   "label": "uncultured Sulfolobales MS2",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:437136",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_437136",
+   "isRoot": false,
+   "label": "uncultured Sulfolobales archaeon",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,80 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002008",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0001116",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001116",
+   "isRoot": false,
+   "label": "TB lineage 7 - Ethiopia",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002009",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002009",
+   "isRoot": false,
+   "label": "TB lineage 2 - East-Asian, includes Bejing",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002010",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002010",
+   "isRoot": false,
+   "label": "TB lineage 3 - East-African Indian, includes CAS/Delhi",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002011",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002011",
+   "isRoot": false,
+   "label": "TB lineage 4 - Euro-American, includes Haarlem, LAM3, X, T, F11, H37Rv",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002012",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002012",
+   "isRoot": false,
+   "label": "TB lineage 1 - Indo-Oceanic",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002013",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002013",
+   "isRoot": false,
+   "label": "TB lineage 5 - West African 1",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002014",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002014",
+   "isRoot": false,
+   "label": "TB lineage 6 - West African 2",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

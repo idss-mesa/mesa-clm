@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001805",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001805",
+  "description": "A forest ecosystem which is subject to temperate climate conditions.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001805",
+  "isRoot": false,
+  "label": "temperate forest",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

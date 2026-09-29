@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00000022",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:00000059",
+   "description": "A river that is under the surface of the Earth.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000059",
+   "isRoot": false,
+   "label": "underground river",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000297",
+   "description": "Preliminary definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000297",
+   "isRoot": false,
+   "label": "freshwater river",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000908",
+   "description": "A key example is the Boiling River, or Shanay-timpishka, of the Peruvian Amazon. This river is of high cultural significance and is protected by the shaman of the small town Mayantuyacu, a secluded healing center.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000908",
+   "isRoot": false,
+   "label": "geothermally heated river",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03600015",
+   "description": "The contaminants may cause adverse changes in the ecosystems associated with it.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03600015",
+   "isRoot": false,
+   "label": "polluted river",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

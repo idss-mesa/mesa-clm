@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000816",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000816",
+  "description": "According to the NLCD 2011, areas of deciduous forest are dominated by trees generally greater than 5 meters tall, and making up more than 20% of total vegetation cover. The NLCD 2011 continues to state that more than 75% of these trees should shed foliage simultaneously in response to seasonal change. Such thresholds - which are themselves fuzzy - are not asserted in this definition.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000816",
+  "isRoot": false,
+  "label": "area of deciduous forest",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

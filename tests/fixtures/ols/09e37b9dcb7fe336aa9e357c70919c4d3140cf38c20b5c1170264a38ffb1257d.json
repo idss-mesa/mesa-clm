@@ -1,0 +1,110 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "Type of sample",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0100921",
+   "description": "A data field which describes the type of control used in the experiment.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100921",
+   "isRoot": false,
+   "label": "experimental specimen role type",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102162",
+   "description": "PCDS: If the sample is associated with a particular collection, provide the name of the sample collection. Type culture collection names can be referenced here. Private collections and sample collection project names can also be included.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102162",
+   "isRoot": false,
+   "label": "sample collection name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100443",
+   "description": "A data field which describes the type of animal or plant population inhabiting an area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100443",
+   "isRoot": false,
+   "label": "animal or plant population",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100953",
+   "description": "An environmental material collection process in which a water or soil sample is taken at a single point of time using a container type known as a grab sampler.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100953",
+   "isRoot": false,
+   "label": "grab sampling",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001255",
+   "description": "A data field which describes the name and description of the laboratory host used to propagate the source organism or material from which the sample was obtained.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001255",
+   "isRoot": false,
+   "label": "lab host",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100480",
+   "description": "A data field which describes metrics regarding the prevalence of the pathogen of interest obtained from a surveillance project.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100480",
+   "isRoot": false,
+   "label": "prevalence metrics",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001209",
+   "description": "A data field which describes the relationship of the current specimen to the specimen/sample previously submitted to the repository.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001209",
+   "isRoot": false,
+   "label": "related specimen relationship type field category",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100649",
+   "description": "PCDS: If travel history is available, but the details of travel cannot be provided, indicate this and the type of travel history availble by selecting a value from the picklist. The values in this field can be used to indicate a sample is associated with a travel when the 'purpose of sequencing' is not travel-associated.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100649",
+   "isRoot": false,
+   "label": "travel history availability",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100749",
+   "description": "A physical characterization data tag which indicates the presence of data that describes turbidity measurement.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100749",
+   "isRoot": false,
+   "label": "turbidity measurement tag",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C63362",
+   "description": "A brand of of test tube specifically designed for venipuncture; the tube contains a vacuum allowing it to suck blood though a needle and fill itself. The tube may contain additives to facilitate downstream processing and testing of the blood samples; the tube cap is color-coded to indicate the type of additive present.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C63362",
+   "isRoot": false,
+   "label": "Vacutainer",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

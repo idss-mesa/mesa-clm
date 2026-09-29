@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0600007",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0600007",
+  "description": "A process by which a substance is intentionally given to an organism resulting in exposure of the organism to that substance.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0600007",
+  "isRoot": false,
+  "label": "administering substance in vivo",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

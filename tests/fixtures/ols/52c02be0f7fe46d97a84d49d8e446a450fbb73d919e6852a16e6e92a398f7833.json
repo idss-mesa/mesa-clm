@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_1000181",
+  "ontology_id": "uo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "UO:0000181",
+   "description": "A catalytic unit activity which is equal to the amount of the enzyme that catalyzes the conversion of 1 micro mole of substrate per minute.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000181",
+   "isRoot": false,
+   "label": "enzyme unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  }
+ ]
+}

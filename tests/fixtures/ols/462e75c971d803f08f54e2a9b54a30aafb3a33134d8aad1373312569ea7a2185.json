@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "A common or vernacular name",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001387",
+   "description": "A host field which describes the taxonomic or scientific name of the host.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001387",
+   "isRoot": false,
+   "label": "host (scientific name)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001386",
+   "description": "A host field which describes the commonly used name of the host.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001386",
+   "isRoot": false,
+   "label": "host (common name)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

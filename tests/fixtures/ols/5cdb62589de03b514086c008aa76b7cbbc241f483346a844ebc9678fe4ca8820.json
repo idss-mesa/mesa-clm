@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0400044",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0400008",
+   "description": "An analyser is a flow_cytometer that is used to measure properties of particles (whole cells, nuclei, chromosomes, diatoms, plankton, bacteria, viruses) by moving these particles through a detection chamber. An analyser is used to collect data for analysis.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0400008",
+   "isRoot": false,
+   "label": "flow cytometer analyzer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0400099",
+   "description": "A flow_cytometer_sorter is a flow_cytometer that analyzes and separates or sorts particles passing through (based on properties measured during analysis) to collect cells of interest.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0400099",
+   "isRoot": false,
+   "label": "flow cytometer sorter",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

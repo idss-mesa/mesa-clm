@@ -1,0 +1,180 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "sample collected",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0000536",
+   "description": "A fraction detector is a device that allows regular or specified samples to be taken from a column eluate and stored in a retrievable form. The storage vessels are usually small sample tubes or vials that are oriented in a rotating disk or in a moving belt, there movement usually being controlled by a microprocessor. On receiving a signal from the microprocessor, the next vial is placed under the column outlet and the eluate collected until receiving another signal from the computer. Once the properties of the chromatogram that describes the separation has been ascertained, then the collection program can be defined. The fractions can be collected on a basis of time either at regular intervals or a specific times to collect specific peaks. Alternatively the fractions can be collected by monitoring the detector output and when a peak starts to elute the fraction collector is activated and the peak collected in a specific vial. When the peak returns to base line the column eluate is then directed to waste until the next peak starts eluting. Fraction collectors are in common use with most liquid chromatographs. They are used to collect samples for further purification, subsequent examination by spectroscopic techniques or for biological or organoleptic testing.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000536",
+   "isRoot": false,
+   "label": "fraction collector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002819",
+   "description": "A sample collection device consisting of a soft flexible, absorbent pad usually made from natural material such as gauze or cotton, used to absorb specimen fluid or particulate matter.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002819",
+   "isRoot": false,
+   "label": "specimen pad",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002824",
+   "description": "A sample collection device consisting of a thin, less absorbent sheet, used to collect material from surfaces.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002824",
+   "isRoot": false,
+   "label": "surface wipe",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003089",
+   "description": "An assay for transposase-accessible chromatin using sequencing in which the sample that is sequenced is derived from a collection of cells, such as a tissue sample or entire cell culture, and therefore provides results representative of the aggregate of sample cells.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003089",
+   "isRoot": false,
+   "label": "bulk assay for transposase-accessible chromatin using sequencing",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003090",
+   "description": "A transcription profiling by RNA sequencing assay in which the sample that is sequenced is derived from a collection of cells, such as a tissue sample or entire cell culture, and therefore provides results representative of the aggregate of sample cells.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003090",
+   "isRoot": false,
+   "label": "bulk RNA-seq assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003306",
+   "description": "A Hi-C assay in which the sample that is sequenced is derived from a collection of cells, such as a tissue sample or entire cell culture, and therefore provides results representative of the aggregate of sample cells.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003306",
+   "isRoot": false,
+   "label": "bulk Hi-C assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002650",
+   "description": "A specimen collection that obtains a sample of tissue or cell from a living multicellular organism body for diagnostic purposes by means intended to be minimally invasive.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002650",
+   "isRoot": false,
+   "label": "biopsy",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0400045",
+   "description": "Part of the fluidic subsystem. The fluid pressure regulator maintains constant pressure within the sheath and or sample lines by filling the lines with enough gas to push the fluid at the desired rate. The gas is usually air, and less frequently nitrogen. In the sheath line, the gas is pushed into the sheath tank. In the sample line the gas is pushed into the collection tube. Fluid pressure regulators maintain great enough pressure to push sample fluid out of the tube and sheath fluid out of the sheath tank.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0400045",
+   "isRoot": false,
+   "label": "fluid pressure regulator",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003099",
+   "description": "A mass spectrometry assay that involves collection of spatially resolved mass spectra of a sample during microscopy where a pulse laser is used to produce both ionisation and vaporization. The sample is held in a matrix (such as dihydrobenzoic acid) to protect it from direct laser illumination and to separate the sample molecules. The spectra are used to visualise the spatial distribution of biomolecules by their molecular masses.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003099",
+   "isRoot": false,
+   "label": "matrix assisted laser desorption ionization imaging mass spectrometry assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000164",
+   "description": "Mixed population of cDNAs (complementaryDNA) made from mRNA from a defined source, usually a specific cell type. This term should be associated only to nucleic acid interactors not to their proteins product. For instance in 2h screening use living cells (MI:0349) as sample process.\n\nALT DEF (PRS):: a cDNA library is a collection of host cells, typically E.Coli cells but not exclusively. modified by transfer of plasmid DNA molecule used as vector containing a fragment or totality of cDNA molecule (the insert) .  cDNA library may have an array of role and applications.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000164",
+   "isRoot": false,
+   "label": "clonal cDNA library",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000181",
+   "description": "a population is a collection of individuals from the same taxonomic class living, counted or sampled at a particular site or in a particular area",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000181",
+   "isRoot": false,
+   "label": "population",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002823",
+   "description": "A specimen collection swab stick that is pre-moistened with liquid prior to sampling.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002823",
+   "isRoot": false,
+   "label": "pre-moistened swab stick",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0302716",
+   "description": "A pool of specimens is a mixture of a population of samples which have been gathered from one or more sample populations, obtained by the physical process of mixing individual specimens, e.g.  mixing the DNA collected from the individual fish.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0302716",
+   "isRoot": false,
+   "label": "pool of specimens",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002080",
+   "description": "A specimen set that is collected from one person during a time period which for the purpose of the study can be considered to be taken at the same sampling time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002080",
+   "isRoot": false,
+   "label": "human specimen set",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002079",
+   "description": "A collection of specimens that is collected from one source (e.g. one organism) during a time period which for the purpose of the study can be considered to be taken at the same sampling time.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002079",
+   "isRoot": false,
+   "label": "specimens collected in one encounter",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002078",
+   "description": "A specimen collection process that generates multiple specimens from one source (e.g. one organism) during a time period which for the purpose of the study can be considered to be taken at the same sampling time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002078",
+   "isRoot": false,
+   "label": "specimen set collection process",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000521",
+   "description": "A flame ionization detector is a GC detector that consist of a hydrogen/air flame and a collector plate which are normally heated independently of the chromatographic oven. Heating is necessary in order to prevent condensation of water generated by the flame and also to prevent any hold-up of solutes as they pass from the column to the flame. There is an electrode above the flame to collect the ions formed at a hydrogen/air flame. The number of ions hitting the collector is measured and a signal is generated. Flame ionization detectors are most widely used and generally applicable for gas chromatography and hence is used for routine and general purpose analysis. It is easy to use but destructive of the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000521",
+   "isRoot": false,
+   "label": "flame ionization detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

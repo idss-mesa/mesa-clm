@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "celsius",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:00002983",
+   "description": "An oil which 1) is liquid at room temperature (approximately 20 degrees Celsius) 2) is intended to be burned in a furnace or boiler for the generation of heat or used in an engine for the generation of power, 3) is obtained from petroleum distillation, either as a distillate or a residue, 4) composed of long hydrocarbon chains, particularly alkanes, cycloalkanes and aromatics.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002983",
+   "isRoot": false,
+   "label": "fuel oil",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000183",
+   "description": "Preliminary definition. The semantics and definitions of \"mediterranean\", \"subtropical\", \"tropical\", \"temperate\", \"polar\", and similar climate types may be transferred to an \"environmental condition\" class once the semantics of this class have been established.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000183",
+   "isRoot": false,
+   "label": "tropical desert biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000184",
+   "description": "Preliminary definition. The semantics and definitions of \"mediterranean\", \"subtropical\", \"tropical\", \"temperate\", \"polar\", and similar climate types may be transferred to an \"environmental condition\" class once the semantics of this class have been established.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000184",
+   "isRoot": false,
+   "label": "subtropical desert biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000205",
+   "description": "A subtropical condition is an environmental condition in which an envrionmental system receives more solar irradiance than those with temperate conditions, but less than those with tropical conditions. At low elevations, this typically results in eight months of the year having average temperatures greater than or equal to 10 degrees Celsius with the coldest monthly temperature averaging between 2 and 13 degrees Celsius.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000205",
+   "isRoot": false,
+   "label": "subtropical",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000251",
+   "description": "Note that  this class refers to a climatic rather than a positional condition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000251",
+   "isRoot": false,
+   "label": "subpolar",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000318",
+   "description": "An extreme high temperature environment is a high temperature environment in which entities are exposed to temperatures above 80 degrees Celsius.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000318",
+   "isRoot": false,
+   "label": "extreme high temperature environment",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000378",
+   "description": "An arid subtropical condition is a subtropical condition in which an environmental system has an annual average temperature near 18.2 degrees Celsius with their coldest month averaging between 2 and 13 degrees Celsius, the absence of regular rainfall, and high humidity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000378",
+   "isRoot": false,
+   "label": "arid subtropical",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000477",
+   "description": "Gypsum plaster is a plaster which is formed by partially dehydrating gypsum by heating it to approximately 150 degrees Celsius and grinding the product into a powder. Gypsum anhydride - formed by heating gypsum above 200 degrees Celsius - may also be used as plaster.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000477",
+   "isRoot": false,
+   "label": "gypsum plaster",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00002128",
+   "description": "A sulfur spring through which water at a temperature optimal for the growth of mesophillic microorganism (approximately 20 to 45 degrees Celsius) flows.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002128",
+   "isRoot": false,
+   "label": "mesophilic sulfur spring",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00002985",
+   "description": "A nonpolar, hydrophobic, and lipophilic material which is a viscous liquid at ambient temperatures (about 20 degrees Celsius) or slightly warmer.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002985",
+   "isRoot": false,
+   "label": "oil",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000131",
+   "description": "Sediment characterised by a temperature of 15-45 degrees Celsius and high-to-low oxygenation. Often impacted by hydrothermal fluid flows.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000131",
+   "isRoot": false,
+   "label": "mesophilic sediment",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000132",
+   "description": "Sediment characterised by a temperature of 45-75 degrees Celsius and low to no oxygen content. Often impacted by hydrothermal fluid flows.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000132",
+   "isRoot": false,
+   "label": "thermophilic sediment",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000133",
+   "description": "Sediment characterised by a temperature of 80-125 degrees Celsius and no oxygen content. Often impacted by hydrothermal fluid flows.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000133",
+   "isRoot": false,
+   "label": "hyperthermophilic sediment",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000182",
+   "description": "Preliminary definition. The semantics and definitions of \"mediterranean\", \"subtropical\", \"tropical\", \"temperate\", \"polar\", and similar climate types may be transferred to an \"environmental condition\" class once the semantics of this class have been established.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000182",
+   "isRoot": false,
+   "label": "temperate desert biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000186",
+   "description": "Preliminary definition. The semantics and definitions of \"mediterranean\", \"subtropical\", \"tropical\", \"temperate\", \"polar\", and similar climate types may be transferred to an \"environmental condition\" class once the semantics of this class have been established.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000186",
+   "isRoot": false,
+   "label": "polar desert biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000204",
+   "description": "A tropical condition is an environmental condition in which an environmental system receives high yearly solar irradiance per unit area and, on Earth, the Sun reaches a subsolar point at least once during the solar year. This results in a hot and moist year-round climate at low elevations, which have a monthly average temperature above 18 degrees Celsius.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000204",
+   "isRoot": false,
+   "label": "tropical",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000233",
+   "description": "Intermediate lava is lava which, relative to felsic lava, is lower in aluminium and silica (between 52 and 63 percent by weight), and usually somewhat richer in magnesium and iron. The temperature of intermediate lava ranges from 750 to 950 degrees Celsius, destroying polymerized bonds and promoting more fluid behaviour relative to felsic lavas and also a greater tendency to form phenocrysts. Higher iron and magnesium tends to manifest as a darker groundmass, and also occasionally amphibole or pyroxene phenocrysts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000233",
+   "isRoot": false,
+   "label": "intermediate lava",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000234",
+   "description": "Mafic lava generally erupts at temperatures in excess of 950 degrees Celsius. The high temperature and low polymerisation in mafic lava favors low viscosity and chemical diffusion, promoting the formation of large, well-formed phenocrysts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000234",
+   "isRoot": false,
+   "label": "mafic lava",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000235",
+   "description": "Ultramafic lava generally erupts at temperatures of 1600 degrees Celsius. Due to its high temperature and composition, the viscosity of ultramafic lava is very low.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000235",
+   "isRoot": false,
+   "label": "ultramafic lava",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000238",
+   "description": "On Earth, polar conditions are such that every month has average temperature lower than 10 degrees Celsius. Note that  this class refers to a climatic rather than a positional condition.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000238",
+   "isRoot": false,
+   "label": "polar",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

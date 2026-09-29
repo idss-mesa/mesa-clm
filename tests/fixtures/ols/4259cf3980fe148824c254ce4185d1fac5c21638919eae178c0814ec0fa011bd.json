@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "geographic coordinate",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "DC:coverage",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.org/dc/elements/1.1/coverage",
+   "isRoot": true,
+   "label": "Coverage",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

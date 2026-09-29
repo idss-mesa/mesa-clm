@@ -1,0 +1,110 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00001995",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:00002013",
+   "description": "Rock formed from molten magma.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002013",
+   "isRoot": false,
+   "label": "igneous rock",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00002015",
+   "description": "Due to the general suggestion that volcanic rock simply comes from a volcanic process, it's not immediately clear whether this is interchangeable with igneous rock.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002015",
+   "isRoot": false,
+   "label": "volcanic rock",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00002016",
+   "description": "A rock formed by deposition of either clastic sediments, organic matter, or chemical precipitates (evaporites), followed by compaction of the particulate matter and cementation during diagenesis.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002016",
+   "isRoot": false,
+   "label": "sedimentary rock",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00002017",
+   "description": "A rock formed by subjecting any rock type (including previously-formed metamorphic rock) to different temperature and pressure conditions than those in which the original rock was formed. These temperatures and pressures are always higher than those at the Earth's surface and must be sufficiently high so as to change the original minerals into other mineral types or else into other forms of the same minerals (e.g. by recrystallisation).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00002017",
+   "isRoot": false,
+   "label": "metamorphic rock",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000661",
+   "description": "Tuff is a type of rock made of volcanic ash ejected from a vent during a volcanic eruption.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000661",
+   "isRoot": false,
+   "label": "tuff",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000662",
+   "description": "Scoria differs from pumice in having larger vesicles, thicker vesicle walls and being dark colored and denser.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000662",
+   "isRoot": false,
+   "label": "scoria",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000663",
+   "description": "Scoria differs from pumice in having larger vesicles, thicker vesicle walls and being dark colored and denser.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000663",
+   "isRoot": false,
+   "label": "pumice",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000751",
+   "description": "A lithified mass of rock that lies under the loose softer material (regolith) at the surface of the Earth or other terrestrial planet.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000751",
+   "isRoot": false,
+   "label": "bedrock",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001204",
+   "description": "A rock which is formed as a result of the lithification of alluvium.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001204",
+   "isRoot": false,
+   "label": "alluvial deposit",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:02000094",
+   "description": "a type of rock that contains sufficient minerals with important elements including metals that can be economically extracted from the rock.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_02000094",
+   "isRoot": false,
+   "label": "ore",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

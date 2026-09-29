@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "Sex of individual if detectable, age of individual if individual can not be sexe",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

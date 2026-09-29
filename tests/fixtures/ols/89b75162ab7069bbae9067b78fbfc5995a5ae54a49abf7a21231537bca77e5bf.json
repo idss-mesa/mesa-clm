@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000014",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0000089",
+   "description": "a regulator involved with making and enforcing legislation and governmental orders relevant to chemical manufacture",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000089",
+   "isRoot": false,
+   "label": "role of regulator of chemical manufacturer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000154",
+   "description": "the role of a organization that is realized by members reviewing study designs for their agreement with regulations",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000154",
+   "isRoot": false,
+   "label": "role of Institutional Review Board",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000273",
+   "description": "a regulator involved with making and enforcing legislation and governmental orders relevant to the development, testing, manufacture and use of food, drugs and medical devices",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000273",
+   "isRoot": false,
+   "label": "role of regulator of consumables and medical devices",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "cluster size",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "UBERON:0000107",
+   "description": "The first few specialized divisions of an activated animal egg; Stage consisting of division of cells in the early embryo. The zygotes of many species undergo rapid cell cycles with no significant growth, producing a cluster of cells the same size as the original zygote. The different cells derived from cleavage are called blastomeres and form a compact mass called the morula. Cleavage ends with the formation of the blastula.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0000107",
+   "isRoot": false,
+   "label": "cleavage stage",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0035265",
+   "description": "The increase in size or mass of an organ. Organs are commonly observed as visibly distinct structures, but may also exist as loosely associated clusters of cells that function together as to perform a specific function.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0035265",
+   "isRoot": false,
+   "label": "organ growth",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

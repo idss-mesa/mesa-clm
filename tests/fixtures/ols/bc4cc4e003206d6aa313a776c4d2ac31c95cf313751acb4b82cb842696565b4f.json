@@ -1,0 +1,50 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "named location",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0001627",
+   "description": "A textual entity that denotes a geographic location that is a site or part of a site that is identified as a country in the political geography.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001627",
+   "isRoot": false,
+   "label": "country name",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "DC:coverage",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.org/dc/elements/1.1/coverage",
+   "isRoot": true,
+   "label": "Coverage",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00000448",
+   "description": "A reference to a place on the Earth, by its name or by its geographical location.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00000448",
+   "isRoot": false,
+   "label": "geographic location",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00000448",
+   "description": "A reference to a place on the Earth, by its name or by its geographical location.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00000448",
+   "isRoot": false,
+   "label": "geographic location",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

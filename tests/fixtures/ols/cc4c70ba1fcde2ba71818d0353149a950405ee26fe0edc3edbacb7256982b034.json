@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "end rh",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:990287",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_990287",
+   "isRoot": false,
+   "label": "Rhizobium endophyticum CCGE 2052",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3157623",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3157623",
+   "isRoot": false,
+   "label": "Endophyllum rhamni-globosae",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1651154",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1651154",
+   "isRoot": false,
+   "label": "Rhizoctonia endophytica",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3071014",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3071014",
+   "isRoot": false,
+   "label": "Endophyllum rhamnellae-franguloidis",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2527660",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2527660",
+   "isRoot": false,
+   "label": "Candidatus Rhabdochlamydia endosymbiont of Idionella rugosa",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:578290",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_578290",
+   "isRoot": false,
+   "label": "Rhizobium endophyticum",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1968555",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1968555",
+   "isRoot": false,
+   "label": "Francisella-like endosymbiont of Rhipicephalus decoloratus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1461364",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1461364",
+   "isRoot": false,
+   "label": "Rhizoctonia solani endornavirus - RS002",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1461362",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1461362",
+   "isRoot": false,
+   "label": "Rhizoctonia solani endornavirus - PR-2",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1461363",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1461363",
+   "isRoot": false,
+   "label": "Rhizoctonia solani endornavirus - RS098-1",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1461365",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1461365",
+   "isRoot": false,
+   "label": "Rhizoctonia solani endornavirus - RS024-1",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1461366",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1461366",
+   "isRoot": false,
+   "label": "Rhizoctonia solani endornavirus - RS058-1",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1461367",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1461367",
+   "isRoot": false,
+   "label": "Rhizoctonia solani endornavirus - RS006-2",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1656184",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1656184",
+   "isRoot": false,
+   "label": "Coxiella endosymbiont of Rhipicephalus evertsi",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1200504",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1200504",
+   "isRoot": false,
+   "label": "Coxiella endosymbiont of Rhipicephalus turanicus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1457249",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1457249",
+   "isRoot": false,
+   "label": "Coxiella endosymbiont of Rhipicephalus bursa",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1826063",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1826063",
+   "isRoot": false,
+   "label": "Ehrlichia endosymbiont of Rhipicephalus microplus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2019410",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2019410",
+   "isRoot": false,
+   "label": "Flavobacteriales endosymbiont of Rhyzopertha dominica",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:879210",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_879210",
+   "isRoot": false,
+   "label": "Coxiella endosymbiont of Rhipicephalus sanguineus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2343",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2343",
+   "isRoot": false,
+   "label": "endosymbiont of Rhinocyllus conicus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

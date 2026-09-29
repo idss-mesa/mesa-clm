@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001619",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001619",
+  "description": "A time measurement datum that is the measure of the time when the specimens are collected.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001619",
+  "isRoot": false,
+  "label": "specimen collection time measurement datum",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

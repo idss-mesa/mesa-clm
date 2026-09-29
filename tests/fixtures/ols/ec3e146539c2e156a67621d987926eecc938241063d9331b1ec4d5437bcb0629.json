@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_50557",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:260538",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_260538",
+   "isRoot": false,
+   "label": "unclassified Insecta",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:444483",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_444483",
+   "isRoot": false,
+   "label": "environmental samples <insects,class Insecta>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:554674",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_554674",
+   "isRoot": false,
+   "label": "Monocondylia",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:85512",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_85512",
+   "isRoot": false,
+   "label": "Dicondylia",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

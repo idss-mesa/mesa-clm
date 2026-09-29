@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001309",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001309",
+  "description": "A process quality inhering in a bearer by virtue of the bearer's magnitude of the temporal extent between the starting and ending point.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001309",
+  "isRoot": false,
+  "label": "duration",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

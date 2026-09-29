@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002739",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0002739",
+  "description": "An organism detection assay that is based on examination of morphology and the use of specific taxonomic keys to determine the species of the specimen.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002739",
+  "isRoot": false,
+  "label": "organism detection by morphological examination assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

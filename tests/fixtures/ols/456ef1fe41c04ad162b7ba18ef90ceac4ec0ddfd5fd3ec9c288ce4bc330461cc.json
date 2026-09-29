@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "The geographic latitude",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

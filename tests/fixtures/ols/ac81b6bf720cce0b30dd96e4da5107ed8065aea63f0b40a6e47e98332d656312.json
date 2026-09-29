@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "The scientific name of the class in which the taxon is classified",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

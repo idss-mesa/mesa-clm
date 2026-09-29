@@ -1,0 +1,110 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00000176",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:00000283",
+   "description": "A long and narrow elevation with steep sides.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000283",
+   "isRoot": false,
+   "label": "ridge",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000289",
+   "description": "The raised fault block bounded by normal faults. The raised block is a portion of the Earth's crust that has remained stationary while the land has sunk on either side of it or has been crushed by a mountain range against it.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000289",
+   "isRoot": false,
+   "label": "horst",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000342",
+   "description": "A comparatively elevated area on an icecap.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000342",
+   "isRoot": false,
+   "label": "ice cap dome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000381",
+   "description": "A section of the Earths's crust that is demarcated by faults or flexures. In the movement of the crust, a massif tends to retain its internal structure while being displaced as a whole.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000381",
+   "isRoot": false,
+   "label": "massif",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000398",
+   "description": "Built by fragments (called ejecta) thrown up (ejected) from a volcanic vent, piling up around the vent in the shape of a cone with a central crater.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000398",
+   "isRoot": false,
+   "label": "volcanic cone",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000410",
+   "description": "An elevated area such as a hill, ridge or old lava dome inside or downslope from an area of active volcanism. New lava flows will cover the surrounding land, isolating the kipuka so that it appears as a (usually) forested island in a barren lava flow.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000410",
+   "isRoot": false,
+   "label": "kipuka",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000413",
+   "description": "Pingos may occur in cold-climate wetland areas, but are not necessarily wetlands themselves.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000413",
+   "isRoot": false,
+   "label": "pingo",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000419",
+   "description": "A geological landform consisting of a steep and often vertical column or columns of rock in the sea near a coast.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000419",
+   "isRoot": false,
+   "label": "stack",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000477",
+   "description": "This is not placed under surface landform, as seamounts are also mounts and are submerged.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000477",
+   "isRoot": false,
+   "label": "mount",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000481",
+   "description": "A tall, slender, spire-shaped rock projecting from a level or more gently sloping surface.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000481",
+   "isRoot": false,
+   "label": "pinnacle",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

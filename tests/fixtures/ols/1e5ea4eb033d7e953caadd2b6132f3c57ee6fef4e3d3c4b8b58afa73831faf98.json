@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "passerine",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:1265812",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1265812",
+   "isRoot": false,
+   "label": "Forpus passerinus passerinus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:111974",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_111974",
+   "isRoot": false,
+   "label": "Columbina passerina",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:199267",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_199267",
+   "isRoot": false,
+   "label": "Olearia passerinoides var. passerinoides",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3109272",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3109272",
+   "isRoot": false,
+   "label": "Olearia passerinoides subsp. passerinoides",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3141490",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3141490",
+   "isRoot": false,
+   "label": "Cypripedium passerinum var. passerinum",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3237129",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3237129",
+   "isRoot": false,
+   "label": "Passerine-like atadenovirus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:573214",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_573214",
+   "isRoot": false,
+   "label": "Passerina amoena x Passerina cyanea",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1237769",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1237769",
+   "isRoot": false,
+   "label": "Passerina corymbosa",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:315389",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_315389",
+   "isRoot": false,
+   "label": "Veniliornis passerinus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:486040",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_486040",
+   "isRoot": false,
+   "label": "Aphis passeriniana",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:985148",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_985148",
+   "isRoot": false,
+   "label": "Zymoseptoria passerinii SP63",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1047170",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1047170",
+   "isRoot": false,
+   "label": "Zymoseptoria passerinii",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:121724",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_121724",
+   "isRoot": false,
+   "label": "Glaucidium passerinum",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1265809",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1265809",
+   "isRoot": false,
+   "label": "Forpus passerinus cyanophanes",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:128994",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_128994",
+   "isRoot": false,
+   "label": "Columbicola passerinae",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:142680",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_142680",
+   "isRoot": false,
+   "label": "Passerina <eudicots>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:142695",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_142695",
+   "isRoot": false,
+   "label": "Passerina falcifolia",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:151258",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_151258",
+   "isRoot": false,
+   "label": "Caroxylon passerinum",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1548354",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1548354",
+   "isRoot": false,
+   "label": "Lychnophora passerina",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:224057",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_224057",
+   "isRoot": false,
+   "label": "Thymelaea passerina",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

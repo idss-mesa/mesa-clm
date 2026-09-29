@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001900",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001900",
+  "description": "A specimen identifier which is assigned by a specimen repository",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001900",
+  "isRoot": false,
+  "label": "specimen identifier assigned by specimen repository",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

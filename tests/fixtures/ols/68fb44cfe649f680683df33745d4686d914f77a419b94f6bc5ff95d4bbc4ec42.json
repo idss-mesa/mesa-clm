@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "detection method",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00007300",
+   "description": "A US Department of Interior research laboratory that develops methods for the isolation, detection, and identification of fish pathogens; prevention and control of fish diseases; biomarkers as indicators of contaminant effects.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00007300",
+   "isRoot": true,
+   "label": "Fish Health Laboratory",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

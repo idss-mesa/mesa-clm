@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000070",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0000070",
+  "description": "This term was originally named \"presence\". It has been renamed to reduce ambiguity. Consider annotating with the reciprocal relation,PATO:0001555, has_number_of. For example, rather than E=fin ray Q=count in organism C=10, say E=organism Q=has number of E2= fin ray C=10.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000070",
+  "isRoot": false,
+  "label": "amount",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

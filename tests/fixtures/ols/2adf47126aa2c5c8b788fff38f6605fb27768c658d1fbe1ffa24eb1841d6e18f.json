@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000054",
+  "ontology_id": "uo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "UO:0000283",
+   "description": "An area density unit which is equal to the mass of an object in kilograms divided by the surface area in hectares.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000283",
+   "isRoot": false,
+   "label": "kilogram per hectare",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000323",
+   "description": "An area density unit which is equal to the mass of an object in tons divided by the surface area in hectares.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000323",
+   "isRoot": false,
+   "label": "ton per hectare",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0010071",
+   "description": "An area density unit which is equal to the mass of an object in micrograms divided by the surface area in square centimeters.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0010071",
+   "isRoot": false,
+   "label": "microgram per square centimeter",
+   "ontologyId": "uo",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1010049",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1010049",
+   "isRoot": false,
+   "label": "gram per square meter based unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  }
+ ]
+}

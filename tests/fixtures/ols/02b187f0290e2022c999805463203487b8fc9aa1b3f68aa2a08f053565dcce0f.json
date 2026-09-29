@@ -1,0 +1,110 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003501",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0003504",
+   "description": "A functional assessment of an individual's ability to cough forcefully.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003504",
+   "isRoot": false,
+   "label": "forced cough assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003505",
+   "description": "A functional assessment of an individual's ability to understandably repeat spoken sentences.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003505",
+   "isRoot": false,
+   "label": "speech test assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003506",
+   "description": "A functional assessment of an individual's ability to touch index fingers together in front of the sternum without oscillation for a specified duration of time",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003506",
+   "isRoot": false,
+   "label": "finger to finger assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003507",
+   "description": "A functional assessment of an individual's ability to touch their own nose and then touch an examiners finger in front of them and then touch their own nose once more.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003507",
+   "isRoot": false,
+   "label": "nose to finger assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003508",
+   "description": "A functional assessment of an individual's ability to accurately touch a moving target with their finger and then touch their own chin a number of times in a row.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003508",
+   "isRoot": false,
+   "label": "dysmetria assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003509",
+   "description": "A functional assessment of an individual's ability to alternate the forearm between pronation and suppination as quickly as possible during a specified duration of time",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003509",
+   "isRoot": false,
+   "label": "rapid alternating hands assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003510",
+   "description": "A functional assessment of an individual's ability to touch their finger-tip to thumb as many times as possible during a specified duration of time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003510",
+   "isRoot": false,
+   "label": "finger taps assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003511",
+   "description": "A functional assessment of an individual's ability to slide their heel back and forth along their contralateral tibia from the patella to the ankle with the contralateral leg extended.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003511",
+   "isRoot": false,
+   "label": "heel along shin assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003512",
+   "description": "A functional assessment of an individual's ability to tap their heel to the midpoint of the contralateral shin a number of times.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003512",
+   "isRoot": false,
+   "label": "heel to shin assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003514",
+   "description": "A functional assessment of an individual's ability to perform muscle movement to overcome gravity or physical resistence.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003514",
+   "isRoot": false,
+   "label": "muscle weakness assessment",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

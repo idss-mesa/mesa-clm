@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "end rh",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "HP:0001324",
+   "description": "It is important clinical to distinguish between muscle weakness, fatigue, and asthenia. Fatigue describes the inability to continue performing a task after multiple repetitions; in contrast, a patient with primary weakness is unable to perform the first repetition of the task. Asthenia is a sense of weariness or exhaustion in the absence of muscle weakness. Conditions that result in intrinsic muscle weakness can be divided into several main categories: infectious, neurologic, endocrine, inflammatory, rheumatologic, genetic, metabolic, electrolyte-induced, or drug-induced.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/HP_0001324",
+   "isRoot": false,
+   "label": "Muscle weakness",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "DOID:4974",
+   "description": "A commensal bacterial infectious disease that results_in infection, has_material_basis_in Actinobacillus ureae, which is a commensal of the human respiratory tract. The pathogen causes meningitis, endocarditis, bacteremia, atrophic rhinitis, bronchitis, pneumonia, conjunctivitis, peritonitis, and otitis media.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/DOID_4974",
+   "isRoot": false,
+   "label": "actinobacillosis",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

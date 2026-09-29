@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000011",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0000011",
+  "description": "A time quality inhering in a bearer by virtue of how long the bearer has existed.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000011",
+  "isRoot": false,
+  "label": "age",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

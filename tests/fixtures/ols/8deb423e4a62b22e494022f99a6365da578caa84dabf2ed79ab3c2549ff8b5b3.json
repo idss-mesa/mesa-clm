@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "sample collected",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00055381",
+   "description": "A basaltic tuya in north-central British Columbia that began eruptive activity under glacial ice during the Fraser glaciation (25 to 10 ka). Like Ash Mountain and South Tuya, sections of the tuya reveal a consistent stratigraphic progression from pillow lavas to hyaloclastite deposits from the base upward. Locally the sections are capped by subaerial basaltic lava flows. Consequently, samples of the glassy pillow basalts and hyaloclastites along with crystalline basalt flows were collected at Caribou Tuya.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00055381",
+   "isRoot": true,
+   "label": "Caribou Tuya",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

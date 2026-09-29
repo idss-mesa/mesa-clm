@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_80867",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:643561",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_643561",
+   "isRoot": false,
+   "label": "Paracidovorax avenae ATCC 19860",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:995087",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_995087",
+   "isRoot": false,
+   "label": "Paracidovorax avenae RS-1",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

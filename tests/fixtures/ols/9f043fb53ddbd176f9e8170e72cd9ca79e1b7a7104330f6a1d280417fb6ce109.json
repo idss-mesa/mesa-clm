@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001460",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01001464",
+   "description": "A mid-elevation mountain which has a maximum elevation between 1500 and 2499 metres above sea level and a slope greater than or equal to two degrees.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001464",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 4 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001465",
+   "description": "A mid-elevation mountain which has a maximum elevation between 1000 and 1499 metres above sea level and either 1) a slope greater than or equal to five degrees or 2) a local elevation range, within a 7 kilometre radius, of greater than 300 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001465",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 5 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001466",
+   "description": "A mid-elevation mountain which has a maximum elevation between 300 and 999 metres above sea level and a local elevation range, within a 7 kilometre radius, of greater than 300 metres above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001466",
+   "isRoot": false,
+   "label": "UNEP-WCMC class 6 mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

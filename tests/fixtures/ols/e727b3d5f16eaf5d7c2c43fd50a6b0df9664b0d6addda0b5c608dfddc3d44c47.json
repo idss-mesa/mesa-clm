@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "introduced",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:2902655",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2902655",
+   "isRoot": false,
+   "label": "Acastroma introductum",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:696372",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_696372",
+   "isRoot": false,
+   "label": "Mutation introducing vector pMtKCNQ2",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

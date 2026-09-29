@@ -1,0 +1,90 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "Whether the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001795",
+   "description": "A 'de-identified data' role between a user and given data entails that the user is authorized to see only those fields (including those that are encrypted) which do not contain information that could be use to identify particular individuals (whether patients or medical practitioners) or potentially organizations in the case where an investigation may implicate them.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001795",
+   "isRoot": false,
+   "label": "de-identified data",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001438",
+   "description": "A data field which describes whether there was prior Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) treatment with an antiviral agent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001438",
+   "isRoot": false,
+   "label": "prior sarscov2 antiviral treatment",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100532",
+   "description": "A data field which describes the absence or presence of a prior Monkeypox infection.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100532",
+   "isRoot": false,
+   "label": "prior mpox infection status",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100534",
+   "description": "A data field which describes the absence or presence of antiviral treatment for a prior Monkeypox infection.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100534",
+   "isRoot": false,
+   "label": "prior mpox antiviral treatment",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102272",
+   "description": "A data field which describes the absence or presence of antiviral treatment for a prior pathogen infection.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102272",
+   "isRoot": false,
+   "label": "prior antiviral treatment",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102274",
+   "description": "A data field which describes the absence or presence of a prior pathogen infection.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102274",
+   "isRoot": false,
+   "label": "prior pathogen infection status",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102275",
+   "description": "A data field which describes the absence or presence of a prior measles infection.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102275",
+   "isRoot": false,
+   "label": "prior measles infection status",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100277",
+   "description": "A data field which describes whether the sample was collected from an individual in quarantine.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100277",
+   "isRoot": false,
+   "label": "sample collected in quarantine",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

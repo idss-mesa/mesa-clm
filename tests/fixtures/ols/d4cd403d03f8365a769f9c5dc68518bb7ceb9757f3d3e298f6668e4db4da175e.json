@@ -1,0 +1,110 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001741",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0001226",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001226",
+   "isRoot": false,
+   "label": "lifespan history record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001236",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001236",
+   "isRoot": false,
+   "label": "specimen record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001257",
+   "description": "An exposure group statistics record is a sumary of disease outbreak statistics on a certain date of a group of humans or animals potentially exposed to a pathogen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001257",
+   "isRoot": false,
+   "label": "exposure group statistics record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001259",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001259",
+   "isRoot": false,
+   "label": "health state record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001287",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001287",
+   "isRoot": false,
+   "label": "symptom record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001293",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001293",
+   "isRoot": false,
+   "label": "sequence record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001302",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001302",
+   "isRoot": false,
+   "label": "lab test history record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001424",
+   "description": "ISSUE: lab test results are appropriate to lab test types.  Logic around that?",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001424",
+   "isRoot": false,
+   "label": "lab test record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001426",
+   "description": "A container id is an identifier that refers to a container object about a patient specimen. Container ids are referenced in clinical patient records reported to be suspect, or lab test results.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001426",
+   "isRoot": false,
+   "label": "container record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001430",
+   "description": "A line list is a collection of suspected or known disease outbreak cases.  It may also include details about healthy patients associated with an exposure event (picnic, concert etc.) who have been interviewed in order to compare food intake, assess risk factors, etc.  \n\nNote that the health status of people associated with an exposure event can change from healthy or unknown status, to ill patient.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001430",
+   "isRoot": false,
+   "label": "line list object",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

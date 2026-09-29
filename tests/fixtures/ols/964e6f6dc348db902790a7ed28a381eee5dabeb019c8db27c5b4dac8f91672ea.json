@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003536",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0003536",
+  "description": "A physical examination of an organism through visual assesment.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003536",
+  "isRoot": false,
+  "label": "observational assessment of individual",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

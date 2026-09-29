@@ -1,0 +1,60 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003617",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0003619",
+   "description": "An antibody purification of human MHC class I protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of HLA protein complex with A24 serotype, while others contain impurities and are not of interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003619",
+   "isRoot": false,
+   "label": "antibody purification of HLA protein complex with A24 serotype",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003620",
+   "description": "An antibody purification of human MHC class I protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of HLA protein complex with A2 serotype and/or HLA protein complex with A28 serotype, while others contain impurities and are not of interest.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003620",
+   "isRoot": false,
+   "label": "antibody purification of HLA protein complex with A2 serotype and/or HLA protein complex with A28 serotype",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003621",
+   "description": "An antibody purification of human MHC class I protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of HLA protein complex with A29 serotype, while others contain impurities and are not of interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003621",
+   "isRoot": false,
+   "label": "antibody purification of HLA protein complex with A29 serotype",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003622",
+   "description": "An antibody purification of human MHC class I protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of HLA protein complex with B27 serotype, while others contain impurities and are not of interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003622",
+   "isRoot": false,
+   "label": "antibody purification of HLA protein complex with B27 serotype",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003623",
+   "description": "An antibody purification of human MHC class I protein complex to separate a material entity into different compositions of which one fraction contains a higher concentration of HLA-C protein complex, while others contain impurities and are not of interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003623",
+   "isRoot": false,
+   "label": "antibody purification of HLA-C protein complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

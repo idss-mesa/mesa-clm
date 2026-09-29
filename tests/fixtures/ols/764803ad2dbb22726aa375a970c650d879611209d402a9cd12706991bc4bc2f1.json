@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000003",
+  "ontology_id": "bco",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "BCO:0000047",
+   "description": "A planned process by which a taxonomic inventory is created.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/BCO_0000047",
+   "isRoot": false,
+   "label": "taxonomic inventory process",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "BCO:0000065",
+   "description": "An observing process in which the observing entity consists of one or more humans.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/BCO_0000065",
+   "isRoot": false,
+   "label": "human observation process",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "BCO:0000066",
+   "description": "An observing process in which the observing entity consists of one or more machines.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/BCO_0000066",
+   "isRoot": false,
+   "label": "machine observation process",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

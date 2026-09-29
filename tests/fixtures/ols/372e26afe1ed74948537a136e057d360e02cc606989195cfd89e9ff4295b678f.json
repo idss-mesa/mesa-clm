@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "ro",
+  "query": "sex",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "RO:0002175",
+   "description": "S present_in_taxon T if some instance of T has some S. This does not means that all instances of T have an S - it may only be certain life stages or sexes that have S",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002175",
+   "isRoot": false,
+   "label": "present in taxon",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:HOM0000031",
+   "description": "Paedomorphosis that is produced by precocious sexual maturation of an organism still in a morphologically juvenile stage.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_HOM0000031",
+   "isRoot": false,
+   "label": "in progenesis relationship with",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:HOM0000046",
+   "description": "Historical homology that involves not recombining and subsequently differentiated sex chromosomes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_HOM0000046",
+   "isRoot": false,
+   "label": "in gametology relationship with",
+   "ontologyId": "ro",
+   "synonyms": []
+  }
+ ]
+}

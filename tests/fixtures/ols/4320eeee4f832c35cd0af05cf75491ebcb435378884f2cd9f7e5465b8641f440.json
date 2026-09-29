@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000383",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0000383",
+  "description": "A biological sex quality inhering in an individual or a population that only produces gametes that can be fertilised by male gametes.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000383",
+  "isRoot": false,
+  "label": "female",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

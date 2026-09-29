@@ -1,0 +1,90 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "The scientific name of the class in which the taxon is classified",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "class",
+   "description": "The full scientific name of the class in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/class",
+   "isRoot": true,
+   "label": "Class",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "family",
+   "description": "The full scientific name of the family in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/family",
+   "isRoot": true,
+   "label": "Family",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "genus",
+   "description": "The full scientific name of the genus in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/genus",
+   "isRoot": true,
+   "label": "Genus",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "kingdom",
+   "description": "The full scientific name of the kingdom in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/kingdom",
+   "isRoot": true,
+   "label": "Kingdom",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "order",
+   "description": "The full scientific name of the order in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/order",
+   "isRoot": true,
+   "label": "Order",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "subfamily",
+   "description": "The full scientific name of the subfamily in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/subfamily",
+   "isRoot": true,
+   "label": "Subfamily",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "subgenus",
+   "description": "The full scientific name of the subgenus in which the taxon is classified. Values should include the genus to avoid homonym confusion.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/subgenus",
+   "isRoot": true,
+   "label": "Subgenus",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "phylum",
+   "description": "The full scientific name of the phylum or division in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/phylum",
+   "isRoot": true,
+   "label": "Phylum",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

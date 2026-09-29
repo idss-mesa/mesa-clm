@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000008",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000008",
+  "description": "A length unit which is equal to the length of the path traveled by light in vacuum during a time interval of 1/299 792 458 of a second.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000008",
+  "isRoot": false,
+  "label": "meter",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

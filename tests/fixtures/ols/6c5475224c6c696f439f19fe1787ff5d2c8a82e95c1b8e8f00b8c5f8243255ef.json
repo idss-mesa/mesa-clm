@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000185",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000185",
+  "description": "A plane angle unit which is equal to 1/360 of a full rotation or 1.7453310^[-2] rad.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000185",
+  "isRoot": false,
+  "label": "degree",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

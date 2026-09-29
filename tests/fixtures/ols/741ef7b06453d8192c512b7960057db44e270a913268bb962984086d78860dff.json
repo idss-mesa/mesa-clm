@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "class",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001432",
+   "description": "This class is a temporary holding bin for items that need a class hierarchy home, definition, and/or subclass items. Some classes have subclasses that are currently disjoint in other ontologies like ENVO, so awaiting resolution on such issues.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001432",
+   "isRoot": true,
+   "label": "awaiting ontology review",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001079",
+   "description": "A serotype or serovar is a distinct variation within a species of bacteria or virus or among immune cells of different individuals. These microorganisms, viruses, or cells are classified together based on their cell surface antigens, allowing the epidemiologic classification of organisms to the sub-species level",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001079",
+   "isRoot": false,
+   "label": "serovar/serotype common name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100771",
+   "description": "A data field which describes the type or classification of a wastewater system.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100771",
+   "isRoot": false,
+   "label": "wastewater system type",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001739",
+   "description": "Damion Dooley's note: Intention is to have it be the inverse of \"before\".  This allows axioms like \"B after A\" to be placed in class B, rather than having to phrase them as \"A before B\" in class A.\n\nI believe time dependency relations (conditions) don't imply existence by themselves.  If B after A, and B exists, this doesn't necessarily mean that A exists, only that if A does exist, it must be before B.  To add that extra existence implication probably requires the \"causally downstream of\" and \"immediately causally downstream of\" RO relations, in a closed system where B cannot exist any other way.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001739",
+   "isRoot": true,
+   "label": "after",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000106",
+   "description": "The 'draft data standard' class contains draft representations of formal or defacto third party standards and related components.  These representations may have been crafted without any involvement of related standards issuers and so no guarantee can be provided about their currency, accuracy or veracity.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000106",
+   "isRoot": false,
+   "label": "draft data standard",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001011",
+   "description": "The MIRU24 - international standard is a mycobacterial interspersed repetitive units (MIRU) typing method that classifies Mycobacterium tuberculosis complex (MBTC) bacteria according to a multiple locus VNTR [variable number of tandem repeats] analysis (MLVA) typing scheme of counts of repeats at 24 sequence loci.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001011",
+   "isRoot": false,
+   "label": "MIRU24 - international standard",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001191",
+   "description": "A data field which describes the taxonomic name of the organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001191",
+   "isRoot": false,
+   "label": "organism",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001503",
+   "description": "A data field which describes the variant classification of the lineage/clade.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001503",
+   "isRoot": false,
+   "label": "variant designation",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001533",
+   "description": "A food specimen type is a categorization of a food specimen, by the organism it is or came from, or by a class of food products.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001533",
+   "isRoot": false,
+   "label": "food specimen specification",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001717",
+   "description": "A viral subtype is a classification name for a virus according to some protocol.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001717",
+   "isRoot": false,
+   "label": "viral subtype",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001741",
+   "description": "This class contains components under development for fulfilling GenEpiO and other standard data specifications. Components are relevant to epidemiological, laboratory, clinical or environmental pathogen sample data collection and analysis.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001741",
+   "isRoot": false,
+   "label": "draft GenEpiO component record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100090",
+   "description": "A diagnosis of Kawasaki disease (KD) when patients fail to meet “classic” clinical features but have laboratory findings usually associated with KD and no reasonable alternate diagnosis, they are said to have incomplete or atypical KD.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100090",
+   "isRoot": false,
+   "label": "incomplete Kawasaki disease",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100293",
+   "description": "An infection detail datum which is used for classifying a variant of the Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), determined by the risk it poses based on available scientific evidence.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100293",
+   "isRoot": false,
+   "label": "variant designation (SARS-CoV-2)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100439",
+   "description": "A data field which describes the original sample description provided by the sample collector.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100439",
+   "isRoot": false,
+   "label": "original sample description",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102049",
+   "description": "PCDS: The target taxonomic name refers to the specific species, genus, or other taxonomic classification that the assay or diagnostic test is designed to identify, detect, or characterize. This may include the full binomial name (Genus species) or a higher taxonomic rank (i.e., genus, family) when species-level identification is not applicable. Avoid abbreviations. Search for taxonomic names here: ncbi.nlm.nih.gov/taxonomy.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102049",
+   "isRoot": false,
+   "label": "target taxonomic name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102187",
+   "description": "An amplicon sequencing assay in which the amplicon is derived from universal primers used to amplify the 18S ribosomal RNA gene from isolate bacterial genomic DNA or metagenomic DNA from a microbioal community. Resulting sequences are compared to reference 18S sequence databases to identify or classify bacteria present within a given sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102187",
+   "isRoot": false,
+   "label": "18S ribosomal gene sequencing assay",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000813",
+   "description": "Material parts of astronomical bodies generally have boundaries formed by discontinuities in qualities, composition, or other physical characterisitcs. These boundaries are sometimes sharp, and sometimes diffuse, with different classification systems and communities declaring varying thresholds (e.g. for where a shoreline, forest, or other entity begins and ends). However, some boundaries are declared by fiat - that is, by arbitrary human convention or decree - particularly by regulatory or other authorities and communities of practice. The classes in this hierarchy attempt to offer generalisable definitions that allow multiple classfiication systems to map to and interoperate through. If desired, we can create classes that declare thresholds used by a given authority or community under the more generic ones, annotated with source information.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000813",
+   "isRoot": false,
+   "label": "astronomical body part",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "HP:0001903",
+   "description": "A reduction in erythrocytes volume or hemoglobin concentration.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/HP_0001903",
+   "isRoot": false,
+   "label": "Anemia",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "STATO:0000415",
+   "description": "in the context of binary classification, accuracy is defined as the proportion of true results (both true positives and true negatives) to the total number of cases examined (the sum of true positive, true negative, false positive and false negative).\n\nIt can be understood as a measure of the proximity of measurement results to the true value.\n\nAccuracy is a metric used in the context of classification tasks to evaluate the proportion of correctly predicted instances among the total instances.\n\nKey Points:\n\nUse Case: Classification performance evaluation.\nMetric: Measures the proportion of correct predictions.\nInterpretation: Higher values indicate better classification performance.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/STATO_0000415",
+   "isRoot": false,
+   "label": "accuracy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000122",
+   "description": "Class has undergone final review, is ready for use, and will be included in the next release. Any class lacking \"ready_for_release\" should be considered likely to change place in hierarchy, have its definition refined, or be obsoleted in the next release.  Those classes deemed \"ready_for_release\" will also derived from a chain of ancestor classes that are also \"ready_for_release.\"",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000122",
+   "isRoot": false,
+   "label": "ready for release",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

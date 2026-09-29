@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "taxon rank",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "TAXRANK:0000000",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000000",
+   "isRoot": true,
+   "label": "taxonomic_rank",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "TAXRANK:1000000",
+   "description": "A metadata relation between a class and its taxonomic rank (e.g., species, family)",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_1000000",
+   "isRoot": true,
+   "label": "has_rank",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

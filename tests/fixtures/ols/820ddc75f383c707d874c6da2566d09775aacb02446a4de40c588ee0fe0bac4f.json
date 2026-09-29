@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000055",
+  "ontology_id": "bco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "BCO:0000055",
+  "description": "A taxonomic inventory process in which taxon occurrences are recorded as co-variates of another study, or by happenstance, and later compiled as a taxonomic inventory.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000055",
+  "isRoot": false,
+  "label": "adventitious taxonomic inventory process",
+  "ontologyId": "bco",
+  "synonyms": []
+ }
+}

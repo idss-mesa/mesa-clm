@@ -1,0 +1,70 @@
+{
+ "args": {
+  "ontology_id": "iao",
+  "query": "How the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "IAO:0000131",
+   "description": "A serial number is an information content entity which is a unique sequence of characters borne by part of manufactured product or its packaging that is assigned to each individual in some class of products, and so can serve as a way to identify an individual product within the class. Serial numbers can be encoded in a variety of other information objects, such as bar codes, numerals, or patterns of dots.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000131",
+   "isRoot": false,
+   "label": "serial number",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0020010",
+   "description": "A planned process that provides a reference to an individual entity shared by a group of subscribers to refer to that individual entity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0020010",
+   "isRoot": false,
+   "label": "identifier creating process",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000132",
+   "description": "A lot number is an information content entity which is an identical sequence of character borne by part of manufactured product or its packaging for each instances of a product class in a discrete batch of an item. Lot numbers are usually assigned to each separate production run of an item. Manufacturing as a lot might be due to a variety of reasons, for example,  a single process during which many individuals are made from the same portion of source material. Lot numbers can be encoded in a pattern  of other information objects, such as bar codes, numerals, or patterns of dots.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000132",
+   "isRoot": false,
+   "label": "lot number",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0020000",
+   "description": "An information content entity that is the outcome of a dubbing process and is used to refer to one instance of entity shared by a group of people to refer to that individual entity.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0020000",
+   "isRoot": false,
+   "label": "identifier",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0020015",
+   "description": "An identifier referring to an individual entity that is ascribed personhood by the user of the identifier.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0020015",
+   "isRoot": false,
+   "label": "personal name",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0020016",
+   "description": "A personal name that specifies and differentiates between members of a group of individuals, especially in a family, all of whose members usually share the same family name (surname). A given name is purposefully given, usually by a child's parents at or near birth, in contrast to an inherited one such as a family name",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0020016",
+   "isRoot": false,
+   "label": "given name",
+   "ontologyId": "iao",
+   "synonyms": []
+  }
+ ]
+}

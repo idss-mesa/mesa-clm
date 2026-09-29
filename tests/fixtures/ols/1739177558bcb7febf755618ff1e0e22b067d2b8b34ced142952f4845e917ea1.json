@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "taxrank",
+  "query": "The scientific name of the genus in which the organism is classified",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Fluid level in the trap when it was collected",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

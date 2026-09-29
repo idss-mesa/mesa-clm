@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "subgenus",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "TAXRANK:0000009",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000009",
+   "isRoot": false,
+   "label": "subgenus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1931990",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1931990",
+   "isRoot": false,
+   "label": "unclassified Drosophila (in: flies, subgenus)",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2448453",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2448453",
+   "isRoot": false,
+   "label": "Nomia <bees,subgenus>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2482802",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2482802",
+   "isRoot": false,
+   "label": "Rhizopogon sp. 'subgenus Amylopogon'",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2883617",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2883617",
+   "isRoot": false,
+   "label": "Cortinarius sp. 'subgenus Telamonia'",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:308734",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_308734",
+   "isRoot": false,
+   "label": "Mansonia <mosquitos,subgenus>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:32281",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_32281",
+   "isRoot": false,
+   "label": "Drosophila <flies,subgenus>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3231378",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3231378",
+   "isRoot": false,
+   "label": "Rhizopogon sp. 'subgenus Amylopogon 1'",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3231379",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3231379",
+   "isRoot": false,
+   "label": "Rhizopogon sp. 'subgenus Roseoli 1'",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3231380",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3231380",
+   "isRoot": false,
+   "label": "Rhizopogon sp. 'subgenus Roseoli 2'",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3231381",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3231381",
+   "isRoot": false,
+   "label": "Rhizopogon sp. 'subgenus Roseoli 3'",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3231382",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3231382",
+   "isRoot": false,
+   "label": "Rhizopogon sp. 'subgenus Versicolores'",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3231383",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3231383",
+   "isRoot": false,
+   "label": "Rhizopogon sp. 'subgenus Villosuli section Vinicolores'",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:332929",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_332929",
+   "isRoot": false,
+   "label": "Saturnia <moths & butterflies,subgenus>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3398453",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3398453",
+   "isRoot": false,
+   "label": "unclassified Aedes (in: mosquitos, subgenus)",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3398455",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3398455",
+   "isRoot": false,
+   "label": "unclassified Ochlerotatus (in: mosquitos, subgenus)",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:3407189",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3407189",
+   "isRoot": false,
+   "label": "unclassified Eucera (in: bees, subgenus)",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:443460",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_443460",
+   "isRoot": false,
+   "label": "Odontium subgenus complex",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:443461",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_443461",
+   "isRoot": false,
+   "label": "Hirmoplataphus subgenus complex",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:443468",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_443468",
+   "isRoot": false,
+   "label": "Hydrium subgenus complex",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

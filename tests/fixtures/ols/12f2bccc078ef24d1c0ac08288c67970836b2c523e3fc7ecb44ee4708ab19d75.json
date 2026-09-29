@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001491",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:00000179",
+   "description": "An elevated area of land with a flat top and sides that are usually steep cliffs. Mesas form in areas where horizontally layered rocks are uplifted by tectonic activity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000179",
+   "isRoot": false,
+   "label": "mesa",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000182",
+   "description": "An elevated and comparatively level expanse of land.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000182",
+   "isRoot": false,
+   "label": "plateau",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000287",
+   "description": "An isolated hill with steep sides and a small flat top, smaller than mesas and plateaus. Buttes are formed by erosion when a cap of hard rock, usually of volcanic origin, covers a layer of softer rock that is easily worn away. This hard rock avoids erosion while the rock around it wears down.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000287",
+   "isRoot": false,
+   "label": "butte",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

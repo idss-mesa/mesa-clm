@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "kingdom",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001845",
+   "description": "United Kingdom National Health Service trusts, boards, etc. have some terminology in common for public disclosure of patient health conditions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001845",
+   "isRoot": false,
+   "label": "NHS standard",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00000591",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00000591",
+   "isRoot": false,
+   "label": "Kingdom of Spain",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00001549",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00001549",
+   "isRoot": false,
+   "label": "Kingdom of the Netherlands",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002635",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002635",
+   "isRoot": false,
+   "label": "Kingdom of Denmark",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002699",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002699",
+   "isRoot": false,
+   "label": "Kingdom of Norway",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:01000021",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_01000021",
+   "isRoot": false,
+   "label": "floristic kingdom",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:01000047",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_01000047",
+   "isRoot": false,
+   "label": "Neotropical Kingdom",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00000591",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00000591",
+   "isRoot": false,
+   "label": "Kingdom of Spain",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00001549",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00001549",
+   "isRoot": false,
+   "label": "Kingdom of the Netherlands",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002635",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002635",
+   "isRoot": false,
+   "label": "Kingdom of Denmark",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002637",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002637",
+   "isRoot": true,
+   "label": "United Kingdom",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002699",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002699",
+   "isRoot": false,
+   "label": "Kingdom of Norway",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:01000021",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_01000021",
+   "isRoot": false,
+   "label": "floristic kingdom",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:01000047",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_01000047",
+   "isRoot": false,
+   "label": "Neotropical Kingdom",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "CHEBI:22315",
+   "description": "Any of the naturally occurring, basic nitrogen compounds (mostly heterocyclic) occurring mostly in the plant kingdom, but also found in bacteria, fungi, and animals. By extension, certain neutral compounds biogenetically related to basic alkaloids are also classed as alkaloids. Amino acids, peptides, proteins, nucleotides, nucleic acids, amino sugars and antibiotics are not normally regarded as alkaloids. Compounds in which the nitrogen is  exocyclic (dopamine, mescaline, serotonin, etc.) are usually classed as amines rather than alkaloids.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_22315",
+   "isRoot": false,
+   "label": "alkaloid",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "ExO:0000038",
+   "description": "Damion Dooley note: GenEpiO includes various health status descriptors here; many are annotated as included in the American AHA HIPPA or United Kingdom NHS terminologies.  The challenge is to map them or order them in such a way that merged data can be analyzed.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ExO_0000038",
+   "isRoot": false,
+   "label": "subject health status",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:03411261",
+   "description": "A member of the group of eukaryotic organisms in the kingdom Fungi that includes unicellular microorganisms such as yeasts and molds, as well as multicellular fungi that produce familiar fruiting forms known as mushrooms.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_03411261",
+   "isRoot": false,
+   "label": "fungus",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:03510198",
+   "description": "It should be noted that such claims are illegal in some countries, e.g. Denmark, and that other countries, e.g. United Kingdom, are calling for an end to the use of terms such as 'diabetic' or 'suitable for diabetics' on food labels.\nThe European Commission is considering how foods intended specifically for people with diabetes can be controlled.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_03510198",
+   "isRoot": false,
+   "label": "diabetic or suitable for diabetics claim",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GSSO:000132",
+   "description": "Either, a specific gender identity which is not male or female; or, more broadly, an umbrella term for gender identities not considered male or female.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GSSO_000132",
+   "isRoot": false,
+   "label": "gender nonbinary",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "HANCESTRO:0865",
+   "description": "Individuals who self-identify or are reported by authors as living in or originating from England, a nation of the United Kingdom and that is located on the island of Great Britain.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/HANCESTRO_0865",
+   "isRoot": false,
+   "label": "English",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

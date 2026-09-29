@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000197",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000197",
+  "description": "A broadleaf forest ecosystem which is undergoing climactic ecological succession.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000197",
+  "isRoot": false,
+  "label": "broadleaf forest biome",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "avian",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:2560313",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2560313",
+   "isRoot": false,
+   "label": "avian paramyxovirus 2",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2560319",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2560319",
+   "isRoot": false,
+   "label": "avian paramyxovirus 1",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:28274",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_28274",
+   "isRoot": false,
+   "label": "avian paramyxovirus 4",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:11870",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_11870",
+   "isRoot": false,
+   "label": "Avian carcinoma Mill Hill virus 2",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1401444",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1401444",
+   "isRoot": false,
+   "label": "Avian leukosis virus ev/J",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2560315",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2560315",
+   "isRoot": false,
+   "label": "avian paramyxovirus 5",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2560316",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2560316",
+   "isRoot": false,
+   "label": "avian paramyxovirus 6",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2560317",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2560317",
+   "isRoot": false,
+   "label": "avian paramyxovirus 7",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2560318",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2560318",
+   "isRoot": false,
+   "label": "avian paramyxovirus 8",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2560321",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2560321",
+   "isRoot": false,
+   "label": "avian paramyxovirus 13",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:35270",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_35270",
+   "isRoot": false,
+   "label": "Avian sarcoma virus 31",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1844928",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1844928",
+   "isRoot": false,
+   "label": "Avian-like circovirus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:743290",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_743290",
+   "isRoot": false,
+   "label": "Chimpanzee stool avian-like circovirus Chimp17",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:11867",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_11867",
+   "isRoot": false,
+   "label": "Avian myelocytomatosis virus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:11873",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_11873",
+   "isRoot": false,
+   "label": "Avian musculoaponeurotic fibrosarcoma virus AS42",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:11894",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_11894",
+   "isRoot": false,
+   "label": "Avian sarcoma virus RASV1441",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2078659",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2078659",
+   "isRoot": false,
+   "label": "Cryptosporidium sp. avian genotype I",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2560310",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2560310",
+   "isRoot": false,
+   "label": "avian paramyxovirus 11",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2560314",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2560314",
+   "isRoot": false,
+   "label": "avian paramyxovirus 20",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2560320",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2560320",
+   "isRoot": false,
+   "label": "avian paramyxovirus 12",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

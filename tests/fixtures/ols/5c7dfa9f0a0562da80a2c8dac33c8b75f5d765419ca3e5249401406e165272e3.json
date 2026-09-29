@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "sample condition",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0000815",
+   "description": "For the chromogenic determination of antithrombin III. Autoanalyzer method for undiluted samples. For the quantitative chromogenic determination of the functional activity of antithrombin III in plasma on autoanalyzers for the diagnosis of diminished AT III synthesis, increased consumption, and for monitoring substitution therapy. Berichrom(r) Antithrombin III (A) is used for the rapid determination of the physiologically active antithrombin III and permits the diagnosis of congenital and acquired antithrombin III deficiency, a condition frequently associated with an increased risk of thrombosis. Acquired antithrombin III deficiencies frequently occur due to consumption following major operations or due to disseminated intravascular coagulation (DIC) in cases of septicaemia, nephroses, liver parenchymal damage (hepatitis, drug intoxication, alcoholism) and estrogen-containing contraceptives. The test permits early detection of patients at increased risk for thrombosis. Kit contains: 6 x for 5.0 mL Thrombin (bovine), 3 x for 3.0 mL Substrate Reagent, 1 x 30.0 mL Buffer Solution",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000815",
+   "isRoot": false,
+   "label": "Berichrom(r) Antithrombin III (A) Kit",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

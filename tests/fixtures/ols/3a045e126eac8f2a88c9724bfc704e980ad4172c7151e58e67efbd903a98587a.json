@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GAZ_00000448",
+  "ontology_id": "gaz"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "GAZ:00000448",
+  "description": "A reference to a place on the Earth, by its name or by its geographical location.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/GAZ_00000448",
+  "isRoot": true,
+  "label": "geographic location",
+  "ontologyId": "gaz",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "observer distance",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00053528",
+   "description": "A stratovolcano in the Virunga Mountains associated with the Great Rift Valley. It is located in the Democratic Republic of the Congo, about 20 km north of the town of Goma and Lake Kivu and just west of the border with Rwanda. It contained a lava lake in its deep summit crater that was active for half a century before draining catastrophically through its outer flanks in 1977. In contrast to the low profile of its neighboring shield volcano, Nyamuragira, 3470 m high Nyiragongo displays the steep slopes of a stratovolcano. Benches in the steep-walled, 1.2 km wide summit crater mark levels of former lava lakes, which have been observed since the late-19th century. Two older stratovolcanoes, Baruta and Shaheru, are partially overlapped by Nyiragongo on the north and south. About 100 parasitic cones are located primarily along radial fissures south of Shaheru, east of the summit, and along a NE-SW zone extending as far as Lake Kivu. Many cones are buried by voluminous lava flows that extend long distances down the flanks of the volcano, which is characterized by the eruption of foiditic rocks.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00053528",
+   "isRoot": true,
+   "label": "Mount Nyiragongo",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

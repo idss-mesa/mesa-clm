@@ -1,0 +1,70 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "celsius",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "UO:0000027",
+   "description": "A temperature unit which is equal to one kelvin degree. However, they have their zeros at different points. The centigrade scale has its zero at 273.15 K.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000027",
+   "isRoot": false,
+   "label": "degree Celsius",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:1000027",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UO_1000027",
+   "isRoot": false,
+   "label": "degree Celsius based unit",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000027",
+   "description": "A temperature unit which is equal to one kelvin degree. However, they have their zeros at different points. The centigrade scale has its zero at 273.15 K.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000027",
+   "isRoot": false,
+   "label": "degree Celsius",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001370",
+   "description": "An ecosystem which 1) typically has monthly average temperatures below 10 degrees Celsius 2) has a low evapotranspiration ratio 3) is dominated by treeless terrain, covered by communities of low-growing vegetation such as dwarf shrubs, sedges and grasses, mosses, and lichens, 4) contains areas of soil underlain by permafrost with a thin active layer and 5) occurs in both polar and alpine regions (i.e., both high latitudes and high altitudes), and 5) does not have permanent snow or ice cover.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001370",
+   "isRoot": false,
+   "label": "tundra ecosystem",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000195",
+   "description": "A temperature unit which is equal to 5/9ths of a kelvin. Negative 40 degrees Fahrenheit is equal to negative 40 degrees Celsius.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000195",
+   "isRoot": false,
+   "label": "degree Fahrenheit",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000195",
+   "description": "A temperature unit which is equal to 5/9ths of a kelvin. Negative 40 degrees Fahrenheit is equal to negative 40 degrees Celsius.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000195",
+   "isRoot": false,
+   "label": "degree Fahrenheit",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

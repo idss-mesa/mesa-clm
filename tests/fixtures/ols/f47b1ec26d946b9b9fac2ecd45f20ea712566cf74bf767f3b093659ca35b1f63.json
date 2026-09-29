@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "number",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:1458713",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1458713",
+   "isRoot": false,
+   "label": "Mycobacterium phage Numberten",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1415199",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1415199",
+   "isRoot": false,
+   "label": "Foraminifera sp. number 5 cigar",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

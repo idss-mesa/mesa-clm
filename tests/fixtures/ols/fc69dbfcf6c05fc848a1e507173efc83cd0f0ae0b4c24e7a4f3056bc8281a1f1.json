@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1006562",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:1006563",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1006563",
+   "isRoot": false,
+   "label": "uncultured Florenciella",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1260767",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1260767",
+   "isRoot": false,
+   "label": "uncultured Verrucophora",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

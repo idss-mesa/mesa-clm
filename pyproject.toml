@@ -1,0 +1,196 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mesa-clm"
+dynamic = ["version"]
+description = "Ontology-grounded, calibrated metadata annotation for the MESA stack: Contrastive LM (CLM) rank-first decisions over mesa-mcp's OBO/OLS tools, with provenance next to the mesa-ducklake AVU history."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "IDSS / MESA contributors, University of New Mexico" }]
+keywords = ["mesa", "clm", "contrastive", "ontology", "obo", "ols", "irods", "ducklake", "calibration", "mcp"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+    # The MESA stack (neither is on PyPI; pinned to git commits in [tool.uv.sources], DESIGN D0).
+    "mesa-mcp",
+    "mesa-ducklake",
+    "numpy>=1.24",
+    "pydantic>=2.7",
+    "httpx>=0.28",
+    "pyyaml>=6",
+    "structlog>=24",
+    # The shared MESA catalog is written by duckdb 1.5.x everywhere on the stack (DESIGN D11).
+    "duckdb>=1.5.5,<1.6",
+    "platformdirs>=4",
+    # ols.py catches requests.RequestException from mesa-mcp's OLS client; declared, not transitive.
+    "requests>=2.28",
+    # Never contrastive-lm, torch or vllm here: the core is a torch-free HTTP client (DESIGN D0, D4).
+]
+
+[project.optional-dependencies]
+# Bench-only baselines (PR #13 logistic-regression replica, StandardScaler).
+bench = ["scikit-learn>=1.4"]
+# Exact Qwen3 token counts for the client-side token guard when vLLM /tokenize is unavailable.
+tokenize = ["tokenizers>=0.20"]
+# Claude planner and second-opinion provider.
+claude = ["anthropic>=1.0"]
+# Postgres provenance sidecar dialect (optional; DuckDB per host is the default, DESIGN D11).
+pg = ["psycopg[binary]>=3.2"]
+# End-to-end tests over MCP stdio.
+e2e = ["mcp>=2,<3"]
+docs = ["zensical>=0.0.60", "pyyaml>=6"]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.23",
+    "pytest-cov>=5",
+    "ruff>=0.6",
+    "mypy>=1.10",
+    "types-PyYAML",
+    "jsonschema>=4",
+    # Only for the vendored CLM client used as a wire oracle in tests (DESIGN D4).
+    "requests>=2.28",
+    "types-requests",
+]
+
+[project.scripts]
+mesa-clm = "mesa_clm.cli:main"
+
+# Registers the mesa_clm_* tools into mesa-mcp (>= c74f3aa, which has load_plugins; DESIGN D14).
+[project.entry-points."mesa_mcp.tools"]
+clm = "mesa_clm.mcp_tools"
+
+[project.urls]
+Homepage = "https://github.com/idss-mesa/mesa-clm"
+Documentation = "https://idss-mesa.github.io/mesa-clm/"
+Source = "https://github.com/idss-mesa/mesa-clm"
+Issues = "https://github.com/idss-mesa/mesa-clm/issues"
+Changelog = "https://github.com/idss-mesa/mesa-clm/blob/main/CHANGELOG.md"
+
+[tool.hatch.version]
+path = "src/mesa_clm/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mesa_clm"]
+
+# The policy file ships inside the wheel (policy_defaults.DEFAULTS_PATH prefers the packaged copy
+# and falls back to the repo root in an editable install), so an installed mesa-clm needs no checkout.
+[tool.hatch.build.targets.wheel.force-include]
+"policy_defaults.yaml" = "mesa_clm/policy_defaults.yaml"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/mesa_clm", "tests", "README.md", "CHANGELOG.md", "LICENSE", "THIRD_PARTY.md",
+    "framings.lock.json", "policy_defaults.yaml", "vendored.sha256",
+]
+
+[tool.uv.sources]
+mesa-mcp = { git = "https://github.com/idss-mesa/mesa-mcp", rev = "c74f3aa1a3caade558f063f4f637a9127dba82d9" }
+mesa-ducklake = { git = "https://github.com/idss-mesa/mesa-ducklake", rev = "7bc143fefb093f0a2ace748a7036598147533ca0" }
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = [
+    "site",
+    "docs",
+    # vendored unchanged from idss-mesa/neon-mcp via mesa-anyjev (keep identical to upstream)
+    "scripts/okf_validate.py",
+    "scripts/gen_llms_txt.py",
+    "scripts/postbuild_agent_surface.py",
+    # vendored byte-identical (THIRD_PARTY.md, vendored.sha256)
+    "src/mesa_clm/_vendor",
+    "src/mesa_clm/bench/_metrics.py",
+    "tests/_vendor",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "S", "RUF"]
+ignore = [
+    "S105",  # hardcoded-password heuristics fire on constants named *TOKEN*/*KEY* (env var names)
+    "S106",
+    "S107",
+    "RUF001",
+    "RUF002",
+    "RUF003",
+]
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 120
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106", "S108", "S311", "S603", "B011", "RUF012"]
+"tests/conftest.py" = ["E501"]  # verbatim dataset-card lines
+"scripts/**" = ["S603", "S607", "S101"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+markers = [
+    "live: hits the real EMBL-EBI OLS API or the Claude API (opt-in; MESA_CLM_LIVE=1)",
+    "engine: drives the real CLM stack (encoder :8090 + clm-serve :8700) (MESA_CLM_ENGINE=1)",
+    "gpu: needs the serve venv and a CUDA device (MESA_CLM_GPU=1)",
+    "serve: exercises the patched clm-serve / fallback server in the serve venv",
+    "requires_postgres: needs a Postgres reachable through MESA_CLM_TEST_PG_DSN",
+    "e2e: spawns the real mesa-mcp over MCP stdio (MESA_CLM_E2E=1)",
+    "neon: runs against a neon-ducklake root (MESA_CLM_NEON_ROOT)",
+]
+addopts = "-ra -m 'not live and not engine and not gpu and not serve and not requires_postgres and not e2e and not neon'"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.coverage.run]
+source = ["mesa_clm"]
+branch = true
+omit = ["src/mesa_clm/_vendor/*", "src/mesa_clm/bench/_metrics.py"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_covered = true
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "@overload", "\\.\\.\\."]
+
+[tool.mypy]
+# 3.12: numpy's stubs use the `type` statement; the package itself supports 3.11 (CI runs it).
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = [
+    "mesa_ducklake", "mesa_ducklake.*",
+    "mesa_mcp", "mesa_mcp.*",
+    "irods", "irods.*",
+    "duckdb", "duckdb.*",
+    "psycopg", "psycopg.*",
+    "anthropic", "anthropic.*",
+    "structlog", "structlog.*",
+    "yaml", "yaml.*",
+    "platformdirs",
+    "sklearn", "sklearn.*",
+    "tokenizers", "tokenizers.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Vendored byte-identical (CLM schema.py; AnyJev bench/metrics.py): not ours to annotate (DESIGN D4).
+module = ["mesa_clm._vendor.*", "mesa_clm.bench._metrics"]
+ignore_errors = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true

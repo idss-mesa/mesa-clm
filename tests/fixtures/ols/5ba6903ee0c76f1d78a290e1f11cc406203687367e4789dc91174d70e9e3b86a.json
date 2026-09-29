@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "named location",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00045609",
+   "description": "An archipelago of around 174 small islands (about 35 of which are named) located 128 km off the Pilbara coast of North West Australia.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00045609",
+   "isRoot": true,
+   "label": "Montebello Islands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00089724",
+   "description": "A populated place. A town of the same name located just off the northern Croatian coast in the Adriatic Sea, today in the Primorje-Gorski Kotar county.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00089724",
+   "isRoot": true,
+   "label": "Town of Rab",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00214843",
+   "description": "A river in Quebec and Maine, forming the international boundary between Canada and the US The river rises in a lake of the same name located 19 km east of the Riviere du Loup. The portion that forms the boundary starts at the bottom of Lake Pohenegamook at the very northernmost point of Maine in Estcourt Station, Maine, and flows generally south east to its mouth on the Saint John River.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00214843",
+   "isRoot": true,
+   "label": "Saint Francis River",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00028065",
+   "description": "A municipality of the State of Chuuck located on Namenweitos Atoll.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00028065",
+   "isRoot": true,
+   "label": "Municipality of Piherararh",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00028068",
+   "description": "A municipality of the State of Chuuck located on Namenweitos Atoll.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00028068",
+   "isRoot": true,
+   "label": "Municipality of Unanu",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00028085",
+   "description": "A municipality of the State of Chuuck located on Namenweitos Atoll.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00028085",
+   "isRoot": true,
+   "label": "Municipality of Ulul",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00063054",
+   "description": "Highlands located in Silesia, Poland. Its highest point is the Mountain of St. Anne (400 m).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00063054",
+   "isRoot": true,
+   "label": "Wyzyna Slaska",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00069842",
+   "description": "Island located off the tip of the Baie Verte Peninsula, are two islands. Western Island the smaller of the two and Eastern Island about three times the size of the former.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00069842",
+   "isRoot": true,
+   "label": "Horse Islands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00085830",
+   "description": "Lakes located 45 km North of Kamloops at an elevation of 1,149 metres. It consists of two lakes that are joined by a creek, which is one of the spawning channels for the rainbow trout. The two lakes are known as Big Knouff and Little Knouff.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00085830",
+   "isRoot": true,
+   "label": "Knouff Lakes",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00173097",
+   "description": "Mountains located in Lander and Eureka Counties, in central Nevada in the western United States. The steep range runs in a southwest-northeasterly direction between the Toiyabe Range and the Roberts Mountains.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00173097",
+   "isRoot": true,
+   "label": "Simpson Park Mountains",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00114159",
+   "description": "A sedimentary basin located in the northern part of the province of Malaga, Andalusia, Spain. It takes its name from the city of Antequera, located within the depression. It is located in the Baetic Cordillera, with the Cordilleras Subbeticas to its north and the Cordillera Penibetica to its south.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00114159",
+   "isRoot": true,
+   "label": "Depresion de Antequera",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00000448",
+   "description": "A reference to a place on the Earth, by its name or by its geographical location.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00000448",
+   "isRoot": true,
+   "label": "geographic location",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00028058",
+   "description": "A municipality of the State of Chuuck located on Namenweitos Atoll.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00028058",
+   "isRoot": true,
+   "label": "Municipality of Makur",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00028069",
+   "description": "A municipality of the State of Chuuck located on Namenweitos Atoll.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00028069",
+   "isRoot": true,
+   "label": "Municipality of Onou",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00001074",
+   "description": "The capital of The Gambia, and located within the division of the same name. It is located on Saintt Mary's Island (Banjul Island) where the Gambia River enters the Atlantic Ocean. The island is connected to the mainland by passenger and vehicle ferries to the north and bridges to the south.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00001074",
+   "isRoot": false,
+   "label": "City of Banjul",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00001588",
+   "description": "An island located 700 m west of Stronsay island in the Orkney archipelago.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00001588",
+   "isRoot": true,
+   "label": "Linga Holm",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00001754",
+   "description": "An island. Located off the Cowal Peninsula.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00001754",
+   "isRoot": true,
+   "label": "Sgat Mor",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00002907",
+   "description": "An island located in the Galapagos Islands group, Ecuador. An elongated shield volcano that is dotted with Holocene pyroclastic cones. Fresh-looking lava flows from these cones blanket the flanks of the volcano. The 920 m high summit ridge, lined with a chain of NW-trending cinder and spatter cones, is located at the NW end of the island. Prominent flank tuff cones occur at the western and eastern coasts of Santiago. The most recent activity at Santiago has been concentrated at the NW and SE ends of the island. The spectacular pahoehoe lava flows at James and Sullivan Bays, on opposite ends of the island, were erupted during historical time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00002907",
+   "isRoot": true,
+   "label": "Santiago Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00005186",
+   "description": "An atoll located 86 km north-east of Bougainville in the South Pacific. The atoll is a scattering of low lying islands in a horseshoe shape stretching 30 km in north-south direction, with a total land area of 0.6 km2 and a maximum elevation of 1.5 m above sea level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00005186",
+   "isRoot": true,
+   "label": "Carteret Islands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00005311",
+   "description": "A city located in the northern part of Gauteng Province, South Africa.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00005311",
+   "isRoot": false,
+   "label": "Pretoria",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001919",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0001910",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001910",
+   "isRoot": false,
+   "label": "decimal",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001911",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001911",
+   "isRoot": false,
+   "label": "integer",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "taxon rank",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001191",
+   "description": "A data field which describes the taxonomic name of the organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001191",
+   "isRoot": false,
+   "label": "organism",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102049",
+   "description": "PCDS: The target taxonomic name refers to the specific species, genus, or other taxonomic classification that the assay or diagnostic test is designed to identify, detect, or characterize. This may include the full binomial name (Genus species) or a higher taxonomic rank (i.e., genus, family) when species-level identification is not applicable. Avoid abbreviations. Search for taxonomic names here: ncbi.nlm.nih.gov/taxonomy.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102049",
+   "isRoot": false,
+   "label": "target taxonomic name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "_taxonomic_rank",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon#_taxonomic_rank",
+   "isRoot": false,
+   "label": "obsolete taxonomic rank",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

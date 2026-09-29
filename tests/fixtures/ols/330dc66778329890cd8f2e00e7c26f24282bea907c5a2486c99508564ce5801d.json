@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000906",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01001254",
+   "description": "An aquaculture process during which humans rear animals.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001254",
+   "isRoot": false,
+   "label": "animal aquaculture process",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001255",
+   "description": "An aquaculture process during which humans rear plants.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001255",
+   "isRoot": false,
+   "label": "plant aquaculture process",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001669",
+   "description": "An aquaculture process during which marine organisms are cultivated in the open ocean, an enclosure in the ocean, or in tanks, ponds or raceways which are filled with seawater.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001669",
+   "isRoot": false,
+   "label": "mariculture process",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

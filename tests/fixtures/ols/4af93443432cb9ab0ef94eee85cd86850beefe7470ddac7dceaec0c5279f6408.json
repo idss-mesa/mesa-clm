@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "sex",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0060001",
+   "description": "A quality inhering in a bearer by virtue of the bearer's being present in one sex and absent from the other in members of the same species.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0060001",
+   "isRoot": false,
+   "label": "sex-specific",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0020000",
+   "description": "Note that the chromosomal constitution of genotypic sex varies in different organisms. In human, we have XY, XX, though abnormal XXY, X0, XYY, and other combinations are possible.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0020000",
+   "isRoot": false,
+   "label": "genotypic sex",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001338",
+   "description": "For example a mixture of females and male or males and hermaphrodites.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001338",
+   "isRoot": false,
+   "label": "mixed sex",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0020001",
+   "description": "Note that the chromosomal constitution of genotypic sex varies in different organisms. In human, this would be XY, though abnormal XXY and XYY would also result in a male phenotypic outcome.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0020001",
+   "isRoot": false,
+   "label": "male genotypic sex",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0020002",
+   "description": "Note that the chromosomal constitution of genotypic sex varies in different organisms. In human, this would be XX, though abnormal X0 and XXX would also result in a female phenotypic outcome.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0020002",
+   "isRoot": false,
+   "label": "female genotypic sex",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000047",
+   "description": "An organismal quality inhering in a bearer by virtue of the bearer's ability to undergo sexual reproduction in order to differentiate the individuals or types involved.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000047",
+   "isRoot": false,
+   "label": "biological sex",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001894",
+   "description": "An organismal quality inhering in a bearer by virtue of the bearer's physical expression of sexual characteristics.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001894",
+   "isRoot": false,
+   "label": "phenotypic sex",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040049",
+   "description": "A biological sex quality inhering in an individual or a population who are otherwise male of a non-hermaphroditic species who has ambiguous or atypical congenital development of the reproductive system.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040049",
+   "isRoot": false,
+   "label": "male with DSD",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040056",
+   "description": "A biological sex quality inhering in an individual or a population who are otherwise female of a non-hermaphroditic species who has ambiguous or atypical congenital development of the reproductive system.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040056",
+   "isRoot": false,
+   "label": "female with DSD",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002451",
+   "description": "A quality inhering in a bearer by virtue of the bearer's exhibiting a phenotypic difference between males and females of the same species.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002451",
+   "isRoot": false,
+   "label": "sexually dimorphic",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001827",
+   "description": "A biological sex quality inhering in an individual or a population by virtue of having internal reproductive organs of one sex and external sexual characteristics of the other sex.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001827",
+   "isRoot": false,
+   "label": "pseudohermaphrodite",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000384",
+   "description": "A biological sex quality inhering in an individual or a population whose sex organs contain only male gametes.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000384",
+   "isRoot": false,
+   "label": "male",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001340",
+   "description": "A biological sex quality inhering in an organism or a population with both male and female sexual organs in one individual.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001340",
+   "isRoot": false,
+   "label": "hermaphrodite",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001393",
+   "description": "A ploidy quality inhering in a bearer by virtue of the bearer's containing an integral multiple of the monoploid number, possibly excluding the sex-determining chromosomes.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001393",
+   "isRoot": false,
+   "label": "euploid",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001828",
+   "description": "A biological sex quality inhering in an individual or a population by virtue of having internal reproductive organs of male and external sexual characteristics of female.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001828",
+   "isRoot": false,
+   "label": "male pseudohermaphrodite",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001829",
+   "description": "A biological sex quality inhering in an individual or a population by virtue of having internal reproductive organs of female and external sexual characteristics of male.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001829",
+   "isRoot": false,
+   "label": "female pseudohermaphrodite",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001895",
+   "description": "A biological sex quality inhering in an individual or a population that undergo sexual reproduction.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001895",
+   "isRoot": false,
+   "label": "mating type",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000383",
+   "description": "A biological sex quality inhering in an individual or a population that only produces gametes that can be fertilised by male gametes.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000383",
+   "isRoot": false,
+   "label": "female",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000455",
+   "description": "A maturity quality inhering in a bearer by virtue of the bearer's having arrived at the onset of puberty (the age at which sex glands become functional) but not yet fully mature.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000455",
+   "isRoot": false,
+   "label": "pubescent",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001395",
+   "description": "A diploidy quality inhering in a bearer in by virtue of belonging in a species whose one of the sexes has haploid cells and the other has diploid cells.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001395",
+   "isRoot": false,
+   "label": "haplodiploid",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

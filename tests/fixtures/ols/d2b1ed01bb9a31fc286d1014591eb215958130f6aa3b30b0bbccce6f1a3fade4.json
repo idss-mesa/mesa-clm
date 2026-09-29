@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000033",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000033",
+  "description": "A time unit which is equal to 24 hours.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000033",
+  "isRoot": false,
+  "label": "day",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

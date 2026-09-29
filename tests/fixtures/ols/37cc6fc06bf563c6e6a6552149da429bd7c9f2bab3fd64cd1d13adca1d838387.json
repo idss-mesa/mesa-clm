@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000003",
+  "ontology_id": "pco",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PCO:0000057",
+   "description": "An increased mass density of a population of organisms such that the density of organisms in an area is increased beyond sustainable levels.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000057",
+   "isRoot": false,
+   "label": "overcrowded population",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000079",
+   "description": "The density of plants in a population or organisms (a single species), often measured as the number of plants per area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000079",
+   "isRoot": false,
+   "label": "plant density of a population",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000081",
+   "description": "The density of seedlings in a population or organisms (a single species), often measured as the number of seedlings per area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000081",
+   "isRoot": false,
+   "label": "seedling density of a population",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

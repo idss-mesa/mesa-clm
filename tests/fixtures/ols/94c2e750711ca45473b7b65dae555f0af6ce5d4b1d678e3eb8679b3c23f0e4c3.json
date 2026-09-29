@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000845",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01000846",
+   "description": "A crystal which is primarily composed of water ice.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000846",
+   "isRoot": false,
+   "label": "water ice crystal",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000850",
+   "description": "This class is not to be confused with CHEBI's \"clathrate\". The latter refers to the pure substance, while this class refers to clathrates found in nature.\n\"Traditionally, clathrate compounds are polymeric and completely envelop the guest molecule, but in modern usage clathrates also include host-guest complexes and inclusion compounds.\" https://en.wikipedia.org/wiki/Clathrate_compound",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000850",
+   "isRoot": false,
+   "label": "clathrate material",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

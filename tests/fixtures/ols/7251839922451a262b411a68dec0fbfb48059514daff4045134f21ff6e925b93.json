@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000255",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:00000327",
+   "description": "A secondary mineral deposit formed in caves, most commonly calcite.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000327",
+   "isRoot": false,
+   "label": "speleothem",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:02000150",
+   "description": "A mineral deposit that contains uranium ore.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_02000150",
+   "isRoot": false,
+   "label": "uranium deposit",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

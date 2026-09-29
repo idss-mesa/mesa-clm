@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000140",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0000140",
+  "description": "A spatial quality inhering in a bearer by virtue of the bearer's spatial location relative to other objects in the vicinity.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000140",
+  "isRoot": false,
+  "label": "position",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

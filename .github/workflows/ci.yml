@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      # Every extra is torch-free: the core is an HTTP client and the serving side has its own venv (DESIGN D0).
+      - run: uv sync --all-extras
+      - run: uv run ruff check src tests scripts
+      - run: uv run ruff format --check src tests
+      - run: uv run mypy --strict src
+      # TODO(M1): - run: uv run mesa-clm framings --check   # framing keys match framings.lock.json
+      # The console script installs and the M0 doctor is green on a bare runner (no hashing: the vendored job does that).
+      - run: uv run mesa-clm doctor --quick
+      - run: uv run pytest -q --cov=mesa_clm --cov-report=term --cov-report=xml
+
+  vendored:
+    name: vendored files are byte-identical to upstream
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: CLM schema.py + LICENSE, AnyJev bench/metrics.py and the CLM client oracle match THIRD_PARTY.md
+        run: sha256sum -c vendored.sha256

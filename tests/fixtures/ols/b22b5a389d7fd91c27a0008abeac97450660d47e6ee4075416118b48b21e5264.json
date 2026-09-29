@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "Name of the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001517",
+   "description": "A data field which describes the names of individuals contributing to the processes of sample collection, sequence generation, analysis, and data submission.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001517",
+   "isRoot": false,
+   "label": "data authors",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100513",
+   "description": "A data field which describes the name of the individual or the individual's role in the organization that performed the antimicrobial resistance (AMR) testing.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100513",
+   "isRoot": false,
+   "label": "AMR testing by contact name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102079",
+   "description": "PCDS: Enter the name of the individual responsible for managing and overseeing the data. As names can change when there is staff turnover, the position of the responsible individual can be provided instead.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102079",
+   "isRoot": false,
+   "label": "data steward contact name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100432",
+   "description": "A data field which describes the name or job title of the contact responsible for follow-up regarding the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100432",
+   "isRoot": false,
+   "label": "sample collector contact name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100463",
+   "description": "A data field which describes the name or title of the contact responsible for follow-up regarding the isolate.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100463",
+   "isRoot": false,
+   "label": "isolated by contact name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100471",
+   "description": "A data field which describes the name or title of the contact responsible for follow-up regarding the sequence.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100471",
+   "isRoot": false,
+   "label": "sequenced by contact name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100474",
+   "description": "A data field which describes the name or title of the contact responsible for follow-up regarding the submission of the sequence to a repository or database.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100474",
+   "isRoot": false,
+   "label": "sequence submitted by contact name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100762",
+   "description": "A data field which describes the name of the individual responsible for the data governance, (meta)data usage and distribution of the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100762",
+   "isRoot": false,
+   "label": "sample collection data steward name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102080",
+   "description": "PCDS: Enter the name of the individual responsible for managing and overseeing the data. As the applicable address can change when there is staff turnover, a general contact email or the email tied to the responsible individual's position, can be provided instead.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102080",
+   "isRoot": false,
+   "label": "data steward contact email",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100321",
+   "description": "A host data field which describes the description of the vaccines received and the administration dates of a series of vaccinations against a specific disease or a set of diseases.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100321",
+   "isRoot": false,
+   "label": "vaccination history",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100462",
+   "description": "A data field which describes the specific laboratory affiliation of the individual who performed the isolation procedure.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100462",
+   "isRoot": false,
+   "label": "isolated by laboratory name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001131",
+   "description": "An identifier field which describes the identifer assigned to a sequenced isolate in Integrated Rapid Infectious Disease Analysis (IRIDA) bioinformatics platform.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001131",
+   "isRoot": false,
+   "label": "IRIDA sample ID",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100461",
+   "description": "A data field which describes the name of the agency, organization or institution with which the individual who performed the isolation procedure is affiliated.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100461",
+   "isRoot": false,
+   "label": "isolated by",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001051",
+   "description": "Identification or description of the specific individual from which this sample was obtained",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001051",
+   "isRoot": false,
+   "label": "NCBI BioSample isolate (human name or description)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000017",
+   "description": "The American HIPPA Protected Health Information (PHI) guidelines cover information, including demographic information, which relates to:\n\n- the individual’s past, present, or future physical or mental health or condition,\n- the provision of health care to the individual, or\n- the past, present, or future payment for the provision of health care to the individual, and that identifies the individual or for which there is a reasonable basis to believe can be used to identify the individual. Protected health information includes many common identifiers (e.g., name, address, birth date, Social Security Number) when they can be associated with the health information listed above.\"",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000017",
+   "isRoot": false,
+   "label": "American HIPPA Protected Health Information (PHI) guidelines",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001079",
+   "description": "A serotype or serovar is a distinct variation within a species of bacteria or virus or among immune cells of different individuals. These microorganisms, viruses, or cells are classified together based on their cell surface antigens, allowing the epidemiologic classification of organisms to the sub-species level",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001079",
+   "isRoot": false,
+   "label": "serovar/serotype common name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100443",
+   "description": "A data field which describes the type of animal or plant population inhabiting an area.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100443",
+   "isRoot": false,
+   "label": "animal or plant population",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C25191",
+   "description": "A word or group of words indicating the identity of a person usually consisting of a first (personal) name and a last (family) name with an optional middle name. In some cultural traditions the family name comes first.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C25191",
+   "isRoot": false,
+   "label": "Person Name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C69257",
+   "description": "The name of the individual of interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C69257",
+   "isRoot": false,
+   "label": "Subject Name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C93582",
+   "description": "A local name for an individual's occupation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C93582",
+   "isRoot": false,
+   "label": "Job Title",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

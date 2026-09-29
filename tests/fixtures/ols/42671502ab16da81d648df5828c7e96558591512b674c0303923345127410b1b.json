@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "A list of sources",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00056190",
+   "description": "A stratovolcano that has erupted frequently since the beginning of the Spanish era. The Telica volcano group consists of several interlocking cones and vents with a general NW alignment. Sixteenth-century eruptions were reported at symmetrical Santa Clara volcano at the SW end of the Telica group. However, its eroded and breached crater has been covered by forests throughout historical time, and these eruptions may have originated from Telica, whose upper slopes in contrast are unvegetated. The steep-sided cone of 1061 m high Telica is truncated by a 700-m-wide double crater; the southern crater, the source of recent eruptions, is 120 m deep. El Liston, immediately SE of Telica, has several nested craters. The fumaroles and boiling mudpots of Hervideros de San Jacinto, SE of Telica, form a prominent geothermal area frequented by tourists, and geothermal exploration has occurred nearby.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00056190",
+   "isRoot": true,
+   "label": "Volcan Telica",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

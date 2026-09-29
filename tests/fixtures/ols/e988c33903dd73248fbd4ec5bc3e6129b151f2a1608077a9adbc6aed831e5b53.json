@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "ro",
+  "query": "percent",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "RO:0002029",
+   "description": "This could be used to record the increased infant morality rate in some population compared to wild-type.  For examples of usage see http://purl.obolibrary.org/obo/FBcv_0000351 and subclasses.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002029",
+   "isRoot": true,
+   "label": "has increased age-specific mortality rate",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:HOM0000014",
+   "description": "Structural homology that involves complex structures from which only a fraction of the elements that can be isolated are separately homologous.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_HOM0000014",
+   "isRoot": false,
+   "label": "in partial homology relationship with",
+   "ontologyId": "ro",
+   "synonyms": []
+  }
+ ]
+}

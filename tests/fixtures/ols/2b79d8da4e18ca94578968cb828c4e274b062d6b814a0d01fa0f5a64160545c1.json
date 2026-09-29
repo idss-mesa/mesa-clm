@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0300311",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0300311",
+  "description": "observation design is a study design in which subjects are monitored in the absence of any active intervention by experimentalists.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0300311",
+  "isRoot": false,
+  "label": "observation design",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

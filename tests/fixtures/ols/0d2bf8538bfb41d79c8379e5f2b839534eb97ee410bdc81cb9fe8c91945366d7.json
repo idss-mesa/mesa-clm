@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "age",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0000011",
+   "description": "A time quality inhering in a bearer by virtue of how long the bearer has existed.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000011",
+   "isRoot": false,
+   "label": "age",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001764",
+   "description": "An age which is high relative to the normal or average.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001764",
+   "isRoot": false,
+   "label": "increased age",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001765",
+   "description": "An age which is low relative to the normal or average.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001765",
+   "isRoot": false,
+   "label": "decreased age",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001486",
+   "description": "An age quality that exists by virtue of the time (years and months) that the bearer has existed.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001486",
+   "isRoot": false,
+   "label": "chronological age",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0045005",
+   "description": "An age which is relatively normal or average.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0045005",
+   "isRoot": false,
+   "label": "normal age",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002291",
+   "description": "Absence of a tissue or organ due to failure to develop.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002291",
+   "isRoot": false,
+   "label": "agenesis",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002019",
+   "description": "A growth quality of occurrent in which the growth of an organism, structure or group of organisms does not occur.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002019",
+   "isRoot": false,
+   "label": "aplastic growth",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000050",
+   "description": "A time quality inhering in a bearer by virtue of the bearer's expected maximum age.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000050",
+   "isRoot": false,
+   "label": "life span",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000077",
+   "description": "A quality inhering in a bearer by virtue of the whether the bearer's disposition to react to a stimulus or an agent.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000077",
+   "isRoot": false,
+   "label": "response to",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000308",
+   "description": "An age which is relatively high.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000308",
+   "isRoot": false,
+   "label": "old",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000309",
+   "description": "An age which is relatively low.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000309",
+   "isRoot": false,
+   "label": "young",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000455",
+   "description": "A maturity quality inhering in a bearer by virtue of the bearer's having arrived at the onset of puberty (the age at which sex glands become functional) but not yet fully mature.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000455",
+   "isRoot": false,
+   "label": "pubescent",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000487",
+   "description": "A response quality inhering in a bearer by virtue of the bearer's disposition to react to a stimulus or an agent.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000487",
+   "isRoot": false,
+   "label": "responsive to",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000488",
+   "description": "A response quality inhering in a bearer by virtue of the bearer's lack of reaction to a stimulus or an agent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000488",
+   "isRoot": false,
+   "label": "unresponsive to",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001186",
+   "description": "A maturity quality inhering in a bearer by virtue of the bearer's being at the age immediately before puberty.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001186",
+   "isRoot": false,
+   "label": "prepubescent",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001192",
+   "description": "A response quality inhering in a bearer by virtue of the bearer's excessive reaction to a stimulus or an agent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001192",
+   "isRoot": false,
+   "label": "hyperresponsive to",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001194",
+   "description": "A response quality inhering in a bearer by virtue of the bearer's limited reaction to a stimulus or an agent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001194",
+   "isRoot": false,
+   "label": "hyporesponsive to",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001487",
+   "description": "A time quality inhering in a bearer by virtue of the bearer's growing old; aging.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001487",
+   "isRoot": false,
+   "label": "senescent",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001719",
+   "description": "A behavioral quality which holds by virtue of whether the bearer exhibits the ability to receive another agentitive entity.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001719",
+   "isRoot": false,
+   "label": "receptivity",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040040",
+   "description": "A fractured quality that is caused by a loss of bone mass (osteoporosis) that occurs as part of aging.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040040",
+   "isRoot": false,
+   "label": "compression-fractured",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

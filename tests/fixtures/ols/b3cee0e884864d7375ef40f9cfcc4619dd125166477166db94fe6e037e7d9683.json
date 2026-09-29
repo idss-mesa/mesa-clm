@@ -1,0 +1,50 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "celsius",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0003689",
+   "description": "A temperature control bath in which a water ice mixture acts as contact medium at constant temperature of 0 degrees Celsius or below if salt solutions are used.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003689",
+   "isRoot": false,
+   "label": "ice bath",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003690",
+   "description": "A temperature control bath in which a dry ice solvent mixture acts as contact medium at a constant temperatures significantly below 0 degrees Celsius.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003690",
+   "isRoot": false,
+   "label": "dry ice bath",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000027",
+   "description": "A temperature unit which is equal to one kelvin degree. However, they have their zeros at different points. The centigrade scale has its zero at 273.15 K.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000027",
+   "isRoot": false,
+   "label": "degree Celsius",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "UO:0000195",
+   "description": "A temperature unit which is equal to 5/9ths of a kelvin. Negative 40 degrees Fahrenheit is equal to negative 40 degrees Celsius.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000195",
+   "isRoot": false,
+   "label": "degree Fahrenheit",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

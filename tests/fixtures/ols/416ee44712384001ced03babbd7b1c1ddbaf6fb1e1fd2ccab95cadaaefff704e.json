@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "Indicator of whether the sample contained individuals of the target taxa",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

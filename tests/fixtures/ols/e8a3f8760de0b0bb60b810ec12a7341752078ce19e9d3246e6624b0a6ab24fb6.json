@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GO_0071625",
+  "ontology_id": "go"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "GO:0071625",
+  "description": "The behavior in which an organism produces sounds by a mechanism involving its respiratory system.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/GO_0071625",
+  "isRoot": false,
+  "label": "vocalization behavior",
+  "ontologyId": "go",
+  "synonyms": []
+ }
+}

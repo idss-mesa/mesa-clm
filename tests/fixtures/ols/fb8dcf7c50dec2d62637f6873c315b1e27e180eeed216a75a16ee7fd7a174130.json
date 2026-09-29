@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "individual count",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0000181",
+   "description": "a population is a collection of individuals from the same taxonomic class living, counted or sampled at a particular site or in a particular area",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000181",
+   "isRoot": false,
+   "label": "population",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0400044",
+   "description": "A flow_cytometer is an instrument for counting, examining and sorting microscopic particles in suspension. It allows simultaneous multiparametric analysis of the physical and/or chemical characteristics of single cells flowing through an optical and/or electronic detection apparatus. A flow cytometer is an instrument that can be used to quantitatively measure the properties of individual cells in a flowing medium.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0400044",
+   "isRoot": false,
+   "label": "flow cytometer",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

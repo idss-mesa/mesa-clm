@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000268",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0000268",
+  "description": "Organism_feature_identification_objective is a biological_feature_identification_objective role describing a study designed to examine or characterize a biological feature monitored at the level of the organism, e.g. height, weight, stage of development, stage of life cycle.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000268",
+  "isRoot": false,
+  "label": "organism feature identification objective",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

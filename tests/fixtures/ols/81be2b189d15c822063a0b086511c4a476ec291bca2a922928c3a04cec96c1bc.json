@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000155",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000155",
+  "description": "An irradiance unit which is equal to 1 watt of radiant power incident per one square meter surface area.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000155",
+  "isRoot": false,
+  "label": "watt per square meter",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

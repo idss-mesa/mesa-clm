@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "genus",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "CHEBI:42098",
+   "description": "A hydroxy steroid that consists of 5β-cardanolide having a double bond at the 20(22)-position as well as hydroxy groups at the 3β-, 12β- and 14β-positions. It has been isolated from the plant species of the genus <em>Digitalis</em>.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/CHEBI_42098",
+   "isRoot": false,
+   "label": "digoxigenin",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

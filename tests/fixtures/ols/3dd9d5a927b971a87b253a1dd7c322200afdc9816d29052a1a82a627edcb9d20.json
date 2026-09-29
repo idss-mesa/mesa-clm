@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "sex",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "sex",
+   "description": "The sex of the biological individual(s) represented in the Occurrence.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/sex",
+   "isRoot": true,
+   "label": "Sex",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

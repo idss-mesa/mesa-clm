@@ -1,0 +1,110 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "number",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "otherCatalogNumbers",
+   "description": "A list (concatenated and separated) of previous or alternate fully qualified catalog numbers or other human-used identifiers for the same Occurrence, whether in the current or any other data set or collection.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/otherCatalogNumbers",
+   "isRoot": true,
+   "label": "Other Catalog Numbers",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "recordNumber",
+   "description": "An identifier given to the Occurrence at the time it was recorded. Often serves as a link between field notes and an Occurrence record, such as a specimen collector's number.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/recordNumber",
+   "isRoot": true,
+   "label": "Record Number",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "catalogNumber",
+   "description": "An identifier (preferably unique) for the record within the data set or collection.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/catalogNumber",
+   "isRoot": true,
+   "label": "Catalog Number",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "fieldNumber",
+   "description": "An identifier given to the event in the field. Often serves as a link between field notes and the Event.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/fieldNumber",
+   "isRoot": true,
+   "label": "Field Number",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000643",
+   "description": "the relation of the cells in the finger of the skin to the finger, in which an indeterminate number of grains are parts of the whole by virtue of being grains in a collective that is part of the whole, and in which removing one granular part does not nec- essarily damage or diminish the whole. Ontological Whether there is a fixed, or nearly fixed number of parts - e.g. fingers of the hand, chambers of the heart, or wheels of a car - such that there can be a notion of a single one being missing, or whether, by contrast, the number of parts is indeterminate - e.g., cells in the skin of the hand, red cells in blood, or rubber molecules in the tread of the tire of the wheel of the car.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000643",
+   "isRoot": false,
+   "label": "has grain",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0100060",
+   "description": "A processed material comprised of a collection of cultured cells that has been continuously maintained together in culture and shares a common propagation history.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0100060",
+   "isRoot": false,
+   "label": "cultured cell population",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000596",
+   "description": "Relates an ontology used to record id policy to the number of digits in the URI. The URI is: the 'has ID prefix\" annotation property value concatenated with an integer in the id range (left padded with \"0\"s to make this many digits)",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000596",
+   "isRoot": true,
+   "label": "has ID digit count",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "DC:source",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.org/dc/elements/1.1/source",
+   "isRoot": true,
+   "label": "Source",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "individualCount",
+   "description": "The number of individuals present at the time of the Occurrence.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/individualCount",
+   "isRoot": true,
+   "label": "Individual Count",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "organismQuantity",
+   "description": "A number or enumeration value for the quantity of organisms.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/organismQuantity",
+   "isRoot": true,
+   "label": "Organism Quantity",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

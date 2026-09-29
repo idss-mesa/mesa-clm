@@ -1,0 +1,50 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "A list of sources",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0100325",
+   "description": "PCDS: Provide the library source by selecting a value from the pick list. For amplicon sequencing select 'Viral RNA'.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100325",
+   "isRoot": false,
+   "label": "NCBI SRA library source",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001255",
+   "description": "A data field which describes the name and description of the laboratory host used to propagate the source organism or material from which the sample was obtained.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001255",
+   "isRoot": false,
+   "label": "lab host",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:03510249",
+   "description": "A claim that a food is a source of omega-3 fatty acids, and any claim likely to have the same meaning for the consumer, may only be made where the product contains at least 0,3 g alpha-linolenic acid per 100 g and per\n100 kcal, or at least 40 mg of the sum of eicosapentaenoic acid and docosahexaenoic acid per 100 g and per 100 kcal [COMMISSION REGULATION (EU) No 116/2010 of 9 February 2010 amending Regulation (EC) No 1924/2006 of the European Parliament and of the Council with regard to the list of nutrition claims].",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_03510249",
+   "isRoot": false,
+   "label": "source of omega-3 fatty acids",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000115",
+   "description": "Allyson Lister 8.10.2019: Although the IAO definition has been included here, we have made a curation decision to allow non-Aristotelian definitions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000115",
+   "isRoot": true,
+   "label": "definition",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

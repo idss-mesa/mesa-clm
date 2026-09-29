@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "ro",
+  "query": "identification references",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OIO:hasDbXref",
+   "description": "An annotation property that links an ontology entity or a statement to a prefixed identifier or URI.",
+   "hasChildren": false,
+   "iri": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+   "isRoot": true,
+   "label": "database_cross_reference",
+   "ontologyId": "ro",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000176",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000176",
+  "description": "A shrubland biome is a terrestrial biome which includes, across its entire spatial extent, dense groups of shrubs.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000176",
+  "isRoot": false,
+  "label": "shrubland biome",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

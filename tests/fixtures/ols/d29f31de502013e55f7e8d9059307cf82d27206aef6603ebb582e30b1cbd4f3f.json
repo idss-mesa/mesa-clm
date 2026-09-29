@@ -1,0 +1,70 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000019",
+  "ontology_id": "pco",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PCO:0000062",
+   "description": "A community species diversity metric that accounts for both the abundance and evenness of the species present quantified via the following formula: the negative sum of, the product of the proportion of species i relative to the total number of species (pi) multiplied by the natural logarithm of this proportion (ln pi).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000062",
+   "isRoot": false,
+   "label": "Shannon diversity index",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000063",
+   "description": "A community species diversity metric that is quantified via the following formula: the reciprocal of the sum of squared proportion of species i relative to the total number of species (pi).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000063",
+   "isRoot": false,
+   "label": "Simpson diversity index",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000064",
+   "description": "A community species diversity metric that is quantified via the following formula: the sum of squared proportion of species i relative to the total number of species (pi).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000064",
+   "isRoot": false,
+   "label": "inverse Simpson diversity index",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000074",
+   "description": "A community species diversity that is the mean species diversity at a site or within a specific habitat.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000074",
+   "isRoot": false,
+   "label": "alpha diversity",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000075",
+   "description": "A community species diversity that is the ratio between regional and local species diversity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000075",
+   "isRoot": false,
+   "label": "beta diversity",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000076",
+   "description": "A community species diversity that is the total species diversity in a landscape. The area or landscape of interest may be of very different sizes in different situations, but it should encompass multiple sites or habitats as measured by alpha diversity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000076",
+   "isRoot": false,
+   "label": "gamma diversity",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

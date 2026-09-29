@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "fluid level",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "UBERON:0002113",
+   "description": "A paired organ of the urinary tract that produces urine and maintains bodily fluid homeostasis, blood pressure, pH levels, red blood cell production and skeleton mineralization.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0002113",
+   "isRoot": false,
+   "label": "kidney",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

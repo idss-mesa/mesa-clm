@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001423",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001423",
+  "description": "A flow cytometry assay that detects epitope specific granzyme B release by T cells",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001423",
+  "isRoot": false,
+  "label": "intracellular material detection measuring epitope specific granzyme B release by T cells",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

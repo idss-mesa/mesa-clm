@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_6656",
+  "ontology_id": "ncbitaxon"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "NCBITaxon:6656",
+  "description": "",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_6656",
+  "isRoot": false,
+  "label": "Arthropoda",
+  "ontologyId": "ncbitaxon",
+  "synonyms": []
+ }
+}

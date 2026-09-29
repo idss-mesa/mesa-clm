@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000002",
+  "ontology_id": "pco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PCO:0000002",
+  "description": "A multi-species collection of organisms of at least two different species, living in a particular area. Must have at least two populations of different species as members.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000002",
+  "isRoot": false,
+  "label": "ecological community",
+  "ontologyId": "pco",
+  "synonyms": []
+ }
+}

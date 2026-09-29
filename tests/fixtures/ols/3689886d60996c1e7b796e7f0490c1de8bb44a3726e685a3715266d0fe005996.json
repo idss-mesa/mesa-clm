@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001687",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001687",
+  "description": "A positional quality inhering in a bearer by virtue of the bearer's vertical distance of a point above or below a reference surface.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001687",
+  "isRoot": false,
+  "label": "elevation",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

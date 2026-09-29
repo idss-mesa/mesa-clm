@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000189",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000189",
+  "description": "A dimensionless unit which denotes a simple count of things.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000189",
+  "isRoot": false,
+  "label": "count unit",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

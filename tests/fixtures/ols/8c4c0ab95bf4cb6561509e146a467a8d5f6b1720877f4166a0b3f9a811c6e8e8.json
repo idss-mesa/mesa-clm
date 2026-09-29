@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000027",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000027",
+  "description": "A temperature unit which is equal to one kelvin degree. However, they have their zeros at different points. The centigrade scale has its zero at 273.15 K.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000027",
+  "isRoot": false,
+  "label": "degree Celsius",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

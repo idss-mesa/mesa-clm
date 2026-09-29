@@ -1,0 +1,170 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "individual count",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001536",
+   "description": "The count of individuals or animals for which no health status is available on a certain date/time from a group that was likely exposed to a pathogen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001536",
+   "isRoot": false,
+   "label": "exposure group unknown health status count",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001442",
+   "description": "The count of healthy individuals or animals on a certain date/time from a group that was likely exposed to a pathogen",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001442",
+   "isRoot": false,
+   "label": "exposure group healthy count",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001443",
+   "description": "The count of ill individuals or animals on a certain date/time from a group that was likely exposed to a pathogen",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001443",
+   "isRoot": false,
+   "label": "exposure group ill count",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001416",
+   "description": "A data field which describes an individuals travel history in last six months.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001416",
+   "isRoot": false,
+   "label": "travel history",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100014",
+   "description": "A travel-associated surveillance strategy in which individuals are selected if they have a travel history outside of the reporting country in a specified number of days before onset of symptoms.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100014",
+   "isRoot": false,
+   "label": "international travel surveillance strategy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100018",
+   "description": "A travel-associated surveillance strategy in which individuals are selected if they have a travel history outside of the reporting country in a specified number of days before onset of symptoms.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100018",
+   "isRoot": false,
+   "label": "surveillance from international worker testing strategy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100011",
+   "description": "A priority surveillance strategy in which individuals are monitored for investigation into vaccine escape, i.e., identifying variants that contain mutations that counteracted the immunity provided by vaccine(s) of interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100011",
+   "isRoot": false,
+   "label": "vaccine escape surveillance strategy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "APOLLO_SV:00000098",
+   "description": "The count of individuals in a contagious population (empirical or virtual).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/APOLLO_SV_00000098",
+   "isRoot": false,
+   "label": "count of contagious population",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "APOLLO_SV:00000099",
+   "description": "The count of individuals in a resistant population (empirical or virtual).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/APOLLO_SV_00000099",
+   "isRoot": false,
+   "label": "count of resistant population",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "APOLLO_SV:00000497",
+   "description": "A count of individuals in a population who meet the criteria of some case definition during some time interval.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/APOLLO_SV_00000497",
+   "isRoot": false,
+   "label": "count of disease cases",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "APOLLO_SV:00000617",
+   "description": "A count of simulated or physical individuals in a population.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/APOLLO_SV_00000617",
+   "isRoot": false,
+   "label": "population count",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "HANCESTRO:0014",
+   "description": "Includes individuals who either self-report or are described by authors as Hispanic, Latino, Latin American or one of the sub-populations from this region. This category includes individuals with known admixture of primarily European, African and Native American ancestries, though some may have also a degree of Asian (e.g. Peru). We also note that the levels of admixture vary depending on the country, with Caribbean countries carrying higher levels of African admixture when compared to South American countries, for example. This category also includes individuals who genetically cluster with reference populations from this region, for example 1000 Genomes and/or HapMap CLM, MXL, PEL and PUR populations",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/HANCESTRO_0014",
+   "isRoot": false,
+   "label": "Latin or Admixed American ancestry",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000181",
+   "description": "a population is a collection of individuals from the same taxonomic class living, counted or sampled at a particular site or in a particular area",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000181",
+   "isRoot": false,
+   "label": "population",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "APOLLO_SV:00000022",
+   "description": "MW: I know this causes problems with our set-theoretic definition.  Unfortunately the compartmental models produce fractional counts at each of their time steps, including the final step.  \n\nAny ideas?  I’ve considered and rejected allowing individual organisms to be fractional.  Perhaps if we just replace the term “cardinality” in the definition with ‘computed size’",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/APOLLO_SV_00000022",
+   "isRoot": false,
+   "label": "count of simulated population",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "HANCESTRO:0870",
+   "description": "Individuals who either self-report or have been described by authors as Papuan.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/HANCESTRO_0870",
+   "isRoot": false,
+   "label": "Papuan",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "HANCESTRO:0596",
+   "description": "Includes individuals with ethnic origins in the Semitic people populating the Arabian Peninsula and other countries in the Middle East and Northern Africa",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/HANCESTRO_0596",
+   "isRoot": false,
+   "label": "Arab",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "geographic coordinate",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

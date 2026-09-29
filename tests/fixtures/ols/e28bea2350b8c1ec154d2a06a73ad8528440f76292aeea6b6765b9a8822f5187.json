@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Campylorhynchus brunneicapillus",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:141853",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_141853",
+   "isRoot": false,
+   "label": "Campylorhynchus brunneicapillus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:330149",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_330149",
+   "isRoot": false,
+   "label": "Campylorhynchus yucatanicus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

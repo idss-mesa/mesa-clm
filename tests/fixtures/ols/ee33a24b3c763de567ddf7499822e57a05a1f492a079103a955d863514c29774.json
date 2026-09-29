@@ -1,0 +1,170 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "sex",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0000858",
+   "description": "a record indicating that the biological sex of an organism is not known.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000858",
+   "isRoot": false,
+   "label": "record of unknown sex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001426",
+   "description": "A study design that assays differences associated with an organism's sex, gender or mating type.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001426",
+   "isRoot": false,
+   "label": "sex comparison design",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002432",
+   "description": "An exclusion criterion defined  as whether an individual has a history of sex with someone who has been diagnosed or at risk for a blood borne infections disease in a specified time frame, which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002432",
+   "isRoot": false,
+   "label": "history of sex with someone with a history of blood borne infection  exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002433",
+   "description": "An exclusion criterion defined  as whether an individual has a history of sex with someone who has used intravenous drugs in a specified time frame, which if met, makes the individual unsuitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002433",
+   "isRoot": false,
+   "label": "history of sex with someone with a history of intravenous drugs exclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002561",
+   "description": "An inclusion criterion that defines and states one or more sexes which, if met, makes an entity suitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002561",
+   "isRoot": false,
+   "label": "sex inclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001168",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since fertilization, the process of the union of gametes of opposite sexes during the process of sexual reproduction to form a zygote.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001168",
+   "isRoot": false,
+   "label": "age since fertilization measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001165",
+   "description": "An age measurement datum that is the result of the measurement of the age of an organism since coitus, the process of copulation that occurs during the process of sexual reproduction.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001165",
+   "isRoot": false,
+   "label": "age since coitus measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001338",
+   "description": "A biological sex quality inhering in a population of multiple sexes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001338",
+   "isRoot": false,
+   "label": "mixed sex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000047",
+   "description": "An organismal quality inhering in a bearer by virtue of the bearer's ability to undergo sexual reproduction in order to differentiate the individuals or types involved.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000047",
+   "isRoot": false,
+   "label": "biological sex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001894",
+   "description": "An organismal quality inhering in a bearer by virtue of the bearer's physical expression of sexual characteristics.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001894",
+   "isRoot": false,
+   "label": "phenotypic sex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0009566",
+   "description": "The union of gametes of opposite sexes during the process of sexual reproduction to form a zygote. It involves the fusion of the gametic nuclei (karyogamy) and cytoplasm (plasmogamy).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0009566",
+   "isRoot": false,
+   "label": "fertilization",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000384",
+   "description": "A biological sex quality inhering in an individual or a population whose sex organs contain only male gametes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000384",
+   "isRoot": false,
+   "label": "male",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001340",
+   "description": "A biological sex quality inhering in an organism or a population with both male and female sexual organs in one individual.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001340",
+   "isRoot": false,
+   "label": "hermaphrodite",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001393",
+   "description": "A ploidy quality inhering in a bearer by virtue of the bearer's containing an integral multiple of the monoploid number, possibly excluding the sex-determining chromosomes.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001393",
+   "isRoot": false,
+   "label": "euploid",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001895",
+   "description": "A biological sex quality inhering in an individual or a population that undergo sexual reproduction.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001895",
+   "isRoot": false,
+   "label": "mating type",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000383",
+   "description": "A biological sex quality inhering in an individual or a population that only produces gametes that can be fertilised by male gametes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000383",
+   "isRoot": false,
+   "label": "female",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

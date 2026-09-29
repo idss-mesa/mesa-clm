@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "wetland",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01001209",
+   "description": "A terrestrial ecosystem which is inundated or saturated by surface or ground water at a frequency and duration sufficient to support, and that under normal circumstances does support, a prevalence of vegetation typically adapted for life in saturated soil conditions.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001209",
+   "isRoot": false,
+   "label": "wetland ecosystem",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000043",
+   "description": "An vegetated area which overlaps a wetland ecosystem.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000043",
+   "isRoot": false,
+   "label": "wetland area",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000230",
+   "description": "A wetland ecosystem which overlaps both terrestrial and marine ecosystems.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000230",
+   "isRoot": false,
+   "label": "coastal wetland ecosystem",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000240",
+   "description": "A wetland ecosystem in which soil is saturated with saline water.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000240",
+   "isRoot": false,
+   "label": "saline wetland",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000243",
+   "description": "A wetland which is inundated with water that contains low concentrations of salts.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000243",
+   "isRoot": false,
+   "label": "freshwater wetland ecosystem",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000389",
+   "description": "A wetland ecosystem which is sometimes inundated or saturated by surface or ground water sufficient to support, and that under normal circumstances do support, a prevalence of vegetation typically adapted for life in saturated soil conditions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000389",
+   "isRoot": false,
+   "label": "intermittent wetland",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000409",
+   "description": "A freshwater littoral zone is a littoral zone which extends offshore from the shore of a freshwater body of water to the limit of occupancy of rooted plants.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000409",
+   "isRoot": false,
+   "label": "freshwater littoral zone",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000893",
+   "description": "According to the NLCD 2011, at least 20% of these areas are covered by forest or shrubland vegetation.  Such thresholds - which are themselves fuzzy - are not strictly asserted in this definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000893",
+   "isRoot": false,
+   "label": "area of woody wetland",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000894",
+   "description": "According to the NLCD 2011, at least 80% of these areas are covered by herbaceous vegetation.  Such thresholds - which are themselves fuzzy - are not strictly asserted in this definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000894",
+   "isRoot": false,
+   "label": "area of emergent herbaceous wetland",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000035",
+   "description": "A wetland ecosystem which includes communities of grasses, rushes, reeds, typhas, sedges, and other herbaceous plants (possibly with low-growing woody plants).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000035",
+   "isRoot": false,
+   "label": "marsh",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000044",
+   "description": "A wetland ecosystem which accumulates acidic peat, a deposit of dead plant material.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000044",
+   "isRoot": false,
+   "label": "peatland",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000192",
+   "description": "A wetland that forms when mud is deposited by the tides, rivers, sea or oceans.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000192",
+   "isRoot": false,
+   "label": "mudflat",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000233",
+   "description": "A wetland ecosystem in which land mass is permanently inundated by shallow bodies of water, generally with a substantial number of hummocks, or dry-land protrusions.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000233",
+   "isRoot": false,
+   "label": "swamp ecosystem",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000449",
+   "description": "A wet meadow is a type of wetland with soils that are saturated with water for part or all of the growing season.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000449",
+   "isRoot": false,
+   "label": "wet meadow ecosystem",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000054",
+   "description": "It would be more correct to say that this has_quality salty or has_part ((soil and water) and has_increased_levels_of salt.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000054",
+   "isRoot": false,
+   "label": "saline marsh",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000107",
+   "description": "An upland moor or sandy area dominated by low shrubby vegetation including heather.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000107",
+   "isRoot": false,
+   "label": "heath",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000157",
+   "description": "An artificial working of peatland to remove the peat.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000157",
+   "isRoot": false,
+   "label": "peat cut",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000185",
+   "description": "Rain-fed, potentially deep peatlands occurring principally in lowland areas across much of Northern Europe, as well as in the former USSR, North America and parts of the southern hemisphere.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000185",
+   "isRoot": false,
+   "label": "raised mire",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000186",
+   "description": "Flat or concave peatlands with a string-like pattern of hummocks (hence the name), found principally in northern Scandinavia but occurring in the western parts of the former USSR and in North America. A few examples exist in northern Britain.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000186",
+   "isRoot": false,
+   "label": "string mire",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000232",
+   "description": "A freshwater peat land with chemically basic (which roughly means alkaline) ground water.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000232",
+   "isRoot": false,
+   "label": "fen",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "detection method",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0002047",
+   "description": "A processed material that is comprised of an antibody that is covalently linked to an enzyme through bioconjugation. The enzyme can be used as a detection method when the enzyme's reaction produces a detectable signal, for example a color change when the substrate is added.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002047",
+   "isRoot": false,
+   "label": "enzyme-linked antibody",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000598",
+   "description": "Although there are many direct ozone chemiluminescent reactions with various gaseous molecules, the incorporation of a conversion step to convert various non-chemiluminescent analytes to a species capable of reacting with ozone to produce chemiluminescence broadens the horizon of this technique tremendously. The conversion of nearly all nitrogen- and sulfur-containing compounds to their respective chemiluminescent species for universal nitrogen and sulfur detection has made nitrogen/sulfur chemiluminescence detection the most widely used analytical methods based upon ozone-induced chemiluminescence. In addition to non-chromatographic applications, nitrogen/sulfur chemiluminescence detection has been adapted to various chromatographic techniques from gas chromatography to liquid and supercritical fluid chromatography as specialized element-specific detectors. The characteristics of these detectors are evaluated and compared to other element-selective detection techniques. The unique features of the chemiluminescence detectors have made them powerful tools in many diverse fields of analytical chemistry.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000598",
+   "isRoot": false,
+   "label": "ozone-induced chemiluminescence detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000815",
+   "description": "For the chromogenic determination of antithrombin III. Autoanalyzer method for undiluted samples. For the quantitative chromogenic determination of the functional activity of antithrombin III in plasma on autoanalyzers for the diagnosis of diminished AT III synthesis, increased consumption, and for monitoring substitution therapy. Berichrom(r) Antithrombin III (A) is used for the rapid determination of the physiologically active antithrombin III and permits the diagnosis of congenital and acquired antithrombin III deficiency, a condition frequently associated with an increased risk of thrombosis. Acquired antithrombin III deficiencies frequently occur due to consumption following major operations or due to disseminated intravascular coagulation (DIC) in cases of septicaemia, nephroses, liver parenchymal damage (hepatitis, drug intoxication, alcoholism) and estrogen-containing contraceptives. The test permits early detection of patients at increased risk for thrombosis. Kit contains: 6 x for 5.0 mL Thrombin (bovine), 3 x for 3.0 mL Substrate Reagent, 1 x 30.0 mL Buffer Solution",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000815",
+   "isRoot": false,
+   "label": "Berichrom(r) Antithrombin III (A) Kit",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

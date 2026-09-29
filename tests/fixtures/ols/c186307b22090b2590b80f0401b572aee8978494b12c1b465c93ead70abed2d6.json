@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Discoderus robustus",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:2903183",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2903183",
+   "isRoot": false,
+   "label": "Discoderus robustus",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

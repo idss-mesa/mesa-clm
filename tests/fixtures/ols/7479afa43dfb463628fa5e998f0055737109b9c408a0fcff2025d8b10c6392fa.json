@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "identification remarks",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "identificationRemarks",
+   "description": "Comments or notes about the Identification.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/identificationRemarks",
+   "isRoot": true,
+   "label": "Identification Remarks",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

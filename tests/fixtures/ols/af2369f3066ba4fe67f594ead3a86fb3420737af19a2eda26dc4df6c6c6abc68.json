@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "observed air temp",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01001718",
+   "description": "The direction of motion determines whether fronts are \"cold\", \"warm\", etc. A front is said to be cold if it's moving in the direction of the warmer air mass it is adjacent to. From the perspective of an observer on the ground, this appears as though the colder air \"replaces\" the warmer air mass.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001718",
+   "isRoot": false,
+   "label": "secondary cold front",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000896",
+   "description": "A surface temperature inversion is usually required. In such an inversion, the surface must have a temperature below freezing, while the temperature of the atmosphere where the precipitation forms is above freezing. Alternately, if the temperature of the ground surface and glazed objects is typically near or below freezing (0C or 32F), it is necessary that the water drops be supercooled before striking. Freezing rain can sometimes occur on surfaces exposed to the air (such as tree limbs) with air temperatures slightly above freezing in strong winds. Local evaporational cooling may result in freezing. Freezing rain frequently occurs, therefore, as a transient condition between the occurrence of rain and ice pellets (sleet). When encountered by an aircraft in flight, freezing rain can cause a dangerous accretion of clear icing. In aviation weather observations, this hydrometeor is encoded ZR by NOAA.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000896",
+   "isRoot": false,
+   "label": "freezing rainfall",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

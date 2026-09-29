@@ -1,0 +1,100 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000169",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0000718",
+   "description": "A viability quality inhering in a population by virtue of the bearer's long term survival inability.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000718",
+   "isRoot": false,
+   "label": "lethal (sensu genetics)",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000719",
+   "description": "A viability quality inhering in a bearer or a population by virtue of the bearer's ability to survive or the long term survival ability of a given population.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000719",
+   "isRoot": false,
+   "label": "viable",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001421",
+   "description": "A viability quality inhering in a bearer by virtue of the bearer's condition before death.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001421",
+   "isRoot": false,
+   "label": "alive",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001422",
+   "description": "A viability quality inhering in a bearer by virtue of the cessation of the bearer's life.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001422",
+   "isRoot": false,
+   "label": "dead",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001432",
+   "description": "A quality inhering in a bearer by virtue of the bearer's decomposition into component parts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001432",
+   "isRoot": false,
+   "label": "decayed",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001497",
+   "description": "A reproductive quality inhering in the young of an animal by virtue of the bearer's disposition to survive and develop normally.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001497",
+   "isRoot": false,
+   "label": "brood viability",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001768",
+   "description": "A viability quality inhering in a bearer or a population by virtue of some of it's members' inability to survive to reproduce.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001768",
+   "isRoot": false,
+   "label": "semi-lethal (sensu genetics)",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001770",
+   "description": "A viability quality inhering in a population by virtue of some of it's members' ability to survive.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001770",
+   "isRoot": false,
+   "label": "semi-viable",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001991",
+   "description": "A quality inhering in a bearer by virtue of the bearer's disposition to being capable of indefinite growth or division.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001991",
+   "isRoot": false,
+   "label": "immortal",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

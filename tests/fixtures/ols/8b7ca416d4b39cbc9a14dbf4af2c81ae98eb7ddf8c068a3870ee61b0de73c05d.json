@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000212",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000212",
+  "description": "A temperate mixed forest in which dominant ecological communities have reached their climax successional state.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000212",
+  "isRoot": false,
+  "label": "temperate mixed forest biome",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

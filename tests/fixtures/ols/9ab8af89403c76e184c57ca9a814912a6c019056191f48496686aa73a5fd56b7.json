@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "subfamily",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "TAXRANK:0000024",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000024",
+   "isRoot": false,
+   "label": "subfamily",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1069812",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1069812",
+   "isRoot": false,
+   "label": "environmental samples <gastropods,subfamily Stomatellinae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1096669",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1096669",
+   "isRoot": false,
+   "label": "environmental samples <monocots,subfamily Arecoideae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1276569",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1276569",
+   "isRoot": false,
+   "label": "environmental samples <ray-finned fishes,subfamily Alosinae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1276578",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1276578",
+   "isRoot": false,
+   "label": "environmental samples <ray-finned fishes,subfamily Clupeinae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1276581",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1276581",
+   "isRoot": false,
+   "label": "environmental samples <ray-finned fishes,subfamily Batrachoidinae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1285097",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1285097",
+   "isRoot": false,
+   "label": "environmental samples <eudicots,subfamily Stifftioideae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1298843",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1298843",
+   "isRoot": false,
+   "label": "environmental samples <beetles,subfamily Hydroporinae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2116550",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2116550",
+   "isRoot": false,
+   "label": "environmental samples <rodents,subfamily Sigmodontinae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2116552",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2116552",
+   "isRoot": false,
+   "label": "environmental samples <lizards & snakes,subfamily Tropidurinae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2116556",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2116556",
+   "isRoot": false,
+   "label": "environmental samples <rodents,subfamily Murinae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2304634",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2304634",
+   "isRoot": false,
+   "label": "environmental samples <basidiomycete fungi,subfamily Xerocomoideae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2507687",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2507687",
+   "isRoot": false,
+   "label": "environmental samples <red algae,subfamily Polysiphonioideae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2547690",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2547690",
+   "isRoot": false,
+   "label": "environmental samples <basidiomycete fungi,subfamily Boletoideae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2731472",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2731472",
+   "isRoot": false,
+   "label": "environmental samples <flies,subfamily Tipulinae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2811854",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2811854",
+   "isRoot": false,
+   "label": "environmental samples <flies,subfamily Chironominae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2811877",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2811877",
+   "isRoot": false,
+   "label": "environmental samples <flies,subfamily Orthocladiinae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2811896",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2811896",
+   "isRoot": false,
+   "label": "environmental samples <flies,subfamily Tanypodinae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:319697",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_319697",
+   "isRoot": false,
+   "label": "environmental samples <eudicots,subfamily Tilioideae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:359179",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_359179",
+   "isRoot": false,
+   "label": "environmental samples <beetles,subfamily Cicindelinae>",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

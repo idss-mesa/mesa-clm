@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000385",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000385",
+  "description": "A deciduous broadleaf forest which is subject to temperate climate patterns.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000385",
+  "isRoot": false,
+  "label": "temperate deciduous broadleaf forest",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

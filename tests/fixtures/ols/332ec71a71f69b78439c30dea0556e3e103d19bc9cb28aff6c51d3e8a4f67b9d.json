@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "ro",
+  "query": "class",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "RO:0002172",
+   "description": "An assertion that holds between an ontology class and an organism taxon class, which is intepreted to yield some relationship between instances of the ontology class and the taxon.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002172",
+   "isRoot": false,
+   "label": "taxonomic class assertion",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002594",
+   "description": "An annotation property that connects an object property to a class, where the object property is derived from or a shortcut property for the class. The exact semantics of this annotation may vary on a case by case basis.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002594",
+   "isRoot": false,
+   "label": "is relational form of a class",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002420",
+   "description": "A logical macro assertion whose domain is an IRI for a class",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002420",
+   "isRoot": false,
+   "label": "logical macro assertion on a class",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002535",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002535",
+   "isRoot": false,
+   "label": "temporal logical macro assertion on a class",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002560",
+   "description": "If Rel is the relational form of a process Pr, then it follow that: Rel(x,y) <-> exists p : Pr(p), x subject-partner-in p, y object-partner-in p",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002560",
+   "isRoot": false,
+   "label": "is asymmetric relational form of process class",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002561",
+   "description": "If Rel is the relational form of a process Pr, then it follow that: Rel(x,y) <-> exists p : Pr(p), x partner-in p, y partner-in p",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002561",
+   "isRoot": false,
+   "label": "is symmetric relational form of process class",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002562",
+   "description": "R is the relational form of a process if and only if either (1) R is the symmetric relational form of a process or (2) R is the asymmetric relational form of a process",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002562",
+   "isRoot": false,
+   "label": "is relational form of process class",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002161",
+   "description": "x never in taxon T if and only if T is a class, and x does not instantiate the class expression \"in taxon some T\". Note that this is a shortcut relation, and should be used as a hasValue restriction in OWL.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002161",
+   "isRoot": false,
+   "label": "never in taxon",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002173",
+   "description": "S ambiguous_for_taxon T if the class S does not have a clear referent in taxon T. An example would be the class 'manual digit 1', which encompasses a homology hypotheses that is accepted for some species (e.g. human and mouse), but does not have a clear referent in Aves - the referent is dependent on the hypothesis embraced, and also on the ontogenetic stage.  [PHENOSCPAE:asilomar_mtg]",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002173",
+   "isRoot": false,
+   "label": "ambiguous for taxon",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002546",
+   "description": "A relationship between a stage class and an anatomical structure or developmental process class, in which the stage is characterized by the appearance of the structure or the occurrence of the biological process",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002546",
+   "isRoot": false,
+   "label": "has developmental stage marker",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0020326",
+   "description": "A relationship between a biomarker 'b' and a disease or condition of clinical interest 'd', where the presence or occurrence of 'b' provides clinical information about 'd'.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0020326",
+   "isRoot": false,
+   "label": "provides clinical information for",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0020327",
+   "description": "A relationship between a biomarker 'b' and a disease or condition of clinical interest 'd', where the presence or occurrence of 'b' is used to infer the presence or occurrence of 'd' or determine its subtype.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0020327",
+   "isRoot": false,
+   "label": "diagnostic for",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0020328",
+   "description": "A relationship between a serially-measured biomarker 'b' and a disease or condition of clinical interest 'd', where 'b' is used to infer the status of 'd'.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0020328",
+   "isRoot": false,
+   "label": "monitors status of",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0020329",
+   "description": "A relationship between a biomarker 'b' and an exposure agent 'e', where 'b' is used to show that a biological response to 'e' has occurred.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0020329",
+   "isRoot": false,
+   "label": "indicates response to",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0020330",
+   "description": "A relationship between a biomarker 'b' and an exposure agent 'e', where 'b' is used to identify individuals who are likely to experience a favorable or unfavorable effect from exposure to 'e'.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0020330",
+   "isRoot": false,
+   "label": "predicts effect of",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0020331",
+   "description": "A relationship between a biomarker 'b' and a disease or condition of clinical interest 'd', where the presence or occurrence of 'b' is used to infer the likelihood of a clinical event, disease recurrence or progression in patients who have 'd'.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0020331",
+   "isRoot": false,
+   "label": "prognostic for",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0020332",
+   "description": "A relationship between a biomarker 'b' and an exposure agent 'e', where 'b' is used to indicate the likelihood, presence, or extent of toxicity as an adverse effect of exposure to 'e'.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0020332",
+   "isRoot": false,
+   "label": "assesses toxicity of",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0020333",
+   "description": "A relationship between a biomarker 'b' and a disease or condition of clinical interest 'd', where the presence or occurrence of 'b' is used to infer the potential for developing 'd' in an individual that currently does not have 'd'.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0020333",
+   "isRoot": false,
+   "label": "indicates risk of developing",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0020334",
+   "description": "A relationship between a biomarker 'b' and an exposure agent 'e', where the effect of exposure to 'e' is correlated with the presence or occurrence of 'b', and the observation of 'b' is used to infer exposure to 'e'.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0020334",
+   "isRoot": false,
+   "label": "indicates clinical effect of",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0020335",
+   "description": "A relationship between a serially-measured biomarker 'b' and an exposure agent 'e', where 'b' is used to provide evidence of a biological effect of 'e'.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0020335",
+   "isRoot": false,
+   "label": "monitors effect of",
+   "ontologyId": "ro",
+   "synonyms": []
+  }
+ ]
+}

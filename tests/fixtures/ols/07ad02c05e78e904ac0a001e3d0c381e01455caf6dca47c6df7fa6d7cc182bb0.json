@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "Indicator of whether the cup of the trap was disturbed or missing during the sam",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

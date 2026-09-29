@@ -1,0 +1,131 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "parent_iri": "http://purl.obolibrary.org/obo/ENVO_00000428",
+  "query": "shrubland",
+  "size": 20
+ },
+ "method": "search_term_descendants",
+ "response": [
+  {
+   "curie": "ENVO:01000216",
+   "description": "A montane shrubland biome is a shrubland biome which occurs in regions elevated above sea level and which has community structure determined by elevation-dependent environmental conditions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000216",
+   "isRoot": false,
+   "label": "montane shrubland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000217",
+   "description": "A mediterranean shrubland biome is a subtropical shrubland biome which includes communities adapted to hot to warm, dry summers, mild to cold, rainy winters, and the influence of large, usually marine, bodies of water.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000217",
+   "isRoot": false,
+   "label": "mediterranean shrubland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001369",
+   "description": "A shrubland biome which is densely vegetated by dwarf or short mangroves (and associates) that are generally less than 6 meters in height, is tidally influenced,  is located in tropical or subtropical areas.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001369",
+   "isRoot": false,
+   "label": "tidal mangrove shrubland",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000176",
+   "description": "A shrubland biome is a terrestrial biome which includes, across its entire spatial extent, dense groups of shrubs.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000176",
+   "isRoot": false,
+   "label": "shrubland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000213",
+   "description": "A shrubland biome which is subject to subtropical climate patterns.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000213",
+   "isRoot": false,
+   "label": "subtropical shrubland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000214",
+   "description": "A shrubland biome which is subject to tropical climate patterns.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000214",
+   "isRoot": false,
+   "label": "tropical shrubland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000215",
+   "description": "A shrubland biome which is subject to temperate climate patterns.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000215",
+   "isRoot": false,
+   "label": "temperate shrubland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000218",
+   "description": "Preliminary definition. The semantics and definitions of \"mediterranean\", \"subtropical\", \"tropical\", \"temperate\", \"polar\", and similar climate types may be transferred to an \"environmental condition\" class once the semantics of this class have been established.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000218",
+   "isRoot": false,
+   "label": "xeric shrubland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000300",
+   "description": "Area covered with low-growing or stunted perennial vegetation and usually not mixed with trees.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000300",
+   "isRoot": false,
+   "label": "scrubland area",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000893",
+   "description": "According to the NLCD 2011, at least 20% of these areas are covered by forest or shrubland vegetation.  Such thresholds - which are themselves fuzzy - are not strictly asserted in this definition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000893",
+   "isRoot": false,
+   "label": "area of woody wetland",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000301",
+   "description": "A shrubland area found primarily in regions with a Mediterranean climate (mid, wet winters and hot dry summers) often shaped by wildfires.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000301",
+   "isRoot": false,
+   "label": "chaparral area",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000181",
+   "description": "Preliminary definition. Depending on whether mangrove trees or shrubs are present, this class could be a child of shrubland biome or woodland biome. Consider creating the appropriate classes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000181",
+   "isRoot": false,
+   "label": "mangrove biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

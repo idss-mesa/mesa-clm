@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "latitude",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01001295",
+   "description": "A warm-core cyclone which occurs in the middle and high latitudes, primarily drawing energy from horizontal temperature contrasts between atmospheric fronts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001295",
+   "isRoot": false,
+   "label": "extra-tropical cyclone",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000146",
+   "description": "A region of permanent snow in mountainous areas or high latitudes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000146",
+   "isRoot": false,
+   "label": "snow field",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000262",
+   "description": "A plain without trees (apart from those near rivers and lakes); it is similar to a prairie, although a prairie is generally considered as being dominated by tall grasses, while short grasses are said to be normal in the steppe. It may be semi-desert, or covered with grass or shrubs or both, depending on the season and latitude.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000262",
+   "isRoot": false,
+   "label": "steppe",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000537",
+   "description": "A high altitude or high latitude bare, flat area covered with large angular rocks.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000537",
+   "isRoot": false,
+   "label": "boulder field",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000103",
+   "description": "A warm water, narrow marine surface current flowing from the equator to high latitudes at speeds between 40 and 120 kilometers per day. Western boundary currents are the deepest ocean surface flows, usually extending 1000 meters below the ocean surface.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000103",
+   "isRoot": false,
+   "label": "western boundary current",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000104",
+   "description": "A cold water, broad marine surface current flowing from high latitudes to the equator at speeds between 3 and 7 kilometers per day.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000104",
+   "isRoot": false,
+   "label": "eastern boundary current",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000106",
+   "description": "The permanent marine thermocline is typically found in temperate to tropical latitudes,",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000106",
+   "isRoot": false,
+   "label": "permanent marine thermocline",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000108",
+   "description": "The marine cold-water sphere describes a water mass extending from the polar seas and across low latitudes at depths of ca. 800 to 1000 m, which is separated from the marine warm-water sphere by the permanent marine thermocline",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000108",
+   "isRoot": false,
+   "label": "marine cold-water sphere",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000109",
+   "description": "The marine warm-water sphere describes a water mass extending to depths of ca. 800 to 1000 m in low and middle latitudes. It is separated from the marine cold-water sphere by the permanent marine thermocline",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000109",
+   "isRoot": false,
+   "label": "marine warm-water sphere",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000206",
+   "description": "This class' definition is less satisfactory than the other latitudinal conditoins.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000206",
+   "isRoot": false,
+   "label": "temperate",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000342",
+   "description": "An altitudinal condition which inheres in a bearer by virtue of the bearer being located at an altitude between mid-altitude forests and the tree line.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000342",
+   "isRoot": false,
+   "label": "montane",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000343",
+   "description": "Depending on the latitude (and, to a lesser extent, other factors), the actual location of the zones where these conditions are in effect will change.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000343",
+   "isRoot": false,
+   "label": "altitudinal condition",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000379",
+   "description": "This is an interesting overlap of a latitudinal and altitudinal condition. Some link between this condition and the altitudinal conditions should be considered. This condition corresponds to the Cfb and Cwb categories of Köppen climate classification.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000379",
+   "isRoot": false,
+   "label": "highland subtropical",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000825",
+   "description": "The primary function of the eaves is to keep rain water off the walls and to prevent the ingress of water at the junction where the roof meets the wall. The secondary function is to control solar penetration; the eaves overhang can be designed to adjust the building's solar heat gain to suit the local climate, the latitude and orientation of the building, refer to passive solar building design. The eaves overhang may also shelter openings to ventilate the roof space.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000825",
+   "isRoot": false,
+   "label": "eaves",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001370",
+   "description": "Tundra ecosysems are often underlaid by permafrost, with the result that drainage is bad and the soil may be saturated for long periods. It does not have a permanent snow-ice cover.  Productivity is low in this biome because of the extremes of climate.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001370",
+   "isRoot": false,
+   "label": "tundra ecosystem",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001498",
+   "description": "Landforms found in Thermokarst terrain include alases, thermokarst lakes, and thermokarst mounds. Landscape dominated by depressions, pits, and caves that is created by the thawing of ground ice in high latitude locations. Resembles karst landscape but is not created by chemical weathering.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001498",
+   "isRoot": false,
+   "label": "thermokarst formation process",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001505",
+   "description": "A tundra biome which exists at high altitudes and where vegetation - dominated by a few species of dwarf shrubs, a few grasses, sedges, lichens, and mosses - is stunted due to low temperatures and high winds.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001505",
+   "isRoot": false,
+   "label": "alpine tundra biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001546",
+   "description": "An ice mass which has broken away from a larger ice mass on land, such as a glacier or ice shelf, and may be either afloat or aground.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001546",
+   "isRoot": false,
+   "label": "iceberg",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03000139",
+   "description": "Fog which is composed of particles of ice.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03000139",
+   "isRoot": false,
+   "label": "ice fog",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001699",
+   "description": "A polar front between the deep, cold Arctic air and the shallower, warmer polar air of northern latitudes on Earth.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001699",
+   "isRoot": false,
+   "label": "Arctic front",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

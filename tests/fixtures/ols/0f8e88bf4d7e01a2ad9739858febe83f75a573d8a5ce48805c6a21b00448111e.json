@@ -1,0 +1,100 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000470",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0001654",
+   "description": "A mass spectrometry assay that detects the binding of an antigen with an antibody.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001654",
+   "isRoot": false,
+   "label": "mass spectrometry assay measuring binding of a B cell epitope:antibody complex",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001923",
+   "description": "A sequencing assay that detremines amino acid sequences of proteins using multiple rounds of mass spectrometry and molecule fragmentation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001923",
+   "isRoot": false,
+   "label": "protein sequencing by tandem mass spectrometry assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002035",
+   "description": "A mass spectrometry assay that measures the absolute mass of the cleaved peptides derived from an unknown protein of interest. These masses are then compared to values for known protein sequences to identify the unknown protein.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002035",
+   "isRoot": false,
+   "label": "peptide mass fingerprinting assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003097",
+   "description": "A mass spectrometry assay where a sample mixture is first separated by liquid chromatography before being converted into ions which are characterized by using mass spectrometry based on their mass-to-charge ratio and relative abundance.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003097",
+   "isRoot": false,
+   "label": "liquid chromatography mass spectrometry assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003099",
+   "description": "A mass spectrometry assay that involves collection of spatially resolved mass spectra of a sample during microscopy where a pulse laser is used to produce both ionisation and vaporization. The sample is held in a matrix (such as dihydrobenzoic acid) to protect it from direct laser illumination and to separate the sample molecules. The spectra are used to visualise the spatial distribution of biomolecules by their molecular masses.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003099",
+   "isRoot": false,
+   "label": "matrix assisted laser desorption ionization imaging mass spectrometry assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003101",
+   "description": "A mass spectrometry assay that analyzes organic and biological molecules on a substrate by desorption of an analyte into a solvent bridge formed between two capillaries and the analysis surface. One capillary supplies solvent to create and maintain the bridge, while the second capillary transports the dissolved analyte from the bridge to the mass spectrometer. A high voltage applied between the inlet of mass spectrometer and the primary capillary creates a self-aspirating nanospray.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003101",
+   "isRoot": false,
+   "label": "nanospray desorption electrospray ionization assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003110",
+   "description": "A mass spectrometry assay combining mass spectrometry and gas chromatography for the qualitative as well as quantitative determination of compounds.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003110",
+   "isRoot": false,
+   "label": "gas chromatography mass spectrometry assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003540",
+   "description": "A mass spectrometry assay that uses two or more analyzers separated by a region in which ions can be induced to fragment by transfer of energy (frequently by collision with other molecules).",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003540",
+   "isRoot": false,
+   "label": "tandem mass spectrometry assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003741",
+   "description": "A mass spectrometry assay where a sample mixture is first separated by capillary electrophoresis before being analysed by mass spectrometry.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003741",
+   "isRoot": false,
+   "label": "capillary electrophoresis mass spectrometry assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

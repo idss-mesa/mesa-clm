@@ -1,0 +1,21 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "parent_iri": "http://purl.obolibrary.org/obo/ENVO_00000428",
+  "query": "xeric shrubland biome",
+  "size": 20
+ },
+ "method": "search_term_descendants",
+ "response": [
+  {
+   "curie": "ENVO:01000218",
+   "description": "Preliminary definition. The semantics and definitions of \"mediterranean\", \"subtropical\", \"tropical\", \"temperate\", \"polar\", and similar climate types may be transferred to an \"environmental condition\" class once the semantics of this class have been established.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000218",
+   "isRoot": false,
+   "label": "xeric shrubland biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

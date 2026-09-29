@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0200073",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0200066",
+   "description": "a data transformation that performs more than one hypothesis test simultaneously, a closed-test procedure, that  controls the familywise error rate for all the k hypotheses at level α in the strong sense. Objective: multiple testing correction",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200066",
+   "isRoot": false,
+   "label": "Holm-Bonferroni family-wise error rate correction method",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200092",
+   "description": "Is a data transformation process in which the Westfall and Young method is applied with the aim of controlling for multiple testing",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200092",
+   "isRoot": false,
+   "label": "Westfall and Young family wise error rate correction",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

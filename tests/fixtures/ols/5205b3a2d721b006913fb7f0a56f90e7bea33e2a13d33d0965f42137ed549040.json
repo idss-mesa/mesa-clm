@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000256",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01000508",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000508",
+   "isRoot": false,
+   "label": "salt material",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000853",
+   "description": "Marl is a mass of calcium carbonate derived from mollusk shells and mixed with silt and clay.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000853",
+   "isRoot": false,
+   "label": "marl",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:02000100",
+   "description": "Dust which is derived from mineral material.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_02000100",
+   "isRoot": false,
+   "label": "mineral dust",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

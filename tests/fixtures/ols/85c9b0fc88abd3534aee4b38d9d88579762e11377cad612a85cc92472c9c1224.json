@@ -1,0 +1,10 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "parent_iri": "http://purl.obolibrary.org/obo/ENVO_00000428",
+  "query": "temperate deciduous forest biome",
+  "size": 20
+ },
+ "method": "search_term_descendants",
+ "response": []
+}

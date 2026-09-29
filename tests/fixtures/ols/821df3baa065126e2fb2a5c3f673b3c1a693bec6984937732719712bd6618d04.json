@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000504",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0000476",
+   "description": "The traditional hardware system that allows a human to inject a sample into an inlet by hand, using a syringe.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000476",
+   "isRoot": false,
+   "label": "manual injection system",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000525",
+   "description": "Injected sample enters column immediately (while split valve to split vent is closed). Here a sample is introduced into a heated small chamber via a syringe through a septum - the heat facilitates volatilization of the sample and sample matrix. The carrier gas then either sweeps the entirety (splitless mode) or a portion (split mode) of the sample into the column. In split mode, a part of the sample/carrier gas mixture in the injection chamber is exhausted through the split vent.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000525",
+   "isRoot": false,
+   "label": "splitless GC injector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000610",
+   "description": "A gas chromatography device that can auto-inject a small number of samples an inlet.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000610",
+   "isRoot": false,
+   "label": "auto injector",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

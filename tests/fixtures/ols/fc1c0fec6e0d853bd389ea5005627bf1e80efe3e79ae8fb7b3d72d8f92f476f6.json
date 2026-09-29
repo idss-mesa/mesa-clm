@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1089348",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:1089349",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1089349",
+   "isRoot": false,
+   "label": "uncultured Magnaporthales",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

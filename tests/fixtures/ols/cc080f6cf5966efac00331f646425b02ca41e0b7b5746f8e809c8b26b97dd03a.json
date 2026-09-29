@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GAZ_00002518",
+  "ontology_id": "gaz"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "GAZ:00002518",
+  "description": "A state located in the southwestern region of the United States. It borders New Mexico, Utah, Nevada, California, touches Colorado, and has a 626 km international border with the States of Sonora and Baja California in Mexico.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/GAZ_00002518",
+  "isRoot": true,
+  "label": "State of Arizona",
+  "ontologyId": "gaz",
+  "synonyms": []
+ }
+}

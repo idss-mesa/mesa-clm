@@ -1,0 +1,80 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "sample collected",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "BCO:0000025",
+   "description": "An information artifact that is about a spatio-temporal region at which a process (such as collecting process, observing process, or material sampling process) occured.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/BCO_0000025",
+   "isRoot": false,
+   "label": "locality description",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "BCO:0000031",
+   "description": "An object aggregate that has as member part a material sample that is located in museum as a result of a process of curation.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/BCO_0000031",
+   "isRoot": false,
+   "label": "museum collection",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "BCO:0000032",
+   "description": "A museum collection that has as member part a material sample that was derived from an organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/BCO_0000032",
+   "isRoot": false,
+   "label": "organismal museum collection",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "bco:0000080",
+   "description": "A preserved specimen that is the output of an archaeological sampling process and is the remains of a part of some animal.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/bco_0000080",
+   "isRoot": false,
+   "label": "zooarcheological specimen",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "bco:0000081",
+   "description": "A preserved specimen that is the output of an archaeological sampling process and is the remains of a part of some plant.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/bco_0000081",
+   "isRoot": false,
+   "label": "archeobotanical specimen",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "MaterialSample",
+   "description": "A physical result of a sampling (or subsampling) event. In biological collections, the material sample is typically collected, and either preserved or destructively processed.",
+   "hasChildren": true,
+   "iri": "http://rs.tdwg.org/dwc/terms/MaterialSample",
+   "isRoot": false,
+   "label": "Material Sample",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "MaterialSample",
+   "description": "A physical result of a sampling (or subsampling) event. In biological collections, the material sample is typically collected, and either preserved or destructively processed.",
+   "hasChildren": true,
+   "iri": "http://rs.tdwg.org/dwc/terms/MaterialSample",
+   "isRoot": false,
+   "label": "Material Sample",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

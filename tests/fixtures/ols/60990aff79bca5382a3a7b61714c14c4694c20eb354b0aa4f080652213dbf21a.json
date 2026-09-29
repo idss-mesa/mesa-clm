@@ -1,0 +1,110 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000637",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0000466",
+   "description": "The most commonly used detector in preparative GC is the thermal conductivity detector (hot wire detector). Even this detector, however, is often too sensitive and has too high a flow impedance. Under such circumstances, the procedure mentioned above must be employed. The eluent from the preparative column is split and a small portion diverted through the detector (sometimes with further dilution with carrier gas to reduce sensitivity).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000466",
+   "isRoot": false,
+   "label": "thermal conductivity detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000489",
+   "description": "The nitrogen phosphorus detector (NPD) (sometimes called the thermionic detector) is a very sensitive, specific detector the design of which, is based on the FID. Physically the sensor appears to be very similar to the FID but, in fact, operates on an entirely different principle. The nitrogen phosphorous detector (sometimes called the thermionic detector) is a very sensitive but specific detector that responds almost exclusively to nitrogen and phosphorous compounds. It is based on the flame ionization detector but differs in that it contains a rubidium or cesium silicate (glass) bead situated in a heater coil, a little distance from the hydrogen flame. If the detector is to respond to both nitrogen and phosphorous then the hydrogen flow should be minimal so that the gas does not ignite at the jet. If the detector is to respond to phosphorous only, a large flow of hydrogen is used which is burnt at the jet. The heated bead emits electrons by thermionic emission. These electrons are collected under a potential of a few volts by an appropriately placed anode, and provides a background current. When a solute containing nitrogen or phosphorous is eluted from the column, the partially combusted nitrogen and phosphorous materials are adsorbed on the surface of the bead. The adsorbed material reduces the work function of the surface and, as consequence, the emission of electrons is increased which raises the current collected at the electrode. The sensitivity of the detector to phosphorous is about 10-12 gram per ml and for nitrogen about 10-11 gram per ml at a signal to nose ratio of 2. The alkali bead as a finite life and needs regular replacement.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000489",
+   "isRoot": false,
+   "label": "nitrogen phosphorous detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000506",
+   "description": "The selective determination of aromatic hydrocarbons or organo-heteroatom species is the job of the photoionization detector (PID). This device uses ultraviolet light as a means of ionizing an analyte exiting from a GC column. The ions produced by this process are collected by electrodes. The current generated is therefore a measure of the analyte concentration. f the amount of ionization is reproducible for a given compound, pressure, and light source then the current collected at the PID's reaction cell electrodes is reproducibly proportional to the amount of that compound entering the cell. The reason why the compounds that are routinely analyzed are either aromatic hydrocarbons or heteroatom containing compounds (like organosulfur or organophosphorus species) is because these species have ionization potentials (IP) that are within reach of commercially available UV lamps. The available lamp energies range from 8.3 to 11.7 ev, that is, lambda max ranging from 150 nm to 106 nm. Although most PIDs have only one lamp, lamps in the PID are exchanged depending on the compound selectivity required in the analysis.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000506",
+   "isRoot": false,
+   "label": "photoionization detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000509",
+   "description": "The electron capture detector is a GC detector that uses a radioactive Beta emitter (electrons) to ionize some of the carrier gas and produce a current between a biased pair of electrodes. When organic molecules that contain electronegative functional groups, such as halogens, phosphorous, and nitro groups pass by the detector, they capture some of the electrons and reduce the current measured between the electrodes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000509",
+   "isRoot": false,
+   "label": "electron capture detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000521",
+   "description": "A flame ionization detector is a GC detector that consist of a hydrogen/air flame and a collector plate which are normally heated independently of the chromatographic oven. Heating is necessary in order to prevent condensation of water generated by the flame and also to prevent any hold-up of solutes as they pass from the column to the flame. There is an electrode above the flame to collect the ions formed at a hydrogen/air flame. The number of ions hitting the collector is measured and a signal is generated. Flame ionization detectors are most widely used and generally applicable for gas chromatography and hence is used for routine and general purpose analysis. It is easy to use but destructive of the sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000521",
+   "isRoot": false,
+   "label": "flame ionization detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000569",
+   "description": "A mass selective detector is a GC detector that uses mass spectrometry. It is based upon the ionization of solute molecules in the ion source and the separation of the ions generated on the basis of their mass/charge ratio by an analyzer unit. This may be a magnetic sector analyzer, a quadruple mass filter, or an ion trap. Ions are detected by a dynode electron multiplier.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000569",
+   "isRoot": false,
+   "label": "mass selective detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000588",
+   "description": "The determination of sulfur or phosphorus containing compounds is the job of the flame photometric detector (FPD). This device uses the chemiluminescent reactions of these compounds in a hydrogen/air flame as a source of analytical information that is relatively specific for substances containing these two kinds of atoms. The emitting species for sulfur compounds is excited S2. The lambda max for emission of excited S2 is approximately 394 nm. The emitter for phosphorus compounds in the flame is excited HPO (lambda max = doublet 510-526 nm). In order to selectively detect one or the other family of compounds as it elutes from the GC column, an interference filter is used between the flame and the photomultiplier tube (PMT) to isolate the appropriate emission band. The drawback here being that the filter must be exchanged between chromatographic runs if the other family of compounds is to be detected.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000588",
+   "isRoot": false,
+   "label": "flame photometric detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000598",
+   "description": "Although there are many direct ozone chemiluminescent reactions with various gaseous molecules, the incorporation of a conversion step to convert various non-chemiluminescent analytes to a species capable of reacting with ozone to produce chemiluminescence broadens the horizon of this technique tremendously. The conversion of nearly all nitrogen- and sulfur-containing compounds to their respective chemiluminescent species for universal nitrogen and sulfur detection has made nitrogen/sulfur chemiluminescence detection the most widely used analytical methods based upon ozone-induced chemiluminescence. In addition to non-chromatographic applications, nitrogen/sulfur chemiluminescence detection has been adapted to various chromatographic techniques from gas chromatography to liquid and supercritical fluid chromatography as specialized element-specific detectors. The characteristics of these detectors are evaluated and compared to other element-selective detection techniques. The unique features of the chemiluminescence detectors have made them powerful tools in many diverse fields of analytical chemistry.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000598",
+   "isRoot": false,
+   "label": "ozone-induced chemiluminescence detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000617",
+   "description": "A gas chromatographic detection system based on the low pressure, gas phase chemiluminescence of the reaction mixture of molecular fluorine with organo-sulfur, -selenium, and -tellurium compounds separated from (gas phase) headspace samples. This detector was originally developed in the research group of John Birks at the University of Colorado, USA and was manufactured and sold by Sievers Instruments (Boulder Colorado, USA). This system can be divided up into three parts: the chromatograph, transfer line, and reaction cell; PMT and photon counting electronics; and the molecular fluorine generator.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000617",
+   "isRoot": false,
+   "label": "fluorine-induced chemiluminescence detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000642",
+   "description": "Instead of measuring simple gas phase (carbon containing) ions created in a flame as with the flame ionization detector, or the change in background current because of electronegative element capture of thermal electrons as with the electron capture detector, the AED has a much wider applicability because it is based on the detection of atomic emissions. The strength of the AED lies in the detector's ability to simultaneously determine the atomic emissions of many of the elements in analytes that elute from a GC capillary column (called eluants or solutes in some books). As eluants come off the capillary column they are fed into a microwave powered plasma (or discharge) cavity where the compounds are destroyed and their atoms are excited by the energy of the plasma. The light that is emitted by the excited particles is separated into individual lines via a photodiode array. The associated computer then sorts out the individual emission lines and can produce chromatograms made up of peaks from eluants that contain only a specific element.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000642",
+   "isRoot": false,
+   "label": "atomic emission detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

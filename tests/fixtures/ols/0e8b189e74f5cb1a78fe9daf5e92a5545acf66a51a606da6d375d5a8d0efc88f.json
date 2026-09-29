@@ -1,0 +1,150 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "genus",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001787",
+   "description": "This is the genus-level taxonomic name of an organism playing a pathogen role",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001787",
+   "isRoot": false,
+   "label": "genus of pathogen",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001191",
+   "description": "A data field which describes the taxonomic name of the organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001191",
+   "isRoot": false,
+   "label": "organism",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102049",
+   "description": "PCDS: The target taxonomic name refers to the specific species, genus, or other taxonomic classification that the assay or diagnostic test is designed to identify, detect, or characterize. This may include the full binomial name (Genus species) or a higher taxonomic rank (i.e., genus, family) when species-level identification is not applicable. Avoid abbreviations. Search for taxonomic names here: ncbi.nlm.nih.gov/taxonomy.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102049",
+   "isRoot": false,
+   "label": "target taxonomic name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000065",
+   "description": "A device that generates an automated genetic fingerprint of a bacterium from a bacterial suspension.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000065",
+   "isRoot": false,
+   "label": "Qualicon (DuPont) RiboPrinter Microbial Characterization System",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:genus",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_genus",
+   "isRoot": false,
+   "label": "obsolete genus",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:7215",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_7215",
+   "isRoot": false,
+   "label": "Drosophila <flies,genus>",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "DOID:0050398",
+   "description": "A bartonellosis that results_in infection located_in endothelial cells or located_in red blood cells, has_material_basis_in Bartonella bacilliformis, which is transmitted_by sandflies of genus Lutzomyia. The infection has acute and chronic phases. The acute phase is characterized by severe hemolytic anemia and transient immunosuppression. The chronic phase is characterized by verruga peruana lesions which may ulcerate and bleed.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/DOID_0050398",
+   "isRoot": false,
+   "label": "Carrion's disease",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "DOID:0060859",
+   "description": "A primary bacterial infectious disease caused by the bacteria of the genus Salmonella. It has symptoms diarrhea, fever, vomiting, and abdominal cramps 12 to 72 hours after infection. In most cases, the illness lasts four to seven days, and most people recover without treatment.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/DOID_0060859",
+   "isRoot": false,
+   "label": "salmonellosis",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "DOID:11077",
+   "description": "A primary bacterial infectious disease that is caused by the bacteria of the genus Brucella, when humans come in contact with contaminated animals or animal products or ingestion of infected food products. The disease has_symptom fever, has_symptom sweat, has_symptom headache, has_symptom back pain, has_symptom physical weakness, has_symptom joint pain and has_symptom fatigue.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/DOID_11077",
+   "isRoot": false,
+   "label": "brucellosis",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "DOID:11102",
+   "description": "A primary bacterial infectious disease that is caused by the bacteria of the genus Bartonella.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/DOID_11102",
+   "isRoot": false,
+   "label": "bartonellosis",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "DOID:8596",
+   "description": "An upper respiratory tract disease described as an acute contagious disease caused by Group A bacteria of the genus Streptococcus (especially various strains of S. pyogenes) and characterized by inflammation of the nose, throat, and mouth, generalized toxemia, and a red rash.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/DOID_8596",
+   "isRoot": false,
+   "label": "scarlet fever",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "DOID:9063",
+   "description": "A commensal bacterial infectious disease that is characterized by widespread erythema, peeling, and necrosis of the skin, that is caused by a toxin produced by a bacterium of the genus Staphylococcus (S. aureus). The infection has_symptom redness of skin, has_symptom fluid-filled blister formation, has_symptom fever and has_symptom irritability.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/DOID_9063",
+   "isRoot": false,
+   "label": "Ritter's disease",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "MONDO:0020590",
+   "description": "Infection due to organisms from the genus Mycobacteria.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/MONDO_0020590",
+   "isRoot": false,
+   "label": "mycobacterial infectious disease",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "MONDO:0022034",
+   "description": "Virus diseases caused by the Lentivirus genus. They are multi-organ diseases characterized by long incubation periods and persistent infection.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/MONDO_0022034",
+   "isRoot": false,
+   "label": "lentivirus infection",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

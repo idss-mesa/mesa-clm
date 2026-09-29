@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100293",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0100082",
+   "description": "A variant designation which is 1) a variant of the Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), 2) believed to have genetic mutations that increase binding affinity to human cells, 3) linked to rapid spread in human populations, and 4) is being monitored.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100082",
+   "isRoot": false,
+   "label": "variant of concern (SARS-CoV-2)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100083",
+   "description": "A variant designation which is 1) a variant of the Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), 2) demonstrated to have genetic mutations that increase binding affinity to human cells, 3) linked to rapid spread in human populations, and 4) is under surveillance.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100083",
+   "isRoot": false,
+   "label": "variant of interest (SARS-CoV-2)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100279",
+   "description": "A variant designation which is 1) a variant of the Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-CoV-2), 2) containing genetic mutates that may increase binding affinity to human cells, 3) linked to rapid spread in human populations, 4) is being monitored, and 5) denoted as a lower risk than a Variant of Interest (VOI).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100279",
+   "isRoot": false,
+   "label": "variant under monitoring (SARS-CoV-2)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

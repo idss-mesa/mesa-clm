@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_141976",
+  "ontology_id": "ncbitaxon"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "NCBITaxon:141976",
+  "description": "",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_141976",
+  "isRoot": false,
+  "label": "Plethodon cinereus",
+  "ontologyId": "ncbitaxon",
+  "synonyms": []
+ }
+}

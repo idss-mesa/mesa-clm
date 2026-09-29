@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000022",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000022",
+  "description": "A mass unit which is equal to one thousandth of a gram or 10^[-3] g.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000022",
+  "isRoot": false,
+  "label": "milligram",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

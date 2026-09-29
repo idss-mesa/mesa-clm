@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "individual count",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00204203",
+   "description": "A river. A tributary of the Des Plaines River, begins as two individual streams. The West Branch of the DuPage River, starting out in Hanover Park in Cook County, continues southward through the entire county of DuPage, including the towns of Bartlett, Wheaton, Warrenville, Winfield and Naperville. The East Branch of the DuPage River begins in Bloomingdale and flows southward through Glendale Heights, Glen Ellyn, Lisle, Woodridge, parts of Naperville and parts of Bolingbrook. Both branches flow though many forest preserves and parks. The two branches meet at a spot between Naperville and Bolingbrook. The combined DuPage River continues southward from that point, through Plainfield and then west of Joliet, before finally meeting the Des Plaines River.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00204203",
+   "isRoot": true,
+   "label": "DuPage River",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00063811",
+   "description": "A network of mostly navigable rivers and lakes (known locally as broads) in the English counties of Norfolk and Suffolk. The lakes (Broads) themselves are ancient artificial features, resulting from the flooding of early peat excavations. The Broads largely follows the line of the rivers and natural navigations of the area. There are seven navigable rivers, the River Yare and its (direct and indirect) tributaries the Rivers Bure, Thurne, Ant, Waveney, Chet and Wensum. There are no locks on any of the rivers (except for Mutford lock in Oulton Broad that links to the saltwater Lake Lothing in Lowestoft), all the waterways are subject to tidal influence. The tidal range decreases with distance from the sea, with highly tidal areas such as Breydon Water contrasted with effectively non-tidal reaches such as the River Ant upstream of Barton Broad. The broads themselves range in size from small pools to the large expanses of Hickling Broad, Barton Broad and Breydon Water. The broads are unevenly distributed, with far more broads in the northern half of Broadland (the Rivers Bure, Thurne and Ant) than in the central and southern portions (the Rivers Yare, Waveney, Chet and Wensum). Individual broads may lie directly on the river, or are more often situated to one side and connected to the river by an artificial channel or dyke.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00063811",
+   "isRoot": true,
+   "label": "The Broads",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

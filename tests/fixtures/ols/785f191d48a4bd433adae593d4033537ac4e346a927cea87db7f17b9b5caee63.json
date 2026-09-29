@@ -1,0 +1,80 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00000081",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:00000264",
+   "description": "A mountain rising from the ocean seafloor that does not reach to the water's surface (sea level), and thus is not an island. Typically formed from volcanoes that rise abruptly and are usually found rising from a seafloor of 1,000 - 4,000 meters depth. Independent features that rise to at least 1,000 meters above the seafloor.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000264",
+   "isRoot": false,
+   "label": "seamount",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001453",
+   "description": "A mountain which is located on land and which is bounded by an atmosphere or outer space.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001453",
+   "isRoot": false,
+   "label": "terrestrial mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001454",
+   "description": "A mountain that is part of a polar environment.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001454",
+   "isRoot": false,
+   "label": "polar mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001455",
+   "description": "A mountain that is part of a temperate environment.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001455",
+   "isRoot": false,
+   "label": "temperate mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001456",
+   "description": "A mountain that is part of a tropical environment.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001456",
+   "isRoot": false,
+   "label": "tropical mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001459",
+   "description": "On Earth, mountains in this category cross the atmospheric oxycline above which oxygen concentrations fall below the physiological tolerance threshold of most humans. Note that the threshold elevations are inconsistent between the various reports which list this classification: while some have overlapping thresholds, others are non-overlapping. The latter model is used in ENVO for coherence and to adhere to the Kapos et al. 2000 reference.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001459",
+   "isRoot": false,
+   "label": "high-elevation mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001460",
+   "description": "On Earth, mountains in this category are below the atmospheric oxycline above which oxygen concentrations fall below the physiological tolerance threshold of most humans. Note that the threshold elevations are inconsistent between the various reports which list this classification: while some have overlapping thresholds, others are non-overlapping. The latter model is used in ENVO for coherence and to adhere to the Kapos et al. 2000 reference.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001460",
+   "isRoot": false,
+   "label": "mid-elevation mountain",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

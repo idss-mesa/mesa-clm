@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000031",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000031",
+  "description": "A time unit which is equal to 60 seconds.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000031",
+  "isRoot": false,
+  "label": "minute",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00000233",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01000327",
+   "description": "A strand swamp is a swamp that forms linear drainage channels on flatlands.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000327",
+   "isRoot": false,
+   "label": "strand swamp",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000328",
+   "description": "A dome swamp is a swamp which occurs in a depression where deeper waters at the centre of the swamp allow  trees to grow taller relative to those in shallower regions of the depression. This creates a dome-like shape.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000328",
+   "isRoot": false,
+   "label": "dome swamp",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000331",
+   "description": "A cypress swamp is a swamp which has a plant community dominated by Cupressaceae, often swamp cypresses. Swamp cypresses typically belong to the genus Taxodium or the species Glyptostrobus pensilis and Actinostrobus pyramidalis.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000331",
+   "isRoot": false,
+   "label": "cypress swamp",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

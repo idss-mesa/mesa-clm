@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000187",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000187",
+  "description": "A dimensionless ratio unit which denotes numbers as fractions of 100.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000187",
+  "isRoot": false,
+  "label": "percent",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

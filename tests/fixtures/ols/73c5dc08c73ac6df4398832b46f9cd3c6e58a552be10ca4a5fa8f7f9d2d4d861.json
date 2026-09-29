@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "The scientific name of the phylum or division in which the taxon is classified",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "phylum",
+   "description": "The full scientific name of the phylum or division in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/phylum",
+   "isRoot": true,
+   "label": "Phylum",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

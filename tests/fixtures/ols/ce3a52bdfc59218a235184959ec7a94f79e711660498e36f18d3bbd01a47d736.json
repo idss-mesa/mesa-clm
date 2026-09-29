@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_124969",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:124970",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_124970",
+   "isRoot": false,
+   "label": "Tribeles australis",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

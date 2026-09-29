@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "taxrank",
+  "query": "family",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "TAXRANK:0000004",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000004",
+   "isRoot": false,
+   "label": "family",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  }
+ ]
+}

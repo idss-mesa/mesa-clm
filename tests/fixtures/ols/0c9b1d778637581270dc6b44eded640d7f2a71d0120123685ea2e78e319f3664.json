@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000383",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000383",
+  "description": "An evergreen needleleaf forest which is subject to temperate climate patterns.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000383",
+  "isRoot": false,
+  "label": "temperate evergreen needleleaf forest",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

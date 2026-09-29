@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_1000179",
+  "ontology_id": "uo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "UO:0000179",
+   "description": "A unit per milliliter unit which is equal to one unit of an agreed arbitrary amount per one liter.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000179",
+   "isRoot": false,
+   "label": "unit per liter",
+   "ontologyId": "uo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "family",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "family",
+   "description": "The full scientific name of the family in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/family",
+   "isRoot": true,
+   "label": "Family",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000024",
+   "description": "An organismal entity that consists of one or more people who live in the same dwelling and also share at meals or living accommodation, and may consist of a single family or some other grouping of people.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000024",
+   "isRoot": false,
+   "label": "household",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

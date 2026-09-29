@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000846",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01001883",
+   "description": "A water ice crystal which is a part of a deposit of hoarfrost and which only grows by desublimation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001883",
+   "isRoot": false,
+   "label": "hoar crystal",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:03520007",
+   "description": "A water ice crystal which is constituted by water molecules aligned in a hexagonal array.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_03520007",
+   "isRoot": false,
+   "label": "snow crystal",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "sex",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PCO:0000001",
+   "description": "A collection of organisms, all of the same species, that live in the same place.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000001",
+   "isRoot": false,
+   "label": "population of organisms",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001338",
+   "description": "For example a mixture of females and male or males and hermaphrodites.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001338",
+   "isRoot": false,
+   "label": "mixed sex",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "CARO:0000012",
+   "description": "Anatomical structure that is an individual member of a clade and, at some point in its life-cycle, consists of more than one cell.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/CARO_0000012",
+   "isRoot": false,
+   "label": "multicellular organism",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

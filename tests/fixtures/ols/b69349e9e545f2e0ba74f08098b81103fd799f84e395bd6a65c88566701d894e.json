@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0302716",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0302716",
+  "description": "A pool of specimens is a mixture of a population of samples which have been gathered from one or more sample populations, obtained by the physical process of mixing individual specimens, e.g.  mixing the DNA collected from the individual fish.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0302716",
+  "isRoot": false,
+  "label": "pool of specimens",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

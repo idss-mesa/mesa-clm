@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_303570",
+  "ontology_id": "ncbitaxon",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "NCBITaxon:303572",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_303572",
+   "isRoot": false,
+   "label": "Eucoilinae gen. E sp. 1 MB405",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

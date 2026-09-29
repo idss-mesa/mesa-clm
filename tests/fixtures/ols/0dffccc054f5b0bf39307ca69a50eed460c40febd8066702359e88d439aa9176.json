@@ -1,0 +1,110 @@
+{
+ "args": {
+  "ontology_id": "iao",
+  "query": "number",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "IAO:0000017",
+   "description": "A model number is an information content entity specifically borne by catalogs, design specifications, advertising materials, inventory systems and similar  that is about manufactured objects of the same class. The model number is an alternative term for the class. The manufactered objects may or may not also bear the model number. Model numbers can be encoded in a variety of other information objects, such as bar codes, numerals, or patterns of dots.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000017",
+   "isRoot": false,
+   "label": "model number",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000132",
+   "description": "A lot number is an information content entity which is an identical sequence of character borne by part of manufactured product or its packaging for each instances of a product class in a discrete batch of an item. Lot numbers are usually assigned to each separate production run of an item. Manufacturing as a lot might be due to a variety of reasons, for example,  a single process during which many individuals are made from the same portion of source material. Lot numbers can be encoded in a pattern  of other information objects, such as bar codes, numerals, or patterns of dots.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000132",
+   "isRoot": false,
+   "label": "lot number",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000131",
+   "description": "A serial number is an information content entity which is a unique sequence of characters borne by part of manufactured product or its packaging that is assigned to each individual in some class of products, and so can serve as a way to identify an individual product within the class. Serial numbers can be encoded in a variety of other information objects, such as bar codes, numerals, or patterns of dots.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000131",
+   "isRoot": false,
+   "label": "serial number",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000129",
+   "description": "A version number is an information content entity which is a sequence of characters borne by part of each of a class of manufactured products or its packaging and indicates its order within a set of other products having the same name.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000129",
+   "isRoot": false,
+   "label": "version number",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000029",
+   "description": "A symbol that denotes a number.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000029",
+   "isRoot": false,
+   "label": "numeral",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000327",
+   "description": "A table that relates document parts to specific locations in a document (usually page numbers).  This is also a document part (subsumption there should be inferred).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000327",
+   "isRoot": false,
+   "label": "table of contents",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000328",
+   "description": "A table that relates figures in a document to specific locations in that document (usually page numbers).  This is also a document part (subsumption there should be inferred).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000328",
+   "isRoot": false,
+   "label": "table of figures",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000584",
+   "description": "A data set that is an aggregate of data recording some measurement at a number of time points. The time series data set is an ordered list of pairs of time measurement data and the corresponding measurement data acquired at that time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000584",
+   "isRoot": false,
+   "label": "time sampled measurement data set",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "IAO:0000596",
+   "description": "Relates an ontology used to record id policy to the number of digits in the URI. The URI is: the 'has ID prefix\" annotation property value concatenated with an integer in the id range (left padded with \"0\"s to make this many digits)",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000596",
+   "isRoot": true,
+   "label": "has ID digit count",
+   "ontologyId": "iao",
+   "synonyms": []
+  },
+  {
+   "curie": "APOLLO_SV:00000033",
+   "description": "The planned process of finding the number of elements in a finite set of objects.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/APOLLO_SV_00000033",
+   "isRoot": false,
+   "label": "counting",
+   "ontologyId": "iao",
+   "synonyms": []
+  }
+ ]
+}

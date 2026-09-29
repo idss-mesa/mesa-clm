@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000003",
+  "ontology_id": "pco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PCO:0000003",
+  "description": "A quality that inheres in a population of organisms.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000003",
+  "isRoot": false,
+  "label": "quality of a population",
+  "ontologyId": "pco",
+  "synonyms": []
+ }
+}

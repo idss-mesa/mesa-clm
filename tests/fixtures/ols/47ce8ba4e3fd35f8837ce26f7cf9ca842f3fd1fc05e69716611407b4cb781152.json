@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001376",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01001379",
+   "description": "A marine faunal bed which is dominated by mussels of the Mytilus or Modiolus genera either 1) resting on the sediment surface, 2)  partially embedded in the sediment, 3) attached to conspecifics (by using their byssal threads), or 4) attached to a piece of gravel in slightly gravelly fine sediments.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001379",
+   "isRoot": false,
+   "label": "mussel bed",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

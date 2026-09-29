@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "order",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0000042",
+   "description": "Stream order is a measure of the relative size of streams (The smallest tributaries are referred to as first-order streams, while the largest river in the world, the Amazon, is a twelfth-order waterway).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000042",
+   "isRoot": false,
+   "label": "stream order categorical measurement datum",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001901",
+   "description": "This data type is for items that have a unique order or rank with respect to each other in a set BUT NO meaningful DISTANCE metric exists between items aside from their position in the full set.  \"Favorite soft drinks\" or \"Favorite colours\" or \"Closest friends\" are examples.  \n\nLetters of the alphabet cannot be interpreted as ordinal with respect to their use in words, since no uniform rules exist about their placement in words.  But they can be ordinal insofar as they are stated in a particular order in listing off the alphabet.\n\nA distance metric becomes possible if the items have units, e.g. 5cm or 10degrees celcius.  The set's elements can then be mapped to one dimension.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001901",
+   "isRoot": false,
+   "label": "ordered set",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001902",
+   "description": "An unordered set is a set of elements which have no intrinsic (semantic) order with respect to each other. The set of all living people is not intrinsically ordered; an ordering can only be provided by looking at some partiular feature of the given set elements.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001902",
+   "isRoot": false,
+   "label": "unordered set",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000065",
+   "description": "A device that generates an automated genetic fingerprint of a bacterium from a bacterial suspension.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000065",
+   "isRoot": false,
+   "label": "Qualicon (DuPont) RiboPrinter Microbial Characterization System",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000075",
+   "description": "A laboratory sequencing datum which describes the method and chemistry used to determine the order of nucleotides in a DNA molecule.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000075",
+   "isRoot": false,
+   "label": "sequencing chemistry",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000079",
+   "description": "A sequencing run sample identifier is an alphanumeric identifier for a sample.  In bioinformatics processing this identifier is assigned to a sample in order to track it through the process of sequencing and analysis.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000079",
+   "isRoot": false,
+   "label": "sequencing run sample identifier",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000113",
+   "description": "Specimen category is a categorical variable that broadly indicates the source of a specimen in order for data processing systems like NCBI's biosample submission portal to anticipate other fields related to the source. Currently this distinguishes between \"clinical or host associated\" specimens and \"environmental/food or other pathogen\" specimens.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000113",
+   "isRoot": false,
+   "label": "specimen category",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001012",
+   "description": "The MIRU24 - Canadian standard is a Mycobacterium tuberculosis typing method exactly like MIRU24 - international standard except that the report of the ordering of the matching loci is different.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001012",
+   "isRoot": false,
+   "label": "MIRU24 - Canadian standard",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001430",
+   "description": "A line list is a collection of suspected or known disease outbreak cases.  It may also include details about healthy patients associated with an exposure event (picnic, concert etc.) who have been interviewed in order to compare food intake, assess risk factors, etc.  \n\nNote that the health status of people associated with an exposure event can change from healthy or unknown status, to ill patient.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001430",
+   "isRoot": false,
+   "label": "line list object",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001796",
+   "description": "A 'data protected' role between a user and given data entails that a user must be authorized in order to view that data.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001796",
+   "isRoot": false,
+   "label": "data protected",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002031",
+   "description": "An ordinal tree specification is a value specification entity whose subclasses each represent a possible value selection, and which have a linear order with respect to their siblings.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002031",
+   "isRoot": false,
+   "label": "ordinal value specification",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100003",
+   "description": "A sampling strategy in which individuals are sampled in order to perform research.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100003",
+   "isRoot": false,
+   "label": "research sampling",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100023",
+   "description": "A research sampling strategy in which individuals are sampled in order to perform a viral passage experiment.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100023",
+   "isRoot": false,
+   "label": "viral passage experiment strategy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100024",
+   "description": "A research sampling strategy in which samples are collected in order to test a method or protocol.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100024",
+   "isRoot": false,
+   "label": "protocol testing sampling",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100025",
+   "description": "A personal protective clothing item which is a gown worn in order to provide a barrier between a person and the external environment.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100025",
+   "isRoot": false,
+   "label": "personal protective gown",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100238",
+   "description": "A human mass gathering in which humans meet at an arranged place and time in order to discuss or engage in some common interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100238",
+   "isRoot": false,
+   "label": "convention exposure datum",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100558",
+   "description": "A data field which describes the version number of the method used to assess whether a sequence passed a predetermined quality control threshold.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100558",
+   "isRoot": false,
+   "label": "quality control method version",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100949",
+   "description": "A composite sampler which consists of an absorbent material, suspended in flowing water or wastewater, in order to capture microorganisms or particulates over time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100949",
+   "isRoot": false,
+   "label": "moore swab",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102179",
+   "description": "A sampling strategy in which samples are collected in order to research an outbreak which is associated with water.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102179",
+   "isRoot": false,
+   "label": "water associated outbreak investigation sampling",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000005",
+   "description": "A primary administrative division of a country, such as a state in the United States.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000005",
+   "isRoot": false,
+   "label": "first-order administrative region",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

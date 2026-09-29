@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GO_0007605",
+  "ontology_id": "go"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "GO:0007605",
+  "description": "The series of events required for an organism to receive an auditory stimulus, convert it to a molecular signal, and recognize and characterize the signal. Sonic stimuli are detected in the form of vibrations and are processed to form a sound.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/GO_0007605",
+  "isRoot": false,
+  "label": "sensory perception of sound",
+  "ontologyId": "go",
+  "synonyms": []
+ }
+}

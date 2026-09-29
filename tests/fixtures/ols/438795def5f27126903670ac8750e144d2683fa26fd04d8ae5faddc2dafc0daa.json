@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "subfamily",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "subfamily",
+   "description": "The full scientific name of the subfamily in which the taxon is classified.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/subfamily",
+   "isRoot": true,
+   "label": "Subfamily",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

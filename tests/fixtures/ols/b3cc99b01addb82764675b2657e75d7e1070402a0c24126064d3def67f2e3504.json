@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "family",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00049110",
+   "description": "A national park protecting most of the Family Islands.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00049110",
+   "isRoot": true,
+   "label": "Family Islands National Park",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00045432",
+   "description": "A group of continental islands lying a short distance off the coast, about mid-way between Cairns and Townsville, in Queensland (Australia).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00045432",
+   "isRoot": true,
+   "label": "Family Islands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00086236",
+   "description": "A lake in Census Division No. 19, North East Manitoba Area, Manitoba.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00086236",
+   "isRoot": true,
+   "label": "Family Lake",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00088745",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00088745",
+   "isRoot": true,
+   "label": "Municipality of Sagrada Familia",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00136930",
+   "description": "A commune of the Province of Curico. Limita al norte con las comunas de Hualane, Rauco y Romeral, al sur con las comunas de Pencahue y San Rafael, ambas en la provincia de Talca, al este con la comuna de Curepto, de la provincia de Talca, y al oeste con la comuna de Molina.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00136930",
+   "isRoot": true,
+   "label": "Commune of Sagrada Familia",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00161691",
+   "description": "A state-owned forest. Established 1995.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00161691",
+   "isRoot": true,
+   "label": "Welch Family Farm Forest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00161696",
+   "description": "A state-owned forest. Established 1979.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00161696",
+   "isRoot": true,
+   "label": "Thurston V. Williams Family Forest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00161722",
+   "description": "A state-owned forest. Established 1992.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00161722",
+   "isRoot": true,
+   "label": "The Rumrill Family Forest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00161725",
+   "description": "A state-owned forest. Established 1998.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00161725",
+   "isRoot": true,
+   "label": "Olsen Family Forest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00170577",
+   "description": "A public park in Santa Barbara, California. The Preserve is located on the mesa above Arroyo Burro Beach.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00170577",
+   "isRoot": true,
+   "label": "Douglas Family Preserve",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00209486",
+   "description": "A protected area located on West Matagorda Bay, the preserve is located off F.M. 1095 in Matagorda County, southeast of Collegeport.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00209486",
+   "isRoot": true,
+   "label": "Clive Runnells Family Mad Island Marsh Preserve",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00309761",
+   "description": "A barrio of Malaga.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00309761",
+   "isRoot": true,
+   "label": "Sagrada Familia",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00310089",
+   "description": "A barrio of Jerez de la Frontera.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00310089",
+   "isRoot": true,
+   "label": "Sagrada Familia",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00317734",
+   "description": "A barrio of Barcelona.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00317734",
+   "isRoot": true,
+   "label": "Sagrada Familia",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00001108",
+   "description": "An island nation in the Indian Ocean off the southeastern coast of Africa. The main island, also called Madagascar, is the fourth largest island in the world, and is home to 5% of the world's plant and animal species, of which more than 80% are endemic to Madagascar. Most notable are the lemur infraorder of primates, the carnivorous fossa, three endemic bird families and six endemic baobab species. Madagascar is divided into six autonomous provinces (faritany mizakatena), and 22 regions. The regions are further subdivided into 116 districts, 1,548 communes, and 16,969 fokontany.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00001108",
+   "isRoot": true,
+   "label": "Madagascar",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00045435",
+   "description": "One of the Family Islands.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00045435",
+   "isRoot": true,
+   "label": "Wheeler Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00045436",
+   "description": "An island in the middle of the Family Islands group and located approximately 10 km East of Tully Heads.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00045436",
+   "isRoot": true,
+   "label": "Richards Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00045437",
+   "description": "One of the Family Islands.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00045437",
+   "isRoot": true,
+   "label": "Bowden Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00045438",
+   "description": "One of the Family Islands.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00045438",
+   "isRoot": true,
+   "label": "Coombe Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00045439",
+   "description": "One of the Family Islands.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00045439",
+   "isRoot": true,
+   "label": "Hudson Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

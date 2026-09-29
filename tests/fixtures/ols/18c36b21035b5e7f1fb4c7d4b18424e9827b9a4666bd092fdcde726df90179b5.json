@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "The air temperature measured with a handheld weather meter",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

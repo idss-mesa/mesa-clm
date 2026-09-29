@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_0000010",
+  "ontology_id": "uo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "UO:0000010",
+  "description": "A time unit which is equal to the duration of 9 192 631 770 periods of the radiation corresponding to the transition between the two hyperfine levels of the ground state of the caesium 133 atom.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/UO_0000010",
+  "isRoot": false,
+  "label": "second",
+  "ontologyId": "uo",
+  "synonyms": []
+ }
+}

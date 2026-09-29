@@ -1,0 +1,60 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000070",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0000033",
+   "description": "A quality inhering in a substance by virtue of the amount of the bearer's there is mixed with another substance.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000033",
+   "isRoot": false,
+   "label": "concentration of",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000462",
+   "description": "We recommend using the new absent terms (physical absence, absent anatomical entity, or absent process) instead of this class. This is a legacy term and will ultimately be obsoleted.\nSee https://github.com/pato-ontology/pato/issues/331.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000462",
+   "isRoot": false,
+   "label": "absent",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000467",
+   "description": "A quality inhering in a bearer by virtue of the bearer's existence.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000467",
+   "isRoot": false,
+   "label": "present",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001555",
+   "description": "The number of parts of a particular type that the bearer entity has. This is a relational quality, and thus holds between two entities: the bearer of the quality, and the type of parts.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001555",
+   "isRoot": false,
+   "label": "has number of",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0103004",
+   "description": "A quantitative quality that represents the sum of all 'amount' qualities of the component parts that constitute a whole entity. The total amount quality inheres in the whole entity and reflects the aggregate measure across all its components, such that changes in the amount of individual components may not necessarily correspond to equivalent changes in the total amount of the whole.\n\nExample of usage: \"blood total protein amount\" represents the sum of the amounts of all protein types in blood, while \"blood leptin amount\" represents only the amount of leptin proteins. An increase in blood leptin amount does not necessarily mean an increase in blood total protein amount, as other protein levels may decrease simultaneously.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0103004",
+   "isRoot": false,
+   "label": "total amount",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "Data quality flag indicating when composite samples, pooled samples, or sample m",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

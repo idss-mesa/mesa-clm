@@ -1,0 +1,80 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "How the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:2598465",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2598465",
+   "isRoot": false,
+   "label": "Cladorhizidae sp. individual 1 DS-2019",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2598466",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2598466",
+   "isRoot": false,
+   "label": "Cladorhizidae sp. individual 2 DS-2019",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2598467",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2598467",
+   "isRoot": false,
+   "label": "Cladorhizidae sp. individual 3 DS-2019",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2598468",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2598468",
+   "isRoot": false,
+   "label": "Cladorhizidae sp. individual 4 DS-2019",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2598469",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2598469",
+   "isRoot": false,
+   "label": "Cladorhizidae sp. individual 5 DS-2019",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2598470",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2598470",
+   "isRoot": false,
+   "label": "Cladorhizidae sp. individual 6 DS-2019",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2732015",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2732015",
+   "isRoot": false,
+   "label": "Cladorhizidae sp. MBARI D1340-BT2",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

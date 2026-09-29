@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000272",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0000272",
+  "description": "A plan specification which has sufficient level of detail and quantitative information to communicate it between investigation agents, so that different investigation agents will reliably be able to independently reproduce the process.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000272",
+  "isRoot": false,
+  "label": "protocol",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

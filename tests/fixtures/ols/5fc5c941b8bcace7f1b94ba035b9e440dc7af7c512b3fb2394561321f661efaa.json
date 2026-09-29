@@ -1,0 +1,110 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "deciduous forest",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00052744",
+   "description": "A reserve that is located near Kibi town, to the west of the Accra-Kumasi road. This range of hills, aligned approximately north-south, are steep-sided with more or less flat summits. They represent the last remains of the Tertiary peneplain that once covered southern Ghana and are characterized by very ancient bauxitic soils. The reserve lies within the moist semi-deciduous forest zone.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00052744",
+   "isRoot": true,
+   "label": "Atewa Range Forest Reserve",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00006597",
+   "description": "A mixed deciduous forest lying sixty kilometres southeast of Paris, France. It is located primarily in the arrondissement of Fontainebleau in the southwestern part of the department of Seine-et-Marne.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00006597",
+   "isRoot": true,
+   "label": "Foret de Fontainebleau",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00052335",
+   "description": "A deciduous forest. A Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00052335",
+   "isRoot": true,
+   "label": "Oxleas Wood",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00150566",
+   "description": "A river of Switzerland. It rises at Drusberg in the Canton of Schwyz. It passes through the Sihlsee near Einsiedeln, and then enters the Canton of Zurich, flowing through the Sihl valley (Sihltal) at the foot of the Albis, passing the Sihlwald, the largest remaining deciduous forest of the Swiss plateau, near Langnau am Albis. In Zurich the Sihl flows underneath Zurich Hauptbahnhof (parts of the station are actually built below the Sihl), before joining the Limmat.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00150566",
+   "isRoot": false,
+   "label": "Sihl River",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00051431",
+   "description": "A region of the Pirin Mountains that extends between the Todorova Polyana Saddle and the Popovi Livadi Saddle. It constitutes the smallest (7%) and shortest part, being only 7 km long. The highest peak is Orelyak (2,099 m), while the other peaks are under 2,000 m and heavily forested, usually deciduous. There are only two resthouses, Popovi Livadi and Malina.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00051431",
+   "isRoot": true,
+   "label": "Central Pirin Mountains",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00051433",
+   "description": "The lowest and most round part of the Pirin Mountains, the highest peak being Svesthnik at 1,975 m. It occupies 17% of Pirin and is about 11 km long and wide. Well forested with coniferous and deciduous trees, it is the most rarely visited part of the mountains and thus lacks any resthouses.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00051433",
+   "isRoot": true,
+   "label": "South Pirin Mountains",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00594838",
+   "description": "A forest. A cultivated forest of larch (Larix decidua). Established 1738.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00594838",
+   "isRoot": true,
+   "label": "Korabelnaya roshcha",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00499908",
+   "description": "A forest; a remote, rural area of open pastures, moorland and mixed deciduous/coniferous woodland.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00499908",
+   "isRoot": true,
+   "label": "Clun Forest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00525876",
+   "description": "A forest. The only substantial woodland in the Shetland Islands, located at Weisdale. Mixed conifer and deciduous trees were planted between 1909 and 1921.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00525876",
+   "isRoot": true,
+   "label": "Kergord Woods",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00052262",
+   "description": "A mixed area of countryside in the county of Staffordshire, England. The area has been designated as the Cannock Chase Area of Outstanding Natural Beauty. The Chase gives its name to the Cannock Chase local government district. Cannock Chase is located between Cannock, Lichfield, Rugeley and Stafford. It comprises a mixture of natural deciduous woodland, coniferous plantations, open heathland and the remains of early industry, such as coal mining. Despite being relatively small in area, the chase provides a remarkable range of landscape and wildlife, including a herd of around 800 fallow deer. The landscape owes much to the underlying Triassic bunter formations. Efforts are currently underway to increase the amount of heathland on the chase, reintroducing shrubs such as heather in some areas where bracken and birch forest have crowded out most other plants.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00052262",
+   "isRoot": true,
+   "label": "Cannock Chase",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

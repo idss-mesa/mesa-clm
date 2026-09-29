@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "number",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0200161",
+   "description": "A quantile number of false positives correction method is a MTP that controls for the pth quantile of the distribution of the number of false positives out of the total number of tests performed'",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200161",
+   "isRoot": false,
+   "label": "quantile number of false positives correction method",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000119",
+   "description": "A measurement datum measuring the number of subjects in a defined subset in a flow cytometer instrument. The datum has a qualitative role",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000119",
+   "isRoot": false,
+   "label": "number of particles in subset",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000125",
+   "description": "A measurement datum measuring the number of analysis events lost due to errors in data acquisition electronic coincidence in a flow cytometer instrument. The datum has a qualitative role.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000125",
+   "isRoot": false,
+   "label": "number of lost events electronic",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000269",
+   "description": "A measurement datum recording the number of measurement events lost due to overloading of the analysis chip in a flow cytometer instrument. The datum has a qualitative role",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000269",
+   "isRoot": false,
+   "label": "number of lost events computer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001873",
+   "description": "a data item that is the number of times that a given process failed, as an integer",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001873",
+   "isRoot": false,
+   "label": "number of errors",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002137",
+   "description": "A value specification that specifies the value of the RNA Integrity Number as a real value between 1 (most degraded) and 10 (most intact).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002137",
+   "isRoot": false,
+   "label": "RNA Integrity Number value specification",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002394",
+   "description": "A measurement datum of the total number of pregnancies a woman has had.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002394",
+   "isRoot": false,
+   "label": "number of pregnancies",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002395",
+   "description": "A measurement datum of the total number of live births a female has had.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002395",
+   "isRoot": false,
+   "label": "number of live births",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002475",
+   "description": "A data item that is the number of PCR cycles used during the construction of a sequencing library.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002475",
+   "isRoot": false,
+   "label": "number of PCR cycles during library construction",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002476",
+   "description": "A data item that is the number of times an amplification reaction happened.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002476",
+   "isRoot": false,
+   "label": "number of rounds of amplification",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200153",
+   "description": "The number of variables is a feature of any function (including polynomial functions) with domain contained in an n-dimensional vector space and is defined as n, the dimension of such space.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200153",
+   "isRoot": false,
+   "label": "number of variables",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000537",
+   "description": "An assay that determines lost or amplified genomic regions of DNA by comparing genomic DNA originating from tissues from the same or different individuals using specific techniques such as CGH, array CGH, SNP genotyping",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000537",
+   "isRoot": false,
+   "label": "copy number variation profiling assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002136",
+   "description": "A data transformation using the RIN algorithm to generate a quality measure of RNA based on features from an electrophoretic trace.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002136",
+   "isRoot": false,
+   "label": "RNA Integrity Number calculation",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002191",
+   "description": "A centrally registered identifier symbol assigned by a courier organization in order to track the delivery of an item.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002191",
+   "isRoot": false,
+   "label": "courier tracking number",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0500007",
+   "description": "A randomized complete block design is_a study design which assigns randomly treatments to block. The number of units per block equals the number of treatment so each block receives each treatment exactly once (hence the qualifier 'complete'). The design was originally devised from field trials used in agronomy and agriculture. The analysis assumes that there is no interaction between block and treatment. The method was then used in other settings So The randomised complete block design is a design in which the subjects are matched according to a variable which the experimenter wishes to control. The subjects are put into groups (blocks) of the same size as the number of treatments. The members of each block are then randomly assigned to different treatment groups.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0500007",
+   "isRoot": false,
+   "label": "randomized complete block design",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000643",
+   "description": "the relation of the cells in the finger of the skin to the finger, in which an indeterminate number of grains are parts of the whole by virtue of being grains in a collective that is part of the whole, and in which removing one granular part does not nec- essarily damage or diminish the whole. Ontological Whether there is a fixed, or nearly fixed number of parts - e.g. fingers of the hand, chambers of the heart, or wheels of a car - such that there can be a notion of a single one being missing, or whether, by contrast, the number of parts is indeterminate - e.g., cells in the skin of the hand, red cells in blood, or rubber molecules in the tread of the tire of the wheel of the car.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000643",
+   "isRoot": false,
+   "label": "has grain",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003776",
+   "description": "A regulation of synapse maturation assay that determines the number of synaptic puncta in a culture and normalizes it by the number of neurons in the culture.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003776",
+   "isRoot": false,
+   "label": "synapse per neuron assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200001",
+   "description": "A data transformation in which the mean is calculated by taking the nth root of the product of all of the observations in a data (n being the number of all observations).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200001",
+   "isRoot": false,
+   "label": "geometric mean calculation",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200114",
+   "description": "An euclidean distance calculation is a similarity calculation that attaches to each pair of real number vectors of the same dimension n the square root of the sum of the square differences between corresponding components. The smaller this number, the more similar the two vectors are considered.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200114",
+   "isRoot": false,
+   "label": "euclidean distance calculation",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200119",
+   "description": "A median calculation is a  descriptive statistics calculation in which the midpoint of the data set (the 0.5 quantile) is calculated.  First, the observations are sorted in increasing order.  For an odd number of observations, the median is the middle value of the sorted data.  For an even number of observations, the median is the average of the two middle values.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200119",
+   "isRoot": false,
+   "label": "median calculation",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

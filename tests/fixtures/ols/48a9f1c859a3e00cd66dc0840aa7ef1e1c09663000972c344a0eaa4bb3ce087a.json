@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000213",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000213",
+  "description": "A shrubland biome which is subject to subtropical climate patterns.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000213",
+  "isRoot": false,
+  "label": "subtropical shrubland biome",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

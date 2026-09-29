@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GAZ_00090521",
+  "ontology_id": "gaz",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GAZ:00090528",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00090528",
+   "isRoot": false,
+   "label": "Number 10 Patches, 14-152",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00090529",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00090529",
+   "isRoot": false,
+   "label": "Number 10 Patches, 14-151",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00090530",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00090530",
+   "isRoot": false,
+   "label": "Number 10 Patches, 14-153a",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00090531",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00090531",
+   "isRoot": false,
+   "label": "Number 10 Patches, 14-153b",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

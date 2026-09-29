@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "The horizontal distance",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01000700",
+   "description": "A sturzstrom is a landslide consisting which has a great amount of kinetic energy resulting in greater horizontal movement when compared to its initial vertical drop — as much as 20 or 30 times the vertical distance. By contrast a normal landslide will typically travel a horizontal distance that is less than twice the distance that the material has fallen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000700",
+   "isRoot": false,
+   "label": "sturzstrom",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000099",
+   "description": "A marine current bordered by the surface of the water column and the permanent thermocline, where it occurs. Surface currents are mostly wind driven and mostly limited to the top 400 m of the water column. Ocean currents are driven by the circulation of wind above surface waters. Frictional stress at the interface between the ocean and the wind causes the water to move in the direction of the wind. Large ocean currents are a response of the atmosphere and ocean to the flow of energy from the tropics to polar regions. In some cases, currents are transient features and affect only a small area. Other ocean currents are essentially permanent and extend over large horizontal distances.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000099",
+   "isRoot": false,
+   "label": "marine surface current",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "observer distance",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0200120",
+   "description": "A variance calculation is a descriptive statistics calculation in which the variance is defined as the average squared distance of each observation in the data set to the mean of the data set.  It is also known as the second central moment.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200120",
+   "isRoot": false,
+   "label": "variance calculation",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003820",
+   "description": "A distance measurement assay in which the migration of cells in culture is monitored by measuring the distance between the start position and the cell's location when observed.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003820",
+   "isRoot": false,
+   "label": "cell migration assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

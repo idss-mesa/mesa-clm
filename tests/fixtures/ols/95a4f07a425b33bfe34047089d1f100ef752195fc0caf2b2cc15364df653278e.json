@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GAZ_00162932",
+  "ontology_id": "gaz"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "GAZ:00162932",
+  "description": "An ecological research area owned and managed by Harvard University and located in Petersham, Massachusetts. Established 1907.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/GAZ_00162932",
+  "isRoot": true,
+  "label": "Harvard Forest",
+  "ontologyId": "gaz",
+  "synonyms": []
+ }
+}

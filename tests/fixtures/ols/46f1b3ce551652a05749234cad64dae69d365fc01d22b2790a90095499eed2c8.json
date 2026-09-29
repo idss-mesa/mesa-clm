@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "Model used to measure horizontal position on the earth",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

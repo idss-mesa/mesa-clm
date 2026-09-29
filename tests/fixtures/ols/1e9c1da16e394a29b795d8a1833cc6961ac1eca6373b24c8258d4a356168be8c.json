@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/IAO_0020015",
+  "ontology_id": "iao",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "IAO:0020016",
+   "description": "A personal name that specifies and differentiates between members of a group of individuals, especially in a family, all of whose members usually share the same family name (surname). A given name is purposefully given, usually by a child's parents at or near birth, in contrast to an inherited one such as a family name",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0020016",
+   "isRoot": false,
+   "label": "given name",
+   "ontologyId": "iao",
+   "synonyms": []
+  }
+ ]
+}

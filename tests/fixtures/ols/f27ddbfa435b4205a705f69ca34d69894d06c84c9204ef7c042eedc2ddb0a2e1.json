@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "sex",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCIT:C28421",
+   "description": "An arbitrary categorization of individuals based on the assemblage of physical properties related to reproduction, and commonly associated with the designation of such categories as female and male. This designation is based on a combination of observable information from organ inventories, morphological assessments, hormone assessments, genetic testing, observed primary and secondary sex characteristics, menstrual status, and/or obstetric history. Current sex designation may or may not be the same as an individual's sex assigned or reported at birth.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C28421",
+   "isRoot": false,
+   "label": "Sex",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000031",
+   "description": "A subject sex is the phenotypic sex of given subject (human or animal) related to a given investigation, study, and/or specimen.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000031",
+   "isRoot": false,
+   "label": "subject sex specification",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100500",
+   "description": "A role inhering in a person that is realized when the bearer is a sexual partner of the case.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100500",
+   "isRoot": false,
+   "label": "sexual partner role",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001555",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001555",
+   "isRoot": false,
+   "label": "sexual contact exposure",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001660",
+   "description": "An animal that has had a substantial part of its reproductive organs removed surgically.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001660",
+   "isRoot": false,
+   "label": "neuter",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001661",
+   "description": "A phenotypic sex quality 'pooled male and female' is a categorical value used when the male and female categories or levels of a factor are combined. If used to describe a single organism, then the organism will be one or the other.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001661",
+   "isRoot": false,
+   "label": "pooled male and female",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100452",
+   "description": "A host field which describes the name of the host at a certain stage of food production, which may depend on its age or stage of sexual maturity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100452",
+   "isRoot": false,
+   "label": "host (food production name)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002194",
+   "description": "Sex of patient when isolate was collected",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002194",
+   "isRoot": false,
+   "label": "PulseNet:PatientSex",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C205472",
+   "description": "The male or female designation that doctors ascribe to a newborn infant, usually based on the appearance of the child's external genitalia, and that is marked on their birth records.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C205472",
+   "isRoot": false,
+   "label": "Sex Assigned at Birth",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "MONDO:0021681",
+   "description": "A Disease due to or propagated by sexual contact.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/MONDO_0021681",
+   "isRoot": false,
+   "label": "sexually transmitted disease",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C100812",
+   "description": "A person with whom one has had sexual relations.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C100812",
+   "isRoot": false,
+   "label": "Sexual Partner",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C45910",
+   "description": "A mix of specimens from multiple individuals representing multiple sex groups.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C45910",
+   "isRoot": false,
+   "label": "Sex Pooled Sample",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001894",
+   "description": "Phenotypic sex refers to an individual's sex as determined by their internal and external genitalia, expression of secondary sex characteristics, and behavior.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001894",
+   "isRoot": false,
+   "label": "phenotypic sex",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "MONDO:0021682",
+   "description": "Viral diseases which are potentially transmitted or propagated by sexual conduct.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/MONDO_0021682",
+   "isRoot": false,
+   "label": "viral sexually transmitted disease",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "NCIT:C124436",
+   "description": "The physical sexual characteristics of the neonate at birth.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/NCIT_C124436",
+   "isRoot": false,
+   "label": "Sex at Birth",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "APOLLO_SV:00000511",
+   "description": "An infection acquistion from infectious host that is causally downstream of some potentially infectious sexual contacting",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/APOLLO_SV_00000511",
+   "isRoot": false,
+   "label": "infection acquisition through sexual activity with infectious host",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000047",
+   "description": "An organismal quality inhering in a bearer by virtue of the bearer's ability to undergo sexual reproduction in order to differentiate the individuals or types involved.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000047",
+   "isRoot": false,
+   "label": "biological sex",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040049",
+   "description": "A biological sex quality inhering in an individual or a population who are otherwise male of a non-hermaphroditic species who has ambiguous or atypical congenital development of the reproductive system.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040049",
+   "isRoot": false,
+   "label": "male with DSD",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0040056",
+   "description": "A biological sex quality inhering in an individual or a population who are otherwise female of a non-hermaphroditic species who has ambiguous or atypical congenital development of the reproductive system.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0040056",
+   "isRoot": false,
+   "label": "female with DSD",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UBERON:0003134",
+   "description": "A female organ involved in reproduction.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0003134",
+   "isRoot": false,
+   "label": "female reproductive organ",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

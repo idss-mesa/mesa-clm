@@ -1,0 +1,70 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "elevation",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "maximumElevationInMeters",
+   "description": "The upper limit of the range of elevation (altitude, usually above sea level), in meters.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/maximumElevationInMeters",
+   "isRoot": true,
+   "label": "Maximum Elevation In Meters",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "minimumElevationInMeters",
+   "description": "The lower limit of the range of elevation (altitude, usually above sea level), in meters.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/minimumElevationInMeters",
+   "isRoot": true,
+   "label": "Minimum Elevation In Meters",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "verbatimElevation",
+   "description": "The original description of the elevation (altitude, usually above sea level) of the Location.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/verbatimElevation",
+   "isRoot": true,
+   "label": "Verbatim Elevation",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "maximumDistanceAboveSurfaceInMeters",
+   "description": "The greater distance in a range of distance from a reference surface in the vertical direction, in meters. Use positive values for locations above the surface, negative values for locations below. If depth measures are given, the reference surface is the location given by the depth, otherwise the reference surface is the location given by the elevation.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/maximumDistanceAboveSurfaceInMeters",
+   "isRoot": true,
+   "label": "Maximum Distance Above Surface In Meters",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "minimumDistanceAboveSurfaceInMeters",
+   "description": "The lesser distance in a range of distance from a reference surface in the vertical direction, in meters. Use positive values for locations above the surface, negative values for locations below. If depth measures are given, the reference surface is the location given by the depth, otherwise the reference surface is the location given by the elevation.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/minimumDistanceAboveSurfaceInMeters",
+   "isRoot": true,
+   "label": "Minimum Distance Above Surface In Meters",
+   "ontologyId": "bco",
+   "synonyms": []
+  },
+  {
+   "curie": "verticalDatum",
+   "description": "The vertical datum used as the reference upon which the values in the elevation terms are based.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/verticalDatum",
+   "isRoot": true,
+   "label": "Vertical Datum",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

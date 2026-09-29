@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003070",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0003070",
+  "description": "A protocol that specifies processes to fulfill a specimen collection objective.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003070",
+  "isRoot": false,
+  "label": "specimen collection protocol",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

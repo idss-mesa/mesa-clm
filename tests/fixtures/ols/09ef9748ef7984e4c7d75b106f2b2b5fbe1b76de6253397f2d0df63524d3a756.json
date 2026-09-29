@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003831",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0003831",
+  "description": "An assay that measures the number of elements in a portion of a population",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003831",
+  "isRoot": false,
+  "label": "population count assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000181",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0003086",
+   "description": "A population where the collection of individuals is located and maintained in a laboratory, research, or production facility.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003086",
+   "isRoot": false,
+   "label": "laboratory-based population",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003706",
+   "description": "A population of organisms that are participants under investigation in the same study design execution.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003706",
+   "isRoot": false,
+   "label": "study arm population",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

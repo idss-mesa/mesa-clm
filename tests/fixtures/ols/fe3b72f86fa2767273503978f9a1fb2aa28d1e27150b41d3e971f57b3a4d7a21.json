@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000011",
+  "ontology_id": "pco",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PCO:0000012",
+   "description": "A population process that leads to an increase in the numbers of individuals in a population following a logistic (S-shaped) curve. Generally occurs when the population has a carrying capacity in a particular habitat.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000012",
+   "isRoot": false,
+   "label": "logistic population growth",
+   "ontologyId": "pco",
+   "synonyms": []
+  },
+  {
+   "curie": "PCO:0000013",
+   "description": "A population growth process that leads to an exponential increase in the number of individuals in a population.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000013",
+   "isRoot": false,
+   "label": "exponential population growth",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

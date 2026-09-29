@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000059",
+  "ontology_id": "pco",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PCO:0000017",
+   "description": "A collection of organisms that has as members every organism of given species and no organisms of any other species.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000017",
+   "isRoot": false,
+   "label": "species as a collection of organisms",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

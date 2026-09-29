@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "phylum",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "FOODON:03411297",
+   "description": "A vertebrate animal is any species of organism within the subphylum Vertebrata (chordates with backbones). Vertebrates represent the overwhelming majority of the phylum Chordata, with currently about 69,276 species described.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_03411297",
+   "isRoot": false,
+   "label": "vertebrate animal",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "UBERON:0008270",
+   "description": "A calcareous exoskeleton which encloses, supports and protects the soft parts of an animal in the phylum Mollusca, which includes snails, clams, tusk shells, and several other classes. Not all shelled molluscs live in the sea, many live on the land and in freshwater.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0008270",
+   "isRoot": false,
+   "label": "mollusc shell",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

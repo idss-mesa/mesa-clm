@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "A list of sources",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "georeferenceSources",
+   "description": "A list (concatenated and separated) of maps, gazetteers, or other resources used to georeference the Location, described specifically enough to allow anyone in the future to use the same resources.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/georeferenceSources",
+   "isRoot": true,
+   "label": "Georeference Sources",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

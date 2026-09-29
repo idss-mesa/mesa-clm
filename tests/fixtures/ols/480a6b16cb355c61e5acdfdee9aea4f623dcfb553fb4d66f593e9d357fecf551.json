@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "vernacular name",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "vernacularName",
+   "description": "A common or vernacular name.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/vernacularName",
+   "isRoot": true,
+   "label": "Vernacular Name",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

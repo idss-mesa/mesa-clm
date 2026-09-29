@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "device integrity",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0102185",
+   "description": "A specimen collection device manufactured by Teledyne ISCO designed to collect discrete or composite samples from environmental media according to predefined time intervals, flow conditions, or external triggers.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102185",
+   "isRoot": false,
+   "label": "ISCO sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

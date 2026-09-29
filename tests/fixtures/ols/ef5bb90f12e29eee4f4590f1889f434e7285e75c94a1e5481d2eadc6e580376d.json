@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/IAO_0000029",
+  "ontology_id": "iao",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "IAO:0000031",
+   "description": "A numeral that denotes an integer",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/IAO_0000031",
+   "isRoot": false,
+   "label": "integer numeral",
+   "ontologyId": "iao",
+   "synonyms": []
+  }
+ ]
+}

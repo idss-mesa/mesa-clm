@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GECKO_0000008",
+  "ontology_id": "gecko"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "GECKO:0000008",
+  "description": "A sample size that is about the count of individual organisms in a population.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/GECKO_0000008",
+  "isRoot": false,
+  "label": "population size",
+  "ontologyId": "gecko",
+  "synonyms": []
+ }
+}

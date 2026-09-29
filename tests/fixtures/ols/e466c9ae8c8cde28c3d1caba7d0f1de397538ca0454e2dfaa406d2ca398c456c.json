@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "geodetic datum",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GEO:000000788",
+   "description": "A coordinate system, and a set of reference points, used to locate places on the Earth (or similar objects).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GEO_000000788",
+   "isRoot": false,
+   "label": "geodetic datum",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

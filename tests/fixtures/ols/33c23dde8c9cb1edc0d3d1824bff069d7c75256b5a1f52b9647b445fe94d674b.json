@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/UO_1000211",
+  "ontology_id": "uo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "UO:0000211",
+   "description": "A dimensionless count unit which a measure of plaque forming units in a given volume.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UO_0000211",
+   "isRoot": false,
+   "label": "plaque forming unit",
+   "ontologyId": "uo",
+   "synonyms": []
+  }
+ ]
+}

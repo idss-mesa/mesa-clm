@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "sampling protocol version",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001243",
+   "description": "A data field which describes the name and version of a particular protocol used for sampling.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001243",
+   "isRoot": false,
+   "label": "collection protocol",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

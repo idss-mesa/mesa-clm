@@ -1,0 +1,4 @@
+52cec58afbf49ad7b7aa6bdb7e7476ee42bf3fd7a2703d44319dc4b565987335  src/mesa_clm/_vendor/clm/schema.py
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  src/mesa_clm/_vendor/clm/LICENSE
+df0af62c248f27cc806c90266ae62c28b47df8dd8aa9645de815dedc50d7bbbe  src/mesa_clm/bench/_metrics.py
+45f565c1b30964dedc8f66ed4d4448ad43233dc4a8eb62558d539d87d2485738  tests/_vendor/clm_client.py

@@ -1,0 +1,150 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "family",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "OBI:0001329",
+   "description": "A study design in which the family history such as traits, characteristics, susceptibility to disease is studied.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001329",
+   "isRoot": false,
+   "label": "family history design",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002560",
+   "description": "An inclusion criterion that defines and states one or more family statuses, which, if met, makes a human being suitable for a given task or participation in a given process.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002560",
+   "isRoot": false,
+   "label": "family status inclusion criterion",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200073",
+   "description": "A family wise error rate correction method is a multiple testing procedure that controls the probability of at least one false positive.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200073",
+   "isRoot": false,
+   "label": "family wise error rate correction method",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002095",
+   "description": "A material processing that has as its input a specimen and as its output a collection of specimens.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002095",
+   "isRoot": false,
+   "label": "specimen family creation",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002372",
+   "description": "A clinical history in which there is a diagnosis of cancer in a blood relative.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002372",
+   "isRoot": false,
+   "label": "family clinical history of cancer",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200066",
+   "description": "a data transformation that performs more than one hypothesis test simultaneously, a closed-test procedure, that  controls the familywise error rate for all the k hypotheses at level α in the strong sense. Objective: multiple testing correction",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200066",
+   "isRoot": false,
+   "label": "Holm-Bonferroni family-wise error rate correction method",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200092",
+   "description": "Is a data transformation process in which the Westfall and Young method is applied with the aim of controlling for multiple testing",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200092",
+   "isRoot": false,
+   "label": "Westfall and Young family wise error rate correction",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200160",
+   "description": "A generalized FWER correction method is a multiple testing procedure that controls the probability of at least k+1 false positives, where k is a user-supplied integer.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200160",
+   "isRoot": false,
+   "label": "generalized family wise error rate correction method",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000588",
+   "description": "The determination of sulfur or phosphorus containing compounds is the job of the flame photometric detector (FPD). This device uses the chemiluminescent reactions of these compounds in a hydrogen/air flame as a source of analytical information that is relatively specific for substances containing these two kinds of atoms. The emitting species for sulfur compounds is excited S2. The lambda max for emission of excited S2 is approximately 394 nm. The emitter for phosphorus compounds in the flame is excited HPO (lambda max = doublet 510-526 nm). In order to selectively detect one or the other family of compounds as it elutes from the GC column, an interference filter is used between the flame and the photomultiplier tube (PMT) to isolate the appropriate emission band. The drawback here being that the filter must be exchanged between chromatographic runs if the other family of compounds is to be detected.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000588",
+   "isRoot": false,
+   "label": "flame photometric detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002616",
+   "description": "A document about the family relationships of persons related as members of a domestic group linked through descent from a common ancestor, marriage, or adoption.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002616",
+   "isRoot": false,
+   "label": "genealogical record",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0071604",
+   "description": "The appearance of any member of the transforming growth factor-beta family of cytokines due to biosynthesis or secretion following a cellular stimulus, resulting in an increase in its intracellular or extracellular levels. Transforming growth factor-beta family members include TGF-B1, TGF-B2, and TGF-B3.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0071604",
+   "isRoot": false,
+   "label": "transforming growth factor beta production",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0032606",
+   "description": "The appearance of type I interferon due to biosynthesis or secretion following a cellular stimulus, resulting in an increase in its intracellular or extracellular levels. Type I interferons include the interferon-alpha, beta, delta, episilon, zeta, kappa, tau, and omega gene families.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0032606",
+   "isRoot": false,
+   "label": "type I interferon production",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0032620",
+   "description": "The appearance of any member of the interleukin-17 family of cytokines due to biosynthesis or secretion following a cellular stimulus, resulting in an increase in its intracellular or extracellular levels.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GO_0032620",
+   "isRoot": false,
+   "label": "interleukin-17 production",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OGMS:0000015",
+   "description": "A series of statements representing health-relevant qualities of a patient and of a patient's family.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OGMS_0000015",
+   "isRoot": false,
+   "label": "clinical history",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

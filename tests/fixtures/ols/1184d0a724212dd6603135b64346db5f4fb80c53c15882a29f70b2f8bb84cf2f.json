@@ -1,0 +1,110 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "taxon id",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0100584",
+   "description": "A data field which describes the details of the process used to determine the taxonomic identification of an organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100584",
+   "isRoot": false,
+   "label": "taxonomic identification process details",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100583",
+   "description": "A data field which describes the type of planned process by which an organismal entity is associated with a taxon or taxa.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100583",
+   "isRoot": false,
+   "label": "taxonomic identification process",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0101082",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0101082",
+   "isRoot": false,
+   "label": "Taxonomic identification information field category",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0101108",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0101108",
+   "isRoot": false,
+   "label": "influenza subtype",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102189",
+   "description": "An amplicon sequencing assay that targets and sequences a standardized region of the mitochondrial cytochrome c oxidase subunit I (COI) gene to enable taxonomic identification of eukaryotic organisms based on DNA barcodes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102189",
+   "isRoot": false,
+   "label": "Cytochrome c oxidase I barcoding",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001191",
+   "description": "A data field which describes the taxonomic name of the organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001191",
+   "isRoot": false,
+   "label": "organism",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102049",
+   "description": "PCDS: The target taxonomic name refers to the specific species, genus, or other taxonomic classification that the assay or diagnostic test is designed to identify, detect, or characterize. This may include the full binomial name (Genus species) or a higher taxonomic rank (i.e., genus, family) when species-level identification is not applicable. Avoid abbreviations. Search for taxonomic names here: ncbi.nlm.nih.gov/taxonomy.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102049",
+   "isRoot": false,
+   "label": "target taxonomic name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100834",
+   "description": "A data field which describes the name of the taxonomic reference database used to identify the organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100834",
+   "isRoot": false,
+   "label": "taxonomic reference database name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100835",
+   "description": "A data field which describes the version of the taxonomic reference database used to identify the organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100835",
+   "isRoot": false,
+   "label": "taxonomic reference database version",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000053",
+   "description": "16S ribosomal RNA sequencing is a sequencing method used to identify and compare bacteria present within a given sample. 16S rRNA gene sequencing is a well-established method for studying phylogeny and taxonomy of samples from complex microbiomes or environments that are difficult or impossible to study.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000053",
+   "isRoot": false,
+   "label": "16S rRNA sequencing",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

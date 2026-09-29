@@ -1,0 +1,60 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100942",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0100948",
+   "description": "A composite sampler that passively collects target material from an environment without active pumping or manual collection, relying on natural processes such as diffusion, adsorption, or flow to accumulate analytes over time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100948",
+   "isRoot": false,
+   "label": "passive sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100949",
+   "description": "A composite sampler which consists of an absorbent material, suspended in flowing water or wastewater, in order to capture microorganisms or particulates over time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100949",
+   "isRoot": false,
+   "label": "moore swab",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100950",
+   "description": "A composite sampler which is automated to collect multiple discrete samples over a defined period or condition and combine them into a single composite sample without manual intervention.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100950",
+   "isRoot": false,
+   "label": "automatic composite sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100951",
+   "description": "A composite sampler that collects multiple samples at intervals proportional to the flow rate of the sampled medium, producing a composite sample representative of flow-weighted conditions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100951",
+   "isRoot": false,
+   "label": "automatic flow-proportional composite sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100952",
+   "description": "A composite sampler that collects multiple samples at fixed time intervals, regardless of flow rate, to produce a time-weighted composite sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100952",
+   "isRoot": false,
+   "label": "automatic sequential composite sampling device",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

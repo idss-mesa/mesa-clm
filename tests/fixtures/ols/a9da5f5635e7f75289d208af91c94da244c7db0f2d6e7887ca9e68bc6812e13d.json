@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100001",
+  "ontology_id": "genepio",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "GENEPIO:0100020",
+   "description": "An outbreak investigation sampling strategy in which individuals are chosen for investigation into a disease outbreak that has connections to two or more jurisdictions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100020",
+   "isRoot": false,
+   "label": "multi-jurisdictional outbreak investigation strategy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100021",
+   "description": "An outbreak investigation sampling strategy in which individuals are chosen for investigation into a disease outbreak that only has connections within a single jurisdiction.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100021",
+   "isRoot": false,
+   "label": "intra-jurisdictional outbreak investigation strategy",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102179",
+   "description": "A sampling strategy in which samples are collected in order to research an outbreak which is associated with water.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102179",
+   "isRoot": false,
+   "label": "water associated outbreak investigation sampling",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

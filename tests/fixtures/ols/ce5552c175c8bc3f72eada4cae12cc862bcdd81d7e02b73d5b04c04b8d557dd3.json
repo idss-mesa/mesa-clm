@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "subfamily",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PR:000001289",
+   "description": "Category=gene. Requested by=CL.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PR_000001289",
+   "isRoot": false,
+   "label": "membrane-spanning 4-domains subfamily A member 1",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PR_P19437",
+   "description": "Category=organism-gene.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PR_P19437",
+   "isRoot": false,
+   "label": "B-lymphocyte antigen CD20 (mouse)",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

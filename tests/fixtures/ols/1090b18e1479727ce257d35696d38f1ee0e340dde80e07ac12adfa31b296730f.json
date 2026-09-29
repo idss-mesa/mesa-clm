@@ -1,0 +1,140 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "elevation",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0001687",
+   "description": "A positional quality inhering in a bearer by virtue of the bearer's vertical distance of a point above or below a reference surface.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001687",
+   "isRoot": false,
+   "label": "elevation",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001688",
+   "description": "An elevation which is relatively high.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001688",
+   "isRoot": false,
+   "label": "increased elevation",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0001689",
+   "description": "An elevation which is relatively low.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001689",
+   "isRoot": false,
+   "label": "decreased elevation",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002515",
+   "description": "An elevation quality inhering in a bearer by virtue the bearer's being in a high position relative to another entity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002515",
+   "isRoot": false,
+   "label": "increased elevation relative to",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0045043",
+   "description": "An elevation which is relatively normal or average",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0045043",
+   "isRoot": false,
+   "label": "normal elevation",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "UBERON:0002019",
+   "description": "A cranial nerve that originates from neurons in the medulla and in the cervical spinal cord.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0002019",
+   "isRoot": false,
+   "label": "accessory XI nerve",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0021563",
+   "description": "Various sensory and motor branches of the glossopharyngeal nerve supply nerve connections to the pharynx and back of the tongue. The branchial motor component contains motor fibers that innervate muscles that elevate the pharynx and larynx, and the tympanic branch supplies parasympathetic fibers to the otic ganglion.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0021563",
+   "isRoot": false,
+   "label": "glossopharyngeal nerve development",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0021614",
+   "description": "A developmental process, independent of morphogenetic (shape) change, that is required for the glossopharyngeal nerve to attain its fully functional state. Various sensory and motor branches of the glossopharyngeal nerve supply nerve connections to the pharynx and back of the tongue. The branchial motor component contains motor fibers that innervate muscles that elevate the pharynx and larynx, and the tympanic branch supplies parasympathetic fibers to the otic ganglion.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0021614",
+   "isRoot": false,
+   "label": "glossopharyngeal nerve maturation",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0021615",
+   "description": "The process in which the anatomical structure of the glossopharyngeal nerve is generated and organized. Various sensory and motor branches of the glossopharyngeal nerve supply nerve connections to the pharynx and back of the tongue. The branchial motor component contains motor fibers that innervate muscles that elevate the pharynx and larynx, and the tympanic branch supplies parasympathetic fibers to the otic ganglion.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0021615",
+   "isRoot": false,
+   "label": "glossopharyngeal nerve morphogenesis",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "GO:0021616",
+   "description": "The process that gives rise to the glossopharyngeal nerve. This process pertains to the initial formation of a structure from unspecified parts. Various sensory and motor branches of the glossopharyngeal nerve supply nerve connections to the pharynx and back of the tongue. The branchial motor component contains motor fibers that innervate muscles that elevate the pharynx and larynx, and the tympanic branch supplies parasympathetic fibers to the otic ganglion.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GO_0021616",
+   "isRoot": false,
+   "label": "glossopharyngeal nerve formation",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "UBERON:0001049",
+   "description": "In the developing vertebrate, the neural tube is the embryo's precursor to the central nervous system, which comprises the brain and spinal cord. The neural groove gradually deepens as the neural folds become elevated, and ultimately the folds meet and coalesce in the middle line and convert the groove into a closed tube, the neural tube or neural canal (which strictly speaking is the center of the neural tube), the ectodermal wall of which forms the rudiment of the nervous system. [WP,unvetted].",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0001049",
+   "isRoot": false,
+   "label": "neural tube",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "UBERON:0003726",
+   "description": "The twelve spinal nerves on each side of the thorax. They include eleven INTERCOSTAL NERVES and one subcostal nerve. Both sensory and motor, they supply the muscles and skin of the thoracic and abdominal walls.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0003726",
+   "isRoot": false,
+   "label": "thoracic nerve",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "UBERON:0005062",
+   "description": "One of the two elevated edges of the neural groove[GO,MP].",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0005062",
+   "isRoot": false,
+   "label": "neural fold",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

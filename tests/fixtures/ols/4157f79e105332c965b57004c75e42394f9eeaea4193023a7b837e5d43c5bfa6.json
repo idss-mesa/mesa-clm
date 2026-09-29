@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001167",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001167",
+  "description": "A structural quality inhering in a bearer by virtue of the bearer being harmed or injured or spoiled, such that its functionality is impaired.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001167",
+  "isRoot": false,
+  "label": "damaged",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

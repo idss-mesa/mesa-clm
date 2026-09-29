@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "percent",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

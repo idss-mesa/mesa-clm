@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000191",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000191",
+  "description": "A subtropical grassland in which dominant ecological communities have reached their climax successional state.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000191",
+  "isRoot": false,
+  "label": "subtropical grassland biome",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,110 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001271",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0001673",
+   "description": "A transcription profiling by RNA sequencing assay that is performed using a very low amount (nanogram scale) of mRNA samples using Cap analysis gene expression (CAGE).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001673",
+   "isRoot": false,
+   "label": "nano-cap analysis of gene expression assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001674",
+   "description": "A transcription profiling by RNA sequencing assay which measures RNA transcript abundances in biological samples by extracting 5' ends of capped transcripts, RTPCR and sequence those. Copy numbers of CAGE tags provide a way of quantification and provide a measure of expression of the transcriptome",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001674",
+   "isRoot": false,
+   "label": "cap analysis of gene expression assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001850",
+   "description": "A transcription profiling by RNA sequencing assay that employs paired-end sequencing of RNA transcripts to determine things such as gene expression, gene structure, and alternative transcript structure.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001850",
+   "isRoot": false,
+   "label": "transcript analysis by paired-end tag sequencing assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001864",
+   "description": "A transcription profiling by RNA sequencing assay that identifies transcription start sites (TSS), the quantification of their expression and the characterization of their transcripts using high throughput sequencing.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001864",
+   "isRoot": false,
+   "label": "RNA Annotation and Mapping of Promoters for the Analysis of Gene Expression assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002029",
+   "description": "A transcription profiling by RNA sequencing assay that quantifies RNA through creating short signature tags of the messages and ligating them into a larger molecule that is then sequenced.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002029",
+   "isRoot": false,
+   "label": "serial analysis of gene expression assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002034",
+   "description": "A transcription profiling by RNA sequencing assay that combines enzymatic capture of m(7)G-capped mRNA 5' ends with high-throughput sequencing.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002034",
+   "isRoot": false,
+   "label": "transcript leader sequencing assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002041",
+   "description": "An assay that identifies the sequences that act as transcriptional enhancers in a direct, quantitative, and genome-wide manner from sheared genomic DNA.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002041",
+   "isRoot": false,
+   "label": "self-transcribing active regulatory region sequencing assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002045",
+   "description": "A transcription profiling by RNA sequencing assay that quantitatively profiles RNA polyadenylation at the transcriptome level.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002045",
+   "isRoot": false,
+   "label": "polyA-site sequencing assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002112",
+   "description": "A transcription profiling by RNA sequencing assay which is targeting small RNA (< 200 bp) sequences such as, but not exclusive to, miRNAs using, for example, small RNA library preparation kits.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002112",
+   "isRoot": false,
+   "label": "small RNA sequencing assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002113",
+   "description": "A transcription profiling by RNA sequencing assay used to identify spans of nascent transcription in the genome through isolation of recent bromouridine (Bru) labelled RNAs.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002113",
+   "isRoot": false,
+   "label": "bromouridine labeling and sequencing assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

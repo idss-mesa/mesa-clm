@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "scientific name",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00211013",
+   "description": "A state park.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00211013",
+   "isRoot": true,
+   "label": "Chippewa Moraine State Recreation Area",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00497059",
+   "description": "A Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00497059",
+   "isRoot": true,
+   "label": "Haydon Meadow Site of Special Scientific Interest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00139136",
+   "description": "A permanent French scientific station on Ile de la Possession of the Crozet Islands.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00139136",
+   "isRoot": true,
+   "label": "Alfred-Faure Station",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00456009",
+   "description": "A Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00456009",
+   "isRoot": true,
+   "label": "Botany Hill",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00456064",
+   "description": "A Site of Special Scientific Interest. It consists of an exposure of a mineral vein in the valley of the Killhope Burn.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00456064",
+   "isRoot": true,
+   "label": "Old Moss Lead Vein",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00490801",
+   "description": "A Site of Special Scientific Interest. Includes flooded former gravel quarries.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00490801",
+   "isRoot": true,
+   "label": "Sevenoaks Wildlife Reserve",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00448707",
+   "description": "A lake. A Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00448707",
+   "isRoot": true,
+   "label": "Round Loch of Lundie",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00489176",
+   "description": "A wetland. A SSite of Special Scientific Interest. A protected area. The village of Keyhaven lies to the west, the village of Pennington to the north, and the town of Lymington to the northeast.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00489176",
+   "isRoot": true,
+   "label": "Keyhaven, Pennington, Oxey and Normandy Marshes",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00489802",
+   "description": "A mountain; a Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00489802",
+   "isRoot": true,
+   "label": "Cumnor Hurst",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00593228",
+   "description": "An aircraft test base and scientific research center.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00593228",
+   "isRoot": true,
+   "label": "M. M. Gromov Flight Research Institute",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00458835",
+   "description": "A disused quarry. A Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00458835",
+   "isRoot": true,
+   "label": "Bradgate Quarry",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00488377",
+   "description": "A gravel quarry; a Site of Special Scientific Interest; an archeological site.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00488377",
+   "isRoot": true,
+   "label": "Eartham Pit",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00495197",
+   "description": "Former limestone quarries; a Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00495197",
+   "isRoot": true,
+   "label": "Brown's Folly",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00484631",
+   "description": "A heath. Common land. A Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00484631",
+   "isRoot": true,
+   "label": "Sound Heath",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00489211",
+   "description": "A large natural amphitheatre. A Site of Special Scientific Interest. Located outside Winchester, England.outside Winchester, England.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00489211",
+   "isRoot": true,
+   "label": "Cheesefoot Head",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00494467",
+   "description": "A rriver; in part a Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00494467",
+   "isRoot": true,
+   "label": "Bere Stream",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00495246",
+   "description": "A ruined iron works. A Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00495246",
+   "isRoot": true,
+   "label": "Old Ironstone Works",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00485898",
+   "description": "A disused copper mine. Now a Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00485898",
+   "isRoot": true,
+   "label": "Birk Fell Mine",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00442436",
+   "description": "A coastal dune system. Located adjacent to Site of Special Scientific Interest (Site of Special Scientific Interest) Winterton Dunes.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00442436",
+   "isRoot": true,
+   "label": "Horsey Dunes",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00452570",
+   "description": "A disused quarry. A protected are; a Site of Special Scientific Interest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00452570",
+   "isRoot": true,
+   "label": "Claxby Chalk Pit",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

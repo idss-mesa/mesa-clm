@@ -1,0 +1,40 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000099",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01000100",
+   "description": "A marine surface current that flows along an oceanic front.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000100",
+   "isRoot": false,
+   "label": "along-front current",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000101",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000101",
+   "isRoot": false,
+   "label": "warm surface current",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000102",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000102",
+   "isRoot": false,
+   "label": "cold surface current",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

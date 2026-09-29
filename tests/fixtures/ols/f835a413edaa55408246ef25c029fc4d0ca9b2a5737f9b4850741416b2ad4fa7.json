@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "taxrank",
+  "query": "tribe",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "TAXRANK:0000025",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000025",
+   "isRoot": false,
+   "label": "tribe",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  }
+ ]
+}

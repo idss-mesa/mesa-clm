@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "taxrank",
+  "query": "taxon rank",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "TAXRANK:0000000",
+   "description": "A level of depth of a taxon in a taxonomic hierarchy.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000000",
+   "isRoot": true,
+   "label": "taxonomic_rank",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  },
+  {
+   "curie": "TAXRANK:0000060",
+   "description": "A token asserting that the taxon was not assigned a rank.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000060",
+   "isRoot": false,
+   "label": "no_rank",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  },
+  {
+   "curie": "TAXRANK:9000000",
+   "description": "covers ranks in NCBI taxonomy that don't fit in the normal hierarchy",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_9000000",
+   "isRoot": true,
+   "label": "pseudorank",
+   "ontologyId": "taxrank",
+   "synonyms": []
+  }
+ ]
+}

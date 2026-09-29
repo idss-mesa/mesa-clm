@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/AGRO_00000637",
+  "ontology_id": "agro"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "AGRO:00000637",
+  "description": "Humidity that correspond to moisture content of the atmosphere, expressed as a percentage of the amount of moisture that can be retained by the atmosphere at a given temperature and pressure without condensation.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/AGRO_00000637",
+  "isRoot": false,
+  "label": "relative humidity",
+  "ontologyId": "agro",
+  "synonyms": []
+ }
+}

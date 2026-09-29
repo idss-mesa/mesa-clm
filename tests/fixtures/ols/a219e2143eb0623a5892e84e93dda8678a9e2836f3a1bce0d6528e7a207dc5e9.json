@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000020",
+  "ontology_id": "pco",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PCO:0000032",
+   "description": "A collection of organisms of the same species whose members are all either genealogically related to each other or have mated with each other.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PCO_0000032",
+   "isRoot": false,
+   "label": "biological family",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "tribe",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "pco",
+  "query": "meter",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01001369",
+   "description": "A shrubland biome which is densely vegetated by dwarf or short mangroves (and associates) that are generally less than 6 meters in height, is tidally influenced,  is located in tropical or subtropical areas.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001369",
+   "isRoot": false,
+   "label": "tidal mangrove shrubland",
+   "ontologyId": "pco",
+   "synonyms": []
+  }
+ ]
+}

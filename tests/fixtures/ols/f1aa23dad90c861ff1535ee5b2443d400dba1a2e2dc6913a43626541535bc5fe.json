@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00000262",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:00000262",
+  "description": "A plain without trees (apart from those near rivers and lakes); it is similar to a prairie, although a prairie is generally considered as being dominated by tall grasses, while short grasses are said to be normal in the steppe. It may be semi-desert, or covered with grass or shrubs or both, depending on the season and latitude.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00000262",
+  "isRoot": false,
+  "label": "steppe",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003816",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0003820",
+   "description": "A distance measurement assay in which the migration of cells in culture is monitored by measuring the distance between the start position and the cell's location when observed.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003820",
+   "isRoot": false,
+   "label": "cell migration assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

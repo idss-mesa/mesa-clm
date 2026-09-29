@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000792",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01000793",
+   "description": "",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000793",
+   "isRoot": false,
+   "label": "atmospheric wind",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000795",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000795",
+   "isRoot": false,
+   "label": "planetary wind",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

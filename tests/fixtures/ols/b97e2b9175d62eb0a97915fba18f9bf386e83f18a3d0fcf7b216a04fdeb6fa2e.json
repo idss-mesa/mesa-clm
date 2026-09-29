@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000205",
+  "ontology_id": "envo",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "ENVO:01000207",
+   "description": "These regions are under the constant influence of the subtropical ridge.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000207",
+   "isRoot": false,
+   "label": "mediterranean",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000377",
+   "description": "A humid subtropical condition is a subtropical condition in which an environmental system has hot, humid summers, warm to cool dry winters, and average annual precipitation either evenly distributed throughout the year or marked by a dry season or drying trend during winter",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000377",
+   "isRoot": false,
+   "label": "humid subtropical",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000378",
+   "description": "An arid subtropical condition is a subtropical condition in which an environmental system has an annual average temperature near 18.2 degrees Celsius with their coldest month averaging between 2 and 13 degrees Celsius, the absence of regular rainfall, and high humidity.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000378",
+   "isRoot": false,
+   "label": "arid subtropical",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000379",
+   "description": "This is an interesting overlap of a latitudinal and altitudinal condition. Some link between this condition and the altitudinal conditions should be considered. This condition corresponds to the Cfb and Cwb categories of Köppen climate classification.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000379",
+   "isRoot": false,
+   "label": "highland subtropical",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

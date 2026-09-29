@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "fluid level",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01001712",
+   "description": "An atmospheric layer which 1) is located above the planetary boundary layer, 2) in which the effect of friction between moving air masses and the planetary surface is negligible, and 3) in which the air is usually treated (dynamically) as an ideal fluid.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001712",
+   "isRoot": false,
+   "label": "free atmosphere",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

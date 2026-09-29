@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "fluid level",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00053747",
+   "description": "A basaltic shield volcano on the French island of Reunion in the western Indian Ocean is one of the world's most active volcanoes. Much of its >530,000 year history overlapped with eruptions of the deeply dissected Piton des Neiges shield volcano to the NW. Three calderas formed at about 250,000, 65,000, and less than 5000 years ago by progressive eastward slumping of the volcano. Numerous pyroclastic cones dot the floor of the calderas and their outer flanks. Most historical eruptions have originated from the summit and flanks of Dolomieu, a 400 m high lava shield that has grown within the youngest caldera, which is 8 km wide and breached to below sea level on the eastern side. More than 150 eruptions, most of which have produced fluid basaltic lava flows, have occurred since the 17th century.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00053747",
+   "isRoot": true,
+   "label": "Piton de la Fournaise",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

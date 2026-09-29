@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "distance",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "PATO:0000040",
+   "description": "A quality that is the extent of space between two entities.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000040",
+   "isRoot": false,
+   "label": "distance",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200114",
+   "description": "An euclidean distance calculation is a similarity calculation that attaches to each pair of real number vectors of the same dimension n the square root of the sum of the square differences between corresponding components. The smaller this number, the more similar the two vectors are considered.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200114",
+   "isRoot": false,
+   "label": "euclidean distance calculation",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003816",
+   "description": "An assay that measures the space between two entities.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003816",
+   "isRoot": false,
+   "label": "distance measurement assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200043",
+   "description": "An average linkage hierarchical clustering is an agglomerative hierarchical clustering which generates successive clusters based on a distance measure, where the distance between two clusters is calculated as the average distance between objects from the first cluster and objects from the second cluster.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200043",
+   "isRoot": false,
+   "label": "average linkage hierarchical clustering",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200044",
+   "description": "an agglomerative hierarchical clustering which generates successive clusters based on a distance measure, where the distance between two clusters is calculated as the maximum distance between objects from the first cluster and objects from the second cluster.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200044",
+   "isRoot": false,
+   "label": "complete linkage hierarchical clustering",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200045",
+   "description": "A single linkage hierarchical clustering is an agglomerative hierarchical clustering which generates successive clusters based on a distance measure, where the distance between two clusters is calculated as the minimum distance between objects from the first cluster and objects from the second cluster.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200045",
+   "isRoot": false,
+   "label": "single linkage hierarchical clustering",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003820",
+   "description": "A distance measurement assay in which the migration of cells in culture is monitored by measuring the distance between the start position and the cell's location when observed.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003820",
+   "isRoot": false,
+   "label": "cell migration assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000489",
+   "description": "The nitrogen phosphorus detector (NPD) (sometimes called the thermionic detector) is a very sensitive, specific detector the design of which, is based on the FID. Physically the sensor appears to be very similar to the FID but, in fact, operates on an entirely different principle. The nitrogen phosphorous detector (sometimes called the thermionic detector) is a very sensitive but specific detector that responds almost exclusively to nitrogen and phosphorous compounds. It is based on the flame ionization detector but differs in that it contains a rubidium or cesium silicate (glass) bead situated in a heater coil, a little distance from the hydrogen flame. If the detector is to respond to both nitrogen and phosphorous then the hydrogen flow should be minimal so that the gas does not ignite at the jet. If the detector is to respond to phosphorous only, a large flow of hydrogen is used which is burnt at the jet. The heated bead emits electrons by thermionic emission. These electrons are collected under a potential of a few volts by an appropriately placed anode, and provides a background current. When a solute containing nitrogen or phosphorous is eluted from the column, the partially combusted nitrogen and phosphorous materials are adsorbed on the surface of the bead. The adsorbed material reduces the work function of the surface and, as consequence, the emission of electrons is increased which raises the current collected at the electrode. The sensitivity of the detector to phosphorous is about 10-12 gram per ml and for nitrogen about 10-11 gram per ml at a signal to nose ratio of 2. The alkali bead as a finite life and needs regular replacement.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000489",
+   "isRoot": false,
+   "label": "nitrogen phosphorous detector",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0001968",
+   "description": "Operational Taxonomic Unit matrix  is a data item, organized as a table, where organismal taxonomic units, computed by sequence analysis and genetic distance calculation, are counted in a set of biological or environmental samples. The table is  used to appraise biodiversity of a population or community of living organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0001968",
+   "isRoot": false,
+   "label": "operational taxonomic unit matrix",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0002805",
+   "description": "A device which is a transparent constructed barrier, usually made out of acrylic (Plexiglass) or polycarbonate plastic, installed in facilities to intercept respiratory droplets, encourage physical distancing requirements.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0002805",
+   "isRoot": false,
+   "label": "transparent droplet barrier",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003066",
+   "description": "A one dimensional Cartesian spatial coordinate datum that is the eastward component of a distance from a point on a map projection.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003066",
+   "isRoot": false,
+   "label": "easting coordinate measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003067",
+   "description": "A one dimensional Cartesian spatial coordinate datum that is the northward component of a distance from a point on a map projection.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003067",
+   "isRoot": false,
+   "label": "northing coordinate measurement datum",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003297",
+   "description": "A DNA sequencing assay that uses tyramide signal amplification (TSA) to assess distance of DNA regions to a targeted nuclear compartment or protein, typically on a scale of 100-1000 nm.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003297",
+   "isRoot": false,
+   "label": "tyramide signal amplification sequencing assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003770",
+   "description": "A cytometry assay that uses a distance measurement assay to determine the length of a neurite.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003770",
+   "isRoot": false,
+   "label": "neurite length assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003817",
+   "description": "An assay that measures the distance between two points.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003817",
+   "isRoot": false,
+   "label": "length measurement assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0003819",
+   "description": "An assay that measures the distance traveled in a defined period of time.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0003819",
+   "isRoot": false,
+   "label": "path length assay",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200120",
+   "description": "A variance calculation is a descriptive statistics calculation in which the variance is defined as the average squared distance of each observation in the data set to the mean of the data set.  It is also known as the second central moment.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200120",
+   "isRoot": false,
+   "label": "variance calculation",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0200121",
+   "description": "A standard deviation calculation is a descriptive statistics calculation defined as the square root of the variance.  Also thought of as the average distance of each value to the mean.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0200121",
+   "isRoot": false,
+   "label": "standard deviation calculation",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "CL:0000560",
+   "description": "A late neutrophilic metamyelocyte in which the nucleus is indented to more than half the distance to the farthest nuclear margin but in no area being condensed to a single filament. The nucleus is in the form of a curved or coiled band, not having acquired the typical multilobar shape of the mature neutrophil. These cells are fMLP receptor-positive, CD11b-positive, CD35-negative, and CD49d-negative.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/CL_0000560",
+   "isRoot": false,
+   "label": "band form neutrophil",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "CL:0002192",
+   "description": "A eosinophil precursor in the granulocytic series, being a cell intermediate in development between a myelocyte and a band form cell. The nucleus becomes indented where the indentation is smaller than half the distance to the farthest nuclear margin; chromatin becomes coarse and clumped; specific granules predominate while primary granules are rare.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/CL_0002192",
+   "isRoot": false,
+   "label": "metamyelocyte",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

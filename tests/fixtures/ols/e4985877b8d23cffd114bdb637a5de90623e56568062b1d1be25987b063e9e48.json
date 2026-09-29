@@ -1,0 +1,30 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000017",
+  "ontology_id": "obi",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "OBI:0000014",
+   "description": "a regulatory role involved with making and/or enforcing relevant legislation and governmental orders",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000014",
+   "isRoot": false,
+   "label": "regulator role",
+   "ontologyId": "obi",
+   "synonyms": []
+  },
+  {
+   "curie": "OBI:0000016",
+   "description": "Regulation-assigned role is a regulatory role defined by legislation or governmental orders",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/OBI_0000016",
+   "isRoot": false,
+   "label": "regulation-assigned role",
+   "ontologyId": "obi",
+   "synonyms": []
+  }
+ ]
+}

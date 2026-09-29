@@ -1,0 +1,50 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000040",
+  "ontology_id": "pato",
+  "size": 10
+ },
+ "method": "get_term_children",
+ "response": [
+  {
+   "curie": "PATO:0000374",
+   "description": "A distance which is greater relative to the normal or average.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000374",
+   "isRoot": false,
+   "label": "increased distance",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0000375",
+   "description": "A distance which is lesser relative to the normal or average.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000375",
+   "isRoot": false,
+   "label": "decreased distance",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0002207",
+   "description": "A quality that is the distance between the end of the inserted object and the surface of the object into which it penetrates.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0002207",
+   "isRoot": false,
+   "label": "insertion depth",
+   "ontologyId": "pato",
+   "synonyms": []
+  },
+  {
+   "curie": "PATO:0045014",
+   "description": "A distance which is relatively normal or average.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/PATO_0045014",
+   "isRoot": false,
+   "label": "normal distance",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

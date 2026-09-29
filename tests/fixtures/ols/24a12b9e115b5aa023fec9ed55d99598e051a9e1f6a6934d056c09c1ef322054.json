@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "Name of the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "UBERON:0003357",
+   "description": "examples: tongue squamous epithelium, keratined, non-keratinized and parakeratinized epithelium, as well as gustatory epithelium. Note that not all these subtypes are named in individual anatomy ontologies.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0003357",
+   "isRoot": false,
+   "label": "epithelium of tongue",
+   "ontologyId": "pato",
+   "synonyms": []
+  }
+ ]
+}

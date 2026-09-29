@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/EUPATH_0009357",
+  "ontology_id": "eupath"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "EUPATH:0009357",
+  "description": "A data item that is the output of an absolute taxonomic abundance analysis for organisms grouped at the level of species.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/EUPATH_0009357",
+  "isRoot": false,
+  "label": "absolute abundance of species data",
+  "ontologyId": "eupath",
+  "synonyms": []
+ }
+}

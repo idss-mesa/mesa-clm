@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "wind speed",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:01001362",
+   "description": "The speed of an atmospheric wind.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001362",
+   "isRoot": false,
+   "label": "atmospheric wind speed",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001860",
+   "description": "According to U.S. weather observing practice, gusts are reported when the peak wind speed reaches at least 16 knots and the variation in wind speed between the peaks and lulls is at least 9 knots. The duration of a gust is usually less than 20 seconds.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001860",
+   "isRoot": false,
+   "label": "wind gust",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001728",
+   "description": "An atmospheric wind which rapidly forms, lasts for a duration in the order of minutes, and then rapidly decreases in speed.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001728",
+   "isRoot": false,
+   "label": "squall wind",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

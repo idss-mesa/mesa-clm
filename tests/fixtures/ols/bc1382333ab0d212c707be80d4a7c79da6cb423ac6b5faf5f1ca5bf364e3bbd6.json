@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "pato",
+  "query": "geodetic datum",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

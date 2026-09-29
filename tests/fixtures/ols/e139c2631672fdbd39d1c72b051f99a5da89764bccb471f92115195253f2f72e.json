@@ -1,0 +1,160 @@
+{
+ "args": {
+  "ontology_id": "ro",
+  "query": "How the individual",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "RO:0002801",
+   "description": "Two or more individuals sharing the same roost site (cave, mine, tree or tree hollow, animal burrow, leaf tent, rock crack, space in man-made structure, etc.). Individuals that are sharing a communal roost may be said to be co-roosting. The roost may be either a day roost where the individuals rest during daytime hours, or a night roost where individuals roost to feed, groom, or rest in between flights and/or foraging bouts.  Communal roosting as thus defined is an umbrella term within which different specialized types -- which are not mutually exclusive -- may be recognized based on taxonomy and the temporal and spatial relationships of the individuals that are co-roosting.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002801",
+   "isRoot": false,
+   "label": "co-roosts with",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0019003",
+   "description": "Relates one individual to another which is capable of standing in for the first individual in its other relations to other individuals.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0019003",
+   "isRoot": true,
+   "label": "has substitutable entity",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002802",
+   "description": "A relation between a host organism and a hosted organism in which the hosted organism naturally occurs in an indefinitely maintained reservoir provided by the host.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002802",
+   "isRoot": false,
+   "label": "reservoir host of",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002533",
+   "description": "Any individual unit of a collection of like units arranged in a linear order",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002533",
+   "isRoot": false,
+   "label": "sequence atomic unit",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002158",
+   "description": "VBO calls this homologous_to",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002158",
+   "isRoot": false,
+   "label": "shares ancestor with",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0002474",
+   "description": "An assertion that holds between an OWL Object Property and a dispositional interpretation that elucidates how OWL Class Axioms or OWL Individuals that use this property are to be interpreted in a dispositional context. For example,  A binds B may be interpreted as A have a mutual disposition that is realized by binding to the other one.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0002474",
+   "isRoot": false,
+   "label": "dispositional interpretation",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0003302",
+   "description": "A relationship between an entity (e.g. a genotype, genetic variation, chemical, or environmental exposure) and a condition (a phenotype or disease), where the entity has some causal or contributing role that influences the condition.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0003302",
+   "isRoot": false,
+   "label": "causes or contributes to condition",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0003305",
+   "description": "A relationship between an entity (e.g. a genotype, genetic variation, chemical, or environmental exposure) and a condition (a phenotype or disease), where the entity influences the severity with which a condition manifests in an individual.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_0003305",
+   "isRoot": false,
+   "label": "contributes to severity of condition",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0003307",
+   "description": "A relationship between an entity (e.g. a genotype, genetic variation, chemical, or environmental exposure) and a condition (a phenotype or disease), where the presence of the entity reduces or eliminates some or all aspects of the condition.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0003307",
+   "isRoot": false,
+   "label": "ameliorates condition",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0020330",
+   "description": "A relationship between a biomarker 'b' and an exposure agent 'e', where 'b' is used to identify individuals who are likely to experience a favorable or unfavorable effect from exposure to 'e'.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0020330",
+   "isRoot": false,
+   "label": "predicts effect of",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:0020333",
+   "description": "A relationship between a biomarker 'b' and a disease or condition of clinical interest 'd', where the presence or occurrence of 'b' is used to infer the potential for developing 'd' in an individual that currently does not have 'd'.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/RO_0020333",
+   "isRoot": false,
+   "label": "indicates risk of developing",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:HOM0000008",
+   "description": "Applicable only to morphology. A certain degree of ambiguity is accepted between biological homology and parallelism.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_HOM0000008",
+   "isRoot": false,
+   "label": "in biological homology relationship with",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:HOM0000030",
+   "description": "Heterochronous homology that is produced by a maturation of individuals of a species past adulthood, which take on hitherto unseen traits.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_HOM0000030",
+   "isRoot": false,
+   "label": "in peramorphosis relationship with",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "RO:HOM0000058",
+   "description": "Cannot be used when orthologous patterning gene are organizing obviously non-homologous structures in different organisms due for example to pleiotropic functions of these genes.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/RO_HOM0000058",
+   "isRoot": false,
+   "label": "in syngeny relationship with",
+   "ontologyId": "ro",
+   "synonyms": []
+  },
+  {
+   "curie": "UBERON:0001062",
+   "description": "Biological entity that is either an individual member of a biological species or constitutes the structural organization of an individual member of a biological species.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/UBERON_0001062",
+   "isRoot": false,
+   "label": "anatomical entity",
+   "ontologyId": "ro",
+   "synonyms": []
+  }
+ ]
+}

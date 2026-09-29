@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "M for male, F for female, U for unknown",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

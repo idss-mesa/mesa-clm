@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "identification references",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0001562",
+   "description": "Identifier for a reference genome (used to build or compare an assembly)  that is used in the genome browsers and in the community",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001562",
+   "isRoot": false,
+   "label": "reference genome identifier",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001122",
+   "description": "A data field category which refers to database identifier fields.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001122",
+   "isRoot": false,
+   "label": "database identifiers field category",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001426",
+   "description": "A container id is an identifier that refers to a container object about a patient specimen. Container ids are referenced in clinical patient records reported to be suspect, or lab test results.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001426",
+   "isRoot": false,
+   "label": "container record",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100603",
+   "description": "A data item which is an identifier of a reference bioinformatics database.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100603",
+   "isRoot": false,
+   "label": "reference database name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100834",
+   "description": "A data field which describes the name of the taxonomic reference database used to identify the organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100834",
+   "isRoot": false,
+   "label": "taxonomic reference database name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100835",
+   "description": "A data field which describes the version of the taxonomic reference database used to identify the organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100835",
+   "isRoot": false,
+   "label": "taxonomic reference database version",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001398",
+   "description": "A host data field which describes the unique identifier by which each host can be referred to.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001398",
+   "isRoot": false,
+   "label": "host subject id",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0101078",
+   "description": "A data field which describes the name of the reference database used to perform an in silico antimicrobial resistance determinant identification or analysis.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0101078",
+   "isRoot": false,
+   "label": "AMR reference database name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102187",
+   "description": "An amplicon sequencing assay in which the amplicon is derived from universal primers used to amplify the 18S ribosomal RNA gene from isolate bacterial genomic DNA or metagenomic DNA from a microbioal community. Resulting sequences are compared to reference 18S sequence databases to identify or classify bacteria present within a given sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102187",
+   "isRoot": false,
+   "label": "18S ribosomal gene sequencing assay",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001485",
+   "description": "A data field which describes the persistent, unique identifier of a genome database entry.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001485",
+   "isRoot": false,
+   "label": "reference genome accession",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0101079",
+   "description": "A data field which describes the version number of the reference database used to perform an in silico antimicrobial resistance determinant identification or analysis.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0101079",
+   "isRoot": false,
+   "label": "AMR reference database version",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100606",
+   "description": "A centrally registered identifier symbol that specifies an individual sequence record in a public sequence repository and used as a basis for comparison against another sequence.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100606",
+   "isRoot": false,
+   "label": "reference sequence accession number",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001429",
+   "description": "A strain identifier is the unique microbial or eukaryotic strain name from a reference database that a sample has been matched to.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001429",
+   "isRoot": false,
+   "label": "strain identifier",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0000102",
+   "description": "An IRIDA case ID is a tracking identifier for a case used in the IRIDA.ca software system.  It is used to cross-reference anonymized IDs.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0000102",
+   "isRoot": false,
+   "label": "IRIDA case ID",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001191",
+   "description": "A data field which describes the taxonomic name of the organism.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001191",
+   "isRoot": false,
+   "label": "organism",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0102049",
+   "description": "PCDS: The target taxonomic name refers to the specific species, genus, or other taxonomic classification that the assay or diagnostic test is designed to identify, detect, or characterize. This may include the full binomial name (Genus species) or a higher taxonomic rank (i.e., genus, family) when species-level identification is not applicable. Avoid abbreviations. Search for taxonomic names here: ncbi.nlm.nih.gov/taxonomy.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102049",
+   "isRoot": false,
+   "label": "target taxonomic name",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100923",
+   "description": "A data field which describes the description of the endogenous controls included when extracting a sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100923",
+   "isRoot": false,
+   "label": "endogenous control details",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100562",
+   "description": "A data item which is a statement confirming that quality control processes were carried out and no quality issues were detected.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100562",
+   "isRoot": false,
+   "label": "no quality control issues identified datum",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001563",
+   "description": "The 'genome size delta ratio' is a ratio of the difference between a sample's genome assembly size and the size of a given reference genome, over the reference genome size. \n\nThe formula:\n\n| (reference_genome_size - assembly_genome_size) | / reference_genome_size\n\nThis yeilds a decimal / percentage ranging from 0 = exact length, to say .1 which is equivalent to a 10% variance.  If the ratio is too far from a quality control ratio that depends on the species in question, this indicates a bad assembly or a mis-identified sample.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001563",
+   "isRoot": false,
+   "label": "genome size delta ratio",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0100565",
+   "description": "A data item which is a statement confirming that quality control processes were carried out and that the sequence did not meet the assessment criteria, however the issues detected were minor.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100565",
+   "isRoot": false,
+   "label": "minor quality control issues identified datum",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,68 @@
+[project]
+site_name = "mesa-clm"
+site_url = "https://idss-mesa.github.io/mesa-clm/"
+site_description = "mesa-clm proposes calibrated, ontology-grounded AVUs for the MESA stack with Contrastive LM: rank-first decisions with an abstain anchor over mesa-mcp's OBO/OLS tools, fingerprinted and pre-registered, with provenance next to the mesa-ducklake AVU history."
+site_author = "idss-mesa"
+copyright = "Copyright &copy; 2026 The Regents of the University of New Mexico"
+
+repo_url = "https://github.com/idss-mesa/mesa-clm"
+repo_name = "idss-mesa/mesa-clm"
+edit_uri = "edit/main/docs/"
+
+extra_css = ["stylesheets/extra.css"]
+
+nav = [
+  { "Home" = "index.md" },
+  { "Getting started" = [ { "Contents" = "getting-started/index.md" }, "getting-started/install.md", "getting-started/configuration.md" ] },
+  { "Concepts" = [ { "Contents" = "concepts/index.md" }, "concepts/decision-model.md", "concepts/tiers-and-policy.md", "concepts/provenance.md", "concepts/learning-and-bench.md", "concepts/serving.md" ] },
+  { "Develop" = [ { "Contents" = "develop/index.md" }, "develop/architecture.md", "develop/testing.md" ] },
+  { "About" = [ { "Contents" = "about/index.md" }, "about/ai-agents.md", "about/license.md", { "Changelog" = "log.md" } ] },
+]
+
+[project.theme]
+favicon = "assets/favicon.svg"
+logo = "assets/logo.svg"
+language = "en"
+features = [
+  "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy",
+  "content.code.select", "content.tabs.link", "content.tooltips", "navigation.footer",
+  "navigation.instant", "navigation.path", "navigation.tabs", "navigation.tabs.sticky",
+  "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "toc.follow",
+]
+
+[project.theme.icon]
+repo = "fontawesome/brands/github"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "green"
+accent = "teal"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "green"
+accent = "teal"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/idss-mesa"
+
+[project.markdown_extensions]
+admonition = {}
+attr_list = {}
+def_list = {}
+footnotes = {}
+md_in_html = {}
+toc.permalink = true
+pymdownx.details = {}
+pymdownx.highlight.anchor_linenums = true
+pymdownx.inlinehilite = {}
+pymdownx.superfences = {}
+pymdownx.tabbed.alternate_style = true
+pymdownx.tasklist.custom_checkbox = true

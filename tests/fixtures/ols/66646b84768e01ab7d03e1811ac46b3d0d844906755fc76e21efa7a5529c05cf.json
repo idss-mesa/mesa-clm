@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_484329",
+  "ontology_id": "ncbitaxon"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "NCBITaxon:484329",
+  "description": "",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_484329",
+  "isRoot": false,
+  "label": "Pterostichus tristis",
+  "ontologyId": "ncbitaxon",
+  "synonyms": []
+ }
+}

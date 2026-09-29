@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000010",
+  "ontology_id": "pco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PCO:0000010",
+  "description": "The number of different species represented in an ecological community.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/PCO_0000010",
+  "isRoot": false,
+  "label": "community species richness",
+  "ontologyId": "pco",
+  "synonyms": []
+ }
+}

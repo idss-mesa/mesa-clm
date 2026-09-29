@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "elevation",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00120947",
+   "description": "A canton of the Municipality of Caranavi.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00120947",
+   "isRoot": true,
+   "label": "Canton Villa Elevacion",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00135144",
+   "description": "A municipal ward (municipality) of Seke District.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00135144",
+   "isRoot": true,
+   "label": "Municipality Eleven",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00171798",
+   "description": "A state park.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00171798",
+   "isRoot": true,
+   "label": "Eleven Mile State Park",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00184605",
+   "description": "A district of Mark Twain National Forest.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00184605",
+   "isRoot": true,
+   "label": "Eleven Point Ranger District, Mark Twain National Forest",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00194890",
+   "description": "A river in southern Missouri and northern Arkansas, United States. It originates near Willow Springs, Missouri.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00194890",
+   "isRoot": true,
+   "label": "Eleven Point River",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00198863",
+   "description": "A coastal river in Monterey County in the State of California. It is formed by the confluence of its North and Middle Forks, at an elevation of roughly 390 m. The North Fork is the longer of the two streams, beginning at an elevation of 1,050 m. and running in a straight course southward to where it joins the Middle Fork. The smaller Middle Fork begins at an elevation of 970 m and flows south-southwest to meet the North Fork and form the mainstem of McWay Creek. After the mainstem is formed, the creek winds south and west through a narrow canyon to where it meets the South Fork at an elevation of roughly1 20 m. The South Fork, the largest sub-basin in the McWay Creek watershed, begins at an elevation of 780 m on the east side of a ridge that separates it from the mainstem. After flowing south and turning slightly in a south-southwest direction, it meets McWay Creek. The creek then heads southwest, passing a parking area for Julia Pfeiffer Burns State Park and crossing underneath Highway 1 in a concrete culvert. It spills into the Pacific Ocean at Waterfall Cove.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00198863",
+   "isRoot": false,
+   "label": "McWay Creek",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00266007",
+   "description": "A cave. Located by Beargrass Creek in Louisville, Kentucky. It is 490 m southeast of the corner of Eastern Parkway and Poplar Level Road on the west bank, between Louisville Cemetery and Calvary Cemetery, near Saint X High School. It is developed in Louisville Limestone 448 feet above sea level. A spring discharges water into Beargrass Creek.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00266007",
+   "isRoot": true,
+   "label": "Eleven Jones Cave",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00273476",
+   "description": "A populated place. A township of Johnston County, North Carolina.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00273476",
+   "isRoot": true,
+   "label": "Elevation Township",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00275723",
+   "description": "A populated place. A township of Randolph County Arkansas.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00275723",
+   "isRoot": true,
+   "label": "Eleven Point Township",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00299018",
+   "description": "A river.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00299018",
+   "isRoot": true,
+   "label": "Eleven Mile Creek",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00299303",
+   "description": "A river in the Saint Lawrence River drainage basin in South Algonquin, Nipissing District and Hastings Highlands, Hastings County in Ontario, Canada. Moore Creek has two branches which come together at McKenzie Lake at an elevation of 395 m. The east branch begins at Cross Lake at an elevation of 441 m and travels 5 km southwest to McKenzie Lake. The west branch begins at Princes Lake at an elevation of 448 m and travels 6.5 km southeast, taking in the right tributary Papineau Creek before reaching McKenzie Lake. From there, the creek flows north 6.5 km to Moore Lake at an elevation of 380 m taking in two right tributaries: Taylor Creek from Taylor Lake; and Coghlan Creek from Coghlan Lake. Pastwa Creek enters at the lake from the left. Finally, the creek heads 7 kmnorth to its mouth at the Madawaska River, at an elevation of 314 m, which flows via the Ottawa River into the St. Lawrence River.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00299303",
+   "isRoot": true,
+   "label": "Moore Creek",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00529864",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00529864",
+   "isRoot": true,
+   "label": "Townland of Eleven Ballyboes",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00577568",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00577568",
+   "isRoot": true,
+   "label": "Townland of Elevenacre",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00297082",
+   "description": "A river in northern Saskatchewan, Canada. It is part of the Mackenzie River drainage basin. It begins at an unnamed lake at an elevation of 572 m. It travels north to Kirsch Lake at an elevation of 498 m, where it takes in several unnamed tributaries, including one from the left arriving from Halliday Lake. The river continues to Parker Lake at an elevation of 413 m where it takes in the left tributary Arnold River. It then reaches its mouth at the Cree River at an elevation of 330 m. The river's waters flow via the Cree River, the Fond du Lac River and the Mackenzie River to the Arctic Ocean.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00297082",
+   "isRoot": true,
+   "label": "Rapid River",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00007525",
+   "description": "A salt lake in the interior part of the Tibetan Plateau. It consists of three sub-basins (called Lakes I, II and III) joined by narrow channels. Lake I is the upstream sub-basin and has a water-surface elevation of 4525 m asl. There is no surface input into Lake I. Lake I discharges into Lake II (water-surface elevation of 4522 m asl) which in turn discharges into Lake III (water-surface elevation of 4520 m asl). A small stream discharges into Lake III from the southeast. This is the only surface input to the lakes, which are otherwise fed by direct precipitation and springs.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00007525",
+   "isRoot": true,
+   "label": "Bange Lake",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00008807",
+   "description": "A river that has its sources on the slopes of the Andes mountains, at the foothills of Mino Volcano. The upper Loa basin is flanked on the west by a ridge with elevations that reach above 4,500 m, whereas to the east lies a volcanic chain, which separates it from endorrheic basins as that of Salar de Ascotan. The river flows south on an elevated plateau, for about 150 km, to the oasis of Chiu Chiu. The upper courses of the river are at a considerable elevation above sea level and receive a large volume of water from the Andes, mainly of two major tributaries: San Pedro de Inacaliri River and Salado River. The former joins the Loa near Conchi reservoir and the latter about 3 km south of Chiu Chiu. The water of its upper course and tributaries is fresh. However the lower course, as in all the rivers of this region becomes brackish. From Chiu Chiu, the Loa flows west and north in a great curve to Quillagua. After flowing for 115 km in this portion of its course and having ran through the city of Calama, the Loa receives the waters of San Salvador River at the locality of Chacance. Thence the river flows north for about 80 km to Quillagua. From Quillagua, its dry channel turns westward again and marks the border between the regions of Tarapaca and Antofagasta. Along its lower course, the Loa flows through a 500-m-deep canyon, which crosses the Chilean Coastal Range. The river reaches the Pacific Ocean in lat. 21deg26minS, a few miles south of the old port of Huanillos. The hydrologic regime of the river basin is rain-dominated. The increase of its water volume occurs mainly in January and February, as a consequence of the phenomenon known locally as Bolivian Winter.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00008807",
+   "isRoot": true,
+   "label": "Loa River",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00052629",
+   "description": "A river that is a major tributary of the Zambezi River. The Luwangwa rises in the Lilonda and Mafinga Hills in north-east Zambia at an elevation of around 1500 m, near the border with Tanzania and Malawi, and flows in a southwesterly direction through a broad valley. About 150 km from its source it has dropped to an elevation of about 690 m and becomes a meandering river with a flood-plain several km wide. Over the next 300 km the meanders increase, with many ox-bow lakes and abandoned meanders. Near Mfuwe, the river's elevation has dropped to about 520 m, the flood plain is about 10 km wide and the valley reaches about 100 km wide, with a north-west escarpment (Muchinga Escarpment) about 700 m high, and a south-western escarpment about 450 m high. In the dry season some sections, especially in the upper reaches, dry out completely, leaving isolated pools. At about 500 km the valley narrows to about 50 km and becomes divided by a ridge into two parallel valleys, with a tributary, the Lukusashi River in a 25 km-wide valley to the north-west, and the Luangwa in a 15 km wide valley to the southeast. The river meanders less, and the flood plain narrows. At 600 km the river abruptly enters a narrow valley between hills rising some 200 m from the broader valley floor, becoming almost a gorge. About 700 km from source the Luangwa merges with its tributary the Lukusashi after the latter has merged with the Lunsemfwa River coming from the oppostie driection, and turns due south through a steep narrow valley: this is its exit from the Luangwa Rift Valley (see following section). After only 20 km it emerges from the hills into the broad valley of the Zambezi and meanders over sandy flats about 1.5 km wide in a flood plain of 3-5 km wide. It merges with the deeper Zambezi at Luangwa town.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00052629",
+   "isRoot": true,
+   "label": "Luangwa River",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00059235",
+   "description": "A region located in the Alps in the south of the Isere departement. It is a plateau surroundered by mountains. It roughly matches the boundaries of the canton of La Mure. It is around 20 km long from north to south and around 13km wide from east to west. At the south and at the west, the border of the plateau is marked by the Drac River, which defines the boundary with Trieves (at the south) and with the Vercors Plateau (at the west). At the north, the plateau ends at the Laffrey slope down to the Romanche valley at the elevation of 350m. At the east, the small mountain range including the summits of Grand Serre (elev. 2,141 m) and Tabor (elev. 2,389 m) marks the boundary with the Valbonnais canton.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00059235",
+   "isRoot": true,
+   "label": "Plateau Matheysine",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00141929",
+   "description": "Three low elevations aligned nearly N-S The dominant central nunatak and the southern elevation have definite rock exposures; the minor northern elevation may be entirely snow covered.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00141929",
+   "isRoot": true,
+   "label": "Haag Nunataks",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00271270",
+   "description": "A river that rises on the slopes of Lahchah Mountain at an elevation of 745 m, about 40 km northwest of Old Crow. The river travels 15 km west to reach the United States border, where it crosses into Koyukuk Census Area, Alaska at an elevation of 476 m. The river reaches its mouth at the Porcupine River at an elevation of 197 m, 12.8 km north of the settlement of Old Rampart.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00271270",
+   "isRoot": true,
+   "label": "Rapid River",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

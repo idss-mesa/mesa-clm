@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_141853",
+  "ontology_id": "ncbitaxon"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "NCBITaxon:141853",
+  "description": "",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_141853",
+  "isRoot": false,
+  "label": "Campylorhynchus brunneicapillus",
+  "ontologyId": "ncbitaxon",
+  "synonyms": []
+ }
+}

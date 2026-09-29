@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "named location",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:00000022",
+   "description": "A stream which, through permanent or seasonal flow processes, moves from elevated land towards lower elevations through a definite channel and empties either into a sea, lake, or another river or ends on land as bed seepage and evapotranspiration exceed water supply.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000022",
+   "isRoot": false,
+   "label": "river",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "FOODON:00002373",
+   "description": "A meal type is the name of an eating occasion that may have location, food type, or other customary contextual features. (Damion's 1st draft definition)",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/FOODON_00002373",
+   "isRoot": false,
+   "label": "food by meal type",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

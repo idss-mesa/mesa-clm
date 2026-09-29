@@ -1,0 +1,40 @@
+{
+ "args": {
+  "ontology_id": "genepio",
+  "query": "The geographic longitude",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GENEPIO:0100310",
+   "description": "A data field which describes the longitude coordinates of the geographical location of sample collection.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0100310",
+   "isRoot": false,
+   "label": "sampling location longitude",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0001656",
+   "description": "A geographic coordinate entity composed of both latitude and longitude components.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0001656",
+   "isRoot": false,
+   "label": "latitude and longitude coordinate (ISO 6709)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  },
+  {
+   "curie": "GENEPIO:0002141",
+   "description": "The geographical coordinates of the location where the sample was collected. Specify as degrees latitude and longitude in format \"d[d.dddd] N|S d[dd.dddd] W|E\", eg, 38.98 N 77.11 W",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GENEPIO_0002141",
+   "isRoot": false,
+   "label": "latitude and longitude coordinate (NCBI BioSample format)",
+   "ontologyId": "genepio",
+   "synonyms": []
+  }
+ ]
+}

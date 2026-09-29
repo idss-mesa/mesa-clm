@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "latitude",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00000373",
+   "description": "The oceanic division completely in Earth's southern hemisphere encircling Antarctica, comprising the southernmost waters of the World Ocean south of 60degS latitude. However, the Southern Ocean's northern boundary is not precise. Instead, the Antarctic Convergence, an ocean zone which fluctuates seasonally, separates the Southern Ocean from other oceans. This dynamic, natural boundary is formed by the convergence of two circumpolar currents, one easterly flowing and one westerly.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00000373",
+   "isRoot": false,
+   "label": "Southern Ocean",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00001453",
+   "description": "A sub-antarctic volcanic island in the South Atlantic Ocean, south-southwest of the Cape of Good Hope (South Africa). It is a dependent area of Norway and is not subject to the Antarctic Treaty, as it is north of the latitude south of which claims are suspended.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00001453",
+   "isRoot": true,
+   "label": "Bouvet Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00003984",
+   "description": "A Territory that consists of that segment of the Antarctic continent lying south of latitude 60degS and between longitudes 20deg and 80degW, comprising the Antarctic Peninsula with all adjacent islands, the South Orkney and South Shetland Islands and the Weddell Sea, as well as the landmass extending to the South Pole.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00003984",
+   "isRoot": false,
+   "label": "British Antarctic Territory",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00004063",
+   "description": "A sector of Antarctica claimed by Argentina as part of its national territory. The Argentine Antarctic region, consisting of the Antarctic Peninsula and a triangular section extending to the South Pole, is delimited by the meridians 25degW and 74degW and the parallel 60degS latitude. Administratively, Argentine Antarctica is a department of the province of Tierra del Fuego, Antarctica, and South Atlantic Islands.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00004063",
+   "isRoot": false,
+   "label": "Argentine Antarctica",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00004438",
+   "description": "A state located in the Midwestern region of the United States of America. Iowa is bordered by the Mississippi River on the east; the Missouri River and the Big Sioux River on the west; the northern boundary is a line along 43 degrees, 30 minutes north latitude. The southern border is the Des Moines River and a line along approximately 40 degrees 35 minutes north.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00004438",
+   "isRoot": true,
+   "label": "State of Iowa",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00004946",
+   "description": "A federal subject of Russia. It is bordered by China, North Korea, and warm, non-freezing waters of the Sea of Japan, is the extreme South-Eastern region of Russia, located between 42deg and 48deg North Latitude and 130deg and 139deg East Longitude. It is stretched in the meridianal direction, the distance from its extreme Northern point to the extreme Southern point totals about 900 km.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00004946",
+   "isRoot": true,
+   "label": "Primorsky Krai",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00005854",
+   "description": "A strait between Cape Dezhnev, Russia, the easternmost point (169deg43min W) of the Asian continent and Cape Prince of Wales, Alaska, the westernmost point (168deg05minW) of the North American continent, with latitude of about 65deg 40minNorth, slightly south of the polar circle.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00005854",
+   "isRoot": true,
+   "label": "Bering Strait",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00007750",
+   "description": "A union territory of India. It is located in the Indian Ocean, in the southern reaches of the Bay of Bengal, near Indonesia and Thailand. It comprises two island groups - the Andaman Islands and the Nicobar Islands - which separate the Andaman Sea to the east from the Indian Ocean. These two groups are separated by the 10degN parallel, the Andamans lying to the north of this latitude, and the Nicobars to the south. The capital of this territory is the Andamanese town of Port Blair.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00007750",
+   "isRoot": false,
+   "label": "Union Territory of Andaman and Nicobar Islands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00007751",
+   "description": "An archipelago located in the Indian Ocean, in the southern reaches of the Bay of Bengal. It comprises two island groups - the Andaman Islands and the Nicobar Islands - which separate the Andaman Sea to the east from the Indian Ocean. These two groups are separated by the 10deg N parallel, the Andamans lying to the north of this latitude, and the Nicobars to the south.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00007751",
+   "isRoot": true,
+   "label": "Andaman and Nicobar Islands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00008878",
+   "description": "An area of Antarctica (and other land masses in the Southern Ocean) claimed by New Zealand. It is defined by a sector originating at the South Pole, passing along longitudes 160degE to 150degW, and terminating at latitude 60degS.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00008878",
+   "isRoot": false,
+   "label": "Ross Dependency",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00017568",
+   "description": "One of the Sverdrup Islands in Nunavut between 78 and 79 degrees of latitude. It lies east of Ellef Ringnes Island, west of Axel Heiberg Island. Hassel Sound separates Amund Ringnes Island from Ellef Ringnes Island. Hendriksen Strait is to the south, as is Cornwall Island. Norwegian Bay is to the east, as is Haig-Thomas Island. To the north lies Peary Channel.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00017568",
+   "isRoot": true,
+   "label": "Amund Ringnes Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00024826",
+   "description": "An archipelago located in Maluku Province, Indonesia between latitudes 7 degrees 31 minutes South to 8 degrees 13 minutes South and from longitudes 129 degrees 30 minutes East to 130 degrees 05 minutes East. Kepulauan Babar refers to the entire archipelago.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00024826",
+   "isRoot": true,
+   "label": "Kepulauan Babar",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00039858",
+   "description": "A relatively large island in the Kara Sea off the tip of the Yamal Peninsula, Siberia, Russia. Bely Island covers an area of 1,810 km2. It is covered by tundra, but some dwarf shrubs also grow on this island. It is separated from the mainland by the Malygina Strait, an 8 to 10 km wide sound which is frozen most of the year. The latitude is 73DEG15min N and the longitude 70deg50minE.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00039858",
+   "isRoot": true,
+   "label": "Bely Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00043225",
+   "description": "An island in the Baltic Sea making, in the largest part, the north and east boundaries of the Bay of Wismar on the German coast. The north coast of the island is also part of the southern coast of the large gulf known as the Bay of Mecklenburg, of which Wismar Bay is considered a part. Insel Poel is thus wholly within both Wismar and Mecklenburg Bays its northern tip forming the unofficial latitude of the northern limits of Wismar Bay.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00043225",
+   "isRoot": true,
+   "label": "Poel Island",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00045467",
+   "description": "A scattered island chain off the Queensland coast, located south-east of the city of Mackay roughly between the latitudes 21degS and 22degS. All islands are of the continental type.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00045467",
+   "isRoot": true,
+   "label": "Northumberland Islands",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00047663",
+   "description": "A large river flowing approximately from southwest to northeast in the middle latitudes of North America, connecting the Great Lakes with the Atlantic Ocean. It is the primary drainage of the Great Lakes Basin. It traverses the Canadian provinces of Quebec and Ontario and forms part of the international boundary between Ontario, Canada, and the State of New York.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00047663",
+   "isRoot": false,
+   "label": "Saint Lawrence River",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00048568",
+   "description": "An Island off the coast of southern Ecuador at approximately 80 degrees west longitude and 3 degrees south latitude. It is located at the head of the Gulf of Guayaquil, south of the mouth of the Guayas River and the city of Guayaquil, Ecuador's largest city and chief port. It is bordered by Jambeli Channel on the east and Morro Channel on the west, both of which connect the open Gulf of Guayaquil to the narrow mouth of the Guayas River.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00048568",
+   "isRoot": true,
+   "label": "Isla Puna",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00049434",
+   "description": "A peninsula in northern Queensland bounded by the Gulf of Carpenteria to the west and the Coral Sea to the east. The official boundary of the Cape York Peninsula Region as referred to in the Cape York Peninsula Heritage Act 2007 of Queensland runs along approximately 16degS latitude.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00049434",
+   "isRoot": true,
+   "label": "Cape York Peninsula",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00051254",
+   "description": "A large and long estuary through which the lower Yenisei River flows into the Kara Sea. The Yenisei Gulf is formed by the river widening to an average of 50 km for up to 250 km in a roughly north-south direction, between a latitude of 70deg 30min N in the area around Munguy settlement, and its mouth roughly located at 72deg30min N, in the area of Sibiryakov Island, in the Kara Sea.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00051254",
+   "isRoot": true,
+   "label": "Yenisei Gulf",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00054763",
+   "description": "A plate tectonic convergent boundary. IBM extends over 2800 km south from near Tokyo, Japan, to beyond Guam, and includes the Izu Islands. Bonin Islands, and Mariana Islands; much more of the IBM arc system is submerged below sealevel. The IBM arc system lies along the eastern margin of the Philippine Sea Plate in the Western Pacific Ocean. It is most famous for being the site of the deepest gash in Earth's solid surface, the Challenger Deep in the Mariana Trench. The northern boundary of the IBM arc system follows the Nankai Trough northeastward and onto southern Honshu, joining up with a complex system of thrusts that continue offshore eastward to the Japan Trench. The intersection of the IBM, Japan, and Sagami trenches is the only trench-trench-trench triple junction on Earth. The IBM arc system is bounded on the east by a very deep trench, which ranges from almost 11 km deep in the Challenger Deep to less than 3 km where the Ogasawara Plateau enters the trench. The southern boundary is found where the IBM Trench meets the Kyushu-Palau Ridge near Belau. Thus defined, the IBM arc system spans over 25deg of latitude, from 11degN to 35deg20minN.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00054763",
+   "isRoot": true,
+   "label": "Izu-Bonin-Mariana Arc",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000008",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0000008",
+  "description": "A physical quality inhering in a bearer by virtue of the bearer's scalar absolute value of the rate of change of the bearer's position.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000008",
+  "isRoot": false,
+  "label": "speed",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

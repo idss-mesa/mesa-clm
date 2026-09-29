@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001911",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001911",
+  "description": "A cell culture comprised of cell line cells and the media in which they are being actively propagated or quiescently stored.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001911",
+  "isRoot": false,
+  "label": "cell line culture",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

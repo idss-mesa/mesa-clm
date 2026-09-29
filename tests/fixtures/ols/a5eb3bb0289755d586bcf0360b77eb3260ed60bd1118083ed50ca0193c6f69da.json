@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "kingdom",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "TAXRANK:0000017",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/TAXRANK_0000017",
+   "isRoot": false,
+   "label": "kingdom",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:519877",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_519877",
+   "isRoot": false,
+   "label": "Influenza A virus (A/United Kingdom/1861-CDC-20030709-ROW-12/2003(H3N2))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:652110",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_652110",
+   "isRoot": false,
+   "label": "Oat chlorotic stunt virus isolate United Kingdom",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:105549",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_105549",
+   "isRoot": false,
+   "label": "Bufo bufo United Kingdom iridovirus 1",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:105550",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_105550",
+   "isRoot": false,
+   "label": "Bufo bufo United Kingdom iridovirus 2",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:105551",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_105551",
+   "isRoot": false,
+   "label": "Bufo bufo United Kingdom iridovirus 3",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:105557",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_105557",
+   "isRoot": false,
+   "label": "Rana temporaria United Kingdom iridovirus 1",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:105558",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_105558",
+   "isRoot": false,
+   "label": "Rana temporaria United Kingdom iridovirus 2",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1118206",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1118206",
+   "isRoot": false,
+   "label": "Influenza A virus (A/United Kingdom/261/1991(H3N2))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1214957",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1214957",
+   "isRoot": false,
+   "label": "Influenza A virus (A/equine/United Kingdom/305066/2003(H3N8))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1214958",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1214958",
+   "isRoot": false,
+   "label": "Influenza A virus (A/equine/United Kingdom/306216/2003(H3N8))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1214959",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1214959",
+   "isRoot": false,
+   "label": "Influenza A virus (A/equine/United Kingdom/306287/2003(H3N8))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1214960",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1214960",
+   "isRoot": false,
+   "label": "Influenza A virus (A/equine/United Kingdom/306306/2003(H3N8))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1214961",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1214961",
+   "isRoot": false,
+   "label": "Influenza A virus (A/equine/United Kingdom/306338/2003(H3N8))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1214962",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1214962",
+   "isRoot": false,
+   "label": "Influenza A virus (A/equine/United Kingdom/306420/2003(H3N8))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1214963",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1214963",
+   "isRoot": false,
+   "label": "Influenza A virus (A/equine/United Kingdom/306442/2003(H3N8))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1214964",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1214964",
+   "isRoot": false,
+   "label": "Influenza A virus (A/equine/United Kingdom/306608/2003(H3N8))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1214965",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1214965",
+   "isRoot": false,
+   "label": "Influenza A virus (A/equine/United Kingdom/306617/2003(H3N8))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1214966",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1214966",
+   "isRoot": false,
+   "label": "Influenza A virus (A/equine/United Kingdom/307032/2003(H3N8))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:1214967",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_1214967",
+   "isRoot": false,
+   "label": "Influenza A virus (A/equine/United Kingdom/307048/2003(H3N8))",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}

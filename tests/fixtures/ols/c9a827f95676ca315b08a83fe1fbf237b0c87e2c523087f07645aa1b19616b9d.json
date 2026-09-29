@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "bco",
+  "query": "The specific epithet",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "specificEpithet",
+   "description": "The name of the first or species epithet of the scientificName.",
+   "hasChildren": false,
+   "iri": "http://rs.tdwg.org/dwc/terms/specificEpithet",
+   "isRoot": true,
+   "label": "Specific Epithet",
+   "ontologyId": "bco",
+   "synonyms": []
+  }
+ ]
+}

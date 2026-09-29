@@ -1,0 +1,9 @@
+{
+ "args": {
+  "ontology_id": "obi",
+  "query": "Zenaida macroura",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": []
+}

@@ -1,0 +1,20 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "cluster size",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:00000431",
+   "description": "A cluster of dozens to hundreds of similarly shaped, sized and oriented drumlins.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000431",
+   "isRoot": false,
+   "label": "drumlin field",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_47245",
+  "ontology_id": "ncbitaxon"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "NCBITaxon:47245",
+  "description": "",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_47245",
+  "isRoot": false,
+  "label": "Zenaida macroura",
+  "ontologyId": "ncbitaxon",
+  "synonyms": []
+ }
+}

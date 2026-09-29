@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "gaz",
+  "query": "cluster size",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "GAZ:00132943",
+   "description": "Also: Nansen Island in the Kara Sea.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00132943",
+   "isRoot": true,
+   "label": "Ostrov Nansena",
+   "ontologyId": "gaz",
+   "synonyms": []
+  },
+  {
+   "curie": "GAZ:00056275",
+   "description": "A steep-sided, glacier-clad stratovolcano which contrasts with the broad profile of Nevado del Ruiz volcano to the north. The andesitic-dacitic younger Tolima volcano formed during the past 40,000 years, rising above and largely obscuring a 3 km wide late-Pleistocene caldera. The summit consists of a cluster of late-Pleistocene to Holocene lava domes that were associated with thick block-lava flows on the northern and eastern flanks and extensive pyroclastic-flow deposits. The summit contains a funnel-shaped crater 200-300 m deep. Holocene activity has included explosive eruptions ranging in size from moderate to plinian. The last major eruption took place about 3600 years ago. Lava dome growth has produced block-and-ash flows that traveled primarily to the NE and SE. Minor explosive eruptions have been recorded from Tolima in the 19th and 20th centuries.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/GAZ_00056275",
+   "isRoot": true,
+   "label": "Nevado del Tolima",
+   "ontologyId": "gaz",
+   "synonyms": []
+  }
+ ]
+}

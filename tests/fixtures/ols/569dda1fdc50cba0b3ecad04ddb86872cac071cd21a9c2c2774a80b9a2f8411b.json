@@ -1,0 +1,210 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "query": "species",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "ENVO:00000361",
+   "description": "A conservation designation denoting a protected area in the United Kingdom. SSSIs are the basic 'building block' of nature conservation legislation and most other legal nature/geological conservation designations are based upon them, including National Nature Reserves, Ramsar Sites, Special Protection Areas, and Special Areas of Conservation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000361",
+   "isRoot": false,
+   "label": "site of special scientific interest",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001637",
+   "description": "Agricultural specialisation is often a means to produce sufficiently large quantities of crops to compete in global markets. Entire landscapes and regions are often dedicated to such production.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001637",
+   "isRoot": false,
+   "label": "agricultural specialisation process",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001166",
+   "description": "An IUCN protected area within which the habitats of or ecosystems used by floral and faunal species deemed to be of international, national, or local importance are maintained, conserved, or restored such that their composition and functional integrity are maintained.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001166",
+   "isRoot": false,
+   "label": "IUCN habitat/species management area",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000957",
+   "description": "A tree line ecotone which contains gaps in tree coverage due to decreased biodiversity in tree-forming plant species: gaps are above the alpine tree line for some species yet below the desert tree line for others, and no species with intermediate tolerances are present.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000957",
+   "isRoot": false,
+   "label": "double tree line ecotone",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000988",
+   "description": "A food shop in which the food products on offer are restricted to those produced in a region and cultural setting other than that of the shop's locality.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000988",
+   "isRoot": false,
+   "label": "ethnic food shop",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001376",
+   "description": "A marine bed which is covered by animals which have benthic habitats, including attached, clinging, sessile, infaunal, burrowing, laying, interstitial, and slow-moving animals, but not animals that have created substrate.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001376",
+   "isRoot": false,
+   "label": "marine faunal bed",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001379",
+   "description": "A marine faunal bed which is dominated by mussels of the Mytilus or Modiolus genera either 1) resting on the sediment surface, 2)  partially embedded in the sediment, 3) attached to conspecifics (by using their byssal threads), or 4) attached to a piece of gravel in slightly gravelly fine sediments.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001379",
+   "isRoot": false,
+   "label": "mussel bed",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000059",
+   "description": "\"Seagrass beds are highly diverse and productive ecosystems, and can harbor hundreds of associated species from all phyla, for example juvenile and adult fish, epiphytic and free-living macroalgae and microalgae, mollusks, bristle worms, and nematodes. Few species were originally considered to feed directly on seagrass leaves (partly because of their low nutritional content), but scientific reviews and improved working methods have shown that seagrass herbivory is a highly important link in the food chain, with hundreds of species feeding on seagrasses worldwide, including green turtles, dugongs, manatees, fish, geese, swans, sea urchins and crabs.\" https://en.wikipedia.org/wiki/Seagrass 2016-01-18",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000059",
+   "isRoot": false,
+   "label": "sea grass bed",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000962",
+   "description": "A sedimentary rock which is primarily composed of the fossilized, siliceous remains of diatoms mixed with varying amounts of other clays and minerals.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000962",
+   "isRoot": false,
+   "label": "diatomite",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000963",
+   "description": "A piece of rock which is primarily composed of diatomite: the fossilized, siliceous remains of diatoms mixed with varying amounts of other clays and minerals.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000963",
+   "isRoot": false,
+   "label": "diatomite particle",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001417",
+   "description": "These special clouds will be given the name of the appropriate genus, followed by any appropriate species, variety and supplementary feature, and followed by the special cloud name “silvagenitus” (for example, Stratus silvagenitus).",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001417",
+   "isRoot": false,
+   "label": "silvagenitus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00000363",
+   "description": "A protected area of importance for wildlife, flora, fauna or features of geological or other special interest, which is reserved and managed for conservation and to provide special opportunities for study or research. Nature reserves may be designated by government institutions in some countries, such as the United Kingdom, or by private landowners, such as charities and research institutions, regardless of nationality.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00000363",
+   "isRoot": false,
+   "label": "area designated as a nature reserve",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00001995",
+   "description": "From https://en.wikipedia.org/wiki/ [A mineral] is different from a rock, which can be an aggregate of minerals or non-minerals and does not have a specific chemical composition. The exact definition of a mineral is under debate, especially with respect to the requirement a valid species be abiogenic, and to a lesser extent with regards to it having an ordered atomic structure.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00001995",
+   "isRoot": false,
+   "label": "rock",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:00005804",
+   "description": "A pile of earth, sand, pine needles, or clay or a composite of these and other materials that build up at the entrances of the subterranean dwellings of ant colonies as they are excavated. A colony is built and maintained by legions of worker ants, who carry tiny bits of dirt and pebbles in their mandibles and deposit them near the exit of the colony. They normally deposit the dirt or vegetation at the top of the hill to prevent it from sliding back into the colony, but in some species they actively sculpt the materials into specific shapes, and may create nest chambers within the mound.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_00005804",
+   "isRoot": false,
+   "label": "nest of ant",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000449",
+   "description": "A wet meadow is a type of wetland with soils that are saturated with water for part or all of the growing season.",
+   "hasChildren": true,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000449",
+   "isRoot": false,
+   "label": "wet meadow ecosystem",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000968",
+   "description": "Sources of water include rivers, lakes, reservoirs, and other water bodies. Conduits include canals, pipelines, and tunnels. Water intakes typically transport water for purposes of hydroelectric power engineering, water supply, or irrigation.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000968",
+   "isRoot": false,
+   "label": "water intake",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001028",
+   "description": "Sediment which has its porespace filled by water which has very low levels of sodium chloride and/or other salts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001028",
+   "isRoot": false,
+   "label": "sediment permeated by freshwater",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001036",
+   "description": "Sediment which has its porespace filled by water with increased levels of sodium chloride and other salts.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001036",
+   "isRoot": false,
+   "label": "sediment permeated by saline water",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001418",
+   "description": "The species-level term, 'fibratus', applies mainly to clouds of the Cirrus and Cirrostratus genera",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001418",
+   "isRoot": false,
+   "label": "cirrus fibratus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01001423",
+   "description": "The species-level term, 'fibratus', applies mainly to clouds of the Cirrus and Cirrostratus genera",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01001423",
+   "isRoot": false,
+   "label": "cirrostratus fibratus cloud",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

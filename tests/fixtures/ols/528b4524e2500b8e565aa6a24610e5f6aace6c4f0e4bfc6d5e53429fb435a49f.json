@@ -1,0 +1,30 @@
+{
+ "args": {
+  "ontology_id": "ncbitaxon",
+  "query": "plot type",
+  "size": 20
+ },
+ "method": "search_terms",
+ "response": [
+  {
+   "curie": "NCBITaxon:2650327",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2650327",
+   "isRoot": false,
+   "label": "Plotosus lineatus complex sp. type01",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  },
+  {
+   "curie": "NCBITaxon:2650328",
+   "description": "",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/NCBITaxon_2650328",
+   "isRoot": false,
+   "label": "Plotosus lineatus complex sp. type02",
+   "ontologyId": "ncbitaxon",
+   "synonyms": []
+  }
+ ]
+}
