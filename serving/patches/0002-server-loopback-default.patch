@@ -1,0 +1,134 @@
+mesa-clm serving patch 0002: serve on 127.0.0.1 by default and refuse an exposed server without a key
+
+Upstream: Contrastive-LM/CLM pull request #11 (open, unmerged when carried),
+head fc4d8d85b41bbe4dc6cf17c6260f7de3c3ff69e8 (Wangwenbo0523/CLM harden-server-defaults).
+The diff below is the pull request diff taken verbatim from the GitHub API.
+Series: apply 0001..0006 in order with `git apply` to Contrastive-LM/CLM
+bb42c6c5bf914fd449bed2f6ca65be80602cb1f7. Touches: README.md, src/clm/server.py.
+Never touches src/clm/schema.py or src/clm/client.py (DESIGN D4).
+
+diff --git a/README.md b/README.md
+index aa5296f..d907f51 100644
+--- a/README.md
++++ b/README.md
+@@ -424,9 +424,10 @@ files only; every API route above shadows it.
+ ### `clm-serve` options
+ 
+ ```
+-clm-serve [--port 8700] [--emb-url http://127.0.0.1:8090/v1/embeddings] [--emb-model qwen3-8b]
+-          [--max-tokens 2048] [--ckpt PATH] [--ckpt-dir DIR] [--model NAME=PATH ...] [--device cpu|cuda]
+-          [--action-cache 0.02|512MiB|0] [--no-ui] [--cors]
++clm-serve [--host 127.0.0.1] [--port 8700] [--emb-url http://127.0.0.1:8090/v1/embeddings]
++          [--emb-model qwen3-8b] [--max-tokens 2048] [--ckpt PATH] [--ckpt-dir DIR]
++          [--model NAME=PATH ...] [--device cpu|cuda] [--action-cache 0.02|512MiB|0]
++          [--no-ui] [--cors] [--allow-anonymous]
+ ```
+ 
+ `--ckpt PATH` serves your own head as `clm-latest` (default: the reference
+@@ -435,13 +436,20 @@ head in `~/.cache/clm/`, downloaded if missing); `--ckpt-dir DIR` serves every
+ The heads run on the GPU when torch sees one, else on the CPU; `--device` (or
+ `CLM_DEVICE`) forces one. Checkpoints hot-reload when the file changes. Set `CLM_API_KEY` to require
+ `Authorization: Bearer <key>` (the playground has a field for it). Environment
+-equivalents: `CLM_PORT`, `CLM_EMB_URL`, `CLM_EMB_MODEL`, `CLM_CKPT`,
++equivalents: `CLM_HOST`, `CLM_PORT`, `CLM_EMB_URL`, `CLM_EMB_MODEL`, `CLM_CKPT`,
+ `CLM_DEVICE`, `CLM_ACTION_CACHE`.
+ 
+ `--no-ui` drops the playground and serves the API alone. `--cors` allows browser
+ requests from any origin and is off by default, because an API key otherwise
+ travels in a header any page would then be free to send.
+ 
++`--host` defaults to `127.0.0.1`, so the API answers this machine only
++(`--host 0.0.0.0` to bind every interface, e.g. inside a container; `CLM_HOST`
++does the same). Reaching it from elsewhere takes `CLM_API_KEY`: `clm-serve`
++refuses to start when `--host` is not a loopback address, or `--cors` is passed,
++and no key is set — without a key, anyone who can reach the port drives the
++model. `--allow-anonymous` starts it anyway, for a network you trust.
++
+ #### The vector cache
+ 
+ An agent asks about a changing state but a mostly fixed set of actions, and it
+diff --git a/src/clm/server.py b/src/clm/server.py
+index e44c0d8..c76ba8d 100644
+--- a/src/clm/server.py
++++ b/src/clm/server.py
+@@ -1,7 +1,9 @@
+ """CLM System One API server (FastAPI).
+ 
+     clm-serve --port 8700 --emb-url http://127.0.0.1:8090/v1/embeddings
+-    export CLM_API_KEY=...      # optional; then requests need "Authorization: Bearer <key>"
++    export CLM_API_KEY=...      # required once this server is reachable from another machine
++                                # (a non-loopback --host, or --cors); requests then need
++                                # "Authorization: Bearer <key>"
+ 
+     POST /v1/systemone   {"state": ..., "model": "clm-latest", "questions": {id: Question},
+                           "temperature": 1.0}          -> {"model", "answers": {id: Answer}, "usage"}
+@@ -19,6 +21,7 @@
+ 
+ import argparse
+ import asyncio
++import ipaddress
+ import os
+ import time
+ 
+@@ -164,9 +167,29 @@ def playground():
+     return app
+ 
+ 
++def is_loopback(host: str) -> bool:
++    """Whether ``host`` is reachable from this machine only.
++
++    ``localhost`` and the loopback IPs are; ``0.0.0.0`` and ``::`` — every
++    interface, which is how uvicorn reads them — are not, and neither is a
++    hostname or an empty string, which resolves to this machine's own addresses.
++    The caller only uses this to decide whether an API key is mandatory, so
++    anything we cannot parse without network I/O counts as reachable.
++    """
++    host = (host or "").strip().strip("[]").lower()
++    if host == "localhost":
++        return True
++    try:
++        return ipaddress.ip_address(host).is_loopback
++    except ValueError:
++        return False
++
++
+ def main() -> None:
+     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+-    ap.add_argument("--host", default="0.0.0.0")
++    ap.add_argument("--host", default=os.environ.get("CLM_HOST", "127.0.0.1"),
++                    help="interface to bind (0.0.0.0 for every one); the default serves this machine "
++                         "only, so the API is not reachable from the network.  Environment: CLM_HOST")
+     ap.add_argument("--port", type=int, default=int(os.environ.get("CLM_PORT", 8700)))
+     ap.add_argument("--emb-url", default=os.environ.get("CLM_EMB_URL", "http://127.0.0.1:8090/v1/embeddings"))
+     ap.add_argument("--emb-model", default=os.environ.get("CLM_EMB_MODEL", "qwen3-8b"))
+@@ -187,8 +210,22 @@ def main() -> None:
+     ap.add_argument("--cors", action="store_true",
+                     help="allow browser requests from any origin (needed to drive this server from a "
+                          "playground served elsewhere)")
++    ap.add_argument("--allow-anonymous", action="store_true",
++                    help="serve without CLM_API_KEY even though the server is reachable beyond this "
++                         "machine (a non-loopback --host, or --cors)")
+     args = ap.parse_args()
+ 
++    api_key = os.environ.get("CLM_API_KEY")
++    exposed = args.cors or not is_loopback(args.host)
++    if exposed and not api_key:
++        if not args.allow_anonymous:
++            raise SystemExit(
++                f"refusing to serve: --host {args.host} / --cors makes this server reachable from other "
++                "machines, and CLM_API_KEY is not set, so anyone who can reach the port can call the "
++                "model.  Set CLM_API_KEY=... (clients then send \"Authorization: Bearer <key>\"), or "
++                "pass --allow-anonymous if that exposure is intended.")
++        print("[clm] warning: no CLM_API_KEY; serving anonymously on a reachable interface", flush=True)
++
+     from .embedder import Embedder
+     ckpt = args.ckpt
+     if not ckpt and not args.no_download:
+@@ -205,7 +242,6 @@ def main() -> None:
+                     action_cache=args.action_cache)
+     if not engine.heads and not extra:
+         raise SystemExit("no checkpoint: pass --ckpt or let clm-serve download the reference head")
+-    api_key = os.environ.get("CLM_API_KEY")
+     app = create_app(engine, api_key, ui=not args.no_ui, cors=args.cors)
+     print(f"[clm] models {[m['name'] for m in engine.models()]} on {device}", flush=True)
+     print(f"[clm] embedder {args.emb_url} ({args.emb_model}) {'up' if engine.embedder.healthy() else 'NOT REACHABLE'}; "

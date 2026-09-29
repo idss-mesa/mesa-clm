@@ -1,10 +1,17 @@
 name: Serving
 
-# CPU-only checks for the serve-venv side (serving/, deploy/), which never imports mesa_clm.
-# Skeleton until milestone M1 lands the patches, scripts and units it will check (plan §9).
+# CPU-only checks for the serve-venv side (serving/, deploy/), which never imports mesa_clm
+# (plan §9). The core's view of it (src/mesa_clm/serving.py, tests/unit/test_serving.py) runs in
+# ci.yml. Nothing here needs torch, a GPU, docker or the network beyond PyPI and GitHub.
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "serving/**"
+      - "deploy/**"
+      - ".github/workflows/serving.yml"
   pull_request:
     paths:
       - "serving/**"
@@ -18,15 +25,84 @@ concurrency:
   group: serving-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  CLM_REPO: https://github.com/Contrastive-LM/CLM.git
+  # Tool versions match uv.lock, so these checks agree with `uv run ruff/mypy` locally.
+  RUFF: ruff@0.16.9
+  MYPY: mypy@2.3.1
+
 jobs:
   serving:
     name: serving checks (CPU only)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: TODO(M1) serving checks
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.11"
+
+      - name: Clone Contrastive-LM/CLM at the locked commit and check the pristine schema.py
         run: |
-          echo "TODO(M1): clone Contrastive-LM/CLM@bb42c6c5 and 'git apply --check' serving/patches/0001-0006"
-          echo "TODO(M1): ruff + mypy --strict on serving/; shellcheck deploy/bin/*"
-          echo "TODO(M1): systemd-analyze --user verify deploy/systemd/*"
-          echo "TODO(M1): pytest the patched create_app and fallback_serve with a stub encoder (401 without key, refuse unkeyed non-loopback, constant-time compare)"
+          commit="$(python3 -c 'import json; print(json.load(open("serving/serving.lock.json"))["clm_commit"])')"
+          schema="$(python3 -c 'import json; print(json.load(open("serving/serving.lock.json"))["schema_sha256"])')"
+          git clone --quiet --no-checkout "$CLM_REPO" "$RUNNER_TEMP/CLM"
+          git -C "$RUNNER_TEMP/CLM" -c advice.detachedHead=false checkout --quiet --detach "$commit"
+          echo "$schema  $RUNNER_TEMP/CLM/src/clm/schema.py" | sha256sum -c -
+
+      - name: Apply serving/patches in lock order (git apply --check, then apply)
+        run: |
+          python3 - <<'PY'
+          import hashlib, json
+          lock = json.load(open("serving/serving.lock.json"))
+          for p in lock["patches"]:
+              data = open(f"serving/patches/{p['id']}.patch", "rb").read()
+              assert hashlib.sha256(data).hexdigest() == p["sha256"], p["id"]
+          PY
+          for id in $(python3 -c 'import json; print(" ".join(p["id"] for p in json.load(open("serving/serving.lock.json"))["patches"]))'); do
+            git -C "$RUNNER_TEMP/CLM" apply --check "$GITHUB_WORKSPACE/serving/patches/$id.patch"
+            git -C "$RUNNER_TEMP/CLM" apply "$GITHUB_WORKSPACE/serving/patches/$id.patch"
+            echo "applied $id"
+          done
+          git -C "$RUNNER_TEMP/CLM" diff --quiet HEAD -- src/clm/schema.py src/clm/client.py
+          git -C "$RUNNER_TEMP/CLM" diff --stat
+          python3 -m py_compile "$RUNNER_TEMP"/CLM/src/clm/*.py
+
+      - name: The serve requirements are hash-pinned and never contain vllm
+        run: |
+          if grep -Eiq '^vllm([=<>~ ]|$)' serving/requirements-serve.txt; then
+            echo "serving/requirements-serve.txt must not contain vllm" >&2
+            exit 1
+          fi
+          grep -Eq '^torch==2\.14\.0 ' serving/requirements-serve.txt
+          grep -c -- '--hash=sha256:' serving/requirements-serve.txt
+
+      - name: ruff
+        run: |
+          uvx "$RUFF" check serving
+          uvx "$RUFF" format --check serving
+
+      - name: mypy --strict (torch, transformers and clm are not installed)
+        run: uvx --with numpy --with fastapi --with uvicorn --with httpx --with pytest "$MYPY" --config-file serving/mypy.ini serving
+
+      - name: pytest (patched create_app and fallback_serve with stubs)
+        env:
+          MESA_CLM_CLM_SRC: ${{ runner.temp }}/CLM/src
+        run: >-
+          uvx --with fastapi --with httpx --with numpy --with requests --with uvicorn
+          --with pytest-asyncio pytest -q -p no:cacheprovider serving/tests
+
+      - name: shellcheck deploy/bin
+        run: uvx --from shellcheck-py shellcheck deploy/bin/*
+
+      - name: systemd-analyze verify (against a stub home with the unit's executables)
+        continue-on-error: true
+        run: |
+          stub="$RUNNER_TEMP/home"
+          mkdir -p "$stub/.mesa/clm/bin" "$stub/.mesa/clm/serve/.venv/bin"
+          for f in mesa-clm-check-headroom mesa-clm-wait-http mesa-clm-encoder-run; do
+            printf '#!/bin/sh\n' > "$stub/.mesa/clm/bin/$f"
+          done
+          printf '#!/bin/sh\n' > "$stub/.mesa/clm/serve/.venv/bin/clm-serve"
+          chmod +x "$stub"/.mesa/clm/bin/* "$stub/.mesa/clm/serve/.venv/bin/clm-serve"
+          HOME="$stub" systemd-analyze --user verify deploy/systemd/*.service deploy/systemd/*.timer ||
+            HOME="$stub" systemd-analyze verify deploy/systemd/*.service deploy/systemd/*.timer

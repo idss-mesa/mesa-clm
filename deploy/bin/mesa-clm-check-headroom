@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# mesa-clm-check-headroom GIB: fail (exit 1) when /proc/meminfo MemAvailable is below GIB GiB.
+#
+# The GB10 has 121 GiB of unified memory shared by the CPU and the GPU and nvidia-smi reports
+# its memory as "Not Supported", so MemAvailable is the headroom signal (plan §6.5).
+# mesa-clm-encoder.service runs it with 32 before the container starts; the headroom timer runs
+# it with 8 every 5 minutes. On failure it also names any active CARC vLLM backends, the
+# co-tenant whose return would leave too little memory for the encoder (runbook: stop both
+# mesa-clm units). Exit codes: 0 enough, 1 too little, 2 usage or unreadable meminfo.
+set -euo pipefail
+
+if [[ $# -ne 1 || ! "$1" =~ ^[0-9]+$ ]]; then
+  echo "usage: mesa-clm-check-headroom GIB" >&2
+  exit 2
+fi
+need_gib=$1
+avail_kib="$(awk '/^MemAvailable:/ { print $2; exit }' /proc/meminfo)"
+if [[ ! "$avail_kib" =~ ^[0-9]+$ ]]; then
+  echo "mesa-clm-check-headroom: cannot read MemAvailable from /proc/meminfo" >&2
+  exit 2
+fi
+need_kib=$((need_gib * 1024 * 1024))
+avail_gib="$(awk -v k="$avail_kib" 'BEGIN { printf "%.1f", k / 1048576 }')"
+if ((avail_kib < need_kib)); then
+  echo "mesa-clm-check-headroom: MemAvailable ${avail_gib} GiB < ${need_gib} GiB required" >&2
+  if command -v systemctl >/dev/null 2>&1; then
+    carc="$(systemctl list-units --no-legend --plain --state=active 'carc-vllm@*' 2>/dev/null | awk '{ print $1 }' | tr '\n' ' ' || true)"
+    if [[ -n "${carc// /}" ]]; then
+      echo "mesa-clm-check-headroom: active CARC backends: ${carc}" >&2
+    fi
+  fi
+  exit 1
+fi
+echo "mesa-clm-check-headroom: MemAvailable ${avail_gib} GiB >= ${need_gib} GiB"

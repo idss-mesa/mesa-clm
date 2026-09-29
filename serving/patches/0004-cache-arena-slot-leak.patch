@@ -1,0 +1,24 @@
+mesa-clm serving patch 0004: fix the vector-arena slot leak on concurrent misses
+
+Upstream: Contrastive-LM/CLM pull request #23 (open, unmerged when carried),
+head b618c1d8994042bd4cc205f293476e2b295f298c (Jay-D13/CLM fix/arena-slot-leak).
+The diff below is the pull request diff taken verbatim from the GitHub API.
+Series: apply 0001..0006 in order with `git apply` to Contrastive-LM/CLM
+bb42c6c5bf914fd449bed2f6ca65be80602cb1f7. Touches: src/clm/cache.py.
+Never touches src/clm/schema.py or src/clm/client.py (DESIGN D4).
+
+diff --git a/src/clm/cache.py b/src/clm/cache.py
+index 05b5ed8..32a92a5 100644
+--- a/src/clm/cache.py
++++ b/src/clm/cache.py
+@@ -64,6 +64,10 @@ def __init__(self, buffer, dim: int):
+         self.hits = self.misses = self.evictions = 0
+ 
+     def claim(self, key: str) -> int:
++        slot = self.slots.get(key)
++        if slot is not None:                             # a concurrent miss filled it first
++            self.slots.move_to_end(key)
++            return slot
+         if self.free:
+             slot = self.free.pop()
+         else:

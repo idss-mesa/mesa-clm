@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# mesa-clm-wait-http URL TIMEOUT: wait until URL answers HTTP 200, for at most TIMEOUT seconds.
+#
+# mesa-clm-serve.service runs it on the encoder's /health (open by design, no key sent) before
+# clm-serve starts, because loading Qwen3-8B into vLLM takes minutes (plan §6.2).
+# Exit codes: 0 answered 200, 1 timed out, 2 usage.
+set -euo pipefail
+
+if [[ $# -ne 2 || ! "$2" =~ ^[0-9]+$ ]]; then
+  echo "usage: mesa-clm-wait-http URL TIMEOUT_SECONDS" >&2
+  exit 2
+fi
+url=$1
+timeout_s=$2
+if ! command -v curl >/dev/null 2>&1; then
+  echo "mesa-clm-wait-http: curl is not installed" >&2
+  exit 2
+fi
+deadline=$((SECONDS + timeout_s))
+code=""
+while :; do
+  code="$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 5 "$url" 2>/dev/null || true)"
+  if [[ "$code" == "200" ]]; then
+    echo "mesa-clm-wait-http: $url answered 200"
+    exit 0
+  fi
+  if ((SECONDS >= deadline)); then
+    echo "mesa-clm-wait-http: $url did not answer 200 within ${timeout_s}s (last status: ${code:-none})" >&2
+    exit 1
+  fi
+  sleep 2
+done

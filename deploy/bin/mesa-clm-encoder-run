@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# mesa-clm-encoder-run: the vLLM pooling encoder container on 127.0.0.1:8090 (plan §6.1).
+#
+# mesa-clm-encoder.service runs it as `sg docker -c "exec ~/.mesa/clm/bin/mesa-clm-encoder-run"`
+# because the user systemd manager does not carry the docker group. The container runs as this
+# user with the login group (PGID from the passwd entry; inside sg, `id -g` is the docker group),
+# offline, with the Hugging Face cache mounted read-only and VLLM_API_KEY from a 0600 env file
+# (mesa_clm.serving.init_keys; docs/deploy/serving.md), published on loopback only. The image is pinned by digest and
+# the arguments are the encoder recipe serving/serving.lock.json pins (encoder_fp, DESIGN D5):
+# changing any of them rotates the fingerprint and needs a new lock.
+set -euo pipefail
+
+env_file="$HOME/.mesa/clm/secrets/encoder.env"
+snapshot="$HOME/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218"
+if [[ ! -f "$env_file" ]]; then
+  echo "mesa-clm-encoder-run: $env_file is missing; create the keys first (docs/deploy/serving.md)" >&2
+  exit 1
+fi
+if [[ ! -f "$snapshot/config.json" ]]; then
+  echo "mesa-clm-encoder-run: the pinned Qwen/Qwen3-8B snapshot is not in the HF cache ($snapshot); the container runs offline" >&2
+  exit 1
+fi
+
+PGID="$(getent passwd "$(id -un)" | cut -d: -f4)"      # not $(id -g): inside sg that is 988
+if [[ -z "$PGID" ]]; then
+  echo "mesa-clm-encoder-run: cannot read the login group of $(id -un) from the passwd database" >&2
+  exit 1
+fi
+exec docker run --rm --name mesa-clm-encoder --gpus all --ipc=host --user "$(id -u):${PGID}" \
+  -e HOME=/tmp -e HF_HOME=/hf -e HF_HUB_OFFLINE=1 -v "$HOME/.cache/huggingface:/hf:ro" \
+  --env-file "$HOME/.mesa/clm/secrets/encoder.env" -p 127.0.0.1:8090:8090 --label io.mesa/clm=encoder \
+  vllm/vllm-openai@sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967 \
+  Qwen/Qwen3-8B --revision b968826d9c46dd6066d109eabc6255188de91218 --served-model-name qwen3-8b \
+  --runner pooling --dtype bfloat16 --max-model-len 4096 --max-num-seqs 8 --no-enable-prefix-caching \
+  --gpu-memory-utilization 0.20 --enforce-eager --host 0.0.0.0 --port 8090
