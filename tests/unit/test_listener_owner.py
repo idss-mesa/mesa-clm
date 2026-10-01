@@ -5,12 +5,14 @@ any local account can bind them. ``net.assert_listener_owner`` reads the listeni
 this network namespace from ``/proc/net/tcp`` and ``tcp6`` (here fixture files) and refuses the
 port when the socket a connection would reach belongs to another account; ``HttpEndpoint`` asks
 before every keyed request over the real network, the pre-flight turns a refusal into exit 2 and
-a refusal mid-run fails the run. Nothing here opens a connection."""
+a refusal mid-run fails the run. Nothing here reaches a listener (one test connects to a closed
+loopback port)."""
 
 from __future__ import annotations
 
 import ipaddress
 import os
+import socket
 from pathlib import Path
 from typing import Any
 
@@ -146,6 +148,62 @@ def test_the_keyed_endpoint_refuses_before_sending(
     assert not HttpEndpoint(
         "http://127.0.0.1:8090", "k" * 24, what="e", timeout=1.0, transport=mocked
     )._check_owner
+
+
+def test_the_owner_is_checked_before_every_attempt(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The restart window DESIGN A5 names (the port is free for a moment on every restart): a
+    retry asks again who holds the port. Here nothing listens at the first attempt and another
+    account takes the port during the backoff, so the second attempt is refused unsent."""
+    monkeypatch.setattr(net, "PROC_NET", _proc(tmp_path))
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", 0))
+        port = int(probe.getsockname()[1])
+
+    def squat(_delay: float) -> None:
+        _proc(tmp_path, ("127.0.0.1", port, OTHER))
+
+    keyed = HttpEndpoint(
+        f"http://127.0.0.1:{port}", "k" * 24, what="encoder", timeout=1.0, retries=2, sleep=squat
+    )
+    try:
+        with pytest.raises(ListenerOwnerError, match=f"127.0.0.1:{port} is held by a socket"):
+            keyed.request("GET", "/v1/models")
+        assert keyed.calls == 0 and keyed.breaker.consecutive_failures == 1
+    finally:
+        keyed.close()
+
+
+def test_the_serving_probes_raw_clients_check_the_owner(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """``scripts/serving_probes.py`` (the runbook's probe tool) also sends both keys through raw
+    ``httpx`` clients: the auth matrix, ``/tokenize``, ``/metrics``, ``/version`` and the bounded
+    embeddings requests. Each keyed request asks first (the review of 70dbefe); a request
+    without a key is not checked."""
+    import importlib.util
+
+    path = Path(__file__).resolve().parents[2] / "scripts" / "serving_probes.py"
+    spec = importlib.util.spec_from_file_location("serving_probes_owner_check", path)
+    assert spec is not None and spec.loader is not None
+    probes = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(probes)
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", 0))
+        port = int(probe.getsockname()[1])
+    monkeypatch.setattr(net, "PROC_NET", _proc(tmp_path, ("127.0.0.1", port, OTHER)))
+    http = probes.Http()
+    try:
+        with pytest.raises(ListenerOwnerError, match="serving probe"):
+            http.status("GET", f"http://127.0.0.1:{port}/v1/models", "k" * 24)
+        # No key: not asked; nothing really listens there, so the probe records -1.
+        assert http.status("GET", f"http://127.0.0.1:{port}/health") == -1
+    finally:
+        http.client.close()
+    monkeypatch.setattr(probes, "ENC_URL", f"http://127.0.0.1:{port}")
+    with pytest.raises(ListenerOwnerError):
+        probes._bounded("k" * 24, {"input": ["x"]}, 1.0)
 
 
 def _keyed_env() -> dict[str, str]:

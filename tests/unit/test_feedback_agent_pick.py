@@ -392,6 +392,20 @@ def test_a_group_the_pipeline_rejected_is_not_a_curator_answer(
         svc.record_human_pick(ref, "carol", via="cli", owner="alice", option_key=offered)
 
 
+def test_an_anchor_won_refinement_the_pipeline_rejected_is_not_pending(
+    svc: DecisionService, run_id: UUID
+) -> None:
+    """When the anchor wins a D24 refinement the pipeline stores it ``rejected`` (the parent
+    stands) with ``anchor_won`` set. With no override row that group is settled by the pipeline
+    (``pending``'s ``by is None and outcome in _RESOLVED`` clause), so it is not asked next to
+    its parent, which offers the same candidates; anchor-won alone would make it pending."""
+    ref = _pipeline_rejected(svc, run_id)["refinement"]
+    svc.store.update_group(ref, anchor_won=True)
+    [group] = [g for g in svc.store.groups(run_id) if str(g["group_id"]) == str(ref)]
+    assert group["outcome"] == "rejected" and group["anchor_won"]
+    assert str(ref) not in set(svc.run_summary(run_id)["pending_groups"])
+
+
 def test_an_agent_answer_on_a_pipeline_rejected_group_leaves_it_to_the_curator(
     svc: DecisionService, run_id: UUID
 ) -> None:

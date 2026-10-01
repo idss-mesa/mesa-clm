@@ -150,9 +150,9 @@ MESA_CLM_OLS__FIXTURES=replay MESA_CLM_OLS__FIXTURES_DIR=tests/fixtures/ols-srer
 ```
 
 The live example uses a **non-bench** card (plan §9's smoke card, with its recorded OLS
-responses): until the pre-registered M2 cells exist, no live run looks at the seven bench cards
-(DESIGN, "G1 freeze"). For other cards, live OLS is used with `ols.fixtures` `auto` or
-`record`.
+responses): until the pre-registered M2 cells exist, no live annotate run looks at the seven
+bench cards (DESIGN, "G1 freeze"). For other cards, live OLS is used with `ols.fixtures` `auto`
+or `record`.
 
 `--tier zero_shot` asks CLM's released head (`clm.model`, default `clm-latest`) and records
 level `zero_shot`, calibration `uncalibrated`: `p_fit = σ(s_c)` with `s_c` the log-odds of a

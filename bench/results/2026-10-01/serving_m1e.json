@@ -1,0 +1,294 @@
+{
+ "format": "mesa-clm/endpoint-checks/1",
+ "what": "The encoder endpoint before and after the restart for the review of 70dbefe: the proxy relays only this account's connections (the client socket's owner from sock_diag), its refusal logs are throttled, it keeps its socket's backlog, and its unit runs it in a systemd sandbox. Both records were written by scripts/endpoint_checks.py --foreign (1,000 idle connections of this account; one unauthenticated GET /health each from uid 0 and uid 65534 in throwaway containers of the lock's image on the host network, and from this account); 'before_restart' also carries the doctor's new 'serving units' check run alone (health._units_check) on the old wiring.",
+ "restarts": [
+  {
+   "what": "systemctl --user reset-failed (the six mesa-clm units), then systemctl --user restart mesa-clm-encoder.service mesa-clm-serve.service",
+   "at": "2026-10-01T21:55:23Z",
+   "result": "the encoder served on its socket at 21:57:24Z, but the proxy under the first sandbox (with the mount-namespace options, which imply PrivateUsers= in a user manager) could not connect to it: Ubuntu's AppArmor confined the proxy as 'unprivileged_userns' and denied each connect() ('Failed name lookup - disconnected path', name run/mesa-clm/encoder.sock, error -13; 284 kernel audit lines until 22:07:04Z), so :8090 closed every connection ('cannot reach ...: Permission denied', 69 throttled proxy lines); clm-serve's wait for :8090/health timed out at 22:05:25Z and systemd restarted it once"
+  },
+  {
+   "what": "the namespace options removed from the proxy unit (deploy/systemd/), install -m 0644 + daemon-reload, then systemctl --user restart mesa-clm-encoder-proxy.service (the proxy only; the encoder was not restarted again)",
+   "at": "2026-10-01T22:07:04Z",
+   "result": "clm-serve's wait answered 200 and clm-serve came up at 22:07:04Z"
+  }
+ ],
+ "notes": [
+  "before: the proxy of 70dbefe relays any account's connection (uid 0 and uid 65534 each got the encoder's 92-byte '200 OK' to an unauthenticated /health) and runs unsandboxed (NoNewPrivs 0, Seccomp 0; systemd-analyze --user security 9.8 UNSAFE); the doctor's new 'serving units' check fails it (unit file not the rendering, proxy not sandboxed)",
+  "after: uid 0 and uid 65534 get nothing back (closed at once, one throttled journal line for both), this account's same request gets '200 OK'; the proxy runs with NoNewPrivs 1 and seccomp mode 2 (5.9 MEDIUM): no namespace, see the restarts; 1,000 idle connections of this account take 2,009 descriptors and a keyed GET /v1/models is answered while they are held; lock problems none; units not enabled",
+  "the proxy process recorded after the restart runs the copy installed at 21:54Z (sha256 a75df3ba...), which differs from the committed serving/encoder_proxy.py (installed at 22:07Z, 4168caa5...) only in comments and the wording of the other-account log line ('uid 0 here;' for 'uid 0;'); the committed copy takes effect at the next start of the units",
+  "encoder_fp c3b3d5e1a283 and lock_sha dd33f9fe... unchanged (units and the proxy are not in the lock); the doctor's record of the restarted units is doctor_serve_m1e.json"
+ ],
+ "before_restart": {
+  "format": "mesa-clm/endpoint-checks/1",
+  "command": "uv run python scripts/endpoint_checks.py --out /tmp/mclm-fix/m1e_before.json --idle 1000 --foreign",
+  "started": "2026-10-01T21:52:42+00:00",
+  "units": {
+   "mesa-clm-encoder.service": {
+    "Requires": "basic.target app.slice mesa-clm-encoder-proxy.socket",
+    "Wants": "mesa-clm-headroom.timer",
+    "After": "basic.target app.slice mesa-clm-encoder-proxy.socket",
+    "StartLimitIntervalUSec": "1h",
+    "StartLimitBurst": "3"
+   },
+   "mesa-clm-encoder-proxy.socket": {
+    "Listen": "127.0.0.1:8090 (Stream)",
+    "PartOf": "mesa-clm-encoder.service",
+    "ActiveState": "active"
+   },
+   "mesa-clm-encoder-proxy.service": {
+    "Type": "simple",
+    "MainPID": "2401675",
+    "ExecStart": "{ path=~/.mesa/clm/serve/.venv/bin/python ; argv[]=~/.mesa/clm/serve/.venv/bin/python -I ~/.mesa/clm/bin/mesa-clm-encoder-proxy --connections-max 4096 ~/.mesa/clm/run/encoder.sock ; ignore_errors=no ; start_time=[Thu 2026-10-01 14:42:12 MDT] ; stop_time=[n/a] ; pid=2401675 ; code=(null) ; status=0/0 }",
+    "LimitNOFILE": "16384",
+    "LimitNOFILESoft": "16384",
+    "PrivateTmp": "no",
+    "PrivateUsers": "no",
+    "ProtectHome": "no",
+    "ProtectSystem": "no",
+    "NoNewPrivileges": "no",
+    "SystemCallArchitectures": "",
+    "RestrictAddressFamilies": "~",
+    "MemoryDenyWriteExecute": "no",
+    "RestrictNamespaces": "no",
+    "ProtectProc": "default",
+    "ProcSubset": "all"
+   },
+   "mesa-clm-serve.service": {
+    "Requires": "mesa-clm-encoder.service app.slice basic.target",
+    "After": "mesa-clm-encoder.service app.slice basic.target",
+    "ActiveState": "active"
+   }
+  },
+  "enabled": [
+   "disabled",
+   "disabled",
+   "static",
+   "disabled",
+   "static",
+   "static"
+  ],
+  "listeners": {
+   "8090": [
+    {
+     "host": "127.0.0.1",
+     "uid": 1000,
+     "cgroup": "/user.slice/user-1000.slice/user@1000.service/init.scope"
+    }
+   ],
+   "8700": [
+    {
+     "host": "127.0.0.1",
+     "uid": 1000,
+     "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/mesa-clm-serve.service"
+    }
+   ]
+  },
+  "client_port_owner_check": {
+   "encoder": "this account's socket (the key may be sent)",
+   "clm-serve": "this account's socket (the key may be sent)"
+  },
+  "run_directory": {
+   "mode": "0o700",
+   "owner_is_this_account": true,
+   "entries": [
+    "encoder.sock"
+   ],
+   "encoder_sock_is_socket": true,
+   "encoder_sock_owner_is_this_account": true
+  },
+  "proxy_security_exposure": "9.8 UNSAFE",
+  "lock_problems_require_live": [],
+  "idle_connections": {
+   "idle_connections_held": 1000,
+   "proxy_while_held": {
+    "max_open_files": [
+     "16384",
+     "16384"
+    ],
+    "fds": 2007,
+    "no_new_privs": "0",
+    "seccomp_mode": "0",
+    "uid_map": [
+     "0",
+     "0",
+     "4294967295"
+    ]
+   },
+   "keyed_get_v1_models": {
+    "answered": [
+     "qwen3-8b"
+    ],
+    "ms": 8.5
+   },
+   "proxy_after_release": {
+    "max_open_files": [
+     "16384",
+     "16384"
+    ],
+    "fds": 9,
+    "no_new_privs": "0",
+    "seccomp_mode": "0",
+    "uid_map": [
+     "0",
+     "0",
+     "4294967295"
+    ]
+   }
+  },
+  "other_accounts": {
+   "image": "vllm/vllm-openai@sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967",
+   "network": "host",
+   "uid_0": {
+    "bytes_back": "92"
+   },
+   "uid_65534": {
+    "bytes_back": "92"
+   },
+   "proxy_journal_since_start": [],
+   "own_account_same_request": {
+    "bytes_back": 92,
+    "status_line": "HTTP/1.1 200 OK"
+   }
+  },
+  "doctor_serving_units": {
+   "status": "fail",
+   "detail": "mesa-clm-encoder-proxy.service: ~/.config/systemd/user/mesa-clm-encoder-proxy.service is not the checkout's rendering (install deploy/systemd/ and `systemctl --user daemon-reload`, docs/deploy/serving.md); the running proxy (pid 2401675) is not sandboxed (NoNewPrivs 0, Seccomp 0): it started before the units of deploy/systemd/ were installed; restart the units"
+  }
+ },
+ "after_restart": {
+  "format": "mesa-clm/endpoint-checks/1",
+  "command": "uv run python scripts/endpoint_checks.py --out /tmp/mclm-fix/m1e_after.json --idle 1000 --foreign",
+  "started": "2026-10-01T22:08:09+00:00",
+  "units": {
+   "mesa-clm-encoder.service": {
+    "Requires": "basic.target mesa-clm-encoder-proxy.socket app.slice",
+    "Wants": "mesa-clm-headroom.timer",
+    "After": "basic.target mesa-clm-encoder-proxy.socket app.slice",
+    "StartLimitIntervalUSec": "1h",
+    "StartLimitBurst": "3"
+   },
+   "mesa-clm-encoder-proxy.socket": {
+    "Listen": "127.0.0.1:8090 (Stream)",
+    "PartOf": "mesa-clm-encoder.service",
+    "ActiveState": "active"
+   },
+   "mesa-clm-encoder-proxy.service": {
+    "Type": "simple",
+    "MainPID": "3096648",
+    "ExecStart": "{ path=~/.mesa/clm/serve/.venv/bin/python ; argv[]=~/.mesa/clm/serve/.venv/bin/python -I ~/.mesa/clm/bin/mesa-clm-encoder-proxy --connections-max 4096 ~/.mesa/clm/run/encoder.sock ; ignore_errors=no ; start_time=[Thu 2026-10-01 16:07:04 MDT] ; stop_time=[n/a] ; pid=3096648 ; code=(null) ; status=0/0 }",
+    "LimitNOFILE": "16384",
+    "LimitNOFILESoft": "16384",
+    "PrivateTmp": "no",
+    "PrivateUsers": "no",
+    "ProtectHome": "no",
+    "ProtectSystem": "no",
+    "NoNewPrivileges": "yes",
+    "SystemCallArchitectures": "native",
+    "RestrictAddressFamilies": "AF_NETLINK AF_UNIX",
+    "MemoryDenyWriteExecute": "yes",
+    "RestrictNamespaces": "yes",
+    "ProtectProc": "default",
+    "ProcSubset": "all"
+   },
+   "mesa-clm-serve.service": {
+    "Requires": "mesa-clm-encoder.service basic.target app.slice",
+    "After": "mesa-clm-encoder.service basic.target app.slice",
+    "ActiveState": "active"
+   }
+  },
+  "enabled": [
+   "disabled",
+   "disabled",
+   "static",
+   "disabled",
+   "static",
+   "static"
+  ],
+  "listeners": {
+   "8090": [
+    {
+     "host": "127.0.0.1",
+     "uid": 1000,
+     "cgroup": "/user.slice/user-1000.slice/user@1000.service/init.scope"
+    }
+   ],
+   "8700": [
+    {
+     "host": "127.0.0.1",
+     "uid": 1000,
+     "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/mesa-clm-serve.service"
+    }
+   ]
+  },
+  "client_port_owner_check": {
+   "encoder": "this account's socket (the key may be sent)",
+   "clm-serve": "this account's socket (the key may be sent)"
+  },
+  "run_directory": {
+   "mode": "0o700",
+   "owner_is_this_account": true,
+   "entries": [
+    "encoder.sock"
+   ],
+   "encoder_sock_is_socket": true,
+   "encoder_sock_owner_is_this_account": true
+  },
+  "proxy_security_exposure": "5.9 MEDIUM",
+  "lock_problems_require_live": [],
+  "idle_connections": {
+   "idle_connections_held": 1000,
+   "proxy_while_held": {
+    "max_open_files": [
+     "16384",
+     "16384"
+    ],
+    "fds": 2009,
+    "no_new_privs": "1",
+    "seccomp_mode": "2",
+    "uid_map": [
+     "0",
+     "0",
+     "4294967295"
+    ]
+   },
+   "keyed_get_v1_models": {
+    "answered": [
+     "qwen3-8b"
+    ],
+    "ms": 7.7
+   },
+   "proxy_after_release": {
+    "max_open_files": [
+     "16384",
+     "16384"
+    ],
+    "fds": 11,
+    "no_new_privs": "1",
+    "seccomp_mode": "2",
+    "uid_map": [
+     "0",
+     "0",
+     "4294967295"
+    ]
+   }
+  },
+  "other_accounts": {
+   "image": "vllm/vllm-openai@sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967",
+   "network": "host",
+   "uid_0": {
+    "bytes_back": "0"
+   },
+   "uid_65534": {
+    "bytes_back": "0"
+   },
+   "proxy_journal_since_start": [
+    "closing a connection of another account (uid 0 here; only uid 1000 is relayed)"
+   ],
+   "own_account_same_request": {
+    "bytes_back": 92,
+    "status_line": "HTTP/1.1 200 OK"
+   }
+  }
+ }
+}

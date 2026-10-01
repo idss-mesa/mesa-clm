@@ -198,6 +198,17 @@ All notable changes to the mesa-clm package. The format follows
   of this account only, opened without following symlinks, at most 4,096 connections under
   `LimitNOFILE=16384`, idle ones closed after 900 s; the doctor's new `encoder socket` check fails
   anything else in `~/.mesa/clm/run`.
+- The proxy relays only this account's connections (DESIGN A5, second revision before the
+  merge): for each one it asks the kernel's socket diagnostics (`sock_diag`) who owns the
+  client's socket and closes another account's at once, so no other local account can hold the
+  4,096 connections or reach the encoder at all. Its unit runs it in a systemd sandbox without
+  namespaces (`NoNewPrivileges=`, a system-call allow list, `AF_UNIX` and `AF_NETLINK` only;
+  `systemd-analyze --user security` 9.8 → 5.9; the namespace options are left out because
+  Ubuntu's AppArmor refuses a namespaced proxy's connect to the container's socket); it logs each
+  kind of refusal at most once per 10 s and keeps the backlog its socket was given. The doctor's
+  new `serving units` check fails units that are not the checkout's rendering and a running
+  proxy without the rendered command line or its sandbox (`bench/results/2026-10-01/serving_m1e.md`,
+  `doctor_serve_m1e.md`).
 
 ### Fixed
 
@@ -226,6 +237,14 @@ All notable changes to the mesa-clm package. The format follows
   the default key files off, so a configuration started from it resolved no key.
 - The doctor's golden `/v1/systemone` question and the serving probes' latency and long-input
   requests use the non-bench SRER card instead of a labelled bench item (DESIGN, "G1 freeze").
+- A consensus row in a mesa-anyjev file can no longer replace a bench item's silver label (a
+  `consensus_all` row at 0.8 over a `consensus_negative` item entered without a terminal or
+  `--trust-curator`): `labels import-anyjev` skips consensus rows on a bench card
+  (`skipped["bench_silver"]`), and the fold filter counts a bench card's consensus rows as silver
+  only when the neon-avu-eval ingestion wrote them (`learn.labels.NEON_EVAL_ORIGIN`).
+- The planner gateway client and the raw clients of `scripts/serving_probes.py` ask who holds a
+  loopback port before every keyed request, like `EncoderClient` and `ClmHttpClient`; the
+  gateway's default port (the CARC tunnel's) is free whenever the tunnel is down.
 - CLI error paths end in `mesa-clm: <message>` instead of a traceback: `provenance prune
   --ttl-days -1`, `provenance import` on an unsupported DSN, `provenance export --out` to a file,
   `serve lock --check --lock <directory>`, a blank `--actor`, end of input or Ctrl-C at the review

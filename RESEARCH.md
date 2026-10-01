@@ -526,6 +526,23 @@ Read-only commands on 2026-09-28 (`nvidia-smi`, `nvcc --version`, `free -h`, `un
   last 4,095 token ids; the golden `/v1/systemone` question matches the local route to 1.7e-8
   (`clm-latest`) and 1.1e-5 (`clm-raw`). The warnings are the quickstart urgency of DESIGN A3 and
   `~/.mesa/clm/locks` (0775) and its lock file (0664), created before mesa-clm set modes itself.
+- *Measured 2026-10-01 (the review of `70dbefe`; `bench/results/2026-10-01/serving_m1e.json`).*
+  The user manager (systemd 255) refuses to start a unit with `PrivateDevices=`,
+  `ProtectKernelModules=`, `ProtectKernelLogs=`, `ProtectClock=` or an empty
+  `CapabilityBoundingSet=` (exit status 218, each tried alone in a transient
+  `systemd-run --user` unit); `ProtectHostname=` is ignored with a notice ("UTS namespace setup
+  is prohibited"). Its mount-namespace options put the service in a user namespace mapping this
+  account alone, and the kernel runs with `kernel.apparmor_restrict_unprivileged_userns=1`, so
+  AppArmor confines such a process as `unprivileged_userns`: it denies `capable(sys_admin)` and a
+  `connect()` to the unix socket the encoder container bound in a bind-mounted directory
+  ("Failed name lookup - disconnected path", name `run/mesa-clm/encoder.sock`), while a socket
+  bound on the host in the same kind of directory was reached. The kernel's socket
+  diagnostics answer an exact lookup (`SOCK_DIAG_BY_FAMILY` for one address pair) from an
+  unprivileged process, naming the client socket's owner for IPv4, IPv6 and dual-stack clients
+  (`serving/tests/test_encoder_proxy.py`); a socket that has closed comes back with inode 0 and
+  uid 0.
+  `systemd-analyze --user security` rates the proxy unit 9.8 UNSAFE without a sandbox and 5.9
+  MEDIUM with the one the review installed.
 
 ## mesa-mcp: pin `c74f3aa` vs live `8fbaedf` (`stale_after: 2027-03-31`)
 

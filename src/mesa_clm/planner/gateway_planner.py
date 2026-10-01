@@ -10,7 +10,11 @@ result ``fallback=True`` (the run row records it as ``planner_fallback``).
 The base URL goes through :func:`mesa_clm.net.assert_loopback` (loopback only unless
 ``allow_remote`` *and* https), the client is built with ``trust_env=False`` so no proxy variable
 can redirect the bearer key, and the key itself is only ever placed in the ``Authorization``
-header, never logged.
+header, never logged. Before every keyed request over the real network the planner asks who
+holds the loopback port (:func:`mesa_clm.net.assert_listener_owner`, DESIGN A5): the default
+gateway port is the ``carc-litellm-tunnel`` user unit's, free for any local account to take
+whenever the tunnel is down, and another account's socket there gets no key (the plan falls back
+to the static rules).
 """
 
 from __future__ import annotations
@@ -26,7 +30,7 @@ from pydantic import ValidationError
 
 from mesa_clm.cards import DatasetCard
 from mesa_clm.config import PlannerConfig
-from mesa_clm.net import assert_loopback
+from mesa_clm.net import assert_listener_owner, assert_loopback
 from mesa_clm.planner.base import Plan, PlanResult
 from mesa_clm.planner.static_planner import StaticPlanner
 from mesa_clm.registry import ASPECT_OPTIONS, ONTOLOGY_REGISTRY
@@ -117,6 +121,9 @@ class GatewayPlanner:
         headers = {"Content-Type": "application/json"}
         if api_key:
             headers["Authorization"] = f"Bearer {api_key}"
+        # Over the real network (no injected client or transport) a keyed request first asks
+        # who holds a loopback port: the key never goes to another account's socket (DESIGN A5).
+        self._check_owner = client is None and transport is None and bool(api_key)
         # `client` replaces the whole client (its headers included); `transport` keeps ours and
         # swaps only the wire (httpx.MockTransport in tests).
         self._client = client or httpx.Client(
@@ -161,6 +168,9 @@ class GatewayPlanner:
         }
         content: list[str] = []
         usage: dict[str, Any] = {}
+        if self._check_owner:
+            # ListenerOwnerError: refused before a byte is sent; plan() falls back to the rules.
+            assert_listener_owner(self.base_url, what="planner gateway")
         with self._client.stream("POST", "/v1/chat/completions", json=body) as r:
             if r.status_code >= 400:
                 raise RuntimeError(f"HTTP {r.status_code}: {r.read()[:300]!r}")

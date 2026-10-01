@@ -35,7 +35,11 @@ versions, the image digest, ``encoder_fp`` and ``verify_serving_lock(require_liv
 
 Keys are read from the 0600 files under ``~/.mesa/clm/secrets`` and never printed, logged or
 written: before anything is written the serialised output is checked for both key values and
-the run aborts if either appears. Only loopback addresses are recorded.
+the run aborts if either appears. Only loopback addresses are recorded. Every keyed request,
+through mesa-clm's clients or the raw ``httpx`` clients here (:func:`owner_hook`), first asks
+who holds the loopback port (:func:`mesa_clm.net.assert_listener_owner`, DESIGN A5): run while
+the units are down or restarting, another account's socket on :8090 or :8700 gets no key and
+the run stops.
 """
 
 from __future__ import annotations
@@ -66,6 +70,8 @@ from mesa_clm.clm.encoder import EncoderClient, decode_base64_f32
 from mesa_clm.clm.fingerprint import EncoderSpec, encoder_fp
 from mesa_clm.clm.headproj import RAW_SCALE, HeadProjector
 from mesa_clm.clm.http import Choice, ClmHttpClient, Noul, Score, question_to_dict
+from mesa_clm.health import parse_listener_details
+from mesa_clm.net import assert_listener_owner
 from mesa_clm.registry import ANCHOR_KEY, ANCHORS, ONTOLOGY_REGISTRY
 from mesa_clm.states import target_state
 from mesa_clm.tasks import TASKS
@@ -87,10 +93,11 @@ SNAPSHOT = ROOT / "bench/snapshots/2026-09-29.parquet"
 LOCK = ROOT / "serving/serving.lock.json"
 CARDS = ROOT / "tests/fixtures/cards"
 OLS = ROOT / "tests/fixtures/ols"
-# Plan §9's non-bench live-smoke card: the probes that ask a question or record an answer use it,
-# never a bench card (DESIGN, "G1 freeze"); until 2026-10-01 the long-input and latency probes
-# used the bench card brd_countdata (serving_m1.json, serving_m1b.json, serving_m1c.json,
-# batch_invariance.json).
+# Plan §9's non-bench live-smoke card: the long-input probe and the latency probe's rank-fit
+# question use it (DESIGN, "G1 freeze", item 7); until 2026-10-01 they used the bench card
+# brd_countdata (serving_m1.json, serving_m1b.json, serving_m1c.json, batch_invariance.json).
+# The parity section (g) and the latency probe's 32-text batch still ask and embed labelled
+# snapshot items, label-free, and the served answers go to --pairs-out under .local/ (item 4).
 SMOKE_CARD = ROOT / "tests/fixtures/cards-srer/DP1.00004.001.BP_30min.md"
 MODEL = "qwen3-8b"
 MAX_LEN = 4096
@@ -196,11 +203,29 @@ def cos(a: np.ndarray, b: np.ndarray) -> float:
     return float(a64 @ b64 / (np.linalg.norm(a64) * np.linalg.norm(b64)))
 
 
+def owner_hook(request: httpx.Request) -> None:
+    """An ``httpx`` request hook: a request that carries a key first asks who holds the
+    loopback port and raises :class:`~mesa_clm.net.ListenerOwnerError` (nothing sent) when it is
+    another account's socket, as ``EncoderClient`` and ``ClmHttpClient`` do (DESIGN A5)."""
+    if "authorization" in request.headers:
+        assert_listener_owner(str(request.url), what="serving probe")
+
+
+def raw_client(timeout: float) -> httpx.Client:
+    """A raw client for the probes: no proxies from the environment, the owner check on every
+    keyed request."""
+    return httpx.Client(
+        trust_env=False,
+        timeout=httpx.Timeout(timeout, connect=5.0),
+        event_hooks={"request": [owner_hook]},
+    )
+
+
 class Http:
     """Raw status probes (no retries, no proxies) with an explicit Authorization choice."""
 
     def __init__(self) -> None:
-        self.client = httpx.Client(trust_env=False, timeout=httpx.Timeout(120.0, connect=5.0))
+        self.client = raw_client(120.0)
 
     def status(self, method: str, url: str, key: str | None = None, body: Any = None) -> int:
         headers = {"Authorization": f"Bearer {key}"} if key is not None else {}
@@ -215,18 +240,18 @@ class Http:
 
 
 def probe_binds() -> dict[str, Any]:
-    out = run(["ss", "-Hltn", "( sport = :8090 or sport = :8700 )"])
-    listeners = []
-    for line in out.splitlines():
-        parts = line.split()
-        if len(parts) >= 4:
-            listeners.append(parts[3])
+    out = run(["ss", "-ltne", "( sport = :8090 or sport = :8700 )"])
+    pairs = [(x, port) for port in (8090, 8700) for x in parse_listener_details(out, port)]
+    listeners = [f"{x.host}:{port}" for x, port in pairs]
     loopback = [a for a in listeners if a.startswith(("127.0.0.1:", "[::1]:"))]
     return {
-        "command": "ss -Hltn '( sport = :8090 or sport = :8700 )'",
+        "command": "ss -ltne '( sport = :8090 or sport = :8700 )'",
         "listeners": sorted(listeners),
         "loopback_only": bool(listeners) and len(loopback) == len(listeners),
         "ports_seen": sorted({a.rsplit(":", 1)[1] for a in listeners}),
+        # The owner of each listener (ss omits uid:0, read as root's): another account's socket
+        # on a port would be sent the keys (DESIGN A5); owner_hook refuses that per request.
+        "owners_are_this_account": bool(pairs) and all(x.uid == os.getuid() for x, _ in pairs),
         "docker_port": sg_docker("docker port mesa-clm-encoder"),
     }
 
@@ -564,7 +589,7 @@ def _bounded(enc_key: str, body: dict[str, Any], timeout: float) -> dict[str, An
     ``timeout`` (a hung request; vLLM aborts it when the client disconnects)."""
     t0 = time.perf_counter()
     try:
-        with httpx.Client(trust_env=False, timeout=httpx.Timeout(timeout, connect=5.0)) as c:
+        with raw_client(timeout) as c:
             r = c.post(
                 f"{ENC_URL}/v1/embeddings",
                 json=body,

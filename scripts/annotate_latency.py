@@ -4,9 +4,10 @@ latency budget is fixed by amendment from these numbers).
 
 Runs ``Annotator.annotate`` at tier ``zero_shot`` through the real provider (the serving lock the
 host runs, the keyed pre-flight, the container check) on **non-bench** SRER cards only (DESIGN,
-"G1 freeze": no live run looks at a bench card before the M2 cells exist): plan §9's smoke card
-``DP1.00004.001.BP_30min`` plus the first others of ``~/neon-ducklake/sites/SRER/cards/anyjev`` in
-``sha256(name)`` order, skipping the bench products DP1.10003.001 and DP1.10022.001. Per card:
+"G1 freeze": no live annotate run looks at a bench card before the M2 cells exist): plan §9's
+smoke card ``DP1.00004.001.BP_30min`` plus the first others of
+``~/neon-ducklake/sites/SRER/cards/anyjev`` in ``sha256(name)`` order, skipping the bench products
+DP1.10003.001 and DP1.10022.001. Per card:
 
 * **cold**: the first run after the units' restart, OLS live from EMBL-EBI (recorded into a
   scratch fixture directory); clm-serve's caches start empty, but the texts every card shares

@@ -150,9 +150,12 @@ KV_CACHE_MEMORY_BYTES: Final[int] = MAX_NUM_SEQS * ENCODER.max_len * KV_BYTES_PE
 # unix socket in <home>/run (0700, bind-mounted at SOCKET_MOUNT); the socket unit
 # mesa-clm-encoder-proxy.socket owns 127.0.0.1:8090 and hands its connections to
 # mesa-clm-encoder-proxy (serving/encoder_proxy.py, installed by the bootstrap into <home>/bin),
-# which relays each one to that socket after checking, without following a symlink, that the
-# entry is a socket of this account (the container writes the directory). It holds at most
-# PROXY_CONNECTIONS_MAX connections, two descriptors each, under LimitNOFILE=PROXY_NOFILE.
+# which relays each connection of this account (the kernel's socket diagnostics name the client
+# socket's owner; another account's is closed at once) to that socket after checking, without
+# following a symlink, that the entry is a socket of this account (the container writes the
+# directory). It holds at most PROXY_CONNECTIONS_MAX connections, two descriptors each, under
+# LimitNOFILE=PROXY_NOFILE, and runs in a systemd sandbox (the unit's comment says which
+# directives a rootless user manager can set up).
 ENCODER_NETWORK: Final[str] = "none"
 RUN_DIR: Final[str] = "run"
 SOCKET_MOUNT: Final[str] = "/run/mesa-clm"
@@ -485,8 +488,9 @@ NoDelay=true
 {header}
 # Socket-activated by {proxy_socket}. The encoder container creates
 # its socket in a 0700 directory it can write; {proxy_script}
-# (serving/encoder_proxy.py, installed by the bootstrap) connects only to a socket of this
-# account there, never through a symlink, and holds at most {proxy_max} connections (two
+# (serving/encoder_proxy.py, installed by the bootstrap) relays only this account's connections
+# (the kernel's socket diagnostics name the client socket's owner), connects only to a socket of
+# this account there, never through a symlink, and holds at most {proxy_max} connections (two
 # descriptors each, hence LimitNOFILE).
 [Unit]
 Description=mesa-clm encoder proxy (127.0.0.1:{encoder_port} to the encoder's unix socket)
@@ -500,6 +504,28 @@ Type=simple
 ExecStart={home}/serve/.venv/bin/python -I {home}/bin/{proxy_script} \\
     --connections-max {proxy_max} {home}/{run_dir}/{socket_name}
 LimitNOFILE={proxy_nofile}
+# The sandbox (systemd.exec(5)); the port is reachable from every local account. The proxy reads
+# the run directory's socket and its own code, asks the kernel's socket diagnostics (AF_NETLINK)
+# and relays; it writes nothing. Only what needs no namespace: in a rootless user manager every
+# mount-namespace option (ProtectSystem=, ProtectHome=, PrivateTmp=, ProtectProc=, ...) implies
+# PrivateUsers=, and Ubuntu's AppArmor confines a process in an unprivileged user namespace
+# (unprivileged_userns), which refuses its connect() to the socket the container bound
+# ("disconnected path"): every connection to the port would fail. PrivateDevices=,
+# ProtectKernelModules=, ProtectKernelLogs=, ProtectClock= and an empty CapabilityBoundingSet=
+# cannot be set up there at all (status 218).
+NoNewPrivileges=yes
+KeyringMode=private
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+RestrictNamespaces=yes
+RestrictAddressFamilies=AF_UNIX AF_NETLINK
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+SystemCallErrorNumber=EPERM
+UMask=0077
 SyslogIdentifier=mesa-clm-encoder-proxy
 """,
 }

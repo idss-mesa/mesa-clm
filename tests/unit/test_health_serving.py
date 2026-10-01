@@ -338,6 +338,10 @@ def test_serve_mode_is_green_against_the_fake_stack(tmp_path: Path) -> None:
     by = _by(rep)
     assert rep.ok, rep.lines()
     assert "serving" not in by
+    # The run directory and the units are checked in serve mode too: the probe home is empty
+    # and the scripted systemctl answers no `show`, so both are warnings here.
+    assert by["encoder socket"].status == "warn" and "missing" in by["encoder socket"].detail
+    assert by["serving units"].status == "warn" and "not checked" in by["serving units"].detail
     for name in ("serving binds", "encoder health", "clm-serve health", "encoder auth",
                  "clm-serve auth", "encoder models", "clm-serve models", "clm golden",
                  "encoder long input", "clm parity"):  # fmt: skip
@@ -530,12 +534,120 @@ def test_the_encoder_socket_check(tmp_path: Path) -> None:
         (run / "encoder.sock").unlink()
         (run / "encoder.sock").write_text("", encoding="utf-8")
         assert "not a socket of this account" in _socket_check(probes).detail
-        run.chmod(0o755)
-        assert _socket_check(probes).status == "fail"
+        # The directory's mode alone: a real socket in it, the directory opened to the group.
+        (run / "encoder.sock").unlink()
+        sock.close()
+        sock = socket_mod.socket(socket_mod.AF_UNIX, socket_mod.SOCK_STREAM)
+        sock.bind(str(run / "encoder.sock"))
+        assert _socket_check(probes).status == "ok"
+        run.chmod(0o750)
+        c = _socket_check(probes)
+        assert c.status == "fail" and "mode 0700" in c.detail
     finally:
         run.chmod(0o700)
         sock.close()
     assert _socket_check(ServeProbes(home=tmp_path / "missing")).status == "warn"
+
+
+def _units_host(
+    tmp_path: Path,
+    *,
+    texts: dict[str, str] | None = None,
+    props: dict[str, dict[str, str]] | None = None,
+    pid: int = 4242,
+    argv: list[str] | None = None,
+    status: str = "Name:\tpython\nNoNewPrivs:\t1\nSeccomp:\t2\n",
+) -> tuple[ServeProbes, dict[str, str]]:
+    """A host whose user manager loaded the six units from files under ``tmp_path`` (the
+    checkout's rendering for the probe home unless ``texts`` replaces one), with the proxy
+    running as ``pid`` (a fake ``/proc/<pid>``: ``argv``, default the rendered command line,
+    and ``status``)."""
+    from mesa_clm.serving import render_units
+
+    home = tmp_path / "home"
+    rendered = render_units(home)
+    unit_dir = tmp_path / "units"
+    unit_dir.mkdir(parents=True)
+    blocks = []
+    for name, text in rendered.items():
+        (unit_dir / name).write_text((texts or {}).get(name, text), encoding="utf-8")
+        p = {
+            "Id": name,
+            "LoadState": "loaded",
+            "ActiveState": "active",
+            "FragmentPath": str(unit_dir / name),
+            "NeedDaemonReload": "no",
+            "DropInPaths": "",
+            **(props or {}).get(name, {}),
+        }
+        blocks.append("\n".join(f"{k}={v}" for k, v in p.items()))
+    show = "\n\n".join(blocks) + "\n"
+    proc = tmp_path / "proc" / str(pid)
+    proc.mkdir(parents=True)
+    expected = health._exec_start_argv(rendered["mesa-clm-encoder-proxy.service"])
+    (proc / "cmdline").write_bytes(b"".join(a.encode() + b"\0" for a in argv or expected))
+    (proc / "status").write_text(status, encoding="utf-8")
+
+    def runner(cmd: Sequence[str]) -> CommandResult:
+        if list(cmd[:3]) == ["systemctl", "--user", "show"]:
+            if cmd[-1] == "--property=MainPID":
+                return CommandResult(0, f"MainPID={pid}\n")
+            return CommandResult(0, show)
+        return CommandResult(127, "")
+
+    return ServeProbes(home=home, runner=runner, proc=tmp_path / "proc"), rendered
+
+
+def _units(probes: ServeProbes) -> Check:
+    rep = HealthReport()
+    health._units_check(rep, probes)
+    (check,) = rep.checks
+    return check
+
+
+def test_the_loaded_units_are_the_checkouts_rendering(tmp_path: Path) -> None:
+    """The review of 70dbefe: ``serving binds`` and ``encoder socket`` read the same under the
+    old wiring (systemd-socket-proxyd, an encoder that only ``Wants=`` its socket), so a host
+    that pulled the fix without installing the units got a green doctor. ``serving units``
+    compares what systemd loaded with the rendering and the running proxy with the unit."""
+    probes, rendered = _units_host(tmp_path / "ok")
+    c = _units(probes)
+    assert c.status == "ok", c
+    assert "sandboxed with the rendered command line" in c.detail
+    # The units of 70dbefe's checkout: the proxy without its sandbox, still loaded.
+    old = rendered["mesa-clm-encoder-proxy.service"].split("# The sandbox", 1)[0]
+    old += "SyslogIdentifier=mesa-clm-encoder-proxy\n"
+    c = _units(_units_host(tmp_path / "old", texts={"mesa-clm-encoder-proxy.service": old})[0])
+    assert c.status == "fail" and "is not the checkout's rendering" in c.detail
+    # The units of ec2e2d4: the encoder only wanted its socket, the proxy was systemd's.
+    wants = rendered["mesa-clm-encoder.service"].replace(
+        "Requires=mesa-clm-encoder-proxy.socket\n", ""
+    )
+    c = _units(_units_host(tmp_path / "wants", texts={"mesa-clm-encoder.service": wants})[0])
+    assert c.status == "fail" and "mesa-clm-encoder.service:" in c.detail
+    socket_proxyd = ["/usr/lib/systemd/systemd-socket-proxyd", str(tmp_path / "run/encoder.sock")]
+    c = _units(_units_host(tmp_path / "proxyd", argv=socket_proxyd)[0])
+    assert c.status == "fail" and "not the rendered unit's command" in c.detail
+    # Installed and reloaded, but the proxy still runs from before: no sandbox.
+    bare = "Name:\tpython\nNoNewPrivs:\t0\nSeccomp:\t0\n"
+    c = _units(_units_host(tmp_path / "stale", status=bare)[0])
+    assert c.status == "fail" and "is not sandboxed (NoNewPrivs 0, Seccomp 0)" in c.detail
+    reload = {"mesa-clm-serve.service": {"NeedDaemonReload": "yes"}}
+    c = _units(_units_host(tmp_path / "reload", props=reload)[0])
+    assert c.status == "fail" and "daemon-reload" in c.detail
+    dropin = {"mesa-clm-encoder-proxy.service": {"DropInPaths": "/x/override.conf"}}
+    c = _units(_units_host(tmp_path / "dropin", props=dropin)[0])
+    assert c.status == "warn" and "drop-ins may override" in c.detail
+    c = _units(_units_host(tmp_path / "idle", pid=0)[0])
+    assert c.status == "ok" and "has not started yet" in c.detail
+    one = {"mesa-clm-headroom.timer": {"LoadState": "not-found", "FragmentPath": ""}}
+    c = _units(_units_host(tmp_path / "one", props=one)[0])
+    assert c.status == "fail" and "not installed: mesa-clm-headroom.timer" in c.detail
+    none = {u: {"LoadState": "not-found", "FragmentPath": ""} for u in rendered}
+    c = _units(_units_host(tmp_path / "none", props=none)[0])
+    assert c.status == "warn" and "no mesa-clm unit is installed" in c.detail
+    c = _units(ServeProbes(home=tmp_path / "x", runner=lambda argv: CommandResult(127, "")))
+    assert c.status == "warn" and "not checked" in c.detail
 
 
 # -- the full serve-mode probes -----------------------------------------------------------------

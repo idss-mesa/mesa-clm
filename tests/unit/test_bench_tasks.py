@@ -419,6 +419,64 @@ def test_a_gold_row_never_changes_a_bench_item(tmp_path: Path) -> None:
     assert fold_exclusion({**row, "card": "DP1.00004.001.BP_30min"}) is None
 
 
+def test_a_consensus_row_from_elsewhere_never_changes_a_bench_item(tmp_path: Path) -> None:
+    """The review of 70dbefe: the gold fix left the consensus sources open. A ``consensus_all``
+    row in a mesa-anyjev file (no terminal, no ``--trust-curator``) on a ``consensus_negative``
+    identity of a bench card entered under the source name it gave and, at 0.8 over 0.5,
+    replaced the silver label (term.fits 86/199 -> 87/198). The import now skips consensus rows
+    on a bench card (``bench_silver``), and the fold filter takes a bench card's consensus rows
+    only from the neon-avu-eval ingestion: written any other way, one is dropped like a curator
+    row. Elsewhere a consensus row is an ordinary label."""
+    from mesa_clm.learn.labels import NEON_EVAL_ORIGIN, fold_exclusion, import_anyjev
+    from tests.unit.test_label_identity import _anyjev_sidecar
+
+    st = LabelStore(tmp_path / "labels.duckdb")
+    ingest_neon_eval(st, NEON_EVAL_ROOT, TermResolver(RecordingOLS(None, OLS_DIR, "replay")))
+    before = neon_task(st, "neon_term_fits", "term.fits")
+    assert all(
+        r["origin"].startswith(NEON_EVAL_ORIGIN)
+        for task_id in ("term.fits", "column.ontology_fits")
+        for r in st.labels_for(task_id)
+    )
+    card = "DP1.10003.001.brd_countdata"
+    silver = next(
+        r for r in st.labels_for("term.fits", sources=["consensus_negative"]) if r["card"] == card
+    )
+    src = tmp_path / "anyjev.duckdb"
+    _anyjev_sidecar(
+        src,
+        [
+            {
+                "question_id": "term.fits",
+                "question_key": TERM.key,
+                "state": silver["state_json"],
+                "label_index": 0,  # Yes: a flip of the consensus_negative item
+                "label_source": "consensus_all",
+                "weight": 0.8,
+                "ts": "2026-01-01 00:00:00+00",
+            }
+        ],
+    )
+    report = import_anyjev(src, st)
+    assert report.skipped["bench_silver"] == 1 and report.inserted == 0
+    assert _items(neon_task(st, "neon_term_fits", "term.fits")) == _items(before)
+    # --trust-curator vouches for curator rows, not for silver labels.
+    assert import_anyjev(src, st, trust_curator=True).skipped["bench_silver"] == 1
+    # Written directly (another origin), it still cannot reach a fold on a bench card.
+    assert _curator_flip(st, tagged=False, card=card, source="consensus_all") == 1
+    after = neon_task(st, "neon_term_fits", "term.fits")
+    assert _items(after) == _items(before) and after.meta["excluded"] == {"bench_card": 1}
+    row = {
+        "fold_eligible": True,
+        "bench_card": False,
+        "label_source": "consensus_all",
+        "origin": "anyjev-import:labels.duckdb@0123456789ab " + NEON_EVAL_ORIGIN + "deadbeef0000",
+    }
+    assert fold_exclusion({**row, "card": card}) == "bench_card"
+    assert fold_exclusion({**row, "card": ""}) == "bench_card"
+    assert fold_exclusion({**row, "card": "DP1.00004.001.BP_30min"}) is None
+
+
 def test_curator_rows_on_other_cards_still_compete(tmp_path: Path) -> None:
     """A curator answer on a card that is not a bench card is a fold-eligible label: the fold
     filter drops bench-card and not-fold-eligible rows only."""
@@ -431,7 +489,12 @@ def test_curator_rows_on_other_cards_still_compete(tmp_path: Path) -> None:
     assert fold_exclusion({**row, "card": "DP1.10003.001.brd_countdata"}) == "bench_card"
     assert fold_exclusion({**row, "card": ""}) == "bench_card"
     assert fold_exclusion({**row, "fold_eligible": False, "card": "c"}) == "not_fold_eligible"
-    silver = {**row, "label_source": "consensus_all", "card": "DP1.10003.001.brd_countdata"}
+    silver = {
+        **row,
+        "label_source": "consensus_all",
+        "card": "DP1.10003.001.brd_countdata",
+        "origin": "neon-avu-eval/results/validated.json@0123456789ab",
+    }
     assert fold_exclusion(silver) is None
 
 

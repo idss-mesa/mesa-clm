@@ -17,7 +17,7 @@ import pytest
 
 from mesa_clm.cards import DatasetCard
 from mesa_clm.identity import identity
-from mesa_clm.learn.labels import WEIGHTS, import_anyjev, labelled_targets
+from mesa_clm.learn.labels import WEIGHTS, import_anyjev, is_bench_card, labelled_targets
 from mesa_clm.provenance.labels import LabelRow, LabelStore
 from mesa_clm.registry import ANCHOR_KEY
 from mesa_clm.states import candidate_state, state_sha256, target_state, value_kind_state
@@ -144,9 +144,22 @@ def _anyjev_sidecar(path: Path, rows: list[dict[str, Any]]) -> None:
     con.close()
 
 
+def _off_bench(card: DatasetCard) -> DatasetCard:
+    """The fixture card under a name that is not a bench card's: an import skips consensus rows
+    on a bench card (a bench card's silver labels come only from the neon-avu-eval ingestion,
+    ``skipped["bench_silver"]``), so the import's own rules are tested off the bench."""
+    from mesa_clm.cards import parse_card
+    from tests.conftest import CARD_TEXT
+
+    renamed = parse_card(CARD_TEXT.replace("brd_countdata", "brd_offbench", 1))
+    assert renamed.name != card.name and not is_bench_card(renamed.name)
+    return renamed
+
+
 def test_import_anyjev_derives_identity_and_keeps_the_highest_weight(
     card: DatasetCard, tmp_path: Path
 ) -> None:
+    card = _off_bench(card)
     col = card.column("observerDistance")
     small = candidate_state(card, "column", col, "measurement", CAND, 3)
     large = candidate_state(card, "column", col, "measurement", CAND, 12)
@@ -285,6 +298,7 @@ def test_import_anyjev_derives_identity_and_keeps_the_highest_weight(
 
 
 def test_import_anyjev_counts_conflicts(card: DatasetCard, tmp_path: Path) -> None:
+    card = _off_bench(card)
     col = card.column("observerDistance")
     tk = TASKS["term.fits"].key
     rows = [
@@ -305,6 +319,35 @@ def test_import_anyjev_counts_conflicts(card: DatasetCard, tmp_path: Path) -> No
     report = import_anyjev(src, store)
     assert report.inserted == 1 and report.conflicts == 1
     assert labelled_targets(store, "term.fits").labels == [0]  # the later row won
+
+
+def test_import_anyjev_skips_consensus_rows_on_a_bench_card(
+    card: DatasetCard, tmp_path: Path
+) -> None:
+    """A bench card's silver labels come only from the neon-avu-eval ingestion (D30): a
+    consensus row in a mesa-anyjev file names its source without being it, so the import skips
+    it, with or without ``--trust-curator``; the same row on another card is imported."""
+    col = card.column("observerDistance")
+    tk = TASKS["term.fits"].key
+    rows = [
+        {
+            "question_id": "term.fits",
+            "question_key": tk,
+            "state": candidate_state(c, "column", col, "measurement", CAND, 3),
+            "label_index": 0,
+            "label_source": "consensus_all",
+            "weight": 0.8,
+            "ts": "2026-01-01 00:00:00+00",
+        }
+        for c in (card, _off_bench(card))
+    ]
+    src = tmp_path / "anyjev.duckdb"
+    _anyjev_sidecar(src, rows)
+    for trust in (False, True):
+        store = LabelStore(tmp_path / f"labels-{trust}.duckdb")
+        report = import_anyjev(src, store, trust_curator=trust)
+        assert report.skipped == {"bench_silver": 1} and report.inserted == 1
+        assert [r["card"] for r in store.labels_for("term.fits")] == ["DP1.10003.001.brd_offbench"]
 
 
 def test_import_anyjev_demotes_curator_rows_by_default(card: DatasetCard, tmp_path: Path) -> None:

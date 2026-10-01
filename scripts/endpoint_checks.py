@@ -5,13 +5,19 @@ runs with, and whether the endpoint still answers a keyed request while many idl
 are held open::
 
     uv run python scripts/endpoint_checks.py --out bench/results/<date>/serving_m1d.json
+    uv run python scripts/endpoint_checks.py --foreign --out bench/results/<date>/serving_m1e.json
 
 Read-only apart from the idle connections it opens and closes (``--idle``, default 1,000, each
 an unauthenticated TCP connection that sends nothing): ``systemctl --user show``, ``ss -ltne``,
-``/proc/<proxy pid>/limits`` and ``fd``, the run directory, the clients' port-owner check
+``/proc/<proxy pid>/limits``, ``status`` and ``fd``, ``systemd-analyze --user security`` of the
+proxy unit, the run directory, the clients' port-owner check
 (:func:`mesa_clm.net.assert_listener_owner`), ``verify_serving_lock(require_live=True)``, and one
 keyed ``GET /v1/models`` through :class:`~mesa_clm.clm.encoder.EncoderClient` (the key read from
-its file inside this process). The home directory is written as ``~``; before anything is
+its file inside this process). ``--foreign`` adds what another local account gets on
+127.0.0.1:8090: throwaway containers of the lock's pinned image on the host network, as uid 0
+and as uid 65534, each send an unauthenticated ``GET /health`` (no key exists in them), and
+the bytes they got back are recorded next to the same request from this account, with the
+proxy's journal lines about them. The home directory is written as ``~``; before anything is
 written the text is checked for both keys and the run aborts if either appears.
 """
 
@@ -21,6 +27,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import shlex
 import socket
 import stat
 import subprocess
@@ -44,13 +51,33 @@ UNIT_PROPS = {
         "StartLimitIntervalUSec",
     ],
     serving.PROXY_SOCKET: ["Listen", "PartOf", "ActiveState"],
-    serving.PROXY_SERVICE: ["ExecStart", "LimitNOFILE", "LimitNOFILESoft", "MainPID", "Type"],
+    serving.PROXY_SERVICE: [
+        "ExecStart",
+        "LimitNOFILE",
+        "LimitNOFILESoft",
+        "MainPID",
+        "Type",
+        # The sandbox (the review of 70dbefe).
+        "NoNewPrivileges",
+        "PrivateUsers",
+        "ProtectSystem",
+        "ProtectHome",
+        "PrivateTmp",
+        "ProtectProc",
+        "ProcSubset",
+        "RestrictAddressFamilies",
+        "RestrictNamespaces",
+        "MemoryDenyWriteExecute",
+        "SystemCallArchitectures",
+    ],
     serving.SERVE_UNIT: ["Requires", "After", "ActiveState"],
 }
+FOREIGN_UIDS = (0, 65534)
+HEALTH_REQUEST = "GET /health HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n"
 
 
-def _run(argv: list[str]) -> str:
-    return subprocess.run(argv, capture_output=True, text=True, check=False, timeout=30).stdout
+def _run(argv: list[str], timeout: float = 30) -> str:
+    return subprocess.run(argv, capture_output=True, text=True, check=False, timeout=timeout).stdout
 
 
 def _show(unit: str, props: list[str]) -> dict[str, str]:
@@ -83,7 +110,22 @@ def _run_dir() -> dict[str, Any]:
 def _proxy(pid: int) -> dict[str, Any]:
     limits = Path(f"/proc/{pid}/limits").read_text(encoding="ascii")
     nofile = next(line for line in limits.splitlines() if line.startswith("Max open files"))
-    return {"max_open_files": nofile.split()[3:5], "fds": len(os.listdir(f"/proc/{pid}/fd"))}
+    status = Path(f"/proc/{pid}/status").read_text(encoding="ascii")
+    fields = {k.strip(): v.strip() for k, _, v in (ln.partition(":") for ln in status.splitlines())}
+    return {
+        "max_open_files": nofile.split()[3:5],
+        "fds": len(os.listdir(f"/proc/{pid}/fd")),
+        "no_new_privs": fields.get("NoNewPrivs"),
+        "seccomp_mode": fields.get("Seccomp"),
+        "uid_map": Path(f"/proc/{pid}/uid_map").read_text(encoding="ascii").split(),
+    }
+
+
+def _exposure() -> str:
+    """The last line of ``systemd-analyze --user security`` for the proxy unit (its score)."""
+    out = _run(["systemd-analyze", "--user", "security", serving.PROXY_SERVICE, "--no-pager"])
+    lines = [ln for ln in out.splitlines() if "Overall exposure level" in ln]
+    return " ".join(lines[-1].split(":", 1)[1].split()[:2]) if lines else "unavailable"
 
 
 def _idle_then_keyed(enc: EncoderClient, n_idle: int, pid: int) -> dict[str, Any]:
@@ -109,13 +151,71 @@ def _idle_then_keyed(enc: EncoderClient, n_idle: int, pid: int) -> dict[str, Any
     }
 
 
+def _health_status_line(data: bytes) -> str:
+    return data.split(b"\r\n", 1)[0].decode("ascii", "replace") if data else ""
+
+
+def _own_health() -> dict[str, Any]:
+    """This account's unauthenticated ``GET /health`` on :8090, raw."""
+    with socket.create_connection(("127.0.0.1", serving.ENCODER_PORT), timeout=10) as s:
+        s.sendall(HEALTH_REQUEST.encode("ascii"))
+        data = b""
+        while chunk := s.recv(65536):
+            data += chunk
+    return {"bytes_back": len(data), "status_line": _health_status_line(data)}
+
+
+def _foreign(image: str, since: str) -> dict[str, Any]:
+    """Another local account's view of :8090: a throwaway container of ``image`` on the host
+    network per uid of :data:`FOREIGN_UIDS` (no key, no mount, no GPU) sends the same
+    unauthenticated request and reports how many bytes came back."""
+    script = (
+        "exec 3<>/dev/tcp/127.0.0.1/" + str(serving.ENCODER_PORT) + " || { echo connect-failed; "
+        "exit 0; }; printf " + shlex.quote(HEALTH_REQUEST.replace("\r\n", "\\r\\n")) + " >&3; "
+        "timeout 10 cat <&3 2>/dev/null | wc -c"
+    )
+    out: dict[str, Any] = {"image": image, "network": "host"}
+    for uid in FOREIGN_UIDS:
+        cmd = (
+            f"docker run --rm --network host --user {uid}:{uid} --entrypoint bash {image} -c "
+            + shlex.quote(script)
+        )
+        got = _run(["sg", "docker", "-c", cmd], timeout=120).strip().splitlines()
+        out[f"uid_{uid}"] = {"bytes_back": got[-1] if got else "no output"}
+    time.sleep(1.0)
+    journal = _run(
+        [
+            "journalctl",
+            "--user",
+            "-u",
+            serving.PROXY_SERVICE,
+            "--since",
+            since,
+            "-o",
+            "cat",
+            "--no-pager",
+        ]
+    )
+    out["proxy_journal_since_start"] = [
+        ln for ln in journal.splitlines() if "closing a connection" in ln or "relaying" in ln
+    ]
+    out["own_account_same_request"] = _own_health()
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--idle", type=int, default=1000)
+    ap.add_argument(
+        "--foreign",
+        action="store_true",
+        help="also connect from uid 0 and 65534 (throwaway containers of the lock's image)",
+    )
     args = ap.parse_args(argv)
     cfg = load_config()
     started = dt.datetime.now(tz=dt.UTC)
+    since = started.astimezone().strftime("%Y-%m-%d %H:%M:%S")
     units = {unit: _show(unit, props) for unit, props in UNIT_PROPS.items()}
     owners: dict[str, str] = {}
     for name, url in (("encoder", cfg.encoder.url), ("clm-serve", cfg.clm.base_url)):
@@ -130,18 +230,27 @@ def main(argv: list[str] | None = None) -> int:
         idle = _idle_then_keyed(enc, args.idle, pid) if pid else {"skipped": "no proxy process"}
     finally:
         enc.close()
+    foreign: dict[str, Any] | None = None
+    if args.foreign:
+        lock = json.loads((serving.serving_home() / "serving.lock.json").read_text("utf-8"))
+        foreign = _foreign(f"{lock['image']['ref']}@{lock['image']['digest']}", since)
+    flags = " --foreign" if args.foreign else ""
     payload = {
         "format": "mesa-clm/endpoint-checks/1",
-        "command": f"uv run python scripts/endpoint_checks.py --out {args.out} --idle {args.idle}",
+        "command": f"uv run python scripts/endpoint_checks.py --out {args.out} --idle {args.idle}"
+        + flags,
         "started": started.isoformat(timespec="seconds"),
         "units": units,
         "enabled": _run(["systemctl", "--user", "is-enabled", *serving.UNIT_NAMES]).split(),
         "listeners": _listeners(),
         "client_port_owner_check": owners,
         "run_directory": _run_dir(),
+        "proxy_security_exposure": _exposure(),
         "lock_problems_require_live": serving.verify_serving_lock(require_live=True),
         "idle_connections": idle,
     }
+    if foreign is not None:
+        payload["other_accounts"] = foreign
     text = json.dumps(payload, indent=1, ensure_ascii=False).replace(str(Path.home()), "~") + "\n"
     keys = [k for k in (cfg.clm.resolved_api_key(), cfg.encoder.resolved_api_key()) if k]
     if any(k in text for k in keys):  # never written, never printed

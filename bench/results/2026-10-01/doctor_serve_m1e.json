@@ -1,0 +1,201 @@
+{
+ "format": "mesa-clm/doctor-record/1",
+ "command": "doctor(cfg, quick=False, serve=True) == `mesa-clm doctor --serve`",
+ "mesa_clm": "0.1.0.dev0",
+ "host": "sparky-1",
+ "started": "2026-10-01T22:08:20+00:00",
+ "seconds": 29.5,
+ "ok": true,
+ "summary": {
+  "ok": 36,
+  "warn": 1,
+  "fail": 0
+ },
+ "checks": [
+  {
+   "name": "config",
+   "status": "ok",
+   "detail": "sha256 dfb8919e460c; profile=prod tier=auto planner=static secrets=auto vm_id=sparky-1"
+  },
+  {
+   "name": "python",
+   "status": "ok",
+   "detail": "3.11.16"
+  },
+  {
+   "name": "duckdb",
+   "status": "ok",
+   "detail": "1.5.6 (shared catalog window 1.5.5 <= v < 1.6)"
+  },
+  {
+   "name": "mesa-mcp",
+   "status": "ok",
+   "detail": "0.1.0 @ c74f3aa (pinned)"
+  },
+  {
+   "name": "mesa-ducklake",
+   "status": "ok",
+   "detail": "0.1.0 @ 7bc143f (pinned)"
+  },
+  {
+   "name": "mesa-mcp plugin api",
+   "status": "ok",
+   "detail": "load_plugins and register_tool(meta=) present; group mesa_mcp.tools"
+  },
+  {
+   "name": "plugin entry point",
+   "status": "ok",
+   "detail": "clm = mesa_clm.mcp_tools (registers no tools until M3)"
+  },
+  {
+   "name": "vendored files",
+   "status": "ok",
+   "detail": "4 files match vendored.sha256"
+  },
+  {
+   "name": "framings lock",
+   "status": "ok",
+   "detail": "framings.lock.json in sync; lock_sha b432d32a7536"
+  },
+  {
+   "name": "schema sha256",
+   "status": "ok",
+   "detail": "52cec58afbf4 = vendored.sha256 entry = serving pin"
+  },
+  {
+   "name": "policy defaults",
+   "status": "ok",
+   "detail": "policy_defaults.yaml: 6 tasks, numeric auto: none (proposed-only); profile prod"
+  },
+  {
+   "name": "provenance path",
+   "status": "ok",
+   "detail": "~/.mesa/clm/provenance.duckdb"
+  },
+  {
+   "name": "labels store",
+   "status": "ok",
+   "detail": "none yet (`mesa-clm labels ingest-neon-eval` creates it)"
+  },
+  {
+   "name": "sidecar schema",
+   "status": "ok",
+   "detail": "none yet (the first annotate creates schema v1)"
+  },
+  {
+   "name": "feature store",
+   "status": "ok",
+   "detail": "~/.mesa/clm/features/c3b3d5e1a283/features.duckdb: mesa-clm-features/2, 1563 vectors, 0 truncated texts; vector recipe ed486dcd74a3 is the live lock's; fp16 round trip min cosine 0.9999999 (export gate >= 0.9999)"
+  },
+  {
+   "name": "clm key file",
+   "status": "ok",
+   "detail": "~/.mesa/clm/secrets/clm.key (default): regular file, mode 0600 or stricter (not read)"
+  },
+  {
+   "name": "encoder key file",
+   "status": "ok",
+   "detail": "~/.mesa/clm/secrets/encoder.key (default): regular file, mode 0600 or stricter (not read)"
+  },
+  {
+   "name": "permissions",
+   "status": "ok",
+   "detail": "mesa-clm's state is owner-only (directories 0700, files 0600)"
+  },
+  {
+   "name": "serving lock",
+   "status": "ok",
+   "detail": "~/github/idss-mesa/mesa-clm/serving/serving.lock.json: lock_sha dd33f9fedbae; 11 ok, 0 skipped"
+  },
+  {
+   "name": "host",
+   "status": "ok",
+   "detail": "MemAvailable 84.9 GiB (floors: 32 GiB to start the encoder, 8 GiB while it runs)"
+  },
+  {
+   "name": "gpu_budget",
+   "status": "ok",
+   "detail": "no CARC vLLM backend active (carc-vllm@*)"
+  },
+  {
+   "name": "serving binds",
+   "status": "ok",
+   "detail": "loopback only, sockets of uid 1000: encoder 127.0.0.1:8090 (mesa-clm-encoder-proxy.socket); clm-serve 127.0.0.1:8700"
+  },
+  {
+   "name": "encoder socket",
+   "status": "ok",
+   "detail": "~/.mesa/clm/run/encoder.sock: a socket of uid 1000, alone in a 0700 directory"
+  },
+  {
+   "name": "encoder network",
+   "status": "ok",
+   "detail": "container namespace interfaces lo; 7 listening socket(s), inside a namespace whose only interface is lo"
+  },
+  {
+   "name": "headroom timer",
+   "status": "ok",
+   "detail": "mesa-clm-headroom.timer active (MemAvailable every 5 min)"
+  },
+  {
+   "name": "encoder health",
+   "status": "ok",
+   "detail": "http://127.0.0.1:8090/health 200 (open without a key)"
+  },
+  {
+   "name": "clm-serve health",
+   "status": "ok",
+   "detail": "http://127.0.0.1:8700/health 200 (open without a key)"
+  },
+  {
+   "name": "encoder auth",
+   "status": "ok",
+   "detail": "18 routes answer 401 without a key (an unknown path too)"
+  },
+  {
+   "name": "clm-serve auth",
+   "status": "ok",
+   "detail": "3 routes answer 401 without a key"
+  },
+  {
+   "name": "serving units",
+   "status": "ok",
+   "detail": "the 6 units loaded are the checkout's rendering for ~/.mesa/clm; proxy pid 3096648 sandboxed with the rendered command line"
+  },
+  {
+   "name": "encoder models",
+   "status": "ok",
+   "detail": "qwen3-8b; route vllm as the lock"
+  },
+  {
+   "name": "clm-serve models",
+   "status": "ok",
+   "detail": "clm-latest, clm-raw"
+  },
+  {
+   "name": "clm golden",
+   "status": "ok",
+   "detail": "/v1/systemone clm-latest: 8895 ms, answer UO:0000110, 145 input tokens"
+  },
+  {
+   "name": "encoder goldens",
+   "status": "ok",
+   "detail": "encoder_golden_c3b3d5e1a283.npz: 20/20 bitwise one text per request (min cos 1.0000000); one batch vs one by one min cos 1 - 3.6e-15"
+  },
+  {
+   "name": "encoder long input",
+   "status": "ok",
+   "detail": "a 8741-token text completed with 4095 tokens charged (cap 4095); cos with its last 4095 token ids 1.0000000 (gate 0.9999)"
+  },
+  {
+   "name": "clm parity",
+   "status": "ok",
+   "detail": "golden /v1/systemone vs the local route: clm-latest max |Δp| 2.2e-09; clm-raw max |Δp| 1.0e-07 (gate 0.0001)"
+  },
+  {
+   "name": "clm drift",
+   "status": "warn",
+   "detail": "quickstart urgency 0.8466 (|Δ| 0.0100116), billing 0.9903 (|Δ| 0.0014636), frustration 2.0000 (|Δ| 0.0000210) against issue #15 ± 0.01; tides top \"The Moon's gravitational pull.\" 0.9932 against the model card 0.993 ± 0.005 (warn only; DESIGN A3)"
+  }
+ ]
+}

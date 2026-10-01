@@ -37,6 +37,8 @@ CARD = ROOT / "tests" / "fixtures" / "cards-srer" / "DP1.00004.001.BP_30min.md"
 OLS_FIXTURES = ROOT / "tests" / "fixtures" / "ols-srer"
 LIVE_CHECKS = (
     "serving binds",
+    "encoder socket",
+    "serving units",
     "encoder network",
     "headroom timer",
     "feature store",

@@ -472,7 +472,12 @@ the plan's wording; none changes a decision (what D21's "interactive CLI" means 
   active the encoder's port in the user manager's `init.scope` cgroup (when `ss` reports cgroups);
   the encoder unit active without that socket unit fails too. The **encoder socket** check fails
   anything in `~/.mesa/clm/run` but `encoder.sock`, and that entry unless it is a socket of this
-  account (the container can write the directory; A5). Serve mode also reads the **encoder
+  account (the container can write the directory; A5). The **serving units** check
+  (`systemctl --user show`) fails a unit systemd loaded that is not the checkout's rendering, one
+  awaiting a `daemon-reload`, and a running proxy without the rendered command line or its
+  sandbox (`/proc/<pid>/status`); units that are not installed (the in-process fallback serving)
+  are a warning (A5, second revision: the binds and the run directory look the same under the old
+  and the revised wiring). Serve mode also reads the **encoder
   container's network namespace** (`/proc/<pid>/net/{dev,tcp,tcp6}` of the container's main
   process, the pid
   from `docker inspect`): a listening socket on a non-loopback address in a namespace with an
@@ -647,14 +652,22 @@ the plan's wording; none changes a decision (what D21's "interactive CLI" means 
   list (only tests do). The bench drops rows that may not enter a pre-registered fold **before**
   the per-identity highest-weight selection (`labelled_targets(fold_only=True)`):
   `fold_eligible=false` rows and every row on a bench card that is not the silver consensus
-  (curator rows whatever their tag, and the reserved `gold`) are counted in `meta["excluded"]`;
-  `labels import-anyjev` skips `gold` rows outright (`skipped["reserved_source"]`), since nothing
-  in mesa-clm or mesa-anyjev produces that source (plan §5.1). Rationale: selecting first let a
-  tagged curator row at 1.0 win its identity and then be dropped, deleting the silver item
-  (term.fits 285 → 284 items in a reproduction), and an untagged one replace the silver label in a
-  test fold; a gold row in a mesa-anyjev file, imported without a terminal or `--trust-curator`,
-  did the same (pre-merge review); nothing but the silver label may change a pre-registered item's
-  label or presence (`tests/unit/test_bench_tasks.py`).
+  (curator rows whatever their tag, the reserved `gold`, and a consensus row whose `origin` is not
+  the neon-avu-eval ingestion's, `learn.labels.NEON_EVAL_ORIGIN`) are counted in
+  `meta["excluded"]`; `labels import-anyjev` skips `gold` rows outright
+  (`skipped["reserved_source"]`), since nothing in mesa-clm or mesa-anyjev produces that source
+  (plan §5.1), and consensus rows on a bench card (`skipped["bench_silver"]`), since a bench
+  card's silver labels come only from `labels ingest-neon-eval` (mesa-anyjev's copies of them are
+  the same rows). Rationale: selecting first let a tagged curator row at 1.0 win its identity and
+  then be dropped, deleting the silver item (term.fits 285 → 284 items in a reproduction), and an
+  untagged one replace the silver label in a test fold; a gold row in a mesa-anyjev file,
+  imported without a terminal or `--trust-curator`, did the same (pre-merge review), and so did a
+  consensus row in such a file under a heavier consensus source, which a source name alone let
+  through (`consensus_all` at 0.8 over a `consensus_negative` item: term.fits 86/199 → 87/198
+  in a reproduction; the review of `70dbefe`); nothing but the silver label may change a
+  pre-registered item's label or presence (`tests/unit/test_bench_tasks.py`). All 934 rows of the
+  frozen snapshot (`bench/snapshots/2026-09-29.parquet`) carry the ingestion's origin, so the
+  origin rule leaves its items as they were.
 - **The encoder container check (D5, K4).** `/v1/models` answers the same for every container of
   the pinned image, whatever its kernels or flags: a container like the batch-invariance
   experiment's B0 arm (the same image without `VLLM_BATCH_INVARIANT`) would pass it while its
@@ -704,8 +717,9 @@ computed.~~ No pre-registered **model** cell has been computed: the only cells f
 `pre_registered: true` are the five `lookup_prob` control cells of item 1, one per neon task
 (`baselines.json`), the M0 controls. *(Corrected before G1 by the pre-merge review: the struck
 sentence overlooked those five cells. The same review corrected items 4 and 6 and added items 7
-and 8; each change is marked where it was made.)* What M0 and M1 did with the seven bench cards'
-silver labels, or with model outputs on those cards, and what was seen:
+and 8; each change is marked where it was made. The verification round after `70dbefe`
+completed items 4 and 7 and added item 9, marked the same way.)* What M0 and M1 did with the
+seven bench cards' silver labels, or with model outputs on those cards, and what was seen:
 
 1. *The M0 controls* (`bench/results/2026-09-29/baselines.json`, plan §5.4's verified controls):
    lookup LOCO accuracy 0.772 / 0.800, leave-one-product-out 0.723 / 0.721, the novel-key
@@ -731,6 +745,18 @@ silver labels, or with model outputs on those cards, and what was seen:
    `serving_m1b.json`, `serving_m1c.json`), and the engine test
    `tests/engine/test_offline_parity.py` (12 snapshot groups through the live stack, offline
    against `/v1/systemone` and `/v1/rank`), which runs again whenever the engine tests run.
+   *(Added before G1 by the review of `70dbefe`, the same kind and equally label-free:)*
+   `batch_invariance.json`'s request patterns (a)-(d) over the first 100 contexts of the collapse
+   spike and its 32-text latency batch of snapshot contexts (`embeddings_batch_32`), and the 200
+   snapshot contexts the fallback-parity runs embedded through both routes (`contexts: 200`, the
+   collapse spike's `.local/serving/collapse_contexts.json`). These runs do not stop at G1:
+   whenever they run, the full `scripts/serving_probes.py` (its parity section, the 50 snapshot
+   pairs on `clm-latest` and `clm-raw`, and its latency batch of 32), `scripts/batch_invariance.py
+   measure` (the 100 contexts and the 50 pairs), `scripts/fallback_parity.py` (the 200 contexts
+   and 20 pairs) and `tests/engine/test_offline_parity.py` (12 groups) ask or embed labelled
+   snapshot items, label-free, and the scripts keep what the stack returned outside the
+   repository (`.local/serving/`: the vectors, `systemone_pairs.json` with `clm-latest`'s answers
+   to the 50 pairs, `m1b/vllm_ref_systemone.json` with clm-serve's answers to the 20).
 5. *The annotate smoke* (`bench/results/2026-10-01/annotate_smoke.md`, run 1): the live zero-shot
    stack on the bench card DP1.10003.001.brd_countdata, its outputs read against that card's
    silver labels and the anchor. Seen: zero-shot `column.annotate` answered No to all 14 of the
@@ -750,19 +776,30 @@ silver labels, or with model outputs on those cards, and what was seen:
 7. *(Added before G1.)* *Probes that asked a labelled bench item.* Until 2026-10-01 the doctor's
    golden `/v1/systemone` question (`health.GOLDEN_STATE`: brd_countdata's `observerDistance`,
    aspect measurement, candidates PATO:0000040 and UO:0000008 plus the anchor) was a labelled
-   `term.fits` target (its `target_sha256` has two rows in the snapshot, options PATO:0000040 and
-   PATO:0000122): every serve-mode doctor run answered it at zero shot (the engine test's and plan
-   §9's live-smoke step 1 included), and the recorded answer is PATO:0000040
-   (`2026-10-01/doctor_serve.json`, `doctor_serve_m1c.json`), never set against the labels. The
-   latency probes asked the same target against 12 PATO candidates and recorded latencies only
-   (`serving_m1.json`, `serving_m1b.json`, `serving_m1c.json`, `batch_invariance.json`), and the
-   long-input probe embedded the bench cards' text ending with that target (`serving_m1.json`)
-   and asked it as a state against "distance", "temperature" and the anchor, recording the
-   probabilities (`serving_m1b.json`, `serving_m1c.json`). From
+   `term.fits` target (its `target_sha256`, `77bf030797bc…`, has ~~two rows in the snapshot,
+   options PATO:0000040 and PATO:0000122~~ six rows in the snapshot: two `term.fits` rows, options
+   PATO:0000040 and PATO:0000122, and four `column.ontology_fits` rows, the target being labelled
+   for that task too): every serve-mode doctor run answered it at zero shot (the engine test's
+   and plan §9's live-smoke step 1 included), and the recorded answer is PATO:0000040
+   (`2026-10-01/doctor_serve.json`, `doctor_serve_m1c.json`), never set against the labels
+   *(until the verification round of item 9)*. The latency probes asked the same target against
+   12 PATO candidates and recorded ~~latencies only~~ latencies (`serving_m1.json`,
+   `serving_m1b.json`, `serving_m1c.json`, `batch_invariance.json`) and, in two `--quick` runs of
+   the same script, the answer's full distribution over those candidates and the anchor
+   (`.local/serving/quick_probe.json`, 2026-09-29T18:43:42Z, and
+   `quick_probe_after_restart.json`, 19:34:43Z; outside the repository, never set against the
+   labels), and the long-input probe embedded the bench cards' text ending with that target
+   (`serving_m1.json`) and asked it as a state against "distance", "temperature" and the anchor,
+   recording the probabilities (`serving_m1b.json`, `serving_m1c.json`). From
    the pre-merge review on, the golden question and these probes use the non-bench SRER card
    (`health.GOLDEN_STATE`, `scripts/serving_probes.py`; `tests/unit/test_bench_tasks.py` keeps
-   them off the snapshot's targets), so routine doctor and latency runs after G1 ask no bench
-   item.
+   them off the snapshot's targets), so ~~routine doctor and latency runs after G1 ask no bench
+   item~~ the doctor's golden question and the probes' latency and long-input questions ask no
+   bench item after G1; the probes' parity section and the other runs item 4 names still ask
+   labelled snapshot items, label-free. *(Corrected before G1 by the review of `70dbefe`: the
+   struck words promised more than the code keeps, since a full probe run still asks the 50
+   parity pairs of item 4; the struck row count missed the four `column.ontology_fits` rows,
+   and the two quick-probe records were left out.)*
 8. *(Added before G1.)* *The pre-merge review's own label-free work on 2026-10-01*: a re-run of
    `scripts/x1_crosscheck.py` (output outside the repository, identical to `x1_crosscheck.json`),
    a 20-group `clm-raw` `/v1/systemone` probe on the same draw, and reading the silver labels of
@@ -771,6 +808,23 @@ silver labels, or with model outputs on those cards, and what was seen:
    `doctor_serve_m1d.json`, and one doctor run through a scratch port before the restart) asked
    only the SRER golden question and the upstream drift questions and embedded the doctor's
    fixed texts.
+9. *(Added before G1.)* *The verification round after `70dbefe` (2026-10-01).* While checking
+   item 7, two of its reviewers printed the six snapshot rows of the former golden target
+   (`77bf030797bc…`, brd_countdata's `observerDistance`) with their silver labels (task, option,
+   and the `label` or the `label_source` that encodes it); item 7 records the doctor's zero-shot
+   answer to that question (PATO:0000040), so one recorded zero-shot answer was thereby seen next
+   to its silver label. No other model output was compared with a label in the round's reports.
+   The rest of the round was label-free: tests that printed only class counts `mde.json`
+   publishes (item 2) and per-source counts; this host's mesa-anyjev sidecars imported into
+   scratch stores (no change to the five bench tasks); one `mesa-clm doctor --serve` (the SRER
+   golden question and the drift questions); the hermetic suite; proxy experiments on scratch
+   sockets and ports; and the fixes' own work: the snapshot rows of that target counted per task
+   (no label or option read), the snapshot's rows counted per label source and origin (the
+   totals `labels stats` reports), the candidate keys of the two quick-probe records listed (no
+   value read), and the live checks around the restart (`bench/results/2026-10-01/serving_m1e.json`,
+   `doctor_serve_m1e.json`, one more `mesa-clm doctor --serve` and the engine test's doctor
+   check), which asked only the SRER golden question and the drift questions and embedded the
+   doctor's fixed texts.
 
 The hermetic test suite runs the deterministic fake provider (hashed n-grams, never evidence) on
 the fixture cards; it says nothing about the model.
@@ -1118,11 +1172,16 @@ on the unix socket `/run/mesa-clm/encoder.sock` (`--uds`; the host directory
 `http://127.0.0.1:8090` (D16) is a systemd socket unit, `mesa-clm-encoder-proxy.socket`
 (`ListenStream=127.0.0.1:8090`), whose service hands its connections to
 `mesa-clm-encoder-proxy` (`serving/encoder_proxy.py`, installed by the bootstrap, run by the serve
-venv's Python): for each connection it opens `~/.mesa/clm/run` and then `encoder.sock` with
-`O_PATH | O_NOFOLLOW`, requires an owner-only directory and a socket of this account, and connects
-through `/proc/self/fd/<fd>`, so it never follows a symlink the container could put there; it
-holds at most 4,096 connections (two descriptors each, `LimitNOFILE=16384`) and closes one on
-which no byte has crossed for 900 s. Nothing is published with `-p`. The engine's single-process
+venv's Python): it relays only this account's connections (for each one it asks the kernel's
+socket diagnostics, `sock_diag`, who owns the client's socket, and closes another account's at
+once, before it takes a slot or reaches the encoder), and for each connection it opens
+`~/.mesa/clm/run` and then `encoder.sock` with `O_PATH | O_NOFOLLOW`, requires an owner-only
+directory and a socket of this account, and connects through `/proc/self/fd/<fd>`, so it never
+follows a symlink the container could put there; it holds at most 4,096 connections (two
+descriptors each, `LimitNOFILE=16384`), closes one on which no byte has crossed for 900 s, logs
+each kind of refusal at most once per 10 s, and runs in a systemd sandbox without namespaces
+(`NoNewPrivileges=`, a system-call allow list, `AF_UNIX` and `AF_NETLINK` only). Nothing is
+published with `-p`. The engine's single-process
 rendezvous is put on loopback (`VLLM_HOST_IP=127.0.0.1`, `GLOO_SOCKET_IFNAME=lo`). In the same
 recipe the KV cache is pinned to what `--max-num-seqs 8` at `--max-model-len 4096` needs,
 `--kv-cache-memory-bytes 4831838208` (8 × 4,096 tokens × 147,456 bytes, the 4.5 GiB plan §6.5's
@@ -1133,10 +1192,13 @@ both stop with it, `PartOf=`) and is started at most three times an hour, manual
 (`StartLimitIntervalSec=1h`, `StartLimitBurst=3`; `systemctl --user reset-failed` before a manual
 restart), and its run script refuses an `encoder.env` without a usable `VLLM_API_KEY` line before
 docker runs. A client that sends a key to a loopback port first checks that the socket holding
-it belongs to this account (`net.assert_listener_owner`, before every keyed request), and the
+it belongs to this account (`net.assert_listener_owner`, before every keyed request: the serving
+pair's clients, the planner gateway client and the probe scripts' raw clients), and the
 doctor's `serving binds` requires sockets of this account and, while the socket unit is active,
-the encoder's port in the user manager's cgroup, and its `encoder socket` check fails anything
-in `~/.mesa/clm/run` but a socket of this account. The lock's recipe gains `network: "none"`,
+the encoder's port in the user manager's cgroup, its `encoder socket` check fails anything in
+`~/.mesa/clm/run` but a socket of this account, and its `serving units` check fails units that
+are not the checkout's rendering and a running proxy without the rendered command line or its
+sandbox. The lock's recipe gains `network: "none"`,
 which `serving_lock_sha` covers and the container check compares (`HostConfig.NetworkMode`, the
 socket directory's mount); a recipe with `network: "none"` must serve on `--uds` and name no
 `--host` or `--port`. The bearer guard of A4 is unchanged and still answers 401 on every route
@@ -1221,13 +1283,67 @@ and the proxy are not in the lock (`serving_lock_sha` stays `dd33f9fe…`, `enco
 c3b3d5e1a283). Residual risks, stated rather than fixed: the container still shares the host's
 IPC namespace (`--ipc=host`, one of the two ways vLLM documents to give its processes shared
 memory; the other, `--shm-size`, is untested on this recipe, and the lock does not cover the IPC
-mode); any local account can still hold up to 4,096 idle connections and so block the endpoint;
-the checks name an account, not a process, so another process of this account can hold the
+mode); ~~any local account can still hold up to 4,096 idle connections and so block the
+endpoint~~ (withdrawn by the second revision below: only this account's processes can); the
+checks name an account, not a process, so another process of this account can hold the
 ports; and the start limit counts manual restarts. The review also exposed both serving keys in
 its own session's output; they appear in no file of the repository, its history or
 `bench/results` (checked in process, the keys never on a command line), and rotating them
 (`mesa-clm serve keys --rotate`, then `reset-failed` and a restart of both units) is an operator
 action, not a recipe change.
+
+**Second revision before the M1 merge (the review of `70dbefe`, 2026-10-01).** That commit
+(also pushed on `feat/m1-pipeline` only) let every local account's connection through the proxy,
+the one component they can all reach, ran it with the serving account's whole authority
+(`systemd-analyze --user security`: 9.8 UNSAFE), logged two kinds of refusal once per
+connection, and its doctor could not tell the revised wiring from the old one. The text above
+now says, and `70dbefe` did not:
+
+- *Only this account's connections.* For each accepted connection the proxy asks the kernel's
+  socket diagnostics (`sock_diag(7)`: one exact lookup of the client's address and port, which
+  any account may make; `SO_PEERCRED` answers only on unix sockets) who owns the client's socket,
+  and closes a connection of another account, or of an owner the kernel can no longer name (the
+  client already gone), at once: it takes no slot, reaches no encoder and holds nothing. That
+  withdraws the residual risk that any local account could hold the 4,096 connections and so
+  block the endpoint; this account's own processes still can.
+- *A sandbox without namespaces.* `NoNewPrivileges=`, `SystemCallFilter=@system-service` minus
+  `@privileged` and `@resources` (`EPERM` otherwise), `RestrictAddressFamilies=AF_UNIX
+  AF_NETLINK`, `MemoryDenyWriteExecute=`, `RestrictNamespaces=`, `RestrictRealtime=`,
+  `RestrictSUIDSGID=`, `LockPersonality=`, `KeyringMode=private`, `UMask=0077`: 5.9 MEDIUM
+  instead of 9.8. A rootless user manager cannot set up `PrivateDevices=`,
+  `ProtectKernelModules=`, `ProtectKernelLogs=`, `ProtectClock=` or an empty
+  `CapabilityBoundingSet=` (the start fails with status 218). The mount-namespace options
+  (`ProtectSystem=`, `ProtectHome=`, `PrivateTmp=`, `ProtectProc=`, `ProcSubset=`, …) imply
+  `PrivateUsers=` there, and on this host Ubuntu's AppArmor confines a process in an
+  unprivileged user namespace (`unprivileged_userns`), which refused the proxy's `connect()` to
+  the socket the container bound ("disconnected path"): installed with them, the proxy closed
+  every connection to :8090 for ten minutes after the restart (`serving_m1e.md`), so they are
+  left out. The proxy keeps the backlog its listening socket was given (read from the socket,
+  `tcp_info`) instead of reading `net.core.somaxconn`.
+- *Throttled refusals.* Each kind of refusal (another account, the encoder unreachable, a refused
+  socket entry, the connection limit) is logged at most once per 10 s, the next line counting
+  those left out, so connecting in a loop cannot write the journal once per connection.
+- *The doctor tells the wiring apart.* `serving binds` and `encoder socket` read the same under
+  the old units and the revised ones; `serving units` compares each unit systemd loaded with the
+  checkout's rendering, wants none awaiting a `daemon-reload`, and checks that the running proxy
+  has the rendered command line and its sandbox (`NoNewPrivs`, seccomp in `/proc/<pid>/status`),
+  so a host that pulled a fix without installing the units fails it.
+- *Every keyed client checks the port's owner.* The planner gateway client (its default port is
+  the `carc-litellm-tunnel` unit's, free whenever the tunnel is down) and the raw clients of
+  `scripts/serving_probes.py` now ask before each keyed request, as `EncoderClient` and
+  `ClmHttpClient` did.
+
+Evidence: `serving/tests/test_encoder_proxy.py` (the kernel's answer for this account's clients,
+another account's connection closed unrelayed, the throttled logs, a swap after the check, the
+backlog, a late answer after a half-close, a one-way stream, each owner check),
+`tests/unit/test_serving.py` (the sandbox), `tests/unit/test_health_serving.py` (`serving
+units`, `encoder socket`), `tests/unit/test_planner_gateway.py` and
+`tests/unit/test_listener_owner.py` (the keyed clients, the owner checked before every attempt);
+on the host, `bench/results/2026-10-01/serving_m1e.json` before and after the restart (an
+unauthenticated `GET /health` from uid 0 and uid 65534 in throwaway containers on the host
+network: the encoder's 92-byte answer before, nothing after; 9.8 → 5.9) and
+`doctor_serve_m1e.json` (36 ok, the drift warning, 0 failures). Nothing rotates: units and the
+proxy are not in the lock (`serving_lock_sha` `dd33f9fe…`, `encoder_fp` c3b3d5e1a283).
 
 ## Plan (summary; the full plan is `design/plan-2026-09-28.md`)
 

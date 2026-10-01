@@ -46,11 +46,14 @@ M1 adds:
   **binds** (``ss -ltne``: loopback only, sockets of this account, the encoder's port held by the
   user manager's ``mesa-clm-encoder-proxy.socket`` while that unit is active; DESIGN A5); the
   **encoder socket** (``<serving home>/run`` holds nothing but ``encoder.sock``, a socket of this
-  account, never a symlink); the **encoder network**: the container's own namespace read from
-  ``/proc/<pid>/net``, where a listener on a non-loopback address next to an interface besides
-  ``lo`` fails (DESIGN A5; ``ss`` on the host cannot see it); the **headroom timer** active
-  (warn); ``/health`` 200 on both ports without a key; **the 401 matrix**: without a
-  key every encoder route vLLM registers (17, DESIGN A4) and an unknown path, and clm-serve's
+  account, never a symlink); the **units** (``systemctl --user show``: the six units systemd
+  loaded are the checkout's rendering, none awaits a ``daemon-reload``, and the running proxy
+  has the rendered command line and its sandbox, ``/proc/<pid>/status``; a host that pulled a
+  fix without installing the units fails); the **encoder network**: the container's own
+  namespace read from ``/proc/<pid>/net``, where a listener on a non-loopback address next to an
+  interface besides ``lo`` fails (DESIGN A5; ``ss`` on the host cannot see it); the **headroom
+  timer** active (warn); ``/health`` 200 on both ports without a key; **the 401 matrix**: without
+  a key every encoder route vLLM registers (17, DESIGN A4) and an unknown path, and clm-serve's
   ``/v1/models``, ``/v1/systemone`` and ``/v1/rank``, must answer 401; the authenticated model
   lists (``qwen3-8b`` with the lock's ``root``, window and route; ``clm-latest`` and
   ``clm-raw``) and one golden ``/v1/systemone`` call (its shape). The full probes run under
@@ -81,6 +84,7 @@ import importlib.util
 import inspect
 import json
 import os
+import shlex
 import stat
 import sys
 from collections.abc import Callable, Sequence
@@ -101,6 +105,7 @@ from mesa_clm.secrets import SecretError, check_secret_file_stat
 from mesa_clm.serving import (
     ENCODER_UNIT,
     HEADROOM_TIMER,
+    PROXY_SERVICE,
     PROXY_SOCKET,
     RUN_DIR,
     RUN_HEADROOM_GIB,
@@ -1232,6 +1237,148 @@ def _headroom_timer_check(rep: HealthReport, probes: ServeProbes) -> None:
         )
 
 
+# What `systemctl --user show` is asked for each unit by the `serving units` check.
+_UNIT_PROPS: Final[tuple[str, ...]] = (
+    "Id",
+    "LoadState",
+    "ActiveState",
+    "FragmentPath",
+    "NeedDaemonReload",
+    "DropInPaths",
+)
+
+
+def _show_units(probes: ServeProbes, units: Sequence[str]) -> dict[str, dict[str, str]] | None:
+    """``systemctl --user show`` of ``units`` (one block of properties per unit, keyed by
+    ``Id``), ``None`` when systemctl is missing or prints nothing usable."""
+    res = probes.runner(
+        ["systemctl", "--user", "show", *units, *(f"--property={p}" for p in _UNIT_PROPS)]
+    )
+    if res.returncode != 0:
+        return None
+    out: dict[str, dict[str, str]] = {}
+    for block in res.stdout.split("\n\n"):
+        props = dict(line.split("=", 1) for line in block.splitlines() if "=" in line)
+        if props.get("Id"):
+            out[props["Id"]] = props
+    return out or None
+
+
+def _exec_start_argv(unit_text: str) -> list[str]:
+    """The ``ExecStart=`` argv of a rendered unit, ``%h`` expanded as systemd expands it."""
+    joined = unit_text.replace("\\\n", " ")
+    (line,) = [x for x in joined.splitlines() if x.startswith("ExecStart=")]
+    return shlex.split(line.split("=", 1)[1].replace("%h", str(Path.home())))
+
+
+def _proxy_process(probes: ServeProbes, expected: list[str]) -> tuple[list[str], str]:
+    """Problems with the running proxy process (``MainPID`` of the proxy service) and a short
+    description of it: its command line must be the rendered unit's and it must run in the
+    sandbox (``NoNewPrivs: 1``, ``Seccomp: 2``), which a process started before the units were
+    installed lacks. No process yet is no problem: the socket unit starts it on the first
+    connection."""
+    res = probes.runner(["systemctl", "--user", "show", PROXY_SERVICE, "--property=MainPID"])
+    text = res.stdout.strip()
+    pid = text.split("=", 1)[1] if text.startswith("MainPID=") else ""
+    if res.returncode != 0 or not pid.isdigit():
+        return [], "the proxy process was not inspected (no MainPID)"
+    if pid == "0":
+        return [], "the proxy has not started yet (the socket unit starts it on a connection)"
+    try:
+        argv = [
+            a.decode("utf-8", "replace")
+            for a in (probes.proc / pid / "cmdline").read_bytes().split(b"\0")[:-1]
+        ]
+        status = (probes.proc / pid / "status").read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return [], f"the proxy process {pid} was not inspected ({probes.proc}/{pid} unreadable)"
+    fields = dict(
+        (k.strip(), v.strip()) for k, _, v in (ln.partition(":") for ln in status.splitlines())
+    )
+    problems: list[str] = []
+    if argv != expected:
+        problems.append(
+            f"the running proxy (pid {pid}) is not the rendered unit's command "
+            f"({' '.join(argv[:3]) or 'unknown'} ...): restart the units after installing them"
+        )
+    if fields.get("NoNewPrivs") != "1" or fields.get("Seccomp") != "2":
+        problems.append(
+            f"the running proxy (pid {pid}) is not sandboxed (NoNewPrivs "
+            f"{fields.get('NoNewPrivs', '?')}, Seccomp {fields.get('Seccomp', '?')}): it started "
+            "before the units of deploy/systemd/ were installed; restart the units"
+        )
+    return problems, f"proxy pid {pid} sandboxed with the rendered command line"
+
+
+def _units_check(rep: HealthReport, probes: ServeProbes) -> None:
+    """``serving units`` (DESIGN A5, the review of 70dbefe): the binds and the run directory
+    look the same under the old wiring (``systemd-socket-proxyd``, an encoder that only
+    ``Wants=`` its socket) and the revised one, so the doctor compares what systemd loaded with
+    the checkout's rendering (:func:`mesa_clm.serving.render_units` for the serving home): each
+    unit's ``FragmentPath`` text, nothing pending a ``daemon-reload``, and the running proxy
+    started from it (its command line, and the sandbox in ``/proc/<pid>/status``). A unit that
+    differs or a stale proxy fails; units that are not installed (the in-process fallback
+    serving) or drop-ins that may override the rendering are warnings."""
+    from mesa_clm.serving import ServingError, render_units
+
+    home = serving_home(probes.home)
+    try:
+        rendered = render_units(home)
+    except ServingError as exc:
+        rep.add("serving units", "warn", f"not checked: {exc}")
+        return
+    shown = _show_units(probes, UNIT_NAMES)
+    if shown is None:
+        rep.add("serving units", "warn", "not checked: `systemctl --user show` not available")
+        return
+    failed: list[str] = []
+    warned: list[str] = []
+    missing = [u for u in UNIT_NAMES if shown.get(u, {}).get("LoadState") != "loaded"]
+    for unit in UNIT_NAMES:
+        props = shown.get(unit, {})
+        if unit in missing:
+            continue
+        fragment = props.get("FragmentPath", "")
+        try:
+            text = Path(fragment).read_text(encoding="utf-8") if fragment else None
+        except OSError:
+            text = None
+        if text is None:
+            failed.append(f"{unit}: its unit file {fragment or '(none)'} cannot be read")
+        elif text != rendered[unit]:
+            failed.append(
+                f"{unit}: {fragment} is not the checkout's rendering (install deploy/systemd/ "
+                "and `systemctl --user daemon-reload`, docs/deploy/serving.md)"
+            )
+        if props.get("NeedDaemonReload") == "yes":
+            failed.append(
+                f"{unit}: changed on disk since loaded (`systemctl --user daemon-reload`)"
+            )
+        if props.get("DropInPaths"):
+            warned.append(f"{unit}: drop-ins may override the rendering ({props['DropInPaths']})")
+    proxy_note = ""
+    if PROXY_SERVICE not in missing:
+        problems, proxy_note = _proxy_process(probes, _exec_start_argv(rendered[PROXY_SERVICE]))
+        failed.extend(problems)
+    if missing and len(missing) < len(UNIT_NAMES):
+        failed.append(f"not installed: {', '.join(missing)} (install all six of deploy/systemd/)")
+    elif missing:
+        warned.append(
+            "no mesa-clm unit is installed (the in-process fallback may be serving the ports)"
+        )
+    if failed:
+        rep.add("serving units", "fail", "; ".join(failed + warned))
+    elif warned:
+        rep.add("serving units", "warn", "; ".join(warned))
+    else:
+        rep.add(
+            "serving units",
+            "ok",
+            f"the {len(UNIT_NAMES)} units loaded are the checkout's rendering for {home}; "
+            + proxy_note,
+        )
+
+
 def _http(probes: ServeProbes) -> httpx.Client:
     return httpx.Client(timeout=PROBE_TIMEOUT_S, trust_env=False, transport=probes.transport)
 
@@ -1595,6 +1742,8 @@ def _live_checks(
             if up.get(name):
                 routes = ENCODER_GUARDED_ROUTES if name == "encoder" else CLM_GUARDED_ROUTES
                 _auth_matrix(client, name, url, routes, rep)
+    # After the /health probes, which start the socket-activated proxy if nothing had yet.
+    _units_check(rep, probes)
     keys: dict[str, str | None] = {}
     for name, section in (("encoder", cfg.encoder), ("clm-serve", cfg.clm)):
         if not up.get(name):

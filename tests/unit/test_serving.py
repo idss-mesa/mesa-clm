@@ -281,6 +281,61 @@ def test_the_encoder_endpoint_is_a_loopback_socket_and_a_proxy() -> None:
     assert (ROOT / "serving" / "encoder_proxy.py").is_file()
 
 
+def test_the_proxy_runs_in_a_sandbox_a_user_manager_can_set_up() -> None:
+    """The one component every local account can reach (127.0.0.1:8090) runs sandboxed (the
+    review of 70dbefe: `systemd-analyze --user security` rated it 9.8 UNSAFE), with only what
+    works under a rootless user manager on this host. No namespace: there every mount-namespace
+    option implies PrivateUsers=, and Ubuntu's AppArmor profile for unprivileged user
+    namespaces refused the proxy's connect() to the socket the container bound ("disconnected
+    path"; every connection to :8090 failed until the namespace options were removed); five
+    others fail the start outright (status 218). The proxy needs AF_UNIX (the encoder's socket,
+    asyncio's self-pipe) and AF_NETLINK (the client's owner) and creates no inet socket (systemd
+    hands it the listener)."""
+    proxy = serving.render_units()["mesa-clm-encoder-proxy.service"]
+    service = proxy.split("[Service]", 1)[1]
+    for name, value in (
+        ("NoNewPrivileges", "yes"),
+        ("KeyringMode", "private"),
+        ("LockPersonality", "yes"),
+        ("MemoryDenyWriteExecute", "yes"),
+        ("RestrictRealtime", "yes"),
+        ("RestrictSUIDSGID", "yes"),
+        ("RestrictNamespaces", "yes"),
+        ("RestrictAddressFamilies", "AF_UNIX AF_NETLINK"),
+        ("SystemCallArchitectures", "native"),
+        ("SystemCallErrorNumber", "EPERM"),
+        ("UMask", "0077"),
+    ):
+        assert _directive(service, name) == [value], name
+    assert _directive(service, "SystemCallFilter") == ["@system-service", "~@privileged @resources"]
+    for left_out in (
+        # mount-namespace options (PrivateUsers= implied, then AppArmor refuses the connect)
+        "PrivateUsers",
+        "ProtectSystem",
+        "ProtectHome",
+        "PrivateTmp",
+        "ProtectProc",
+        "ProcSubset",
+        "ProtectControlGroups",
+        "ProtectKernelTunables",
+        "ProtectHostname",
+        "ReadWritePaths",
+        "ReadOnlyPaths",
+        "InaccessiblePaths",
+        "PrivateNetwork",
+        # status 218 under a rootless user manager
+        "PrivateDevices",
+        "ProtectKernelModules",
+        "ProtectKernelLogs",
+        "ProtectClock",
+        "CapabilityBoundingSet",
+    ):
+        assert _directive(service, left_out) == [], left_out
+    # The other units are untouched: the encoder runs docker through sg, clm-serve its venv.
+    for name in ("mesa-clm-encoder.service", "mesa-clm-serve.service"):
+        assert "NoNewPrivileges" not in serving.render_units()[name]
+
+
 def test_install_sections_only_name_targets() -> None:
     for name, text in serving.render_units().items():
         install = text.split("[Install]", 1)[1] if "[Install]" in text else ""

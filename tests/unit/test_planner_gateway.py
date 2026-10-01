@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import logging
 from collections.abc import Iterable
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -311,3 +312,37 @@ def test_planner_never_reads_proxy_env(monkeypatch: pytest.MonkeyPatch, card: Da
     gw = Gateway([httpx.Response(200, content=sse(json.dumps(GOOD_PLAN)))])
     assert not gw.planner().plan(card).fallback
     assert str(gw.requests[0].url).startswith("http://127.0.0.1:8000/")
+
+
+def test_the_key_never_goes_to_another_accounts_port(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, card: DatasetCard
+) -> None:
+    """DESIGN A5 (the review of 70dbefe): the gateway's default port is the tunnel unit's, free
+    for any local account to take while the tunnel is down. Over the real network the planner
+    asks who holds the port before every keyed request and falls back to the static rules
+    rather than send its key to another account's socket."""
+    from mesa_clm import net
+    from tests.unit.test_listener_owner import ME, OTHER, _proc
+
+    sent: list[str] = []
+
+    class Wire:
+        """Stands in for the real client: records a request, then fails as nothing listens."""
+
+        def stream(self, method: str, url: str, **kw: Any) -> Any:
+            sent.append(url)
+            raise httpx.ConnectError("nothing listens here")
+
+    monkeypatch.setattr(net, "PROC_NET", _proc(tmp_path, ("127.0.0.1", 28000, OTHER)))
+    planner = GatewayPlanner("http://127.0.0.1:28000", "gw-key-0123456789abcdef", timeout=5.0)
+    assert planner._check_owner
+    planner._client = Wire()  # type: ignore[assignment]
+    result = planner.plan(card)
+    assert result.fallback and sent == []
+    # The port is this account's (or nobody's): the request goes out as before.
+    _proc(tmp_path, ("127.0.0.1", 28000, ME))
+    assert planner.plan(card).fallback and sent == ["/v1/chat/completions"]
+    # An injected client or transport (the tests' fakes) is not checked; neither is no key.
+    assert not GatewayPlanner("http://127.0.0.1:28000", None)._check_owner
+    mocked = httpx.MockTransport(lambda request: httpx.Response(500))
+    assert not GatewayPlanner("http://127.0.0.1:28000", "k", transport=mocked)._check_owner
