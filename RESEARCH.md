@@ -1,4 +1,4 @@
-# RESEARCH.md — verified facts (2026-09-29)
+# RESEARCH.md — verified facts (2026-09-29, M1 additions 2026-10-01)
 
 Every fact names where it was verified: a URL, a commit, a `file:line`, or the command that was
 run. Every section carries a `stale_after`: upstream CLM facts expire on 2026-12-31 (the project
@@ -188,6 +188,32 @@ Source unless stated: https://github.com/Contrastive-LM/CLM at
   on Qwen3-0.6B; fp32 vs bf16 quickstart 0.842 vs 0.837; PR #7 MPS 0.84301, CPU bf16 0.84629 —
   every encoder route lands near 0.84, so the README gap is head or layout, not encoder.
 
+### Collapse on mesa-clm's own contexts (M1-A; `stale_after: 2027-03-31`)
+
+Label-free, report-only (plan §8 M1-A, X1's collapse diagnostic): mean pairwise cosine between
+*different* contexts of the 285 term.fits and 190 column.ontology_fits rows of
+`bench/snapshots/2026-09-29.parquet`, raw 4096-d and after the released state head (512-d).
+
+- *Measured 2026-10-01 on the pipeline's rendering* (`bench/results/2026-10-01/collapse_spike.json`,
+  `encoder_fp` c3b3d5e1a283; the state-only, F9 and F1 texts equal the feature manifest's F7, F9
+  and F1 contexts): term.fits state-only (F7) **0.831** raw / **0.677** projected, with the
+  question appended **0.993 / 0.965**, F9 0.945 / 0.749, the F1 control 0.992 / 0.959;
+  column.ontology_fits state-only **0.949 / 0.767**, suffixed **0.995 / 0.971**, F9 0.939 / 0.727,
+  F1 0.991 / 0.946. Issue #15's direction (0.452 state only against 0.958 suffixed, raw) holds:
+  appending the question collapses different targets on mesa-clm's contexts too, and the head
+  keeps the state-only contexts further apart than the raw space does.
+- *The first run used a rendering the pipeline never sends.* `bench/results/2026-09-29/collapse_spike.json`
+  (M1-A recipe 852efc921a8a) rendered the snapshot's canonical, sorted-key `state_json`
+  directly, so nested objects (the card header first) were in sorted key order: state-only
+  0.730 / 0.675 (term.fits) and 0.854 / 0.740 (ontology_fits). Re-run on the A3/A4 recipe with the
+  same sorted-key texts (`bench/results/2026-10-01/collapse_spike_sorted_keys.json`) it gives
+  0.7297 and 0.8536 raw, within about 5e-4 of the first run's means (0.8541 there for
+  ontology_fits state-only; term.fits F9 0.9448 against 0.945): the encoder recipe barely moves
+  these numbers, the key order does (term.fits within-card and across-card means 0.832 / 0.831 on the
+  pipeline's rendering against 0.744 / 0.727 on the sorted one). The 2026-09-29 state-only texts
+  remain the fixed inputs of the fallback parity and batch-invariance runs, which compare
+  encoder routes on the same texts and do not depend on the rendering.
+
 ## vLLM pooling (`stale_after: 2027-03-31`)
 
 - `truncation_side` was added in vLLM **v0.18.0**
@@ -208,16 +234,87 @@ Source unless stated: https://github.com/Contrastive-LM/CLM at
   `--no-enable-prefix-caching` explicitly until golden-vector parity with caching on is recorded
   (plan §6.1). API-key auth guards only `/v1`, `/v2`, `/inference` and `/cohere`
   (`vllm/entrypoints/openai/server_utils.py:42`); `/health`, `/tokenize` and `/metrics` are open.
-  Whether `/tokenize` works under `--runner pooling` is unverified (M1).
+  `/tokenize` works under `--runner pooling` (measured 2026-09-29, below), and the M1-A probes
+  found more open routes than this list (DESIGN A4).
 - vLLM's startup check compares `gpu_memory_utilization × total` against *currently free*
   memory (a CARC spec note: 0.40 of 121.7 GiB failed with 42 GiB free). Whether GB10 page cache
-  counts as used there is unverified (M1).
+  counts as used there is still unverified (see "Unverified, scheduled").
 - `/v1/embeddings` requests default to `add_special_tokens=True`
   (`vllm/entrypoints/pooling/base/protocol.py@v0.30.0` L202-203), which adds nothing for Qwen3
   (below).
 - PyPI vLLM 0.30.0 (2026-09-22) ships `manylinux_2_28_aarch64` and pins `torch==2.13.0`; the
   mesa-anyjev venv has torch 2.14.0, so vLLM can never share a venv with it. mesa-clm uses the
   container image instead (U3) and the serve venv has no vllm (plan §3).
+
+- *Measured 2026-09-29 on sparky-1 (M1-A recipe, `encoder_fp` 852efc921a8a;
+  `bench/results/2026-09-29/serving_m1.json` unless stated).* vLLM 0.27.1 `--runner pooling`
+  runs Qwen3-8B bf16 on the GB10 (sm_121) from the pinned image, so neither the NGC image nor the
+  in-process fallback was needed (K0 steps 1-2): the log shows the model loaded (14.11 GiB in
+  66.0 s), `seq_pooling_type='LAST'` with `use_activation=True`, `enable_prefix_caching=False`
+  (`--no-enable-prefix-caching` accepted), 105.2 of 121.69 GiB free at start-up and a 9.49 GiB KV
+  cache (69,072 tokens; the log lines are `bench/results/2026-10-01/encoder_logs.json`, the start
+  of 2026-09-29 18:30Z). `VLLM_API_KEY` through `docker run --env-file` works: `GET /v1/models` and
+  `POST /v1/embeddings` answered 401 to no key, a wrong key and clm-serve's key, 200 with the
+  right one. `/tokenize` works under `--runner pooling` (200; unguarded on that recipe, guarded
+  since DESIGN A4). Without a key `POST /pooling`, `/invocations`, `/score`, `/rerank` and
+  `/detokenize` answered 200 (embeddings and scores served unauthenticated) while `/v1/score` and
+  `/v2/embed` answered 401: vLLM's key check covers path prefixes, not routes (DESIGN A4).
+- *Measured 2026-09-29 (`serving_m1.json`).* Left truncation works as PR #6 says: a
+  ~5,005-token text sent with `truncate_prompt_tokens` 4,095 and `truncation_side: left` embeds
+  to cosine 1.0000000 with its last 4,095 token ids; the default (right) truncation keeps the
+  first 4,095 ids (cosine 0.8107 with the left-truncated vector). The M1-A recipe was not
+  batch-invariant: 20 golden texts one per request were bitwise identical on repeat (20/20), the
+  same 20 as one batch against one by one reached min cosine 0.9999507, and two identical batches
+  0.9998659. The numpy head projection equals CLM's torch `HeadPair` on identical vectors (max abs
+  projection difference 6.3e-7, probability 3.8e-6, 50 questions / 159 candidates), and the
+  released head loads with `torch.load(..., weights_only=True)` (patch 0003). clm-serve's
+  `/v1/systemone` against the local route differed by up to 0.0434 (`clm-latest`) and 0.0591
+  (`clm-raw`) in probability, and the local route against itself by 0.0248 / 0.0363: the batch
+  dependence, not the head, which DESIGN A3 removed (3.9e-6 / 6.6e-5 on the A3/A4 recipe,
+  `bench/results/2026-10-01/serving_m1b.json`, and again on A5's, `serving_m1c.json`).
+  The CLM README quickstart gave urgency 0.8449, billing 0.9878, frustration 2.0000 and the
+  model-card tides rank 0.9939 on that recipe.
+- *Measured 2026-09-29 (`serving_m1.json#/latency`).* A rank-fit Choice (a 371-token
+  `target_state`, 12 PATO candidates plus the anchor, `clm-latest`) takes p50 1.0 ms / p95
+  1.6 ms when the state was seen before and 110.1 / 111.6 ms for a new state with cached
+  candidates (heads on CPU, D17); `/v1/embeddings` for a batch of 32 contexts (14,004 tokens)
+  p50 2,820 ms / p95 2,841 ms (30 repeats each).
+- *Measured 2026-10-01 on the pinned image (vLLM 0.27.1, Python 3.12.13, starlette 1.6.0,
+  fastapi 0.136.3; `docker run --entrypoint python3` on the image).* Under `--runner pooling` for
+  Qwen3-8B, vLLM's own `build_app` registers 18 routes plus a `/metrics` mount and no WebSocket
+  route: `GET /load`, `/version`, `/health`, `/metrics`, `/v1/models`, `/ping`; `POST
+  /tokenize`, `/detokenize`, `/ping`, `/invocations`, `/pooling`, `/v1/embeddings`, `/v2/embed`,
+  `/score`, `/v1/score`, `/rerank`, `/v1/rerank`, `/v2/rerank`
+  (`bench/results/2026-10-01/serving_m1b.json#/auth/enumeration`, built by
+  `serving/vllm_routes.py`). The startup `Route:` log lines omit mounts. `--middleware` with an
+  async function goes through FastAPI's `app.middleware("http")` after vLLM's own middleware,
+  so it is the outermost layer (`vllm/entrypoints/openai/api_server.py` `build_app`, the
+  `args.middleware` loop; the enumeration's `middleware_outermost_first`).
+  `--disable-fastapi-docs` removes `/docs`, `/redoc` and `/openapi.json`. The image sets no
+  `PYTHONPATH` (`docker image inspect`). mesa-clm's guard `serving/vllm_auth.py` now answers 401
+  on every route but `/health` (DESIGN A4).
+- *Measured 2026-10-01.* An input of exactly `--max-model-len` (4,096) token ids still never
+  completes (timeout at 30 s), and the abandoned request is aborted when the client disconnects,
+  also with a function middleware in the stack: 5 s later the engine reports 0 running and 0
+  waiting requests and a 4,095-id request answers in 1.03 s
+  (`bench/results/2026-10-01/serving_m1b.json#/boundary`). Clients truncate to 4,095 (DESIGN A4).
+- *Measured 2026-10-01.* `VLLM_BATCH_INVARIANT=1` starts and applies on the GB10 (sm_121): the
+  image's `model_executor/layers/batch_invariant.py` `enable_batch_invariant_mode` takes its
+  non-SM80 branch (`CUBLAS_WORKSPACE_CONFIG=:16:8`, `CUBLASLT_WORKSPACE_SIZE=1`, cuBLASLt
+  preferred) and registers batch-invariant softmax, mean and `bmm`; unquantized linear layers
+  call the persistent Triton matmul (`model_executor/layers/linear.py`, the
+  `VLLM_BATCH_INVARIANT` branch of `apply`), RMSNorm a Triton kernel (`layernorm.py`), and
+  FlashAttention runs with `num_splits=1`. On start the attention selector drops FLASHINFER
+  (`bench/results/2026-10-01/batch_invariance.json#/arms/B1/container/log_lines`); the log
+  (`journalctl --user -u mesa-clm-encoder.service --since "2026-10-01 08:43:58"`) shows torch's
+  `preferred_blas_library` warning and the JIT compilation of `matmul_kernel_persistent` on the
+  first requests. Effect: one text per request, batches of 32 and 8 concurrent requests agree to
+  1 − 3.3e-15 in cosine (1 − 1.05e-4 without it), at 3,266.6 ms against 2,885.2 ms for a 32-text
+  batch measured the same day (`batch_invariance.json#/arms`). One text per request is bitwise
+  reproducible with and without it.
+- *Verified 2026-10-01 in the image.* vLLM reports usage to `https://stats.vllm.ai` by default
+  (`vllm/usage/usage_lib.py` `is_usage_stats_enabled`; `envs.py` `VLLM_USAGE_STATS_SERVER`);
+  `VLLM_NO_USAGE_STATS=1` or `DO_NOT_TRACK=1` turns it off, and the encoder recipe sets both.
 
 ## Encoder model: Qwen/Qwen3-8B (`stale_after: 2027-03-31`)
 
@@ -294,6 +391,19 @@ Read-only commands on 2026-09-28 (`nvidia-smi`, `nvcc --version`, `free -h`, `un
   kernels and packaging are the risk (K0).
 - Ports 8090 and 8700 were free at exploration time; mesa-clm binds only those two, on
   loopback. Other loopback ports on this host belong to other services and are never reused.
+- *Checked 2026-10-01 (pre-merge review).* A free loopback port can be bound by any local
+  account, and the units are not enabled at boot, so 8090 and 8700 are usually free. `ss -ltne`
+  shows each listener's owner (`uid:`, omitted for root) and cgroup: the socket unit's
+  127.0.0.1:8090 is `uid:1000` in `user@1000.service/init.scope` (the user manager),
+  clm-serve's :8700 `uid:1000` in `app.slice/mesa-clm-serve.service`; `/proc/net/tcp` carries
+  the same owner. `/proc`
+  is mounted without `hidepid` (`rw,nosuid,nodev,noexec,relatime`), so any account can read
+  another's command lines: a key passed on argv is exposed. The user manager gives its services a
+  soft `RLIMIT_NOFILE` of 1,024 (hard 500,000); `systemd-socket-proxyd` (systemd 255.4) takes six
+  descriptors per connection (two sockets, two splice pipes) and connects to its target by path,
+  following symlinks. `kernel.apparmor_restrict_unprivileged_userns=1`, so `--user` units cannot
+  sandbox with `TemporaryFileSystem=`/`BindPaths=`. Hence `serving/encoder_proxy.py` (DESIGN A5,
+  revision before the merge).
 - CARC co-tenancy: `/opt/carc/carc-agents/models/*.yaml` (2026-09-09) pins four vLLM backends
   to this host at `gpu_memory_utilization` 0.05 + 0.12 + 0.30 + 0.36 = **0.83**; all four
   stopped 2026-09-23 15:28 MDT and `carc-vllm@.service` is disabled, but the specs still name
@@ -303,7 +413,136 @@ Read-only commands on 2026-09-28 (`nvidia-smi`, `nvcc --version`, `free -h`, `un
   Qwen3-Embedding-0.6B; `carc-fast` is NVFP4 and generative), so it cannot back CLM.
 - GPU budget at 0.20: 24.3 GiB (weights ≈15–16.4 GiB, KV 8×4096×144 KiB = 4.5 GiB). clm-serve
   on CPU: unpatched worst case ≈4–5 GiB (200k-entry LRU ≈3.3 GB + 512 MiB arena + torch CPU +
-  heads); with `CLM_EMB_CACHE_SIZE=20000` the LRU is ≈0.33 GB. RSS to be measured in M1.
+  heads); with `CLM_EMB_CACHE_SIZE=20000` the LRU is ≈0.33 GB. Measured in M1: clm-serve VmRSS
+  1.20 GiB (2026-09-29) and 1.19 GiB (2026-10-01), below.
+
+- *Measured 2026-09-29 (M1-A recipe; `bench/results/2026-09-29/serving_m1.json#/footprint`).*
+  MemAvailable 107.8 GiB with both units stopped, 80.3 with the encoder alone, 78.15 with both
+  (Δ 29.65 GiB: encoder 27.5, clm-serve 2.15); `nvidia-smi` VLLM::EngineCore 24,799 MiB;
+  `docker stats` 4.79 GiB; clm-serve VmRSS 1.20 GiB (VmHWM 1.20 GiB, unit `MemoryPeak` 1.06 GB),
+  with `CLM_EMB_CACHE_SIZE=20000` and the 512 MiB action arena on CPU (`/health`: 536.9 MB
+  reserved). The encoder ran from the read-only HF cache mount with `HF_HUB_OFFLINE=1`, as the
+  unit is written (plan §6.1).
+- *Measured 2026-09-29 (`bench/results/2026-09-29/fallback_parity.json`).* The in-process
+  fallback (`serving/cuda_encoder.py`, bf16) at batch 8 failed plan §6.6's parity gate against
+  the vLLM route: min cosine 0.998975 (gate 0.999; 52 of 220 texts below 0.9999), mean 0.999907;
+  re-embedded in the same process at batch 1 it reached min 0.999401, so right padding inside
+  bf16 batches made most of the gap. Systemone through the fallback differed from the vLLM route by
+  up to 0.0328 (`clm-latest`) and 0.0717 (`clm-raw`) in probability. Model load 88.3 s; 220
+  texts (84,660 tokens) in 25.95 s at batch 8; peak MemAvailable Δ 18.15 GiB,
+  `torch.cuda.max_memory_allocated` 14.6 GiB, process max RSS 4.89 GiB. The batch-1 recipe passes
+  (2026-10-01, below; DESIGN A3).
+- *Measured 2026-10-01.* A container port that docker publishes on `127.0.0.1` is still
+  reachable on the container's docker-bridge address from the host, by any local account: the
+  encoder answered `/health` there (`bench/results/2026-10-01/serving_m1b.json#/auth/docker_bridge_address`;
+  the address is not recorded). `ss -ltn` shows only `127.0.0.1:8090` because the container
+  listens in its own network namespace. The bearer guard on every route but `/health` is the
+  control (DESIGN A4).
+- *Measured 2026-10-01 (`bench/results/2026-10-01/encoder_netns.json`).* That namespace held seven
+  more listeners, all in the engine process and none behind the key: PyTorch's TCPStore of the
+  single-process rendezvous on the IPv6 wildcard (`[::]:53581`, dual-stack, so on the bridge
+  address too) and six Gloo collective sockets on the bridge address (read from
+  `/proc/<container pid>/net/{dev,tcp,tcp6}`; vLLM's `UniProcExecutor` builds
+  `distributed_init_method` from `get_ip()`, which picks the bridge address). After DESIGN A5
+  (`--network none`, the API on a unix socket behind a loopback socket unit, `VLLM_HOST_IP=127.0.0.1`,
+  `GLOO_SOCKET_IFNAME=lo`) the namespace has `lo` only: the six Gloo sockets listen on 127.0.0.1 and
+  the TCPStore still binds `[::]`, now inside a namespace with no other interface, and the
+  container has no bridge address.
+- *Measured 2026-10-01 on the DESIGN A5 recipe* (`bench/results/2026-10-01/serving_m1c.json`):
+  with `--kv-cache-memory-bytes 4831838208` vLLM reserves exactly 4.5 GiB of KV cache (32,768
+  tokens, 8.00× concurrency at 4,096 tokens; `encoder_logs.json`); MemAvailable 107.46 GiB with
+  both units stopped, 86.01 with the encoder alone (Δ **21.45 GiB**), 84.79 with both (Δ 22.67;
+  clm-serve 1.22); `nvidia-smi` VLLM::EngineCore **19,609 MiB**; `docker stats` 3.10 GiB;
+  clm-serve VmRSS 1.18 GiB. The encoder goldens are bitwise equal to the A4 recipe's (20/20), so
+  neither the KV pin nor the transport moves a vector.
+- *Measured 2026-10-01 on the A3/A4 recipe* (`bench/results/2026-10-01/serving_m1b.json#/footprint`):
+  MemAvailable 107.46 GiB with both units stopped, 80.03 with the encoder alone, 78.31 with both
+  (Δ 29.15 GiB; clm-serve 1.72); `nvidia-smi` VLLM::EngineCore 25,153 MiB (24.56 GiB, against
+  24,799 MiB in M1-A, `bench/results/2026-09-29/serving_m1.json`); clm-serve VmRSS 1.19 GiB. vLLM
+  sizes its KV cache at start-up so that its own accounting fills the 0.20 share ("Desired GPU
+  memory utilization is (0.2, 24.34 GiB)" in the start-up log, `bench/results/2026-10-01/encoder_logs.json`);
+  that start chose 9.87 GiB of KV cache where M1-A's measured start chose 9.49 GiB (the same
+  file), and `nvidia-smi` also counts the CUDA context, so the process total moves by a few
+  hundred MiB between starts. That recipe was above plan §8's 24.3 GiB by either measure; the KV
+  pin of DESIGN A5 brings it under (below).
+- *Measured 2026-10-01.* The in-process fallback (`serving/cuda_encoder.py`, bf16, batch 1)
+  embeds 220 texts (84,660 tokens) in 27.61 s, 125.5 ms per text, after a 104.8 s model load, at a
+  peak MemAvailable Δ of 17.78 GiB (`bench/results/2026-10-01/fallback_parity.json`).
+
+- *Measured 2026-10-01 (`bench/results/2026-10-01/features_build.json`).* `features build` over
+  every X1/X2 text of the 2026-09-29 snapshot (1,563 distinct texts, 620,336 encoder tokens, none
+  over the window) took 195.2 s one text per request on the A3/A4 recipe, about 125 ms per text;
+  the fp16 copies keep min cosine 0.9999999 with the float32 vectors, the store is 31.2 MB, the
+  `clm-latest` projections of all 1,563 vectors took 2.81 s wall clock in numpy on the CPU, and the
+  `TextCache` export is 13.1 MB.
+- *Measured 2026-10-01 (`bench/results/2026-10-01/features_build.json#/rerun/crosscheck`,
+  `x1_crosscheck.json`).* Offline scores from **float16** vectors miss clm-serve by up to 1.31e-3
+  (`clm-latest`) and 3.59e-3 (`clm-raw`) in probability over X1's 200 groups, though every float16
+  copy keeps cosine ≥ 0.9999999 with its float32 vector: float16 rounding spread over the vector
+  moves scores beyond 1e-4 at CLM's scale of 100, and a round-trip cosine bounds angles, not
+  scores. The few large dimensions are not the whole cause: Qwen3-8B's last-token vectors hold
+  their largest component in one of three dimensions (2202, 2284, 3169; median |value| 0.27-0.47
+  against a median component of 0.0038; float16 spacing 2.4e-4 there), but putting those three
+  back from float32 brings `clm-raw` to 8.0e-4 (still eight times the 1e-4 gate) and leaves
+  `clm-latest` at 1.37e-3, and renormalising the float16 vectors before the head leaves it at
+  1.26e-3 (`features_build.json#/rerun/crosscheck/cause`); only float32 vectors reproduce
+  clm-serve. From **float32** vectors the same 200 groups match `/v1/systemone` to 5.2e-6 and
+  7.47e-5 and `/v1/rank` identically (rank and systemone return the same probabilities);
+  `clm-raw`'s larger residual is clm-serve's float32 accumulation of 4096-d cosines (`engine.py`
+  `za @ zq` on CPU float32) against the offline scorer's float64.
+- *Measured 2026-10-01 (`bench/results/2026-10-01/features_build_m1c.json`).* The feature store in
+  format 2 (float32 vectors) on the A5 recipe: 1,563 texts embedded one per request in 223.7 s;
+  every float16 cast of a new vector is bitwise equal to the format-1 store's (1,563/1,563), the
+  `TextCache` export is byte-identical, and the store is 57.4 MB.
+- *Measured 2026-10-01 (`bench/results/2026-10-01/annotate_latency.json`).* Annotate at zero shot
+  on ten non-bench SRER cards through the live stack: the first run after a restart (OLS live)
+  took 1.10-4.33 s (p50 3.34 s, p95 4.18 s across the cards), most of it in clm-serve calls on
+  cache misses (1.06-3.90 s summed); ten warm repeats (OLS replayed) took 12.6-41.5 ms per card at
+  the p50 and at most 47.2 ms at the p95 for the decide phase, plus about 115-180 ms for the
+  sidecar commit. Per card (one cold run each; ten warm repeats; the wall clock includes the
+  commit):
+
+  | card | cold s | warm p50 / p95 ms | warm wall p50 / p95 ms |
+  |---|--:|--:|--:|
+  | DP1.00004.001.BP_30min | 4.33 | 16.3 / 24.9 | 133 / 141 |
+  | DP1.10047.001.spc_particlesize | 4.01 | 32.3 / 41.1 | 170 / 177 |
+  | DP1.10107.001.mms_metagenomeSequencing | 2.40 | 31.2 / 36.4 | 179 / 187 |
+  | DP1.10109.001.mga_soilGroupAbundances | 1.90 | 17.6 / 21.2 | 163 / 173 |
+  | DP1.10038.001.mos_BOLDtaxonomy | 3.51 | 20.5 / 22.1 | 163 / 170 |
+  | DP1.00022.001.SRPP_1min | 1.83 | 13.0 / 17.6 | 165 / 176 |
+  | DP1.10043.001.mos_expertTaxonomistIDProcessed | 3.49 | 33.0 / 47.2 | 204 / 215 |
+  | DP1.10067.001.bbc_percore | 3.19 | 41.5 / 45.7 | 217 / 228 |
+  | DP1.00094.001.SWS_30_minute | 3.64 | 28.2 / 40.8 | 206 / 219 |
+  | DP1.00046.001.THRPRE_1min | 1.10 | 12.6 / 15.0 | 180 / 184 |
+- *Measured 2026-10-01 (`bench/results/2026-10-01/doctor_serve_m1c.json`).* On the A5 recipe,
+  after the operator's `chmod` of `~/.mesa/clm/locks`, `mesa-clm doctor --serve` reports 34 ok,
+  1 warning (the quickstart urgency of DESIGN A3) and 0 failures in 4.7 s, with the new feature
+  store, encoder network and headroom timer checks ok.
+- *Measured 2026-10-01 (`bench/results/2026-10-01/doctor_serve.json`).* `mesa-clm doctor --serve`
+  is green on the A3/A4 recipe (30 ok, 2 warnings, 0 failures, 4.6 s): every encoder route but
+  `/health` and an unknown path answer 401 without a key, as do clm-serve's three `/v1` routes;
+  the 20 encoder goldens are bitwise equal one text per request and within 1 − 3.6e-15 as one
+  batch; an 8,741-token text completes with 4,095 tokens charged and cosine 1.0000000 with its
+  last 4,095 token ids; the golden `/v1/systemone` question matches the local route to 1.7e-8
+  (`clm-latest`) and 1.1e-5 (`clm-raw`). The warnings are the quickstart urgency of DESIGN A3 and
+  `~/.mesa/clm/locks` (0775) and its lock file (0664), created before mesa-clm set modes itself.
+- *Measured 2026-10-01 (the review of `70dbefe`; `bench/results/2026-10-01/serving_m1e.json`).*
+  The user manager (systemd 255) refuses to start a unit with `PrivateDevices=`,
+  `ProtectKernelModules=`, `ProtectKernelLogs=`, `ProtectClock=` or an empty
+  `CapabilityBoundingSet=` (exit status 218, each tried alone in a transient
+  `systemd-run --user` unit); `ProtectHostname=` is ignored with a notice ("UTS namespace setup
+  is prohibited"). Its mount-namespace options put the service in a user namespace mapping this
+  account alone, and the kernel runs with `kernel.apparmor_restrict_unprivileged_userns=1`, so
+  AppArmor confines such a process as `unprivileged_userns`: it denies `capable(sys_admin)` and a
+  `connect()` to the unix socket the encoder container bound in a bind-mounted directory
+  ("Failed name lookup - disconnected path", name `run/mesa-clm/encoder.sock`), while a socket
+  bound on the host in the same kind of directory was reached. The kernel's socket
+  diagnostics answer an exact lookup (`SOCK_DIAG_BY_FAMILY` for one address pair) from an
+  unprivileged process, naming the client socket's owner for IPv4, IPv6 and dual-stack clients
+  (`serving/tests/test_encoder_proxy.py`); a socket that has closed comes back with inode 0 and
+  uid 0.
+  `systemd-analyze --user security` rates the proxy unit 9.8 UNSAFE without a sandbox and 5.9
+  MEDIUM with the one the review installed.
 
 ## mesa-mcp: pin `c74f3aa` vs live `8fbaedf` (`stale_after: 2027-03-31`)
 
@@ -388,6 +627,12 @@ Source: https://github.com/idss-mesa/mesa-ducklake at
   `duckdb>=1.5.5,<1.6` here.
 - DuckDB 1.5.5 rejects `UNIQUE NULLS NOT DISTINCT (a, b)` with a ParserException and enforces
   CHECK constraints (in-memory test in the mesa-anyjev venv, 2026-09-28) → DESIGN D11.
+- *Verified 2026-10-01 in this repository's venv (duckdb 1.5.6, pandas not installed), with a
+  `sys.meta_path` finder counting lookups of `pandas`:* DuckDB attempts `import pandas` twice for
+  every Python value it binds: `executemany` of 1, 10 and 100 rows of two values made 4, 40 and
+  400 attempts, a bound list of 100 integers 202, and the same 100 rows bound as one JSON string
+  2. Each failed attempt walks the import path, which is what made a per-row sidecar commit slow
+  → DESIGN implementation notes (M1), "Bulk sidecar inserts".
 
 ## neon-ducklake seam (`stale_after: 2027-03-31`)
 
@@ -463,6 +708,10 @@ will move when it lands.
   column.annotate 63 (0.6) / 35 (0.5); value_kind class 3 = 82 *rows* at 0.5, which is 59 of
   278 *targets* once the highest weight per target is kept (`labelled_targets`; identical to
   mesa-anyjev's `labelled_states`).
+- mesa-anyjev's `.local/labels.duckdb` on sparky-1 holds no curator labels: a read-only count
+  of a copy on 2026-10-01 found `consensus_all` 107, `consensus_majority` 758,
+  `consensus_negative` 441 rows and nothing else, so DESIGN A2's demotion of imported curator
+  rows to `agent_pick` changes no label that exists today.
 - mesa-anyjev's policy and bench disagree on `min_weight` (`policy_defaults.yaml:17,65,73` =
   0.6; `bench/tasks/neon.py:53,61,62` = 0.5) → DESIGN D9. `labelled_states` keeps the highest
   weight per state (`learn/labels.py:377-396`) → DESIGN D30.
@@ -505,9 +754,21 @@ will move when it lands.
   0.708, n 285, n_neg 199, 7 folds; `neon_ontology_fits.L2` acc **0.837**, ECE **0.078**,
   cov@5% **0.547**, cov@10% 0.768, NLL 0.375, n 190, n_neg 114, 7 folds. `neon_annotate.L2`
   passed the fold guards in only 1 of 7 folds (n 17, n_neg 5; class counts 63/35), so
-  column.annotate has no citable AnyJev cell. These are the K2(a) comparison targets; without
-  the per-item dump (`scripts/anyjev_l2_predictions.py`, feasibility read in M0) the comparison
-  is unpaired.
+  column.annotate has no citable AnyJev cell. These are the K2(a) comparison targets.
+- **AnyJev L2 per item (M1-A, 2026-09-29), reproduced exactly.**
+  `bench/baselines/anyjev_l2_2026-09-29.json` (written by `scripts/anyjev_l2_predictions.py`
+  under mesa-anyjev's interpreter in the GPU window, the encoder stopped; summary
+  `bench/baselines/anyjev_l2_2026-09-29.md`) holds every held-out L2 prediction: 285 term.fits
+  and 190 column.ontology_fits items with card, state, target identity, label and `p_yes`. Its
+  pooled and per-fold cells equal mesa-anyjev's committed
+  `bench/results/2026-09-25/Qwen__Qwen3-8B.hf.json` float for float in every metric field
+  (compared field by field on 2026-10-01; term.fits acc 0.765, ECE 0.058; ontology_fits 0.837,
+  0.078); only the fields one file has and the other lacks differ (`head` per fold here;
+  `masked`, `ms_per_decision`, `prompts`, `seconds` there), and the environment records
+  `questions_lock_sha` `9f9370e0…` against `0190586d…` with the same two task keys. Every item
+  maps to its own D1 identity and pairs with a row of `bench/snapshots/2026-09-29.parquet`
+  with the same label and card (285 / 190 of 285 / 190), so the K2(a) comparison can be paired
+  (plan §5.6 X2).
 - **Lookup and control baselines** (first a read-only recomputation from mesa-anyjev
   `.local/labels.duckdb` during planning, plan §1 and §5.4; **reproduced in M0** by `mesa-clm
   bench baselines` from the fixture ingestion: `bench/results/2026-09-29/baselines.json`,
@@ -563,15 +824,17 @@ will move when it lands.
 
 ## Unverified, scheduled
 
-- M1: vLLM pooling on sm_121 in v0.27.1 (else the NGC digest); `VLLM_API_KEY` through
-  `--env-file`; `--no-enable-prefix-caching` accepted and logged; `/tokenize` under `--runner
-  pooling`; the `:ro` HF mount offline; `weights_only=True` with the released head; CPU head
-  latency; clm-serve RSS; whether GB10 page cache counts toward vLLM's free-memory check.
+- M1 (settled above, `bench/results/2026-09-29/serving_m1.json` and the 2026-10-01 records):
+  vLLM 0.27.1 pooling on sm_121 (works; no NGC image needed), `VLLM_API_KEY` through
+  `--env-file` (works; the bearer guard of DESIGN A4 now covers every route), prefix caching off
+  (logged), `/tokenize` under `--runner pooling` (works), the `:ro` HF mount offline (the unit
+  runs from it), `weights_only=True` with the released head (loads), CPU head latency (110 ms for
+  a new 371-token state, 1 ms when cached) and clm-serve RSS (1.20 GiB). Still open: whether GB10
+  page cache counts toward vLLM's free-memory check (start-up reported 105.2 of 121.69 GiB free
+  with MemAvailable 107.8 GiB, which does not separate the two).
 - M0 (settled above): the 285/303 reconciliation (five GAZ root terms) and kilometer's UO id
-  (UO:0010066; UO:0000009 is kilogram). The AnyJev per-item L2 dump is feasible
-  (`scripts/anyjev_l2_predictions.py`: mesa-anyjev's `_fit_eval_loco` builds the per-fold
-  `DecisionRecord` list before pooling, so the script keeps it; ≈12–15 min on the GB10 with
-  vLLM stopped) and runs in M1-A's GPU window; it has not been run.
+  (UO:0010066; UO:0000009 is kilogram). The AnyJev per-item L2 dump ran in M1-A's GPU window
+  and reproduces the committed cells (see Baselines).
 - M4: teacher target resolution (column → table card, else dataset scope).
 - M7: the local `--data`/`--workflow` directory layout `finetune.py` expects.
 - Whether the released head was trained at max_len 8192 or 2048 is not stated upstream.

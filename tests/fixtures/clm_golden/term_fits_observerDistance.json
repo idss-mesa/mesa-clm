@@ -1,0 +1,105 @@
+{
+  "kind": "systemone",
+  "path": "/v1/systemone",
+  "body": {
+    "state": {
+      "card": {
+        "dataset": "DP1.10003.001.brd_countdata",
+        "product_title": "Breeding landbird point counts",
+        "product_description": "Count, distance from observer, and taxonomic identification of breeding landbirds observed during point counts",
+        "sites": [
+          {
+            "code": "HARV",
+            "name": "Harvard Forest & Quabbin Watershed NEON",
+            "domain": "D01",
+            "habitat": "temperate deciduous/mixed forest"
+          },
+          {
+            "code": "SRER",
+            "name": "Santa Rita Experimental Range NEON",
+            "domain": "D14",
+            "habitat": "semi-arid desert grassland/shrubland"
+          }
+        ],
+        "rows": 15484,
+        "months": "2020-04 to 2024-06",
+        "columns": [
+          "uid",
+          "siteID",
+          "startDate",
+          "scientificName",
+          "observerDistance",
+          "detectionMethod",
+          "identificationHistoryID"
+        ]
+      },
+      "scope": "column",
+      "aspect": "measurement",
+      "column": {
+        "name": "observerDistance",
+        "description": "Radial distance between the observer and the individual(s) being observed",
+        "dtype": "real",
+        "unit": "meter",
+        "profile": "numeric, n=14670, min=1, median=59, max=999"
+      }
+    },
+    "model": "clm-latest",
+    "questions": {
+      "fit": {
+        "type": "choice",
+        "instructions": null,
+        "criteria": {
+          "PATO:0000040": "distance: A 1-D extent quality which is equal to the distance between two points.",
+          "PATO:0000122": "length: A 1-D extent quality which is equal to the distance between two points.",
+          "UO:0000008": "meter: A length unit which is equal to the length of the path travelled by light.",
+          "__none__": "None of these terms is the right concept for this target."
+        }
+      }
+    }
+  },
+  "body_json": "{\"state\":{\"card\":{\"dataset\":\"DP1.10003.001.brd_countdata\",\"product_title\":\"Breeding landbird point counts\",\"product_description\":\"Count, distance from observer, and taxonomic identification of breeding landbirds observed during point counts\",\"sites\":[{\"code\":\"HARV\",\"name\":\"Harvard Forest & Quabbin Watershed NEON\",\"domain\":\"D01\",\"habitat\":\"temperate deciduous/mixed forest\"},{\"code\":\"SRER\",\"name\":\"Santa Rita Experimental Range NEON\",\"domain\":\"D14\",\"habitat\":\"semi-arid desert grassland/shrubland\"}],\"rows\":15484,\"months\":\"2020-04 to 2024-06\",\"columns\":[\"uid\",\"siteID\",\"startDate\",\"scientificName\",\"observerDistance\",\"detectionMethod\",\"identificationHistoryID\"]},\"scope\":\"column\",\"aspect\":\"measurement\",\"column\":{\"name\":\"observerDistance\",\"description\":\"Radial distance between the observer and the individual(s) being observed\",\"dtype\":\"real\",\"unit\":\"meter\",\"profile\":\"numeric, n=14670, min=1, median=59, max=999\"}},\"model\":\"clm-latest\",\"questions\":{\"fit\":{\"type\":\"choice\",\"instructions\":null,\"criteria\":{\"PATO:0000040\":\"distance: A 1-D extent quality which is equal to the distance between two points.\",\"PATO:0000122\":\"length: A 1-D extent quality which is equal to the distance between two points.\",\"UO:0000008\":\"meter: A length unit which is equal to the length of the path travelled by light.\",\"__none__\":\"None of these terms is the right concept for this target.\"}}}}",
+  "response": {
+    "model": "clm-latest",
+    "answers": {
+      "fit": {
+        "type": "choice",
+        "choice": "__none__",
+        "confidence": 0.0700306575585807,
+        "probabilities": {
+          "PATO:0000040": 0.24453285631339441,
+          "PATO:0000122": 0.22398857270241304,
+          "UO:0000008": 0.22895557781525705,
+          "__none__": 0.30252299316893555
+        }
+      }
+    },
+    "usage": {
+      "billing_units": 1,
+      "input_tokens": 159,
+      "output_tokens": 0
+    }
+  },
+  "latency_ms": "12.5",
+  "parsed": {
+    "model": "clm-latest",
+    "answers": {
+      "fit": {
+        "type": "choice",
+        "choice": "__none__",
+        "confidence": 0.0700306575585807,
+        "probabilities": {
+          "PATO:0000040": 0.24453285631339441,
+          "PATO:0000122": 0.22398857270241304,
+          "UO:0000008": 0.22895557781525705,
+          "__none__": 0.30252299316893555
+        }
+      }
+    },
+    "usage": {
+      "billing_units": 1,
+      "input_tokens": 159,
+      "output_tokens": 0
+    },
+    "latency_ms": 12.5
+  }
+}

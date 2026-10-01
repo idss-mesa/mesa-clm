@@ -1,0 +1,924 @@
+{
+ "format": "mesa-clm/features-build/2",
+ "date": "2026-10-01",
+ "host": "sparky-1",
+ "started": "2026-10-01T16:12:25Z",
+ "finished": "2026-10-01T16:15:40Z",
+ "commands": [
+  "uv run mesa-clm features build --snapshot bench/snapshots/2026-09-29.parquet",
+  "uv run mesa-clm features project",
+  "uv run mesa-clm features project --model clm-raw",
+  "uv run mesa-clm features export-npz --out ~/.mesa/clm/features/c3b3d5e1a283/textcache",
+  "uv run mesa-clm features stats --json"
+ ],
+ "serving": {
+  "lock": "~/.mesa/clm/serving.lock.json (the installed copy; equal to serving/serving.lock.json)",
+  "lock_sha": "59625b8efedb61ba48b22a74bd044893fe3fcc290807feadc32fe02bd88de3cb",
+  "encoder_fp": "c3b3d5e1a283",
+  "batch_invariance": "kernels",
+  "encoder": "http://127.0.0.1:8090 serving qwen3-8b (mesa-clm-encoder.service, vLLM 0.27.1)"
+ },
+ "snapshot": {
+  "path": "bench/snapshots/2026-09-29.parquet",
+  "labels_sha256": "aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c"
+ },
+ "build": {
+  "tasks": [
+   "term.fits",
+   "column.ontology_fits"
+  ],
+  "framings": [
+   "F1",
+   "F4",
+   "F7",
+   "F9",
+   "joint4096@S1",
+   "joint4096@S1ns"
+  ],
+  "manifest_rows": 5018,
+  "texts": 1563,
+  "texts_by_side": {
+   "state": 1400,
+   "action": 163
+  },
+  "already_stored": 0,
+  "embedded": 1563,
+  "truncated": 0,
+  "encoder_tokens": 620336,
+  "batch": 1,
+  "seconds_reported": 195.2,
+  "wall_clock": "3:15.50",
+  "max_rss_kib": 168872,
+  "fp16_roundtrip_min_cosine": 0.9999999471243575,
+  "fp16_gate": 0.9999,
+  "output": [
+   "feature store ~/.mesa/clm/features/c3b3d5e1a283/features.duckdb (encoder_fp c3b3d5e1a283)",
+   "  serving lock ~/.mesa/clm/serving.lock.json (lock_sha 59625b8efedb); encoder http://127.0.0.1:8090 serving qwen3-8b",
+   "  snapshot bench/snapshots/2026-09-29.parquet; labels_sha256 aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+   "  tasks term.fits, column.ontology_fits; framings F1, F4, F7, F9, joint4096@S1, joint4096@S1ns",
+   "  manifest: 5018 rows, 1563 distinct texts (state 1400, action 163)",
+   "  already stored 0, embedded 1563 (1563 new vectors), truncated 0 (recorded, not embedded), encoder tokens 620336, batch 1, 195.2 s",
+   "  fp16 round-trip min cosine 0.9999999 (gate >= 0.9999)"
+  ]
+ },
+ "project": {
+  "clm_model_fp": "78be8c462b2e",
+  "head_sha256": "b2b4a8c9c2d39263eff78a351eb909a342ce9b3bf21a3f07c1d1bf15f1c4eda5",
+  "state": 1563,
+  "action": 1563,
+  "output": [
+   "clm-latest (clm_model_fp 78be8c462b2e, head b2b4a8c9c2d3): state 1563, action 1563 projections of 1563 stored vectors in ~/.mesa/clm/features/c3b3d5e1a283/features.duckdb"
+  ],
+  "wall_seconds": 2.81
+ },
+ "export_npz": {
+  "file": "choice_Qwen_Qwen3-8B_4096.npz",
+  "dir": "~/.mesa/clm/features/c3b3d5e1a283/textcache",
+  "keys": "sha1(text) as <U40",
+  "vecs": "float16 [1563, 4096]",
+  "bytes": 13054678,
+  "sha256": "c66280953f442fd90df5dbabd0c1b08249c973faeebce624f18268b7def07293",
+  "mode": "0o600",
+  "output": [
+   "wrote ~/.mesa/clm/features/c3b3d5e1a283/textcache/choice_Qwen_Qwen3-8B_4096.npz: 1563 texts (keys sha1 <U40, vecs float16 [1563, 4096]); fp16 round-trip min cosine 0.9999999 (gate >= 0.9999)",
+   "finetune.py: --embed-cache ~/.mesa/clm/features/c3b3d5e1a283/textcache --embed-model Qwen/Qwen3-8B --max-len 4096"
+  ],
+  "wall_seconds": 0.29
+ },
+ "stats": {
+  "root": "~/.mesa/clm/features",
+  "live_encoder_fp": "c3b3d5e1a283",
+  "stores": [
+   {
+    "path": "~/.mesa/clm/features/c3b3d5e1a283/features.duckdb",
+    "encoder_fp": "c3b3d5e1a283",
+    "exists": true,
+    "format": "mesa-clm-features/1",
+    "dim": 4096,
+    "created_at": "2026-10-01T16:12:25+00:00",
+    "encoder_spec": {
+     "batch_invariance": "kernels",
+     "dtype": "bfloat16",
+     "max_len": 4096,
+     "model": "Qwen/Qwen3-8B",
+     "normalize": true,
+     "pooling": "LAST",
+     "prefix_caching": false,
+     "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+     "route": "vllm",
+     "truncation_side": "left"
+    },
+    "texts": 1563,
+    "vectors": 1563,
+    "truncated": 0,
+    "tokens": {
+     "total": 620336,
+     "max": 685,
+     "p50": 450.0,
+     "p95": 588.7999999999997
+    },
+    "fp16_min_cosine": 0.9999999471243575,
+    "projections": {
+     "78be8c462b2e": {
+      "action": 1563,
+      "state": 1563
+     }
+    },
+    "bytes": 31207424
+   }
+  ]
+ },
+ "note": "Diagnostics, not citable bench cells (X1 and X2 are M2). The v1 fields above `rerun` are the first build (2026-10-01T16:12:25Z-16:15:40Z) and are unchanged; `rerun` is the re-run on the final recipe and code, 2026-10-01T16:49:29Z-17:00:41Z.",
+ "rerun": {
+  "started": "2026-10-01T16:49:29Z",
+  "finished": "2026-10-01T17:00:41Z",
+  "serving": {
+   "lock": "~/.mesa/clm/serving.lock.json (byte-identical to serving/serving.lock.json, sha256 0d558552…0cda63)",
+   "lock_sha": "59625b8efedb61ba48b22a74bd044893fe3fcc290807feadc32fe02bd88de3cb",
+   "encoder_fp": "c3b3d5e1a283",
+   "units": "mesa-clm-encoder.service active since 09:18:56 MDT, mesa-clm-serve.service since 09:21:08 MDT, NRestarts 0, both disabled (not enabled at boot); not restarted or reconfigured"
+  },
+  "doctor_serve_before": {
+   "started": "2026-10-01T16:49:29Z",
+   "command": "uv run mesa-clm doctor --serve",
+   "exit": 0,
+   "wall_seconds": 4.8,
+   "summary": {
+    "ok": 30,
+    "warn": 2,
+    "fail": 0
+   },
+   "not_ok_verbatim": [
+    "[WARN] permissions: ~/.mesa/clm/locks 0775, ~/.mesa/clm/locks/provenance.lock 0664 (owner-only state; fix: chmod 700 ~/.mesa/clm/locks; chmod 600 ~/.mesa/clm/locks/provenance.lock)",
+    "[WARN] clm drift: quickstart urgency 0.8466 (|Δ| 0.0100116), billing 0.9903 (|Δ| 0.0014636), frustration 2.0000 (|Δ| 0.0000210) against issue #15 ± 0.01; tides top \"The Moon's gravitational pull.\" 0.9932 against the model card 0.993 ± 0.005 (warn only; DESIGN A3)"
+   ]
+  },
+  "build_existing_store": {
+   "started": "2026-10-01T16:50:30Z",
+   "command": "uv run mesa-clm features build --snapshot bench/snapshots/2026-09-29.parquet",
+   "exit": 0,
+   "output": [
+    "feature store ~/.mesa/clm/features/c3b3d5e1a283/features.duckdb (encoder_fp c3b3d5e1a283)",
+    "  serving lock ~/.mesa/clm/serving.lock.json (lock_sha 59625b8efedb); encoder http://127.0.0.1:8090 serving qwen3-8b",
+    "  snapshot bench/snapshots/2026-09-29.parquet; labels_sha256 aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+    "  tasks term.fits, column.ontology_fits; framings F1, F4, F7, F9, joint4096@S1, joint4096@S1ns",
+    "  manifest: 5018 rows, 1563 distinct texts (state 1400, action 163)",
+    "  already stored 1563, embedded 0 (0 new vectors), truncated 0 (recorded, not embedded), encoder tokens 0, batch 1, 0.0 s",
+    "  fp16 round-trip min cosine 0.9999999 (gate >= 0.9999)"
+   ],
+   "already_stored": 1563,
+   "embedded": 0,
+   "new_vectors": 0,
+   "truncated": 0,
+   "encoder_tokens": 0,
+   "seconds_reported": 0.0,
+   "wall_clock": "0:00.30",
+   "max_rss_kib": 114068
+  },
+  "scratch_rebuild": {
+   "why": "a fresh build of the same manifest on the final code (src/mesa_clm/learn/features.py changed at 16:44:03Z, after the first build) for timing, and a bitwise reproducibility check of the store across two independent builds",
+   "started": "2026-10-01T16:50:49Z",
+   "finished": "2026-10-01T16:54:05Z",
+   "command": "MESA_CLM_FEATURES__DIR=.local/features-rebuild uv run mesa-clm features build --snapshot bench/snapshots/2026-09-29.parquet",
+   "exit": 0,
+   "output": [
+    "feature store .local/features-rebuild/c3b3d5e1a283/features.duckdb (encoder_fp c3b3d5e1a283)",
+    "  serving lock ~/.mesa/clm/serving.lock.json (lock_sha 59625b8efedb); encoder http://127.0.0.1:8090 serving qwen3-8b",
+    "  snapshot bench/snapshots/2026-09-29.parquet; labels_sha256 aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+    "  tasks term.fits, column.ontology_fits; framings F1, F4, F7, F9, joint4096@S1, joint4096@S1ns",
+    "  manifest: 5018 rows, 1563 distinct texts (state 1400, action 163)",
+    "  already stored 0, embedded 1563 (1563 new vectors), truncated 0 (recorded, not embedded), encoder tokens 620336, batch 1, 195.9 s",
+    "  fp16 round-trip min cosine 0.9999999 (gate >= 0.9999)"
+   ],
+   "already_stored": 0,
+   "embedded": 1563,
+   "truncated": 0,
+   "encoder_tokens": 620336,
+   "batch": 1,
+   "seconds_reported": 195.9,
+   "wall_clock": "3:16.24",
+   "max_rss_kib": 170208,
+   "store": ".local/features-rebuild/c3b3d5e1a283/features.duckdb (31,993,856 bytes; not the canonical store)",
+   "vs_canonical_store": {
+    "texts_canonical": 1563,
+    "texts_rebuild": 1563,
+    "vectors_canonical": 1563,
+    "vectors_rebuild": 1563,
+    "same_text_sha256_set": true,
+    "vectors_bitwise_equal": 1563,
+    "texts_tokens_truncated_equal": 1563,
+    "fp16_cos_equal": 1563,
+    "min_cos_where_not_bitwise": null,
+    "n_not_bitwise": 0,
+    "meta_differences": {
+     "created_at": {
+      "canonical": "2026-10-01T16:12:25+00:00",
+      "rebuild": "2026-10-01T16:50:49+00:00"
+     }
+    },
+    "vectors_digest_sha256": "e5610655160612a8195b4bc624b20f339b81d8d06c9135e812aabd798b7f7c0e",
+    "digest_definition": "sha256 over the float16 BLOBs concatenated in text_sha256 order (same for both stores)"
+   }
+  },
+  "project": {
+   "clm-latest": {
+    "command": "uv run mesa-clm features project --model clm-latest",
+    "exit": 0,
+    "output": [
+     "clm-latest (clm_model_fp 78be8c462b2e, head b2b4a8c9c2d3): state 1563, action 1563 projections of 1563 stored vectors in ~/.mesa/clm/features/c3b3d5e1a283/features.duckdb"
+    ],
+    "wall_seconds": 0.55,
+    "note": "every projection was already cached by the first build's project step, so nothing was recomputed"
+   },
+   "clm-raw": {
+    "command": "uv run mesa-clm features project --model clm-raw",
+    "exit": 0,
+    "output": [
+     "clm-raw scores raw 4096-d cosines at scale 100: there is nothing to project (offline scoring reads the stored vectors)"
+    ],
+    "wall_seconds": 0.08
+   }
+  },
+  "export_npz": {
+   "command": "uv run mesa-clm features export-npz --out .local/features-npz/",
+   "exit": 0,
+   "output": [
+    "wrote .local/features-npz/choice_Qwen_Qwen3-8B_4096.npz: 1563 texts (keys sha1 <U40, vecs float16 [1563, 4096]); fp16 round-trip min cosine 0.9999999 (gate >= 0.9999)",
+    "finetune.py: --embed-cache .local/features-npz --embed-model Qwen/Qwen3-8B --max-len 4096"
+   ],
+   "wall_seconds": 0.26,
+   "fp16_roundtrip_min_cosine": 0.9999999471243575,
+   "fp16_gate": 0.9999,
+   "fp16_gate_pass": true,
+   "file": {
+    "path": ".local/features-npz/choice_Qwen_Qwen3-8B_4096.npz",
+    "bytes": 13054678,
+    "sha256": "c66280953f442fd90df5dbabd0c1b08249c973faeebce624f18268b7def07293",
+    "mode": "0o600",
+    "dir_mode": "0o700",
+    "rows": 1563,
+    "keys_ok": true,
+    "vecs_bitwise_equal_store": true,
+    "norm_min": 0.9997450060913523,
+    "norm_max": 1.0002271704698442,
+    "arrays_sha256": "fdb4ffe67aea2acb7efd1d3d28c7aa259bd148777085f1198c5cf5507716b30e",
+    "zip_members": {
+     "keys.npy": {
+      "crc": 2792610068,
+      "size": 250208,
+      "date_time": [
+       1980,
+       1,
+       1,
+       0,
+       0,
+       0
+      ]
+     },
+     "vecs.npy": {
+      "crc": 3300194863,
+      "size": 12804224,
+      "date_time": [
+       1980,
+       1,
+       1,
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   },
+   "first_export": "~/.mesa/clm/features/c3b3d5e1a283/textcache/choice_Qwen_Qwen3-8B_4096.npz",
+   "byte_identical_to_first_export": true,
+   "note": "numpy writes zip members with a fixed 1980-01-01 timestamp, so equal arrays give an equal file"
+  },
+  "stats": {
+   "command": "uv run mesa-clm features stats [--json]",
+   "exit": 0,
+   "root": "~/.mesa/clm/features",
+   "live_encoder_fp": "c3b3d5e1a283",
+   "stores": [
+    {
+     "path": "~/.mesa/clm/features/c3b3d5e1a283/features.duckdb",
+     "encoder_fp": "c3b3d5e1a283",
+     "exists": true,
+     "format": "mesa-clm-features/1",
+     "dim": 4096,
+     "created_at": "2026-10-01T16:12:25+00:00",
+     "encoder_spec": {
+      "batch_invariance": "kernels",
+      "dtype": "bfloat16",
+      "max_len": 4096,
+      "model": "Qwen/Qwen3-8B",
+      "normalize": true,
+      "pooling": "LAST",
+      "prefix_caching": false,
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "route": "vllm",
+      "truncation_side": "left"
+     },
+     "texts": 1563,
+     "vectors": 1563,
+     "truncated": 0,
+     "tokens": {
+      "total": 620336,
+      "max": 685,
+      "p50": 450.0,
+      "p95": 588.7999999999997
+     },
+     "fp16_min_cosine": 0.9999999471243575,
+     "projections": {
+      "78be8c462b2e": {
+       "action": 1563,
+       "state": 1563
+      }
+     },
+     "bytes": 31207424
+    }
+   ]
+  },
+  "manifest_counts": {
+   "source": "features.manifest(bench/snapshots/2026-09-29.parquet) joined with the store's texts.tokens. Each entry gives the manifest rows, the distinct texts and the sum of their exact token counts; a text used by several entries (F1 contexts are the joint4096@S1 contexts, the candidates are shared by F4/F7/F9) is counted in each, so the entries do not add up to the 1,563 texts and 620,336 tokens of the store",
+   "rows_total": 5018,
+   "distinct_texts": 1563,
+   "tokens_total": 620336,
+   "context_conflicts": 0,
+   "by_task_framing_role": [
+    {
+     "task": "term.fits",
+     "framing": "F1",
+     "role": "context",
+     "rows": 285,
+     "distinct_texts": 285,
+     "tokens_distinct": 145663,
+     "tokens_max": 685
+    },
+    {
+     "task": "term.fits",
+     "framing": "F1",
+     "role": "noul_true",
+     "rows": 285,
+     "distinct_texts": 1,
+     "tokens_distinct": 37,
+     "tokens_max": 37
+    },
+    {
+     "task": "term.fits",
+     "framing": "F1",
+     "role": "noul_false",
+     "rows": 285,
+     "distinct_texts": 1,
+     "tokens_distinct": 37,
+     "tokens_max": 37
+    },
+    {
+     "task": "term.fits",
+     "framing": "F4",
+     "role": "context",
+     "rows": 143,
+     "distinct_texts": 143,
+     "tokens_distinct": 61846,
+     "tokens_max": 602
+    },
+    {
+     "task": "term.fits",
+     "framing": "F4",
+     "role": "anchor",
+     "rows": 143,
+     "distinct_texts": 1,
+     "tokens_distinct": 12,
+     "tokens_max": 12
+    },
+    {
+     "task": "term.fits",
+     "framing": "F4",
+     "role": "candidate",
+     "rows": 285,
+     "distinct_texts": 146,
+     "tokens_distinct": 3883,
+     "tokens_max": 79
+    },
+    {
+     "task": "term.fits",
+     "framing": "F7",
+     "role": "context",
+     "rows": 143,
+     "distinct_texts": 143,
+     "tokens_distinct": 59808,
+     "tokens_max": 587
+    },
+    {
+     "task": "term.fits",
+     "framing": "F7",
+     "role": "anchor",
+     "rows": 143,
+     "distinct_texts": 1,
+     "tokens_distinct": 12,
+     "tokens_max": 12
+    },
+    {
+     "task": "term.fits",
+     "framing": "F7",
+     "role": "candidate",
+     "rows": 285,
+     "distinct_texts": 146,
+     "tokens_distinct": 3883,
+     "tokens_max": 79
+    },
+    {
+     "task": "term.fits",
+     "framing": "F9",
+     "role": "context",
+     "rows": 143,
+     "distinct_texts": 101,
+     "tokens_distinct": 3585,
+     "tokens_max": 60
+    },
+    {
+     "task": "term.fits",
+     "framing": "F9",
+     "role": "anchor",
+     "rows": 143,
+     "distinct_texts": 1,
+     "tokens_distinct": 12,
+     "tokens_max": 12
+    },
+    {
+     "task": "term.fits",
+     "framing": "F9",
+     "role": "candidate",
+     "rows": 285,
+     "distinct_texts": 146,
+     "tokens_distinct": 3883,
+     "tokens_max": 79
+    },
+    {
+     "task": "term.fits",
+     "framing": "joint4096@S1",
+     "role": "context",
+     "rows": 285,
+     "distinct_texts": 285,
+     "tokens_distinct": 145663,
+     "tokens_max": 685
+    },
+    {
+     "task": "term.fits",
+     "framing": "joint4096@S1ns",
+     "role": "context",
+     "rows": 285,
+     "distinct_texts": 285,
+     "tokens_distinct": 137113,
+     "tokens_max": 655
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "F1",
+     "role": "context",
+     "rows": 190,
+     "distinct_texts": 190,
+     "tokens_distinct": 92165,
+     "tokens_max": 630
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "F1",
+     "role": "noul_true",
+     "rows": 190,
+     "distinct_texts": 1,
+     "tokens_distinct": 27,
+     "tokens_max": 27
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "F1",
+     "role": "noul_false",
+     "rows": 190,
+     "distinct_texts": 1,
+     "tokens_distinct": 27,
+     "tokens_max": 27
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "F4",
+     "role": "context",
+     "rows": 60,
+     "distinct_texts": 60,
+     "tokens_distinct": 26702,
+     "tokens_max": 589
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "F4",
+     "role": "anchor",
+     "rows": 60,
+     "distinct_texts": 1,
+     "tokens_distinct": 13,
+     "tokens_max": 13
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "F4",
+     "role": "candidate",
+     "rows": 190,
+     "distinct_texts": 11,
+     "tokens_distinct": 134,
+     "tokens_max": 17
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "F7",
+     "role": "context",
+     "rows": 60,
+     "distinct_texts": 60,
+     "tokens_distinct": 25857,
+     "tokens_max": 575
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "F7",
+     "role": "anchor",
+     "rows": 60,
+     "distinct_texts": 1,
+     "tokens_distinct": 13,
+     "tokens_max": 13
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "F7",
+     "role": "candidate",
+     "rows": 190,
+     "distinct_texts": 11,
+     "tokens_distinct": 134,
+     "tokens_max": 17
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "F9",
+     "role": "context",
+     "rows": 60,
+     "distinct_texts": 45,
+     "tokens_distinct": 1616,
+     "tokens_max": 59
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "F9",
+     "role": "anchor",
+     "rows": 60,
+     "distinct_texts": 1,
+     "tokens_distinct": 13,
+     "tokens_max": 13
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "F9",
+     "role": "candidate",
+     "rows": 190,
+     "distinct_texts": 11,
+     "tokens_distinct": 134,
+     "tokens_max": 17
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "joint4096@S1",
+     "role": "context",
+     "rows": 190,
+     "distinct_texts": 190,
+     "tokens_distinct": 92165,
+     "tokens_max": 630
+    },
+    {
+     "task": "column.ontology_fits",
+     "framing": "joint4096@S1ns",
+     "role": "context",
+     "rows": 190,
+     "distinct_texts": 190,
+     "tokens_distinct": 88365,
+     "tokens_max": 610
+    }
+   ],
+   "by_framing": {
+    "F1": {
+     "distinct_texts": 479,
+     "tokens_distinct": 237956
+    },
+    "F4": {
+     "distinct_texts": 362,
+     "tokens_distinct": 92590
+    },
+    "F7": {
+     "distinct_texts": 304,
+     "tokens_distinct": 64710
+    },
+    "F9": {
+     "distinct_texts": 261,
+     "tokens_distinct": 7686
+    },
+    "joint4096@S1": {
+     "distinct_texts": 475,
+     "tokens_distinct": 237828
+    },
+    "joint4096@S1ns": {
+     "distinct_texts": 475,
+     "tokens_distinct": 225478
+    }
+   },
+   "by_side": {
+    "state": {
+     "distinct_texts": 1400,
+     "tokens_distinct": 616166
+    },
+    "action": {
+     "distinct_texts": 163,
+     "tokens_distinct": 4170
+    }
+   },
+   "all_in_store": true
+  },
+  "crosscheck": {
+   "what": "plan §5.6 X1: offline rank_fit scores from the cache vs clm-serve /v1/systemone <= 1e-4 in probs, over 200 (context, candidates + anchor) groups; script .local/live-final/crosscheck.py, per-group rows .local/live-final/crosscheck.json",
+   "routes": {
+    "store": "mesa_clm.learn.offline.OfflineScorer.rank_fit_texts over the feature store (float16 vectors; cached clm-latest projections)",
+    "local": "the same scorer over float32 vectors fetched now from the encoder, one text per request",
+    "served": "clm-serve's answer to the same request (framings.build_request over the snapshot pair states, checked to render the manifest texts)"
+   },
+   "started": "2026-10-01T16:54:56Z",
+   "finished": "2026-10-01T16:56:18Z",
+   "wall_seconds": 81.29,
+   "clm_model_fp": {
+    "clm-latest": "78be8c462b2e",
+    "clm-raw": "9f44b0301ee3"
+   },
+   "draw": {
+    "rule": "per (task, framing) stratum of the F4/F7/F9 groups, a share of 200 proportional to the stratum's group count (largest remainder), groups ordered by sha256('task|framing|target_sha256'), first n taken",
+    "strata_sizes": {
+     "term.fits/F4": 143,
+     "term.fits/F7": 143,
+     "term.fits/F9": 143,
+     "column.ontology_fits/F4": 60,
+     "column.ontology_fits/F7": 60,
+     "column.ontology_fits/F9": 60
+    },
+    "drawn": {
+     "term.fits/F4": 47,
+     "term.fits/F7": 47,
+     "term.fits/F9": 47,
+     "column.ontology_fits/F4": 20,
+     "column.ontology_fits/F7": 20,
+     "column.ontology_fits/F9": 19
+    },
+    "groups": 200,
+    "options": 649,
+    "distinct_texts": 307
+   },
+   "gate": 0.0001,
+   "local_vectors": {
+    "texts": 307,
+    "tokens": 62099,
+    "seconds": 30.3,
+    "fp16_bitwise_equal_to_store": "307/307",
+    "min_cos_fresh_f32_vs_store_f16": 0.9999999554333988
+   },
+   "served": {
+    "clm-latest": {
+     "calls": 200,
+     "input_tokens": 60786,
+     "seconds": 26.95,
+     "latency_ms_p50": 131.95,
+     "latency_ms_p95": 241.86999999999992
+    },
+    "clm-raw": {
+     "calls": 200,
+     "input_tokens": 0,
+     "seconds": 0.29,
+     "latency_ms_p50": 0.3,
+     "latency_ms_p95": 0.6
+    }
+   },
+   "results": {
+    "clm-latest": {
+     "store_vs_served": {
+      "max_abs_prob_diff": 0.0013107863725215219,
+      "mean_abs_prob_diff": 0.00012339407010711855,
+      "p95_abs_prob_diff": 0.0004349317273870734,
+      "top_choice_agreement": "199/200",
+      "worst_group": "term.fits/F9/a213d5ff9852",
+      "pass": false,
+      "max_abs_s_c_diff": 0.006300031052550281
+     },
+     "local_vs_served": {
+      "max_abs_prob_diff": 5.1850389245489126e-06,
+      "mean_abs_prob_diff": 6.912350382542877e-07,
+      "p95_abs_prob_diff": 2.7388738066569382e-06,
+      "top_choice_agreement": "200/200",
+      "worst_group": "term.fits/F7/8c3f30cfb8d0",
+      "pass": true,
+      "max_abs_s_c_diff": 3.492301357410632e-05
+     },
+     "store_vs_local": {
+      "max_abs_prob_diff": 0.0013087968548143314,
+      "mean_abs_prob_diff": 0.00012319685493041813,
+      "p95_abs_prob_diff": 0.0004328856148736068,
+      "top_choice_agreement": "199/200",
+      "worst_group": "term.fits/F9/a213d5ff9852",
+      "pass": false,
+      "max_abs_s_c_diff": 0.006293636381453638
+     }
+    },
+    "clm-raw": {
+     "store_vs_served": {
+      "max_abs_prob_diff": 0.0035888747041297187,
+      "mean_abs_prob_diff": 0.000356385327522242,
+      "p95_abs_prob_diff": 0.001025465980424045,
+      "top_choice_agreement": "200/200",
+      "worst_group": "term.fits/F7/0b1785e813aa",
+      "pass": false,
+      "max_abs_s_c_diff": 0.013357379673733849
+     },
+     "local_vs_served": {
+      "max_abs_prob_diff": 7.465798778238941e-05,
+      "mean_abs_prob_diff": 1.4823064277898046e-05,
+      "p95_abs_prob_diff": 3.9988372163098066e-05,
+      "top_choice_agreement": "200/200",
+      "worst_group": "term.fits/F4/2b46b47a8ce1",
+      "pass": true,
+      "max_abs_s_c_diff": 0.00032116240389890027
+     },
+     "store_vs_local": {
+      "max_abs_prob_diff": 0.003598604877645184,
+      "mean_abs_prob_diff": 0.0003545594662827349,
+      "p95_abs_prob_diff": 0.0009966128454100799,
+      "top_choice_agreement": "200/200",
+      "worst_group": "term.fits/F7/0b1785e813aa",
+      "pass": false,
+      "max_abs_s_c_diff": 0.013383580963055586
+     }
+    }
+   },
+   "noul_supplement": {
+    "rule": "F1 pairs per task, 50 in all proportional to the pair counts, ordered by sha256('task|F1|target_sha256|option_key'), first n",
+    "pairs": {
+     "term.fits/F1": 30,
+     "column.ontology_fits/F1": 20
+    },
+    "clm-latest": {
+     "max_abs_prob_diff": 0.0005025999863786934,
+     "mean_abs_prob_diff": 0.0001555908741851386,
+     "p95_abs_prob_diff": 0.0003476060527291491,
+     "top_choice_agreement": "50/50",
+     "worst_group": "term.fits/F1/0279bc7c45df/ENVO:01000179",
+     "pass": false
+    },
+    "clm-raw": {
+     "max_abs_prob_diff": 0.0004108576785231133,
+     "mean_abs_prob_diff": 0.0002640182551985959,
+     "p95_abs_prob_diff": 0.0003998063251204609,
+     "top_choice_agreement": "49/50",
+     "worst_group": "term.fits/F1/b6e0245c7a19/OBI:0001621",
+     "pass": false
+    }
+   },
+   "flips": {
+    "rank_fit": [
+     {
+      "model": "clm-latest",
+      "group": "term.fits/F7/d990d135bddc",
+      "n_candidates": 1,
+      "winner": {
+       "store": "__none__",
+       "local": "OBI:0001141",
+       "served": "OBI:0001141"
+      },
+      "probs": {
+       "store": {
+        "OBI:0001141": 0.49961460742595754,
+        "__none__": 0.5003853925740425
+       },
+       "local": {
+        "OBI:0001141": 0.5001807397590478,
+        "__none__": 0.49981926024095225
+       },
+       "served": {
+        "OBI:0001141": 0.5001821517863754,
+        "__none__": 0.4998178482136246
+       }
+      }
+     }
+    ],
+    "noul": [
+     {
+      "model": "clm-raw",
+      "pair": "term.fits/F1/1e637bb56b99/ENVO:01000215",
+      "p_true": {
+       "store": 0.5000653865749637,
+       "served": 0.4997215271284024
+      }
+     }
+    ]
+   },
+   "verdict": {
+    "gate": 0.0001,
+    "store_vs_served_pass": false,
+    "local_vs_served_pass": true,
+    "summary": "Scored from the float16 store, the offline route misses clm-serve by up to 1.31e-3 (clm-latest) and 3.59e-3 (clm-raw) in probability, with one top-choice flip in 200 (clm-latest, a one-candidate group at p 0.4996 vs 0.5002); store vs local is the same size, so the gap is the float16 rounding of the stored vectors. Scored from float32 vectors of the same texts the offline route matches clm-serve to 5.2e-6 / 7.5e-5 (200/200 top choices), within the gate."
+   },
+   "cause": {
+    "script": ".local/live-final/fp16_cause.py (re-embeds the 307 texts; served probabilities reused from crosscheck.json)",
+    "texts": 307,
+    "fp16_bitwise_equal_to_store": "307/307",
+    "outlier_dims": [
+     2202,
+     2284,
+     3169
+    ],
+    "rounding_error": {
+     "outlier_dims_max": 0.00024062395095825195,
+     "outlier_dims_median": 6.583333015441895e-05,
+     "other_dims_max": 0.0001220405101776123,
+     "other_dims_median": 4.6403147280216217e-07
+    },
+    "store_stats": {
+     "argmax_dim_counts": {
+      "2202": 75,
+      "2284": 748,
+      "3169": 740
+     },
+     "median_abs_component": 0.0037822723388671875,
+     "dim_values": {
+      "2202": {
+       "min": 0.1353759765625,
+       "median": 0.267333984375,
+       "max": 0.57275390625
+      },
+      "2284": {
+       "min": -0.619140625,
+       "median": -0.465087890625,
+       "max": -0.043731689453125
+      },
+      "3169": {
+       "min": -0.5390625,
+       "median": 0.4638671875,
+       "max": 0.587890625
+      }
+     },
+     "fp16_spacing_at_median_abs": {
+      "2202": 0.000244140625,
+      "2284": 0.000244140625,
+      "3169": 0.000244140625
+     },
+     "median_share_of_cosine": {
+      "2202": 0.07949148665520096,
+      "2284": 0.27481955892058474,
+      "3169": 0.22266815598144027
+     }
+    },
+    "clm-latest": {
+     "fp16": {
+      "max_abs_prob_diff": 0.0013107863725215219,
+      "mean_abs_prob_diff": 0.00012339407010711855,
+      "p95_abs_prob_diff": 0.0004349317273870734,
+      "top_choice_disagreements": 1
+     },
+     "fp16+outliers32": {
+      "max_abs_prob_diff": 0.0013735499918071103,
+      "mean_abs_prob_diff": 0.00011983580312798228,
+      "p95_abs_prob_diff": 0.00043729259207944123,
+      "top_choice_disagreements": 1
+     },
+     "f32": {
+      "max_abs_prob_diff": 5.1850389245489126e-06,
+      "mean_abs_prob_diff": 6.912350382542877e-07,
+      "p95_abs_prob_diff": 2.7388738066569382e-06,
+      "top_choice_disagreements": 0
+     }
+    },
+    "clm-raw": {
+     "fp16": {
+      "max_abs_prob_diff": 0.0035888747041297187,
+      "mean_abs_prob_diff": 0.000356385327522242,
+      "p95_abs_prob_diff": 0.001025465980424045,
+      "top_choice_disagreements": 0
+     },
+     "fp16+outliers32": {
+      "max_abs_prob_diff": 0.0007978420788674612,
+      "mean_abs_prob_diff": 0.00012921056014654622,
+      "p95_abs_prob_diff": 0.00047796002116787495,
+      "top_choice_disagreements": 0
+     },
+     "f32": {
+      "max_abs_prob_diff": 7.465798778238941e-05,
+      "mean_abs_prob_diff": 1.4823064277898046e-05,
+      "p95_abs_prob_diff": 3.9988372163098066e-05,
+      "top_choice_disagreements": 0
+     }
+    },
+    "fp16_renormalised_before_the_head": {
+     "max_abs_prob_diff": 0.0012574065967475012,
+     "mean_abs_prob_diff": 0.00012159556312998678
+    },
+    "reading": "Only float32 vectors pass. Putting the three largest-magnitude dimensions (2202, 2284, 3169; median |value| 0.27-0.47 against a median component of 0.0038; float16 spacing 2.4e-4 there) back from float32 cuts clm-raw's gap from 3.6e-3 to 8.0e-4 but leaves clm-latest's at 1.4e-3, and renormalising the float16 vectors before the head leaves it at 1.26e-3."
+   }
+  }
+ }
+}

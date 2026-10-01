@@ -1,0 +1,897 @@
+"""The M1 doctor checks (plan §6.8): framings lock, schema contract, sidecar schema, serving
+lock, host and GPU budget, and the serving probes, each driven through injected
+:class:`~mesa_clm.health.ServeProbes` (the fake CLM transport, scripted ``ss``/``systemctl``
+output, a meminfo file). Nothing here opens a port or runs a command; no key reaches a report.
+The live path is ``tests/engine/test_doctor_live.py`` (marker ``engine``)."""
+
+from __future__ import annotations
+
+import json
+import os
+from collections.abc import Sequence
+from pathlib import Path
+from typing import Any
+
+import duckdb
+import pytest
+
+from mesa_clm import framings, health, render
+from mesa_clm.config import Config, load_config
+from mesa_clm.health import (
+    Check,
+    HealthReport,
+    ServeProbes,
+    doctor,
+    meminfo_gib,
+    parse_listeners,
+    units_active,
+)
+from mesa_clm.provenance.store import SCHEMA, DuckDBStore
+from mesa_clm.serving import CommandResult, LockCheck
+from tests.fakes.clm_transport import FakeClmServer
+
+CLM_KEY = "clm-key-0123456789abcdef"
+ENC_KEY = "enc-key-0123456789abcdef"
+ME = os.getuid()
+# `ss -ltne` as the serving host prints it: the owner (ss omits uid:0) and the cgroup.
+MANAGER = f"/user.slice/user-{ME}.slice/user@{ME}.service"
+SS_LOOPBACK = (
+    "State Recv-Q Send-Q Local Address:Port Peer Address:PortProcess\n"
+    f"LISTEN 0 2048 127.0.0.1:8700 0.0.0.0:* uid:{ME} ino:1 sk:1 "
+    f"cgroup:{MANAGER}/app.slice/mesa-clm-serve.service <->\n"
+    f"LISTEN 0 4096 127.0.0.1:8090 0.0.0.0:* uid:{ME} ino:2 sk:2 cgroup:{MANAGER}/init.scope <->\n"
+    "LISTEN 0 128 0.0.0.0:22 0.0.0.0:* ino:3 sk:3 cgroup:/system.slice/ssh.socket <->\n"
+)
+CARC = "carc-vllm@qwen.service loaded active running CARC vLLM backend\n"
+
+
+def _cfg(tmp_path: Path, **env: str) -> Config:
+    base = {"MESA_CLM_PROVENANCE__DSN": f"duckdb:///{tmp_path / 'prov.duckdb'}"}
+    return load_config(env={**base, **env})
+
+
+def _keyed(tmp_path: Path, **env: str) -> Config:
+    keys = {"MESA_CLM_CLM__API_KEY": CLM_KEY, "MESA_CLM_ENCODER__API_KEY": ENC_KEY}
+    return _cfg(tmp_path, **{**keys, **env})
+
+
+def _by(rep: HealthReport) -> dict[str, Check]:
+    return {c.name: c for c in rep.checks}
+
+
+class Runner:
+    """Scripted command output by program name; records every argv."""
+
+    def __init__(self, **out: tuple[int, str]) -> None:
+        self.out = out
+        self.calls: list[list[str]] = []
+
+    def __call__(self, argv: Sequence[str]) -> CommandResult:
+        self.calls.append(list(argv))
+        if argv[0] == "systemctl" and "--user" in argv:
+            return CommandResult(*self.out.get("units", (3, "inactive\ninactive\n")))
+        if argv[0] == "systemctl":
+            return CommandResult(*self.out.get("carc", (0, "")))
+        return CommandResult(*self.out.get(argv[0], (127, "")))
+
+
+def _meminfo(tmp_path: Path, gib: float) -> Path:
+    path = tmp_path / "meminfo"
+    path.write_text(f"MemTotal: 127000000 kB\nMemAvailable: {int(gib * 1024 * 1024)} kB\n")
+    return path
+
+
+def _probes(tmp_path: Path, server: FakeClmServer | None = None, **runner: Any) -> ServeProbes:
+    offline = ServeProbes.offline(home=tmp_path / "no-serving-home")
+    return ServeProbes(
+        home=offline.home,
+        transport=server.transport() if server is not None else offline.transport,
+        runner=Runner(**runner),
+        docker=lambda args: None,
+        meminfo=_meminfo(tmp_path, 64),
+        golden_dirs=(tmp_path / "goldens",),
+        proc=tmp_path / "proc",
+        features_dir=tmp_path / "features",
+    )
+
+
+# -- framings lock and the schema contract ------------------------------------------------------
+
+
+def test_framings_lock_drift_fails(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    rep = HealthReport()
+    health._framings_check(rep)
+    assert rep.checks[0].status == "ok" and framings.lock_sha()[:12] in rep.checks[0].detail
+    lock = tmp_path / "framings.lock.json"
+    data = json.loads(framings.LOCK_PATH.read_text(encoding="utf-8"))
+    data["schema_sha256"] = "0" * 64
+    lock.write_text(json.dumps(data), encoding="utf-8")
+    monkeypatch.setattr(framings, "LOCK_PATH", lock)
+    monkeypatch.setattr(framings, "lock_drift", lambda path=lock: [f"p{i}" for i in range(7)])
+    rep = HealthReport()
+    health._framings_check(rep)
+    c = rep.checks[0]
+    assert c.status == "fail" and "(+2 more)" in c.detail and "--update-lock" in c.detail
+
+
+def test_framings_lock_is_skipped_in_a_wheel(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(framings, "LOCK_PATH", tmp_path / "framings.lock.json")
+    monkeypatch.setattr(health, "repo_root", lambda: None)
+    rep = HealthReport()
+    health._framings_check(rep)
+    assert rep.checks[0].status == "ok" and rep.checks[0].detail.startswith("skipped")
+
+
+def test_schema_sha_against_manifest_and_pin(monkeypatch: pytest.MonkeyPatch) -> None:
+    rep = HealthReport()
+    health._schema_sha_check(rep)
+    assert rep.checks[0] == Check(
+        "schema sha256", "ok", "52cec58afbf4 = vendored.sha256 entry = serving pin"
+    )
+    monkeypatch.setattr(render, "schema_sha256", lambda: "f" * 64)
+    rep = HealthReport()
+    health._schema_sha_check(rep)
+    c = rep.checks[0]
+    assert c.status == "fail" and "vendored.sha256 pins 52cec58afbf4" in c.detail
+    assert "serving pin is 52cec58afbf4" in c.detail
+    monkeypatch.setattr(health, "repo_root", lambda: None)  # a wheel: the pin only
+    rep = HealthReport()
+    health._schema_sha_check(rep)
+    assert rep.checks[0].status == "fail" and "vendored" not in rep.checks[0].detail
+
+
+# -- sidecar schema ------------------------------------------------------------------------------
+
+
+def _sidecar(cfg: Config) -> Check:
+    rep = HealthReport()
+    health._sidecar_check(cfg, rep)
+    return rep.checks[0]
+
+
+def test_sidecar_schema_versions(tmp_path: Path) -> None:
+    path = tmp_path / "prov.duckdb"
+    cfg = _cfg(tmp_path)
+    assert _sidecar(cfg).detail.startswith("none yet") and not path.exists()
+    DuckDBStore(path).ensure_schema()
+    c = _sidecar(cfg)
+    assert c == Check("sidecar schema", "ok", f"{path}: mesa_clm schema v1")
+    con = duckdb.connect(str(path))
+    con.execute(f"INSERT INTO {SCHEMA}.schema_versions (version) VALUES (2)")  # noqa: S608
+    con.close()
+    c = _sidecar(cfg)
+    assert c.status == "fail" and "newer than this mesa-clm" in c.detail
+    con = duckdb.connect(str(path))
+    con.execute(f"DELETE FROM {SCHEMA}.schema_versions")  # noqa: S608
+    con.execute(f"INSERT INTO {SCHEMA}.schema_versions (version) VALUES (0)")  # noqa: S608
+    con.execute(f"DROP TABLE {SCHEMA}.audits")
+    con.close()
+    c = _sidecar(cfg)
+    assert c.status == "warn" and "missing audits" in c.detail and "provenance migrate" in c.detail
+
+
+def test_sidecar_schema_of_an_m0_labels_file_and_a_broken_file(tmp_path: Path) -> None:
+    from mesa_clm.provenance.labels import LabelStore
+
+    path = tmp_path / "prov.duckdb"
+    LabelStore(path).ensure_schema()
+    c = _sidecar(_cfg(tmp_path))
+    assert c.status == "ok" and "no schema_versions (labels)" in c.detail
+    path.write_bytes(b"not a duckdb file" * 100)
+    c = _sidecar(_cfg(tmp_path))
+    assert c.status == "fail" and "cannot open read-only" in c.detail
+
+
+def test_sidecar_schema_on_postgres_and_unsupported(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from mesa_clm.provenance import migrate
+
+    dsn = "postgresql://clm:s3cret@db.example/clm"
+    cfg = _cfg(tmp_path, MESA_CLM_PROVENANCE__DSN=dsn)
+    monkeypatch.setattr(migrate, "current_version", lambda d: 1)
+    c = _sidecar(cfg)
+    assert c.status == "ok" and "schema v1" in c.detail and "s3cret" not in c.detail
+
+    def refused(d: str) -> int:
+        raise ConnectionRefusedError("s3cret")
+
+    monkeypatch.setattr(migrate, "current_version", refused)
+    c = _sidecar(cfg)
+    assert c.status == "fail" and "ConnectionRefusedError" in c.detail and "s3cret" not in c.detail
+
+    def no_driver(d: str) -> int:
+        raise ImportError("psycopg")
+
+    monkeypatch.setattr(migrate, "current_version", no_driver)
+    assert _sidecar(cfg).status == "warn"
+    c = _sidecar(_cfg(tmp_path, MESA_CLM_PROVENANCE__DSN="sqlite:///x.db"))
+    assert c.status == "fail" and "unsupported" in c.detail
+
+
+# -- serving lock, host, gpu budget --------------------------------------------------------------
+
+
+def test_serving_lock_runs_on_a_serving_home(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from mesa_clm import serving
+
+    home = tmp_path / "home"
+    home.mkdir()
+    seen: dict[str, Any] = {}
+
+    def fake_check(**kw: Any) -> list[LockCheck]:
+        seen.update(kw)
+        return [
+            LockCheck("lock", "ok", "serving.lock.json: lock_sha abcdef012345"),
+            LockCheck("head", "skip", "absent"),
+            LockCheck("clone", "ok", "fine"),
+        ]
+
+    monkeypatch.setattr(serving, "check_serving_lock", fake_check)
+    probes = _probes(tmp_path)
+    probes.home = home
+    rep = doctor(_cfg(tmp_path), quick=True, probes=probes)
+    assert _by(rep)["serving lock"].detail.startswith("skipped (--quick")
+    rep = doctor(_cfg(tmp_path), probes=probes)
+    assert _by(rep)["serving lock"] == Check(
+        "serving lock", "ok", "serving.lock.json: lock_sha abcdef012345; 2 ok, 1 skipped"
+    )
+    assert seen["home"] == home and seen["require_live"] is False
+
+    def failing(**kw: Any) -> list[LockCheck]:
+        return [LockCheck("lock", "ok", "x"), LockCheck("image", "fail", "digest differs")]
+
+    monkeypatch.setattr(serving, "check_serving_lock", failing)
+    rep = doctor(_cfg(tmp_path), probes=probes)
+    assert _by(rep)["serving lock"] == Check("serving lock", "fail", "image: digest differs")
+    assert not rep.ok
+
+
+def test_meminfo_and_host_floor(tmp_path: Path) -> None:
+    assert meminfo_gib(_meminfo(tmp_path, 12.5)) == pytest.approx(12.5)
+    assert meminfo_gib(tmp_path / "missing") is None
+    (tmp_path / "odd").write_text("MemAvailable: lots\n")
+    assert meminfo_gib(tmp_path / "odd") is None
+    probes = _probes(tmp_path)
+    probes.meminfo = _meminfo(tmp_path, 4)
+    rep = HealthReport()
+    health._host_checks(rep, probes)
+    by = _by(rep)
+    assert by["host"].status == "warn" and "< 8 GiB" in by["host"].detail
+    assert by["gpu_budget"] == Check(
+        "gpu_budget", "ok", "no CARC vLLM backend active (carc-vllm@*)"
+    )
+    probes.meminfo = _meminfo(tmp_path, 64)
+    rep = HealthReport()
+    health._host_checks(rep, probes)
+    assert _by(rep)["host"].status == "ok" and "64.0 GiB" in _by(rep)["host"].detail
+
+
+def test_gpu_budget_notes_carc(tmp_path: Path) -> None:
+    probes = _probes(tmp_path, carc=(0, CARC))
+    rep = HealthReport()
+    health._host_checks(rep, probes)
+    c = _by(rep)["gpu_budget"]
+    assert c.status == "ok" and "carc-vllm@qwen.service" in c.detail
+    probes.meminfo = _meminfo(tmp_path, 20)
+    rep = HealthReport()
+    health._host_checks(rep, probes)
+    c = _by(rep)["gpu_budget"]
+    assert c.status == "warn" and "could not start" in c.detail
+    runner = probes.runner
+    assert isinstance(runner, Runner)
+    assert [
+        "systemctl",
+        "list-units",
+        "--no-legend",
+        "--plain",
+        "--state=active",
+        "carc-vllm@*",
+    ] in runner.calls
+    rep = HealthReport()
+    health._host_checks(rep, ServeProbes.offline())
+    assert _by(rep)["gpu_budget"].detail.startswith("systemctl not available")
+
+
+def test_units_active() -> None:
+    assert units_active(Runner(units=(0, "active\nactive\n")))
+    assert not units_active(Runner(units=(3, "active\ninactive\n")))
+    assert not units_active(Runner(units=(127, "")))
+
+
+def test_parse_listeners() -> None:
+    text = (
+        SS_LOOPBACK
+        + "LISTEN 0 4096 [::1]:8090 [::]:*\nLISTEN 0 5 *:8700 *:*\nESTAB 0 0 1.2.3.4:8090 x\n"
+    )
+    assert parse_listeners(text, 8090) == ["127.0.0.1", "[::1]"]
+    assert parse_listeners(text, 8700) == ["127.0.0.1", "*"]
+    assert parse_listeners(text, 9999) == []
+
+
+# -- serving endpoints ---------------------------------------------------------------------------
+
+
+def test_without_serve_mode_one_reachability_line(tmp_path: Path) -> None:
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    rep = doctor(_cfg(tmp_path), quick=True, probes=_probes(tmp_path, server))
+    c = _by(rep)["serving"]
+    assert c.status == "ok" and "answer /health" in c.detail and "doctor --serve" in c.detail
+    assert server.paths == ["/health", "/health"]  # nothing guarded was touched
+    rep = doctor(_cfg(tmp_path), quick=True, probes=_probes(tmp_path))
+    c = _by(rep)["serving"]
+    assert c.status == "warn" and c.detail.count("unreachable") == 2 and rep.ok
+
+
+def test_serve_mode_is_green_against_the_fake_stack(tmp_path: Path) -> None:
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    rep = doctor(
+        _keyed(tmp_path),
+        quick=True,
+        serve=True,
+        probes=_probes(tmp_path, server, ss=(0, SS_LOOPBACK)),
+    )
+    by = _by(rep)
+    assert rep.ok, rep.lines()
+    assert "serving" not in by
+    # The run directory and the units are checked in serve mode too: the probe home is empty
+    # and the scripted systemctl answers no `show`, so both are warnings here.
+    assert by["encoder socket"].status == "warn" and "missing" in by["encoder socket"].detail
+    assert by["serving units"].status == "warn" and "not checked" in by["serving units"].detail
+    for name in ("serving binds", "encoder health", "clm-serve health", "encoder auth",
+                 "clm-serve auth", "encoder models", "clm-serve models", "clm golden",
+                 "encoder long input", "clm parity"):  # fmt: skip
+        assert by[name].status == "ok", (name, by[name])
+    assert by["serving binds"].detail.startswith("loopback only")
+    assert by["encoder auth"].detail == (
+        f"{len(health.ENCODER_GUARDED_ROUTES)} routes answer 401 without a key (an unknown path too)"
+    )
+    assert by["clm-serve auth"].detail == "3 routes answer 401 without a key"
+    assert by["encoder long input"].detail.endswith("cos with its last 4095 token ids 1.0000000 "
+                                                     "(gate 0.9999)")  # fmt: skip
+    assert "clm-raw max |Δp| 0.0e+00" in by["clm parity"].detail
+    # No golden reference for this encoder_fp, and the fake's quickstart is far from issue #15.
+    assert (
+        by["encoder goldens"].status == "warn"
+        and "no golden reference" in by["encoder goldens"].detail
+    )
+    assert by["clm drift"].status == "warn" and "|Δ| " in by["clm drift"].detail
+    # Every encoder route was asked without a key; the guarded ones only.
+    unauthenticated = {
+        (r.method, r.url.path)
+        for r in server.requests
+        if r.url.port == 8090 and "authorization" not in r.headers
+    }
+    assert set(health.ENCODER_GUARDED_ROUTES) | {("GET", "/health")} == unauthenticated
+    assert by["encoder models"].detail == "qwen3-8b; route vllm as the lock"
+    assert (
+        "clm-latest" in by["clm-serve models"].detail and "clm-raw" in by["clm-serve models"].detail
+    )
+    assert by["clm golden"].detail.startswith("/v1/systemone clm-latest: 12 ms, answer ")
+    golden = next(b for b in server.bodies if "questions" in b)
+    assert set(golden["questions"]["fit"]["criteria"]) == set(health.GOLDEN_CRITERIA)
+    text = json.dumps(rep.as_dict())
+    assert CLM_KEY not in text and ENC_KEY not in text
+
+
+def test_serve_mode_failures(tmp_path: Path) -> None:
+    # An open /v1 route, an exposed bind and a key the server does not know.
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=None)
+    exposed = SS_LOOPBACK.replace("127.0.0.1:8090", "0.0.0.0:8090")
+    cfg = _keyed(tmp_path, MESA_CLM_CLM__API_KEY="not-the-" + CLM_KEY)
+    rep = doctor(cfg, quick=True, serve=True, probes=_probes(tmp_path, server, ss=(0, exposed)))
+    by = _by(rep)
+    assert not rep.ok
+    assert by["serving binds"].status == "fail" and "not loopback" in by["serving binds"].detail
+    assert by["encoder auth"].status == "fail" and "-> 200" in by["encoder auth"].detail
+    assert by["clm golden"].status == "fail" and "(401)" in by["clm golden"].detail
+    assert "not-the-" not in json.dumps(rep.as_dict())
+
+
+def test_serve_mode_without_keys_names_the_setting(tmp_path: Path) -> None:
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    rep = doctor(
+        _cfg(tmp_path),
+        quick=True,
+        serve=True,
+        probes=_probes(tmp_path, server, ss=(0, SS_LOOPBACK)),
+    )
+    by = _by(rep)
+    assert "MESA_CLM_ENCODER__API_KEY_FILE" in by["encoder models"].detail
+    assert "MESA_CLM_CLM__API_KEY_FILE" in by["clm-serve models"].detail
+    assert "clm golden" not in by
+
+
+def test_unreachable_is_fail_under_serve_and_warn_when_auto_quick(tmp_path: Path) -> None:
+    probes = _probes(tmp_path, ss=(0, ""), units=(0, "active\nactive\n"))
+    rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=probes)
+    by = _by(rep)
+    assert by["encoder health"].status == "fail" and by["clm-serve health"].status == "fail"
+    assert by["serving binds"].status == "fail" and "nothing listens" in by["serving binds"].detail
+    assert "encoder auth" not in by and not rep.ok
+    # Auto-detected serve mode (both units active) under --quick: warnings only.
+    rep = doctor(_keyed(tmp_path), quick=True, serve=None, probes=probes)
+    by = _by(rep)
+    assert by["encoder health"].status == "warn" and rep.ok
+    # Auto-detected without --quick: an unreachable endpoint fails.
+    rep = doctor(_keyed(tmp_path), serve=None, probes=probes)
+    assert _by(rep)["encoder health"].status == "fail"
+    # Units inactive: no serve mode, the single warning line.
+    rep = doctor(_keyed(tmp_path), serve=None, probes=_probes(tmp_path))
+    assert _by(rep)["serving"].status == "warn" and "encoder health" not in _by(rep)
+
+
+def test_ss_missing_is_a_warning(tmp_path: Path) -> None:
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=_probes(tmp_path, server))
+    assert _by(rep)["serving binds"].status == "warn" and rep.ok
+
+
+def _binds(ss: str, units: tuple[int, str] = (3, "inactive\ninactive\n")) -> Check:
+    """The ``serving binds`` check alone, ``systemctl --user is-active`` answering ``units``."""
+    rep = HealthReport()
+    probes = ServeProbes(runner=Runner(ss=(0, ss), units=units))
+    health._binds_check(rep, probes, {"encoder": 8090, "clm-serve": 8700}, "fail")
+    (check,) = rep.checks
+    return check
+
+
+def test_binds_need_sockets_of_this_account() -> None:
+    """DESIGN A5 (pre-merge review): a free loopback port can be taken by any local account,
+    and ``ss -ltn`` only showed that the address was loopback. The owner is checked now: a
+    socket of another account (or root's, which ``ss`` prints without ``uid:``) fails."""
+    ok = _binds(SS_LOOPBACK)
+    assert ok.status == "ok" and ok.detail.startswith(f"loopback only, sockets of uid {ME}")
+    squatted = SS_LOOPBACK.replace(
+        f"127.0.0.1:8090 0.0.0.0:* uid:{ME}", "127.0.0.1:8090 0.0.0.0:* uid:4242"
+    )
+    c = _binds(squatted)
+    assert c.status == "fail" and "encoder :8090 is held by a socket of uid 4242" in c.detail
+    rooted = SS_LOOPBACK.replace(f"127.0.0.1:8700 0.0.0.0:* uid:{ME} ", "127.0.0.1:8700 0.0.0.0:* ")
+    c = _binds(rooted)
+    assert c.status == "fail" and "clm-serve :8700 is held by a socket of uid 0" in c.detail
+
+
+def test_the_encoder_port_belongs_to_its_socket_unit() -> None:
+    both = (0, "active\nactive\n")
+    c = _binds(SS_LOOPBACK, both)
+    assert c.status == "ok" and "127.0.0.1:8090 (mesa-clm-encoder-proxy.socket)" in c.detail
+    # Another process of this account holds :8090 while the socket unit is active.
+    other = SS_LOOPBACK.replace(
+        f"cgroup:{MANAGER}/init.scope", f"cgroup:{MANAGER}/app.slice/x.service"
+    )
+    c = _binds(other, both)
+    assert (
+        c.status == "fail" and "not by the user manager's mesa-clm-encoder-proxy.socket" in c.detail
+    )
+    # ss without cgroup ids (cgroup v1, an old kernel): the owner check still applies.
+    bare = "".join(
+        " ".join(t for t in line.split() if not t.startswith("cgroup:")) + "\n"
+        for line in SS_LOOPBACK.splitlines()
+    )
+    assert _binds(bare, both).status == "ok"
+    # The encoder unit up without its socket unit (a unit file from before the fix).
+    c = _binds(SS_LOOPBACK, (3, "inactive\nactive\n"))
+    assert c.status == "fail" and "mesa-clm-encoder.service is active but" in c.detail
+    # Neither active (the in-process fallback serves both ports): the owner check only.
+    assert _binds(SS_LOOPBACK).status == "ok"
+    assert _binds(SS_LOOPBACK, (127, "")).status == "ok"  # no systemctl
+
+
+def test_parse_listener_details() -> None:
+    from mesa_clm.health import Listener, parse_listener_details
+
+    assert parse_listener_details(SS_LOOPBACK, 8090) == [
+        Listener("127.0.0.1", ME, f"{MANAGER}/init.scope")
+    ]
+    assert parse_listener_details(SS_LOOPBACK, 22) == [
+        Listener("0.0.0.0", 0, "/system.slice/ssh.socket")  # noqa: S104
+    ]
+    assert parse_listener_details("LISTEN 0 5 [::1]:8700 [::]:*\n", 8700) == [
+        Listener("[::1]", 0, None)
+    ]
+
+
+def _socket_probes(tmp_path: Path) -> tuple[ServeProbes, Path]:
+    home = tmp_path / "home"
+    run = home / "run"
+    run.mkdir(parents=True, mode=0o700)
+    run.chmod(0o700)
+    return ServeProbes(home=home), run
+
+
+def _socket_check(probes: ServeProbes) -> Check:
+    rep = HealthReport()
+    health._encoder_socket_check(rep, probes)
+    (check,) = rep.checks
+    return check
+
+
+def test_the_encoder_socket_check(tmp_path: Path) -> None:
+    """DESIGN A5: the container writes ``run/``; the doctor fails a symlink or a stranger
+    there, which would redirect the host's :8090 (the proxy itself refuses both)."""
+    import socket as socket_mod
+
+    probes, run = _socket_probes(tmp_path)
+    assert _socket_check(probes).status == "warn"  # no socket yet: the model is loading
+    sock = socket_mod.socket(socket_mod.AF_UNIX, socket_mod.SOCK_STREAM)
+    try:
+        sock.bind(str(run / "encoder.sock"))
+        c = _socket_check(probes)
+        assert c.status == "ok" and "alone in a 0700 directory" in c.detail
+        (run / "notes.txt").write_text("x", encoding="utf-8")
+        c = _socket_check(probes)
+        assert c.status == "fail" and "unexpected entries" in c.detail and "notes.txt" in c.detail
+        (run / "notes.txt").unlink()
+        (run / "encoder.sock").unlink()
+        (run / "encoder.sock").symlink_to(tmp_path / "elsewhere.sock")
+        c = _socket_check(probes)
+        assert c.status == "fail" and "encoder.sock is a symlink" in c.detail
+        (run / "encoder.sock").unlink()
+        (run / "encoder.sock").write_text("", encoding="utf-8")
+        assert "not a socket of this account" in _socket_check(probes).detail
+        # The directory's mode alone: a real socket in it, the directory opened to the group.
+        (run / "encoder.sock").unlink()
+        sock.close()
+        sock = socket_mod.socket(socket_mod.AF_UNIX, socket_mod.SOCK_STREAM)
+        sock.bind(str(run / "encoder.sock"))
+        assert _socket_check(probes).status == "ok"
+        run.chmod(0o750)
+        c = _socket_check(probes)
+        assert c.status == "fail" and "mode 0700" in c.detail
+    finally:
+        run.chmod(0o700)
+        sock.close()
+    assert _socket_check(ServeProbes(home=tmp_path / "missing")).status == "warn"
+
+
+def _units_host(
+    tmp_path: Path,
+    *,
+    texts: dict[str, str] | None = None,
+    props: dict[str, dict[str, str]] | None = None,
+    pid: int = 4242,
+    argv: list[str] | None = None,
+    status: str = "Name:\tpython\nNoNewPrivs:\t1\nSeccomp:\t2\n",
+) -> tuple[ServeProbes, dict[str, str]]:
+    """A host whose user manager loaded the six units from files under ``tmp_path`` (the
+    checkout's rendering for the probe home unless ``texts`` replaces one), with the proxy
+    running as ``pid`` (a fake ``/proc/<pid>``: ``argv``, default the rendered command line,
+    and ``status``)."""
+    from mesa_clm.serving import render_units
+
+    home = tmp_path / "home"
+    rendered = render_units(home)
+    unit_dir = tmp_path / "units"
+    unit_dir.mkdir(parents=True)
+    blocks = []
+    for name, text in rendered.items():
+        (unit_dir / name).write_text((texts or {}).get(name, text), encoding="utf-8")
+        p = {
+            "Id": name,
+            "LoadState": "loaded",
+            "ActiveState": "active",
+            "FragmentPath": str(unit_dir / name),
+            "NeedDaemonReload": "no",
+            "DropInPaths": "",
+            **(props or {}).get(name, {}),
+        }
+        blocks.append("\n".join(f"{k}={v}" for k, v in p.items()))
+    show = "\n\n".join(blocks) + "\n"
+    proc = tmp_path / "proc" / str(pid)
+    proc.mkdir(parents=True)
+    expected = health._exec_start_argv(rendered["mesa-clm-encoder-proxy.service"])
+    (proc / "cmdline").write_bytes(b"".join(a.encode() + b"\0" for a in argv or expected))
+    (proc / "status").write_text(status, encoding="utf-8")
+
+    def runner(cmd: Sequence[str]) -> CommandResult:
+        if list(cmd[:3]) == ["systemctl", "--user", "show"]:
+            if cmd[-1] == "--property=MainPID":
+                return CommandResult(0, f"MainPID={pid}\n")
+            return CommandResult(0, show)
+        return CommandResult(127, "")
+
+    return ServeProbes(home=home, runner=runner, proc=tmp_path / "proc"), rendered
+
+
+def _units(probes: ServeProbes) -> Check:
+    rep = HealthReport()
+    health._units_check(rep, probes)
+    (check,) = rep.checks
+    return check
+
+
+def test_the_loaded_units_are_the_checkouts_rendering(tmp_path: Path) -> None:
+    """The review of 70dbefe: ``serving binds`` and ``encoder socket`` read the same under the
+    old wiring (systemd-socket-proxyd, an encoder that only ``Wants=`` its socket), so a host
+    that pulled the fix without installing the units got a green doctor. ``serving units``
+    compares what systemd loaded with the rendering and the running proxy with the unit."""
+    probes, rendered = _units_host(tmp_path / "ok")
+    c = _units(probes)
+    assert c.status == "ok", c
+    assert "sandboxed with the rendered command line" in c.detail
+    # The units of 70dbefe's checkout: the proxy without its sandbox, still loaded.
+    old = rendered["mesa-clm-encoder-proxy.service"].split("# The sandbox", 1)[0]
+    old += "SyslogIdentifier=mesa-clm-encoder-proxy\n"
+    c = _units(_units_host(tmp_path / "old", texts={"mesa-clm-encoder-proxy.service": old})[0])
+    assert c.status == "fail" and "is not the checkout's rendering" in c.detail
+    # The units of ec2e2d4: the encoder only wanted its socket, the proxy was systemd's.
+    wants = rendered["mesa-clm-encoder.service"].replace(
+        "Requires=mesa-clm-encoder-proxy.socket\n", ""
+    )
+    c = _units(_units_host(tmp_path / "wants", texts={"mesa-clm-encoder.service": wants})[0])
+    assert c.status == "fail" and "mesa-clm-encoder.service:" in c.detail
+    socket_proxyd = ["/usr/lib/systemd/systemd-socket-proxyd", str(tmp_path / "run/encoder.sock")]
+    c = _units(_units_host(tmp_path / "proxyd", argv=socket_proxyd)[0])
+    assert c.status == "fail" and "not the rendered unit's command" in c.detail
+    # Installed and reloaded, but the proxy still runs from before: no sandbox.
+    bare = "Name:\tpython\nNoNewPrivs:\t0\nSeccomp:\t0\n"
+    c = _units(_units_host(tmp_path / "stale", status=bare)[0])
+    assert c.status == "fail" and "is not sandboxed (NoNewPrivs 0, Seccomp 0)" in c.detail
+    reload = {"mesa-clm-serve.service": {"NeedDaemonReload": "yes"}}
+    c = _units(_units_host(tmp_path / "reload", props=reload)[0])
+    assert c.status == "fail" and "daemon-reload" in c.detail
+    dropin = {"mesa-clm-encoder-proxy.service": {"DropInPaths": "/x/override.conf"}}
+    c = _units(_units_host(tmp_path / "dropin", props=dropin)[0])
+    assert c.status == "warn" and "drop-ins may override" in c.detail
+    c = _units(_units_host(tmp_path / "idle", pid=0)[0])
+    assert c.status == "ok" and "has not started yet" in c.detail
+    one = {"mesa-clm-headroom.timer": {"LoadState": "not-found", "FragmentPath": ""}}
+    c = _units(_units_host(tmp_path / "one", props=one)[0])
+    assert c.status == "fail" and "not installed: mesa-clm-headroom.timer" in c.detail
+    none = {u: {"LoadState": "not-found", "FragmentPath": ""} for u in rendered}
+    c = _units(_units_host(tmp_path / "none", props=none)[0])
+    assert c.status == "warn" and "no mesa-clm unit is installed" in c.detail
+    c = _units(ServeProbes(home=tmp_path / "x", runner=lambda argv: CommandResult(127, "")))
+    assert c.status == "warn" and "not checked" in c.detail
+
+
+# -- the full serve-mode probes -----------------------------------------------------------------
+
+
+def _golden_file(tmp_path: Path, server: FakeClmServer, *, shift: bool = False) -> Path:
+    """An encoder golden for the checkout lock's encoder_fp, recorded through the fake."""
+    import numpy as np
+
+    from mesa_clm.clm.encoder import EncoderClient
+    from mesa_clm.serving import load_lock
+
+    texts = ["hello world", "What causes tides on Earth?", "x"]
+    with EncoderClient(
+        "http://127.0.0.1:8090", ENC_KEY, transport=server.transport(), retries=1
+    ) as enc:
+        vectors = np.stack([enc.embed([t])[0][0] for t in texts])
+    if shift:
+        vectors = np.roll(vectors, 1, axis=0)
+    fp = load_lock().encoder_fp
+    path = tmp_path / "goldens" / health.GOLDEN_FILE.format(fp=fp)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    np.savez(path, texts=np.array(texts), vectors=vectors, encoder_fp=np.array(fp))
+    return path
+
+
+def test_encoder_goldens_are_bitwise_one_text_per_request(tmp_path: Path) -> None:
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    _golden_file(tmp_path, server)
+    probes = _probes(tmp_path, server, ss=(0, SS_LOOPBACK))
+    rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=probes)
+    c = _by(rep)["encoder goldens"]
+    assert c.status == "ok" and "3/3 bitwise one text per request" in c.detail
+    assert "one batch vs one by one min cos 1 - " in c.detail
+    _golden_file(tmp_path, server, shift=True)
+    rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=probes)
+    c = _by(rep)["encoder goldens"]
+    assert c.status == "fail" and "0/3 bitwise" in c.detail and not rep.ok
+
+
+def test_systemone_parity_with_the_pinned_heads_export(tmp_path: Path) -> None:
+    from mesa_clm.serving import HEADS_DIR, load_lock
+
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    lock = load_lock()
+    head = server.clm.heads["clm-latest"]
+    home = tmp_path / "serving-home"
+    npz = home / HEADS_DIR / "npz" / f"{lock.head.sha256[:8]}.npz"
+    npz.parent.mkdir(parents=True)
+    head.source_sha256 = lock.head.sha256
+    head.to_npz(npz)
+    probes = _probes(tmp_path, server, ss=(0, SS_LOOPBACK))
+    probes.home = home
+    rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=probes)
+    c = _by(rep)["clm parity"]
+    assert c.status == "ok", c
+    assert "clm-latest max |Δp|" in c.detail and "clm-raw max |Δp|" in c.detail
+    # A head exported from another checkpoint is not the lock's: clm-latest is skipped.
+    head.source_sha256 = "0" * 64
+    head.to_npz(npz)
+    rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=probes)
+    assert "clm-latest skipped" in _by(rep)["clm parity"].detail
+
+
+def test_quick_auto_serve_mode_runs_only_the_light_probes(tmp_path: Path) -> None:
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    probes = _probes(tmp_path, server, ss=(0, SS_LOOPBACK), units=(0, "active\nactive\n"))
+    rep = doctor(_keyed(tmp_path), quick=True, serve=None, probes=probes)
+    by = _by(rep)
+    assert by["encoder auth"].status == "ok" and by["clm golden"].status == "ok"
+    for name in ("encoder goldens", "encoder long input", "clm parity", "clm drift"):
+        assert name not in by
+
+
+def test_the_wrong_route_on_8090_fails_the_encoder_models_check(tmp_path: Path) -> None:
+    server = FakeClmServer(
+        clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY, encoder_owned_by="mesa-clm-fallback"
+    )
+    rep = doctor(
+        _keyed(tmp_path), quick=True, serve=True, probes=_probes(tmp_path, server, ss=(0, ""))
+    )
+    c = _by(rep)["encoder models"]
+    assert c.status == "fail" and "not the lock's route 'vllm'" in c.detail
+
+
+def test_urls_are_checked_by_the_loopback_rule_and_printed_redacted(tmp_path: Path) -> None:
+    import httpx
+
+    seen: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(str(request.url.host))
+        raise httpx.ConnectError("refused", request=request)
+
+    cfg = _keyed(tmp_path, MESA_CLM_CLM__BASE_URL="http://user:s3cr3t-pw@clm.example.org:8700")
+    probes = _probes(tmp_path)
+    probes.transport = httpx.MockTransport(handler)
+    for serve in (True, False):
+        rep = doctor(cfg, quick=True, serve=serve, probes=probes)
+        text = "\n".join(rep.lines()) + json.dumps(rep.as_dict())
+        assert "s3cr3t" not in text and "user:" not in text
+        c = _by(rep)["clm-serve url"]
+        assert c.status == "fail" and c.detail.startswith("http://clm.example.org:8700: not probed")
+    assert "clm.example.org" not in seen and seen  # the encoder was probed, clm-serve never
+
+
+def test_permissions_warn_with_the_fix(tmp_path: Path) -> None:
+    import os
+
+    home = tmp_path / "home"
+    (home / "locks").mkdir(parents=True)
+    os.chmod(home, 0o700)
+    os.chmod(home / "locks", 0o775)  # noqa: S103 - a deliberately loose mode
+    (home / "locks" / "provenance.lock").write_text("")
+    os.chmod(home / "locks" / "provenance.lock", 0o664)
+    probes = _probes(tmp_path)
+    probes.home = home
+    rep = doctor(_cfg(tmp_path), quick=True, probes=probes)
+    c = _by(rep)["permissions"]
+    assert c.status == "warn" and rep.ok
+    assert f"chmod 700 {home / 'locks'}" in c.detail
+    assert f"chmod 600 {home / 'locks' / 'provenance.lock'}" in c.detail
+    os.chmod(home / "locks", 0o700)
+    os.chmod(home / "locks" / "provenance.lock", 0o600)
+    assert _by(doctor(_cfg(tmp_path), quick=True, probes=probes))["permissions"].status == "ok"
+
+
+def test_the_default_key_files_are_named_and_end_the_no_key_warning(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from mesa_clm import serving
+
+    home = tmp_path / "keys-home"
+    secrets = home / "secrets"
+    secrets.mkdir(parents=True)
+    for name, key in (("clm", CLM_KEY), ("encoder", ENC_KEY)):
+        (secrets / f"{name}.key").write_text(key + "\n")
+        (secrets / f"{name}.key").chmod(0o600)
+    monkeypatch.setattr(serving, "DEFAULT_HOME", str(home))
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    rep = doctor(_cfg(tmp_path), quick=True, serve=True, probes=_probes(tmp_path, server))
+    by = _by(rep)
+    assert by["clm key file"].detail == (
+        f"{secrets / 'clm.key'} (default): regular file, mode 0600 or stricter (not read)"
+    )
+    assert by["encoder key file"].status == "ok"
+    assert by["encoder models"].status == "ok" and by["clm golden"].status == "ok"
+    assert "no key configured" not in json.dumps(rep.as_dict())
+    assert CLM_KEY not in json.dumps(rep.as_dict())
+
+
+# -- the feature store, the encoder's network namespace, the headroom timer ----------------------
+
+
+def _feature_store(tmp_path: Path, lock: Any) -> Any:
+    from mesa_clm.clm.fake import FakeEncoder
+    from mesa_clm.learn.features import FeatureStore
+
+    store = FeatureStore.for_lock(tmp_path / "features", lock)
+    texts = ["hello world", "What causes tides on Earth?"]
+    vectors, _ = FakeEncoder().embed(texts)
+    store.add(texts, vectors, [2, 5])
+    return store
+
+
+def test_feature_store_check(tmp_path: Path) -> None:
+    from mesa_clm.serving import load_lock
+
+    lock = load_lock()
+    probes = _probes(tmp_path)
+
+    def check() -> Check:
+        return _by(doctor(_cfg(tmp_path), quick=True, probes=probes))["feature store"]
+
+    c = check()
+    assert c.status == "ok" and c.detail.startswith(f"none yet for encoder_fp {lock.encoder_fp}")
+    store = _feature_store(tmp_path, lock)
+    (tmp_path / "features" / "852efc921a8a").mkdir()
+    (tmp_path / "features" / "852efc921a8a" / "features.duckdb").write_bytes(b"")
+    c = check()
+    assert c.status == "ok", c
+    assert "mesa-clm-features/2, 2 vectors" in c.detail and "is the live lock's" in c.detail
+    assert "other fingerprints, never read here: 852efc921a8a" in c.detail
+    # Built under another vector recipe (another image, say): every read is refused, K4.
+    con = duckdb.connect(str(store.path))
+    try:
+        con.execute("UPDATE meta SET value = 'f' || value WHERE key = 'vector_recipe_sha256'")
+    finally:
+        con.close()
+    c = check()
+    assert c.status == "fail" and "vector recipe" in c.detail and "rebuild" in c.detail
+    con = duckdb.connect(str(store.path))
+    try:
+        con.execute("UPDATE meta SET value = 'mesa-clm-features/1' WHERE key = 'format'")
+    finally:
+        con.close()
+    c = check()
+    assert c.status == "fail" and "float16" in c.detail
+
+
+def _netns_probes(tmp_path: Path, interfaces: list[str], tcp: str, **runner: Any) -> ServeProbes:
+    from tests.unit.test_serving import PROC_TCP6, _proc
+
+    tmp_path.mkdir(parents=True, exist_ok=True)
+    probes = _probes(tmp_path, **runner)
+    probes.proc = _proc(tmp_path, 4186240, interfaces, tcp, PROC_TCP6)
+    probes.docker = lambda args: ["docker", *args]
+    return probes
+
+
+def test_encoder_network_check(tmp_path: Path) -> None:
+    """DESIGN A5: the engine's sockets inside the container are invisible to ``ss`` on the host;
+    the doctor reads the container's namespace, fails a bridged one with non-loopback listeners
+    and passes one whose only interface is ``lo``."""
+    from tests.unit.test_serving import PROC_TCP
+
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    pid = {"docker": (0, "4186240\n"), "ss": (0, SS_LOOPBACK)}
+    bridged = _netns_probes(tmp_path / "a", ["eth0", "lo"], PROC_TCP, **pid)
+    bridged.transport = server.transport()
+    rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=bridged)
+    c = _by(rep)["encoder network"]
+    assert c.status == "fail" and "172.17.0.2:38747" in c.detail and "eth0" in c.detail
+    assert not rep.ok
+    isolated = _netns_probes(tmp_path / "b", ["lo"], PROC_TCP, **pid)
+    isolated.transport = server.transport()
+    c = _by(doctor(_keyed(tmp_path), quick=True, serve=True, probes=isolated))["encoder network"]
+    assert c.status == "ok" and "only interface is lo" in c.detail
+    missing = _probes(tmp_path, server, ss=(0, SS_LOOPBACK))
+    c = _by(doctor(_keyed(tmp_path), quick=True, serve=True, probes=missing))["encoder network"]
+    assert c.status == "warn" and "cannot be inspected" in c.detail
+
+
+def test_headroom_timer_check(tmp_path: Path) -> None:
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+
+    def timer(units: tuple[int, str]) -> Check:
+        probes = _probes(tmp_path, server, ss=(0, SS_LOOPBACK), units=units)
+        return _by(doctor(_keyed(tmp_path), quick=True, serve=True, probes=probes))[
+            "headroom timer"
+        ]
+
+    assert timer((0, "active\n")).status == "ok"
+    c = timer((3, "inactive\n"))
+    assert c.status == "warn" and "mesa-clm-headroom.timer is inactive" in c.detail
+    assert "start only" in c.detail
+    assert timer((127, "")).detail == "skipped: systemctl not available"

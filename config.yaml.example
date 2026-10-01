@@ -7,20 +7,25 @@
 
 clm:                                   # clm-serve (heads over the encoder), plan §6.2
   base_url: http://127.0.0.1:8700      # loopback; remote needs allow_remote AND https (D16)
-  api_key: null                        # or MESA_CLM_CLM__API_KEY / CLM_API_KEY; never commit one
-  api_key_file: null                   # e.g. ~/.mesa/clm/secrets/clm.key (mode 0600)
+  # The key settings stay commented out: unset, the key is read from ~/.mesa/clm/secrets/clm.key
+  # when that file exists; any explicit value here, null or empty included, switches that off.
+  # api_key: <key>                     # or MESA_CLM_CLM__API_KEY / CLM_API_KEY; never commit one
+  # api_key_file: /path/to/clm.key     # a raw 0600 key file elsewhere
   model: clm-latest                    # clm-latest | clm-raw | a promoted head's unique name
   timeout: 120.0
   allow_remote: false                  # one switch for clm and encoder URLs (plan §6.4)
 encoder:                               # vLLM pooling server, Qwen3-8B last-token, plan §6.1
   url: http://127.0.0.1:8090
-  api_key: null                        # or MESA_CLM_ENCODER__API_KEY
-  api_key_file: null                   # e.g. ~/.mesa/clm/secrets/encoder.key
+  # Unset, the key is read from ~/.mesa/clm/secrets/encoder.key when that file exists.
+  # api_key: <key>                     # or MESA_CLM_ENCODER__API_KEY
+  # api_key_file: /path/to/encoder.key
   model: qwen3-8b                      # --served-model-name of the encoder unit
   max_len: 4096                        # --max-model-len; the token guard abstains above max_len-16
   timeout: 120.0
+  tokenizer_json: null                 # pinned Qwen3 tokenizer.json for the guard when /tokenize is absent
 decider:
-  tier: auto                           # auto | zero_shot | calibrated | probe | head (D6)
+  tier: auto                           # auto | zero_shot | calibrated | probe | head | ols_rank (D6, D28)
+  ols_rank_fallback: false             # annotate --provider clm, tier auto, clm-serve down: true runs ols_rank
 planner:                               # plans, never decides (D22)
   kind: static                         # static | gateway | claude
   gateway_base_url: http://127.0.0.1:8000   # loopback tunnel to the CARC LiteLLM gateway; no /v1

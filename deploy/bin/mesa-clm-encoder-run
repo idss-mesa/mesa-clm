@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# mesa-clm-encoder-run: the vLLM pooling encoder container behind 127.0.0.1:8090 (plan §6.1).
+#
+# mesa-clm-encoder.service runs it as `sg docker -c "exec ~/.mesa/clm/bin/mesa-clm-encoder-run"`
+# because the user systemd manager does not carry the docker group. The container runs as this
+# user with the login group (PGID from the passwd entry; inside sg, `id -g` is the docker group),
+# offline, with the Hugging Face cache mounted read-only and VLLM_API_KEY from a 0600 env file
+# (mesa_clm.serving.init_keys; docs/deploy/serving.md). The image is pinned by digest and the
+# arguments are the encoder recipe serving/serving.lock.json pins (encoder_fp, DESIGN D5, and the
+# container recipe, DESIGN A3, A5): changing any of them needs a new lock.
+#
+# The container has no network (--network none, DESIGN A5): vLLM serves on the unix socket
+# ~/.mesa/clm/run/encoder.sock (a 0700 directory, bind-mounted read-write at /run/mesa-clm), and
+# mesa-clm-encoder-proxy.socket owns 127.0.0.1:8090 and hands each connection to
+# mesa-clm-encoder-proxy, which relays it to that socket only when the entry is a socket of this
+# account (never through a symlink: the container can write the directory). Nothing else the
+# container listens on (the engine's rendezvous and collective sockets, put on loopback by
+# VLLM_HOST_IP and GLOO_SOCKET_IFNAME) is reachable from the host, and the container has no
+# network to reach out on; it still shares with the host that directory, the read-only mounts,
+# the GPU and, through --ipc=host, the host's IPC namespace (DESIGN A5, residual risks).
+#
+# Every route but /health requires the key (DESIGN A4): vLLM's own check covers only /v1, /v2,
+# /inference and /cohere, so the bearer guard serving/vllm_auth.py (installed by the bootstrap
+# under ~/.mesa/clm/serve/vllm-auth, 0700) is mounted read-only, put on PYTHONPATH and loaded with
+# --middleware; --disable-fastapi-docs drops /docs, /redoc and /openapi.json. VLLM_NO_USAGE_STATS
+# and DO_NOT_TRACK stop vLLM's default usage report to stats.vllm.ai. VLLM_BATCH_INVARIANT=1 makes a
+# text's vector independent of what it is batched with (batch_invariance "kernels", DESIGN A3;
+# bench/results/2026-10-01/batch_invariance.json). --kv-cache-memory-bytes pins the KV cache to
+# 8 sequences of the whole window (4.5 GiB; DESIGN A5) instead of whatever fills the 0.20 share.
+#
+# vLLM resolves the guard only after the model is loaded, so a missing or empty key is refused
+# here, before docker runs, instead of failing after the load (the unit's StartLimitBurst stops a
+# recipe that keeps failing later than that).
+set -euo pipefail
+
+env_file="$HOME/.mesa/clm/secrets/encoder.env"
+auth_dir="$HOME/.mesa/clm/serve/vllm-auth"
+run_dir="$HOME/.mesa/clm/run"
+snapshot="$HOME/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218"
+if [[ ! -f "$env_file" ]]; then
+  echo "mesa-clm-encoder-run: $env_file is missing; create the keys first (docs/deploy/serving.md)" >&2
+  exit 1
+fi
+# The same character rule as mesa_clm.serving._ENV_SAFE_KEY; grep -q prints nothing.
+if ! grep -Eq '^VLLM_API_KEY=[A-Za-z0-9._~+/=-]{16,512}$' "$env_file"; then
+  echo "mesa-clm-encoder-run: $env_file has no usable VLLM_API_KEY line; re-run \`mesa-clm serve keys --init\`" >&2
+  exit 1
+fi
+if [[ ! -f "$auth_dir/vllm_auth.py" ]]; then
+  echo "mesa-clm-encoder-run: $auth_dir/vllm_auth.py is missing; re-run mesa-clm-serve-bootstrap" >&2
+  exit 1
+fi
+if [[ ! -f "$snapshot/config.json" ]]; then
+  echo "mesa-clm-encoder-run: the pinned Qwen/Qwen3-8B snapshot is not in the HF cache ($snapshot); the container runs offline" >&2
+  exit 1
+fi
+# The socket's directory: owner-only, and no socket left from a previous run (vLLM binds it anew).
+mkdir -p "$run_dir"
+chmod 0700 "$run_dir"
+rm -f "$run_dir/encoder.sock"
+
+PGID="$(getent passwd "$(id -un)" | cut -d: -f4)"      # not $(id -g): inside sg that is 988
+if [[ -z "$PGID" ]]; then
+  echo "mesa-clm-encoder-run: cannot read the login group of $(id -un) from the passwd database" >&2
+  exit 1
+fi
+exec docker run --rm --name mesa-clm-encoder --gpus all --ipc=host --network none --user "$(id -u):${PGID}" \
+  -e HOME=/tmp -e HF_HOME=/hf -e HF_HUB_OFFLINE=1 -e VLLM_NO_USAGE_STATS=1 -e DO_NOT_TRACK=1 \
+  -e PYTHONPATH=/opt/mesa-clm-auth -e VLLM_BATCH_INVARIANT=1 -e VLLM_HOST_IP=127.0.0.1 -e GLOO_SOCKET_IFNAME=lo \
+  -v "$HOME/.cache/huggingface:/hf:ro" -v "$auth_dir:/opt/mesa-clm-auth:ro" -v "$run_dir:/run/mesa-clm" \
+  --env-file "$env_file" --label io.mesa/clm=encoder \
+  vllm/vllm-openai@sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967 \
+  Qwen/Qwen3-8B --revision b968826d9c46dd6066d109eabc6255188de91218 --served-model-name qwen3-8b \
+  --runner pooling --dtype bfloat16 --max-model-len 4096 --max-num-seqs 8 --no-enable-prefix-caching \
+  --gpu-memory-utilization 0.20 --kv-cache-memory-bytes 4831838208 --enforce-eager \
+  --uds /run/mesa-clm/encoder.sock \
+  --middleware vllm_auth.require_api_key --disable-fastapi-docs

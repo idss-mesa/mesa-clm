@@ -1,0 +1,93 @@
+{
+  "kind": "rank",
+  "path": "/v1/rank",
+  "body": {
+    "context": {
+      "card": {
+        "dataset": "DP1.10003.001.brd_countdata",
+        "product_title": "Breeding landbird point counts",
+        "product_description": "Count, distance from observer, and taxonomic identification of breeding landbirds observed during point counts",
+        "sites": [
+          {
+            "code": "HARV",
+            "name": "Harvard Forest & Quabbin Watershed NEON",
+            "domain": "D01",
+            "habitat": "temperate deciduous/mixed forest"
+          },
+          {
+            "code": "SRER",
+            "name": "Santa Rita Experimental Range NEON",
+            "domain": "D14",
+            "habitat": "semi-arid desert grassland/shrubland"
+          }
+        ],
+        "rows": 15484,
+        "months": "2020-04 to 2024-06",
+        "columns": [
+          "uid",
+          "siteID",
+          "startDate",
+          "scientificName",
+          "observerDistance",
+          "detectionMethod",
+          "identificationHistoryID"
+        ]
+      },
+      "scope": "column",
+      "aspect": "measurement",
+      "column": {
+        "name": "observerDistance",
+        "description": "Radial distance between the observer and the individual(s) being observed",
+        "dtype": "real",
+        "unit": "meter",
+        "profile": "numeric, n=14670, min=1, median=59, max=999"
+      }
+    },
+    "question": null,
+    "answers": [
+      "meter",
+      "degree Celsius",
+      "percent"
+    ],
+    "model": "clm-latest"
+  },
+  "body_json": "{\"context\":{\"card\":{\"dataset\":\"DP1.10003.001.brd_countdata\",\"product_title\":\"Breeding landbird point counts\",\"product_description\":\"Count, distance from observer, and taxonomic identification of breeding landbirds observed during point counts\",\"sites\":[{\"code\":\"HARV\",\"name\":\"Harvard Forest & Quabbin Watershed NEON\",\"domain\":\"D01\",\"habitat\":\"temperate deciduous/mixed forest\"},{\"code\":\"SRER\",\"name\":\"Santa Rita Experimental Range NEON\",\"domain\":\"D14\",\"habitat\":\"semi-arid desert grassland/shrubland\"}],\"rows\":15484,\"months\":\"2020-04 to 2024-06\",\"columns\":[\"uid\",\"siteID\",\"startDate\",\"scientificName\",\"observerDistance\",\"detectionMethod\",\"identificationHistoryID\"]},\"scope\":\"column\",\"aspect\":\"measurement\",\"column\":{\"name\":\"observerDistance\",\"description\":\"Radial distance between the observer and the individual(s) being observed\",\"dtype\":\"real\",\"unit\":\"meter\",\"profile\":\"numeric, n=14670, min=1, median=59, max=999\"}},\"question\":null,\"answers\":[\"meter\",\"degree Celsius\",\"percent\"],\"model\":\"clm-latest\"}",
+  "response": {
+    "model": "clm-latest",
+    "ranked": [
+      {
+        "rank": 1,
+        "candidate": "percent",
+        "prob": 0.34654835134562784
+      },
+      {
+        "rank": 2,
+        "candidate": "meter",
+        "prob": 0.3320433133185353
+      },
+      {
+        "rank": 3,
+        "candidate": "degree Celsius",
+        "prob": 0.32140833533583685
+      }
+    ]
+  },
+  "latency_ms": "12.5",
+  "parsed": [
+    {
+      "rank": 1,
+      "candidate": "percent",
+      "prob": 0.34654835134562784
+    },
+    {
+      "rank": 2,
+      "candidate": "meter",
+      "prob": 0.3320433133185353
+    },
+    {
+      "rank": 3,
+      "candidate": "degree Celsius",
+      "prob": 0.32140833533583685
+    }
+  ]
+}

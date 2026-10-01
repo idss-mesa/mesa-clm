@@ -1,0 +1,346 @@
+{
+ "format": "mesa-clm/collapse-spike/1",
+ "created_at": "2026-10-01T16:24:07+00:00",
+ "command": "uv run python scripts/collapse_spike.py --sorted-keys",
+ "rendering": "sorted-key state_json",
+ "label_free": true,
+ "snapshot": "bench/snapshots/2026-09-29.parquet",
+ "labels_sha256": "aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+ "rows": {
+  "term.fits": 285,
+  "column.ontology_fits": 190
+ },
+ "ontology_state_rows_given_task_scope": {
+  "term.fits": 0,
+  "column.ontology_fits": 190
+ },
+ "encoder": {
+  "url": "http://127.0.0.1:8090",
+  "model": "qwen3-8b",
+  "max_len": 4096,
+  "encoder_fp": "c3b3d5e1a283",
+  "route": "vllm",
+  "batch_invariance": "kernels"
+ },
+ "head": {
+  "npz": "b2b4a8c9.npz",
+  "source_sha256": "b2b4a8c9c2d39263eff78a351eb909a342ce9b3bf21a3f07c1d1bf15f1c4eda5",
+  "side": "state"
+ },
+ "n_distinct_texts_embedded": 925,
+ "prompt_tokens": 392978,
+ "embed_seconds": 93.2,
+ "variants": {
+  "state_only": "render.to_text(target_state_from(state))",
+  "suffixed": "render.state_text(view, TASKS[task].text)",
+  "f9_query": "framings.context_text(framing(task, 'F9'), state)",
+  "control_f1": "framings.context_text(framing(task, 'F1'), state): the stored anyjev per-candidate state + the question (one context per row)"
+ },
+ "headline_mean_pairwise_cos": {
+  "term.fits": {
+   "raw_4096": {
+    "state_only": 0.7297,
+    "suffixed": 0.9932,
+    "f9_query": 0.945,
+    "control_f1": 0.9888
+   },
+   "projected_512": {
+    "state_only": 0.6747,
+    "suffixed": 0.9691,
+    "f9_query": 0.7488,
+    "control_f1": 0.9491
+   }
+  },
+  "column.ontology_fits": {
+   "raw_4096": {
+    "state_only": 0.8536,
+    "suffixed": 0.9949,
+    "f9_query": 0.9392,
+    "control_f1": 0.9892
+   },
+   "projected_512": {
+    "state_only": 0.7399,
+    "suffixed": 0.9735,
+    "f9_query": 0.7272,
+    "control_f1": 0.9459
+   }
+  }
+ },
+ "issue15_reference": {
+  "state_only_raw": 0.452,
+  "suffixed_raw": 0.958,
+  "suffixed_projected": 0.947
+ },
+ "results": {
+  "term.fits": {
+   "state_only": {
+    "n_distinct_texts": 143,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 411.0,
+     "p95": 528.6,
+     "max": 588
+    },
+    "raw_4096": {
+     "n": 143,
+     "n_pairs": 10153,
+     "mean_pairwise_cos": 0.7297,
+     "min_pairwise_cos": 0.0782,
+     "within_card_mean": 0.7441,
+     "across_card_mean": 0.7273,
+     "n_within_pairs": 1444,
+     "top_pc_variance_fraction": 0.5883,
+     "top3_pc_variance_fraction": 0.7623,
+     "norm_of_mean_vector": 0.8553
+    },
+    "projected_512": {
+     "n": 143,
+     "n_pairs": 10153,
+     "mean_pairwise_cos": 0.6747,
+     "min_pairwise_cos": 0.3561,
+     "within_card_mean": 0.6954,
+     "across_card_mean": 0.6713,
+     "n_within_pairs": 1444,
+     "top_pc_variance_fraction": 0.3057,
+     "top3_pc_variance_fraction": 0.516,
+     "norm_of_mean_vector": 0.8228
+    }
+   },
+   "suffixed": {
+    "n_distinct_texts": 143,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 439.0,
+     "p95": 556.6,
+     "max": 616
+    },
+    "raw_4096": {
+     "n": 143,
+     "n_pairs": 10153,
+     "mean_pairwise_cos": 0.9932,
+     "min_pairwise_cos": 0.9823,
+     "within_card_mean": 0.9941,
+     "across_card_mean": 0.993,
+     "n_within_pairs": 1444,
+     "top_pc_variance_fraction": 0.2965,
+     "top3_pc_variance_fraction": 0.459,
+     "norm_of_mean_vector": 0.9966
+    },
+    "projected_512": {
+     "n": 143,
+     "n_pairs": 10153,
+     "mean_pairwise_cos": 0.9691,
+     "min_pairwise_cos": 0.9165,
+     "within_card_mean": 0.9741,
+     "across_card_mean": 0.9683,
+     "n_within_pairs": 1444,
+     "top_pc_variance_fraction": 0.1787,
+     "top3_pc_variance_fraction": 0.3924,
+     "norm_of_mean_vector": 0.9846
+    }
+   },
+   "f9_query": {
+    "n_distinct_texts": 101,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 34.0,
+     "p95": 49.0,
+     "max": 60
+    },
+    "raw_4096": {
+     "n": 101,
+     "n_pairs": 5050,
+     "mean_pairwise_cos": 0.945,
+     "min_pairwise_cos": 0.7391,
+     "within_card_mean": 0.9519,
+     "across_card_mean": 0.9439,
+     "n_within_pairs": 735,
+     "top_pc_variance_fraction": 0.2564,
+     "top3_pc_variance_fraction": 0.4829,
+     "norm_of_mean_vector": 0.9724
+    },
+    "projected_512": {
+     "n": 101,
+     "n_pairs": 5050,
+     "mean_pairwise_cos": 0.7488,
+     "min_pairwise_cos": 0.4942,
+     "within_card_mean": 0.7784,
+     "across_card_mean": 0.7437,
+     "n_within_pairs": 735,
+     "top_pc_variance_fraction": 0.2281,
+     "top3_pc_variance_fraction": 0.4586,
+     "norm_of_mean_vector": 0.8668
+    }
+   },
+   "control_f1": {
+    "n_distinct_texts": 285,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 502.0,
+     "p95": 627.8,
+     "max": 685
+    },
+    "raw_4096": {
+     "n": 285,
+     "n_pairs": 40470,
+     "mean_pairwise_cos": 0.9888,
+     "min_pairwise_cos": 0.9608,
+     "within_card_mean": 0.9896,
+     "across_card_mean": 0.9886,
+     "n_within_pairs": 5732,
+     "top_pc_variance_fraction": 0.1636,
+     "top3_pc_variance_fraction": 0.3428,
+     "norm_of_mean_vector": 0.9944
+    },
+    "projected_512": {
+     "n": 285,
+     "n_pairs": 40470,
+     "mean_pairwise_cos": 0.9491,
+     "min_pairwise_cos": 0.8493,
+     "within_card_mean": 0.953,
+     "across_card_mean": 0.9484,
+     "n_within_pairs": 5732,
+     "top_pc_variance_fraction": 0.1403,
+     "top3_pc_variance_fraction": 0.2995,
+     "norm_of_mean_vector": 0.9743
+    }
+   }
+  },
+  "column.ontology_fits": {
+   "state_only": {
+    "n_distinct_texts": 60,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 418.5,
+     "p95": 522.5999999999999,
+     "max": 575
+    },
+    "raw_4096": {
+     "n": 60,
+     "n_pairs": 1770,
+     "mean_pairwise_cos": 0.8536,
+     "min_pairwise_cos": 0.4927,
+     "within_card_mean": 0.8764,
+     "across_card_mean": 0.8499,
+     "n_within_pairs": 251,
+     "top_pc_variance_fraction": 0.6767,
+     "top3_pc_variance_fraction": 0.7803,
+     "norm_of_mean_vector": 0.9252
+    },
+    "projected_512": {
+     "n": 60,
+     "n_pairs": 1770,
+     "mean_pairwise_cos": 0.7399,
+     "min_pairwise_cos": 0.3789,
+     "within_card_mean": 0.7686,
+     "across_card_mean": 0.7351,
+     "n_within_pairs": 251,
+     "top_pc_variance_fraction": 0.3684,
+     "top3_pc_variance_fraction": 0.5183,
+     "norm_of_mean_vector": 0.8627
+    }
+   },
+   "suffixed": {
+    "n_distinct_texts": 60,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 436.5,
+     "p95": 540.5999999999999,
+     "max": 593
+    },
+    "raw_4096": {
+     "n": 60,
+     "n_pairs": 1770,
+     "mean_pairwise_cos": 0.9949,
+     "min_pairwise_cos": 0.9881,
+     "within_card_mean": 0.9955,
+     "across_card_mean": 0.9948,
+     "n_within_pairs": 251,
+     "top_pc_variance_fraction": 0.1444,
+     "top3_pc_variance_fraction": 0.3726,
+     "norm_of_mean_vector": 0.9975
+    },
+    "projected_512": {
+     "n": 60,
+     "n_pairs": 1770,
+     "mean_pairwise_cos": 0.9735,
+     "min_pairwise_cos": 0.9299,
+     "within_card_mean": 0.9768,
+     "across_card_mean": 0.973,
+     "n_within_pairs": 251,
+     "top_pc_variance_fraction": 0.1594,
+     "top3_pc_variance_fraction": 0.3787,
+     "norm_of_mean_vector": 0.9869
+    }
+   },
+   "f9_query": {
+    "n_distinct_texts": 45,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 34.0,
+     "p95": 49.0,
+     "max": 59
+    },
+    "raw_4096": {
+     "n": 45,
+     "n_pairs": 990,
+     "mean_pairwise_cos": 0.9392,
+     "min_pairwise_cos": 0.7993,
+     "within_card_mean": 0.9467,
+     "across_card_mean": 0.938,
+     "n_within_pairs": 143,
+     "top_pc_variance_fraction": 0.3191,
+     "top3_pc_variance_fraction": 0.5998,
+     "norm_of_mean_vector": 0.9698
+    },
+    "projected_512": {
+     "n": 45,
+     "n_pairs": 990,
+     "mean_pairwise_cos": 0.7272,
+     "min_pairwise_cos": 0.5023,
+     "within_card_mean": 0.7683,
+     "across_card_mean": 0.7202,
+     "n_within_pairs": 143,
+     "top_pc_variance_fraction": 0.2716,
+     "top3_pc_variance_fraction": 0.5663,
+     "norm_of_mean_vector": 0.8563
+    }
+   },
+   "control_f1": {
+    "n_distinct_texts": 190,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 470.0,
+     "p95": 587.1999999999999,
+     "max": 630
+    },
+    "raw_4096": {
+     "n": 190,
+     "n_pairs": 17955,
+     "mean_pairwise_cos": 0.9892,
+     "min_pairwise_cos": 0.9676,
+     "within_card_mean": 0.991,
+     "across_card_mean": 0.9889,
+     "n_within_pairs": 2727,
+     "top_pc_variance_fraction": 0.1763,
+     "top3_pc_variance_fraction": 0.3669,
+     "norm_of_mean_vector": 0.9946
+    },
+    "projected_512": {
+     "n": 190,
+     "n_pairs": 17955,
+     "mean_pairwise_cos": 0.9459,
+     "min_pairwise_cos": 0.849,
+     "within_card_mean": 0.9538,
+     "across_card_mean": 0.9445,
+     "n_within_pairs": 2727,
+     "top_pc_variance_fraction": 0.1331,
+     "top3_pc_variance_fraction": 0.3269,
+     "norm_of_mean_vector": 0.9727
+    }
+   }
+  }
+ },
+ "contexts_file": ".local/serving/collapse_contexts_2026-10-01_sorted_keys.json",
+ "seconds": 96.7
+}

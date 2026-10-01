@@ -1,0 +1,151 @@
+{
+  "kind": "systemone",
+  "path": "/v1/systemone",
+  "body": {
+    "state": "Column airTemperature: mean air temperature over 30 minutes, in °C (unit: degree Celsius).",
+    "model": "clm-latest",
+    "questions": {
+      "n1": {
+        "type": "noul",
+        "instructions": "Is this column a measured quantity?"
+      },
+      "n2": {
+        "type": "noul",
+        "instructions": "Is the unit a temperature unit?",
+        "criteria": {
+          "true": "A temperature unit such as °C or K.",
+          "false": "Not a temperature unit."
+        }
+      },
+      "n3": {
+        "type": "noul",
+        "instructions": "Empty criteria are dropped"
+      },
+      "s": {
+        "type": "score",
+        "instructions": "How hot?",
+        "criteria": [
+          "Calm",
+          "Frustrated",
+          "Very angry"
+        ]
+      },
+      "wire": {
+        "type": "choice",
+        "instructions": "raw dict",
+        "criteria": {
+          "a": "alpha",
+          "b": "beta"
+        }
+      }
+    },
+    "temperature": 2.0
+  },
+  "body_json": "{\"state\":\"Column airTemperature: mean air temperature over 30 minutes, in °C (unit: degree Celsius).\",\"model\":\"clm-latest\",\"questions\":{\"n1\":{\"type\":\"noul\",\"instructions\":\"Is this column a measured quantity?\"},\"n2\":{\"type\":\"noul\",\"instructions\":\"Is the unit a temperature unit?\",\"criteria\":{\"true\":\"A temperature unit such as °C or K.\",\"false\":\"Not a temperature unit.\"}},\"n3\":{\"type\":\"noul\",\"instructions\":\"Empty criteria are dropped\"},\"s\":{\"type\":\"score\",\"instructions\":\"How hot?\",\"criteria\":[\"Calm\",\"Frustrated\",\"Very angry\"]},\"wire\":{\"type\":\"choice\",\"instructions\":\"raw dict\",\"criteria\":{\"a\":\"alpha\",\"b\":\"beta\"}}},\"temperature\":2.0}",
+  "response": {
+    "model": "clm-latest",
+    "answers": {
+      "n1": {
+        "type": "noul",
+        "noul": 0.5051230080659012
+      },
+      "n2": {
+        "type": "noul",
+        "noul": 0.47861185792400057
+      },
+      "n3": {
+        "type": "noul",
+        "noul": 0.50555204706348
+      },
+      "s": {
+        "type": "score",
+        "score": 0.9707089301207568,
+        "confidence": 0.02444472460358832,
+        "legend": {
+          "0": "Calm",
+          "1": "Frustrated",
+          "2": "Very angry"
+        },
+        "probabilities": {
+          "0": 0.3496298164023922,
+          "1": 0.33003143707445887,
+          "2": 0.3203387465231489
+        }
+      },
+      "wire": {
+        "type": "choice",
+        "choice": "b",
+        "confidence": 0.06600855399391725,
+        "probabilities": {
+          "a": 0.4669957230030414,
+          "b": 0.5330042769969586
+        }
+      }
+    },
+    "usage": {
+      "billing_units": 5,
+      "input_tokens": 145,
+      "output_tokens": 0
+    }
+  },
+  "latency_ms": "12.5",
+  "parsed": {
+    "model": "clm-latest",
+    "answers": {
+      "n1": {
+        "type": "noul",
+        "noul": 0.5051230080659012,
+        "probabilities": {
+          "false": 0.49487699193409884,
+          "true": 0.5051230080659012
+        }
+      },
+      "n2": {
+        "type": "noul",
+        "noul": 0.47861185792400057,
+        "probabilities": {
+          "false": 0.5213881420759994,
+          "true": 0.47861185792400057
+        }
+      },
+      "n3": {
+        "type": "noul",
+        "noul": 0.50555204706348,
+        "probabilities": {
+          "false": 0.49444795293652,
+          "true": 0.50555204706348
+        }
+      },
+      "s": {
+        "type": "score",
+        "score": 0.9707089301207568,
+        "confidence": 0.02444472460358832,
+        "probabilities": {
+          "0": 0.3496298164023922,
+          "1": 0.33003143707445887,
+          "2": 0.3203387465231489
+        },
+        "legend": {
+          "0": "Calm",
+          "1": "Frustrated",
+          "2": "Very angry"
+        }
+      },
+      "wire": {
+        "type": "choice",
+        "choice": "b",
+        "confidence": 0.06600855399391725,
+        "probabilities": {
+          "a": 0.4669957230030414,
+          "b": 0.5330042769969586
+        }
+      }
+    },
+    "usage": {
+      "billing_units": 5,
+      "input_tokens": 145,
+      "output_tokens": 0
+    },
+    "latency_ms": 12.5
+  }
+}

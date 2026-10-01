@@ -1,0 +1,24 @@
+mesa-clm serving patch 0001: keep the tail when truncating long states for the encoder
+
+Upstream: Contrastive-LM/CLM pull request #6 (open, unmerged when carried),
+head 11211fcab1c27e4779323ff646714dbce475568e (ssrajadh/CLM fix-truncation-side).
+The diff below is the pull request diff taken verbatim from the GitHub API.
+Series: apply 0001..0006 in order with `git apply` to Contrastive-LM/CLM
+bb42c6c5bf914fd449bed2f6ca65be80602cb1f7. Touches: src/clm/embedder.py.
+Never touches src/clm/schema.py or src/clm/client.py (DESIGN D4).
+
+diff --git a/src/clm/embedder.py b/src/clm/embedder.py
+index b19cb70..50ebe0e 100644
+--- a/src/clm/embedder.py
++++ b/src/clm/embedder.py
+@@ -40,7 +40,10 @@ def __init__(self, url: str = "http://127.0.0.1:8090/v1/embeddings", model: str
+     def _fetch(self, texts: list[str]) -> tuple[list[np.ndarray], int]:
+         body: dict[str, Any] = {"model": self.model, "input": texts, "encoding_format": "base64"}
+         if self.max_tokens:
++            # Keep the tail, as the training recipe does: the question sits at the end of a
++            # state text. vLLM's pooling runner cuts from the right by default since 0.13.
+             body["truncate_prompt_tokens"] = self.max_tokens
++            body["truncation_side"] = "left"
+         try:
+             r = self.session.post(self.url, json=body, timeout=self.timeout)
+         except requests.RequestException as e:

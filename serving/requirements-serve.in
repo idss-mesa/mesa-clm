@@ -1,0 +1,26 @@
+# The serve venv (~/.mesa/clm/serve/.venv; uv CPython 3.11.16, aarch64, CUDA 13.0 driver).
+# It runs the patched clm-serve (CPU heads), serving/export_head.py and serving/fallback_serve.py.
+# It never imports mesa_clm, and it never contains vllm: the encoder is the pinned container
+# (plan §6.1) and contrastive-lm's unconditional `vllm>=0.6` is skipped by installing the CLM
+# clone with `--no-deps` (DESIGN D0).
+#
+# Regenerate the hash-pinned lock (then update the sha256 of this lock in the docs if cited):
+#   uv pip compile serving/requirements-serve.in --python-version 3.11 \
+#     --python-platform aarch64-unknown-linux-gnu --generate-hashes -o serving/requirements-serve.txt
+
+# PyPI's aarch64 torch 2.14.0 wheel is a CUDA 13.0 build (cuda-toolkit==13.0.3, nvidia-*-cu13,
+# triton~=3.8.0), matching driver 580.173.02 / CUDA 13.0 on the GB10.
+torch==2.14.0
+# contrastive-lm's own runtime requirements (pyproject at bb42c6c5), minus vllm.
+numpy>=1.24
+requests>=2.28
+fastapi>=0.100
+uvicorn>=0.23
+pyarrow>=14
+huggingface_hub>=0.20
+# The fallback encoder (plan §6.6). transformers 5.17.0 is the version Qwen3-8B bf16 was
+# verified with on this host (RESEARCH.md, encoder model).
+transformers==5.17.0
+accelerate>=1.0
+safetensors>=0.4
+tokenizers>=0.20

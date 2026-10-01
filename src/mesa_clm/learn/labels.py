@@ -9,7 +9,8 @@ one row. Sources and weights, the highest winning when one target has several: `
 candidates of a pick), ``agent_pick`` 0.0 (a plain tool call; recorded, never fitted),
 ``consensus_all`` 0.8 and ``consensus_majority`` 0.6 (neon-avu-eval agreement),
 ``consensus_negative`` 0.5, ``teacher`` 0.5 / ``teacher_implicit`` 0.3 (Opus-validated neon
-curation, never fold-eligible), ``gold`` 1.0.
+curation, never fold-eligible), ``gold`` 1.0 (reserved: nothing produces it, an import skips it,
+and on a bench card it never enters a fold).
 
 The neon-avu-eval silver is *agreement between four agentic models*, not truth, and it is
 circular with the agentic baselines the bench compares against; the docs say so wherever a
@@ -36,7 +37,7 @@ import collections
 import hashlib
 import json
 import re
-from collections.abc import Sequence
+from collections.abc import Collection, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Final
@@ -81,9 +82,54 @@ INGESTED_TASKS: Final[tuple[str, ...]] = (
     "avu.value_kind",
 )
 
+# Sources the table reserves but nothing produces, in mesa-clm or in mesa-anyjev (plan §5.1:
+# ``gold``, at weight 1.0 and fold-eligible). ``import_anyjev`` skips their rows
+# (``skipped["reserved_source"]``): a row of one in a mesa-anyjev file came from no reviewed
+# process, and at 1.0 it would win a bench item's identity over the silver label (D30).
+RESERVED_SOURCES: Final[frozenset[str]] = frozenset({"gold"})
 # mesa-anyjev label sources with no mesa-clm counterpart: ``accepted_avu`` was never produced
 # and ``hosted_jev`` answers were a different model's. ``import_anyjev`` skips them by name.
 _ANYJEV_SOURCE_MAP: Final[dict[str, str]] = {s: s for s in WEIGHTS}
+# Curator-grade sources: mesa-anyjev let a plain tool call mint them (defect (g), D21), so an
+# import demotes them to ``agent_pick`` unless the curator vouches for the file (DESIGN A2).
+CURATOR_SOURCES: Final[frozenset[str]] = frozenset({"curator", "curator_implicit"})
+# The silver sources whose cards are the bench cards (D30): curator labels on them are tagged.
+CONSENSUS_SOURCES: Final[tuple[str, ...]] = (
+    "consensus_all",
+    "consensus_majority",
+    "consensus_negative",
+)
+# Where a bench card's silver labels come from: ``ingest_neon_eval`` stamps every row with this
+# origin (plus the validated file's sha256). A consensus row on a bench card with another origin
+# (a mesa-anyjev file, an edit) names the source without being it: the import skips such rows
+# (``skipped["bench_silver"]``) and the fold filter drops any that are there anyway (D30).
+NEON_EVAL_ORIGIN: Final[str] = "neon-avu-eval/results/validated.json@"
+# The bench cards (U2, D30): the seven neon-avu-eval tables every pre-registered cell is benched
+# on, the cards of the frozen snapshot bench/snapshots/2026-09-29.parquet (a test pins both).
+# Membership is fixed here, not inferred from the silver labels a sidecar happens to hold: a
+# sidecar without them (the serving host's, today) would otherwise tag a curator answer on a
+# bench card as fold-eligible, and that answer would replace the silver label of the
+# pre-registered item once the silver is ingested next to it.
+BENCH_CARDS: Final[frozenset[str]] = frozenset(
+    {
+        "DP1.10003.001.brd_countdata",
+        "DP1.10003.001.brd_perpoint",
+        "DP1.10022.001.bet_archivepooling",
+        "DP1.10022.001.bet_expertTaxonomistIDProcessed",
+        "DP1.10022.001.bet_fielddata",
+        "DP1.10022.001.bet_parataxonomistID",
+        "DP1.10022.001.bet_sorting",
+    }
+)
+
+
+def is_bench_card(card: str, extra: Collection[str] = ()) -> bool:
+    """Whether a curator label on ``card`` is a bench-card label (D30): one of
+    :data:`BENCH_CARDS` or ``extra`` (cards with silver consensus labels in a store), and, failing
+    closed, any card whose name is unknown (blank)."""
+    name = (card or "").strip()
+    return not name or name in BENCH_CARDS or name in extra
+
 
 _REGISTRY_IDS: Final[list[str]] = [e.id for e in ONTOLOGY_REGISTRY]
 _PRODUCT_CODE = re.compile(r"^(DP\d\.\d{5}\.\d{3})")
@@ -115,6 +161,8 @@ class IngestReport:
     skipped: collections.Counter[str] = field(default_factory=collections.Counter)
     conflicts: int = 0
     source_ref: str = ""
+    # import_anyjev: rows read as curator / curator_implicit and imported as agent_pick.
+    demoted: int = 0
 
     def count(self, task_id: str, source: str, n: int = 1) -> None:
         self.per_task.setdefault(task_id, collections.Counter())[source] += n
@@ -136,6 +184,7 @@ class IngestReport:
             "terms_missing_curies": sorted(set(self.terms_missing)),
             "skipped": dict(self.skipped),
             "conflicts": self.conflicts,
+            "demoted": self.demoted,
             "per_task": {t: dict(c) for t, c in self.per_task.items()},
             "source_ref": self.source_ref,
         }
@@ -288,10 +337,7 @@ def ingest_neon_eval(
     runs: list[dict[str, Any]] = json.loads(validated_path.read_text(encoding="utf-8"))
     excluded = set(exclude_models)
     runs = [r for r in runs if r["model"] not in excluded]
-    ref = (
-        "neon-avu-eval/results/validated.json@"
-        f"{hashlib.sha256(validated_path.read_bytes()).hexdigest()[:12]}"
-    )
+    ref = NEON_EVAL_ORIGIN + hashlib.sha256(validated_path.read_bytes()).hexdigest()[:12]
     if excluded:
         ref += " minus:" + ",".join(sorted(excluded))
     report = IngestReport(source_ref=ref)
@@ -447,15 +493,26 @@ def import_anyjev(
     store: LabelStore,
     *,
     actor: str = "import-anyjev",
+    trust_curator: bool = False,
 ) -> IngestReport:
     """Import ``mesa_anyjev.labels`` from a mesa-anyjev DuckDB sidecar (opened read-only).
 
     Identity is derived from each row's ``state_json`` (D1). Rows of inactive tasks, of a
     ``question_key`` that is not the task's current key, of a source mesa-clm has no counterpart
-    for (``accepted_avu``, ``hosted_jev``) or whose state carries no target identity are counted
-    in ``skipped``. When several anyjev rows collapse onto one identity (the same pair with
-    different ``n_candidates``), the highest weight wins, then the latest ``ts``; a collapse
-    with a different label is counted in ``conflicts``. The recorded weight is kept as is.
+    for (``accepted_avu``, ``hosted_jev``), of a reserved source nothing produces
+    (:data:`RESERVED_SOURCES`: ``gold``), consensus rows on a bench card (``bench_silver``: a
+    bench card's silver labels come only from :func:`ingest_neon_eval`) or whose state carries
+    no target identity are counted in ``skipped``. When several anyjev rows collapse onto one
+    identity (the same pair with different ``n_candidates``), the highest weight wins, then the
+    latest ``ts``; a collapse with a different label is counted in ``conflicts``. The recorded
+    weight is kept as is.
+
+    ``curator`` and ``curator_implicit`` rows are what mesa-anyjev's defect (g) let an agent mint
+    with a plain tool call (D21), so they arrive as ``agent_pick`` (weight 0, never
+    fold-eligible; counted in ``demoted``) unless ``trust_curator`` says a curator vouches for the
+    file (the CLI's ``labels import-anyjev --trust-curator``, which needs an interactive
+    terminal, DESIGN A2). Trusted curator rows on a bench card (a card with silver consensus
+    labels in the store or in the file) are tagged ``bench_card`` (D30).
     """
     text = str(dsn)
     m = _DUCKDB_RE.match(text)
@@ -475,6 +532,17 @@ def import_anyjev(
         con.close()
     ref = f"anyjev-import:{path.name}@{hashlib.sha256(path.read_bytes()).hexdigest()[:12]}"
     report = IngestReport(source_ref=ref)
+    bench_cards: set[str] = set(BENCH_CARDS)
+    if trust_curator:
+        bench_cards.update(
+            str(r["card"] or "") for r in raw if str(r["label_source"]) in CONSENSUS_SOURCES
+        )
+        for task_id in INGESTED_TASKS:
+            bench_cards.update(
+                str(r.get("card") or "")
+                for r in store.labels_for(task_id, sources=CONSENSUS_SOURCES)
+            )
+        bench_cards.discard("")
 
     best: dict[tuple[str, str, str, str], tuple[float, Any, LabelRow]] = {}
     for r in raw:
@@ -490,6 +558,9 @@ def import_anyjev(
         if source is None:
             report.skipped["unknown_source"] += 1
             continue
+        if source in RESERVED_SOURCES:
+            report.skipped["reserved_source"] += 1
+            continue
         state = r["state_json"]
         if isinstance(state, str):
             state = json.loads(state)
@@ -503,7 +574,19 @@ def import_anyjev(
             report.skipped["bad_label_index"] += 1
             continue
         card_name = str(r["card"] or state["card"]["dataset"])
+        if source in CONSENSUS_SOURCES and is_bench_card(card_name):
+            # A bench card's silver labels come only from ingest_neon_eval (D30): a consensus
+            # row in a mesa-anyjev file (no terminal, no --trust-curator needed) would otherwise
+            # enter under a source name of its choosing and, at a higher weight, replace a
+            # pre-registered item's silver label. mesa-anyjev's own copies of the silver labels
+            # are the same rows, which the ingestion already wrote.
+            report.skipped["bench_silver"] += 1
+            continue
         product = product_code_of(card_name)
+        weight = _snap_weight(float(r["weight"]), source)
+        if source in CURATOR_SOURCES and not trust_curator:
+            source, weight = "agent_pick", WEIGHTS["agent_pick"]
+            report.demoted += 1
         row = LabelRow(
             task_id=task_id,
             task_key=ident.task_key,
@@ -512,13 +595,14 @@ def import_anyjev(
             label_source=source,  # type: ignore[arg-type]
             label=t.options[label_index],
             label_index=label_index,
-            weight=_snap_weight(float(r["weight"]), source),
+            weight=weight,
             state_sha256=str(r["state_sha256"]),
             state_json=state,
             card=card_name,
             product_code=product,
             leak_group=product,
             fold_eligible=source not in NOT_FOLD_ELIGIBLE,
+            bench_card=source in CURATOR_SOURCES and is_bench_card(card_name, bench_cards),
             origin=f"{ref} {r['source_ref'] or ''}".strip(),
             actor=actor,
         )
@@ -544,7 +628,8 @@ def import_anyjev(
 class LabelledSet:
     """Parallel lists, one entry per ``(target_sha256, option_key)``; ``labels`` are option
     indices. ``fold_eligible``, ``bench_card`` and ``leak_group`` let the bench build
-    leakage-aware folds (D19, D30)."""
+    leakage-aware folds (D19, D30); ``excluded`` counts, by reason, the rows ``fold_only``
+    dropped before the per-identity selection."""
 
     states: list[dict[str, Any]]
     labels: list[int]
@@ -556,12 +641,38 @@ class LabelledSet:
     fold_eligible: list[bool] = field(default_factory=list)
     bench_card: list[bool] = field(default_factory=list)
     leak_group: list[str] = field(default_factory=list)
+    excluded: dict[str, int] = field(default_factory=dict)
 
     def class_counts(self) -> dict[int, int]:
         return dict(sorted(collections.Counter(self.labels).items()))
 
     def __len__(self) -> int:
         return len(self.labels)
+
+
+def is_silver(row: dict[str, Any]) -> bool:
+    """Whether ``row`` is a silver consensus label as the neon-avu-eval ingestion wrote it: a
+    consensus source *and* that ingestion's origin (:data:`NEON_EVAL_ORIGIN`)."""
+    return str(row.get("label_source")) in CONSENSUS_SOURCES and str(
+        row.get("origin") or ""
+    ).startswith(NEON_EVAL_ORIGIN)
+
+
+def fold_exclusion(row: dict[str, Any]) -> str | None:
+    """Why a label row may not enter a pre-registered fold (D19, D21, D30), or ``None``:
+    ``not_fold_eligible`` (teacher and agent rows), ``bench_card`` (a row tagged so, or any row
+    on a bench card that is not the silver consensus: curator rows whether or not they were
+    tagged when they were written, the reserved ``gold`` whatever wrote it, and a consensus row
+    that did not come from the neon-avu-eval ingestion, :func:`is_silver`; the fixed
+    :data:`BENCH_CARDS` decide, failing closed on a blank card). Only the silver labels are the
+    pre-registered items' labels, so nothing else may change one or add one."""
+    if not bool(row.get("fold_eligible", True)):
+        return "not_fold_eligible"
+    if bool(row.get("bench_card")) or (
+        not is_silver(row) and is_bench_card(str(row.get("card") or ""))
+    ):
+        return "bench_card"
+    return None
 
 
 def labelled_targets(
@@ -571,18 +682,29 @@ def labelled_targets(
     min_weight: float = 0.0,
     exclude_cards: Sequence[str] = (),
     sources: Sequence[str] | None = None,
+    fold_only: bool = False,
 ) -> LabelledSet:
     """One entry per ``(target_sha256, option_key)`` with ``weight >= min_weight``, the
     highest-weight source winning (ties: the earliest row), sorted by that key.
 
-    ``min_weight`` should come from :func:`mesa_clm.policy_defaults.min_weight_for` (D9). A
-    fitter or the bench must exclude ``fold_eligible=False`` and ``bench_card=True`` entries
-    from its folds itself (D19, D30); they are returned so the caller can report them.
+    ``min_weight`` should come from :func:`mesa_clm.policy_defaults.min_weight_for` (D9).
+    ``fold_only`` (the bench's pre-registered items) drops every row :func:`fold_exclusion`
+    names *before* the per-identity selection and counts them in ``excluded``: otherwise a
+    curator answer at 1.0 on a bench card would win its identity and then be dropped, taking the
+    silver item with it, or (untagged) replace the silver label in the test fold (D30). Without
+    ``fold_only`` every row competes and the caller excludes ``fold_eligible=False`` and
+    ``bench_card=True`` entries itself (they are returned so it can report them).
     """
     best: dict[tuple[str, str], dict[str, Any]] = {}
+    excluded: collections.Counter[str] = collections.Counter()
     for row in store.labels_for(
         task_id, min_weight=min_weight, exclude_cards=exclude_cards, sources=sources
     ):
+        if fold_only:
+            reason = fold_exclusion(row)
+            if reason is not None:
+                excluded[reason] += 1
+                continue
         key = (str(row["target_sha256"]), str(row["option_key"]))
         cur = best.get(key)
         if cur is None or float(row["weight"]) > float(cur["weight"]):
@@ -599,6 +721,7 @@ def labelled_targets(
         fold_eligible=[bool(r["fold_eligible"]) for r in rows],
         bench_card=[bool(r["bench_card"]) for r in rows],
         leak_group=[str(r["leak_group"]) for r in rows],
+        excluded=dict(sorted(excluded.items())),
     )
 
 

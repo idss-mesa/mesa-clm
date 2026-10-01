@@ -1,0 +1,651 @@
+{
+ "format": "mesa-clm/batch-invariance/1",
+ "date": "2026-10-01",
+ "host": "sparky-1",
+ "preregistration": {
+  "texts": "the 20 goldens of .local/serving/encoder_golden.npz, then the first 100 state-only contexts of .local/serving/collapse_contexts.json (file order)",
+  "pairs": "the 50 (state, questions) pairs of .local/serving/systemone_pairs.json",
+  "patterns": {
+   "a": "one text per request, sequential",
+   "b": "batches of 32 (EncoderClient batch=32)",
+   "c": "8 concurrent single-text requests",
+   "d": "repeat of (a)"
+  },
+  "gates": {
+   "min_cos_across_patterns": 0.999999,
+   "systemone_max_abs_prob_diff": 0.0001,
+   "max_slowdown": 4.0
+  },
+  "latency_reference_ms": {
+   "source": "bench/results/2026-09-29/serving_m1.json latency (M1-A, p50)",
+   "embeddings_batch_32_p50": 2820.0,
+   "systemone_cold_p50": 110.1
+  },
+  "rule": "ADOPT B1 iff min cosine across (a)-(d) >= 1 - 1e-6 AND (e) <= 1e-4 for both models AND (f) slowdown <= 4x (both p50s against the M1-A reference). Otherwise ADOPT B2 iff the same cosine and (e) criteria hold (no slowdown criterion). If neither holds, keep the current recipe, record the noise floor, and amend the gate scope instead."
+ },
+ "arms": {
+  "B0": {
+   "format": "mesa-clm/batch-invariance-arm/1",
+   "arm": "B0",
+   "started_at": "2026-10-01T14:39:37+00:00",
+   "host": "sparky-1",
+   "command": "uv run python scripts/batch_invariance.py measure --arm B0",
+   "container": {
+    "cmd": [
+     "Qwen/Qwen3-8B",
+     "--revision",
+     "b968826d9c46dd6066d109eabc6255188de91218",
+     "--served-model-name",
+     "qwen3-8b",
+     "--runner",
+     "pooling",
+     "--dtype",
+     "bfloat16",
+     "--max-model-len",
+     "4096",
+     "--max-num-seqs",
+     "8",
+     "--no-enable-prefix-caching",
+     "--gpu-memory-utilization",
+     "0.20",
+     "--enforce-eager",
+     "--host",
+     "0.0.0.0",
+     "--port",
+     "8090",
+     "--middleware",
+     "vllm_auth.require_api_key",
+     "--disable-fastapi-docs"
+    ],
+    "env": {
+     "VLLM_NO_USAGE_STATS": "1",
+     "PYTHONPATH": "/opt/mesa-clm-auth"
+    },
+    "active_since": "Thu 2026-10-01 08:37:14 MDT",
+    "log_lines": [
+     "Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION'].",
+     "Using FlashAttention version 2",
+     "non-default args: {'model_tag': 'Qwen/Qwen3-8B', 'host': '0.0.0.0', 'port': 8090, 'middleware': ['vllm_auth.require_api_key'], 'disable_fastapi_docs': True, 'model': 'Qwen/Qwen3-8B', 'runner': 'pooling', 'dtype': 'bfloat16', 'revision': 'b968826d9c46dd6066d109eabc6255188de91218', 'max_model_len': 40"
+    ]
+   },
+   "texts": {
+    "n": 120,
+    "goldens": 20,
+    "contexts": 100,
+    "texts_sha256": "8cb4294bd40164d35b79004ad0cc4fd0b52b03a462c43653a7fe2fe3a872f8f8"
+   },
+   "patterns": {
+    "a": "one text per request, sequential",
+    "b": "batches of 32 (EncoderClient batch=32)",
+    "c": "8 concurrent single-text requests",
+    "d": "repeat of (a)",
+    "seconds": {
+     "a": 47.6,
+     "b": 8.86,
+     "c": 9.08,
+     "d": 12.61
+    }
+   },
+   "vectors_file": ".local/serving/m1b/batch_invariance_B0_vectors.npz",
+   "pairwise": {
+    "a_vs_b": {
+     "max_abs_diff": 0.006014212965965271,
+     "min_cos": 0.9998946107989615,
+     "mean_cos": 0.9999972967802812,
+     "one_minus_min_cos": 0.00010538920103853044,
+     "bitwise_equal_rows": 93,
+     "worst_index": 19
+    },
+    "a_vs_c": {
+     "max_abs_diff": 0.006014227867126465,
+     "min_cos": 0.9998946108845788,
+     "mean_cos": 0.9999975568778533,
+     "one_minus_min_cos": 0.00010538911542123941,
+     "bitwise_equal_rows": 92,
+     "worst_index": 19
+    },
+    "a_vs_d": {
+     "max_abs_diff": 0.0,
+     "min_cos": 0.9999999999999998,
+     "mean_cos": 1.0,
+     "one_minus_min_cos": 2.220446049250313e-16,
+     "bitwise_equal_rows": 120,
+     "worst_index": 12
+    },
+    "b_vs_c": {
+     "max_abs_diff": 0.002307713031768799,
+     "min_cos": 0.9999687883769517,
+     "mean_cos": 0.9999997399031412,
+     "one_minus_min_cos": 3.12116230483106e-05,
+     "bitwise_equal_rows": 112,
+     "worst_index": 16
+    },
+    "b_vs_d": {
+     "max_abs_diff": 0.006014212965965271,
+     "min_cos": 0.9998946107989615,
+     "mean_cos": 0.9999972967802812,
+     "one_minus_min_cos": 0.00010538920103853044,
+     "bitwise_equal_rows": 93,
+     "worst_index": 19
+    },
+    "c_vs_d": {
+     "max_abs_diff": 0.006014227867126465,
+     "min_cos": 0.9998946108845788,
+     "mean_cos": 0.9999975568778533,
+     "one_minus_min_cos": 0.00010538911542123941,
+     "bitwise_equal_rows": 92,
+     "worst_index": 19
+    }
+   },
+   "across_patterns": {
+    "min_cos": 0.9998946107989615,
+    "one_minus_min_cos": 0.00010538920103853044,
+    "max_abs_diff": 0.006014227867126465
+   },
+   "systemone": {
+    "n_pairs": 50,
+    "local_encoder_batch": 32,
+    "gate": 0.0001,
+    "clm-latest": {
+     "served_vs_local": {
+      "max_abs_prob_diff": 0.037672407000249986,
+      "mean_abs_prob_diff": 0.00608288193264679,
+      "p95_abs_prob_diff": 0.02268721013392005,
+      "top_choice_agreement": "49/50",
+      "worst_pair": "term.fits/F1/3c8ee476b167",
+      "pass": false
+     },
+     "local_vs_local_repeat": {
+      "max_abs_prob_diff": 0.03767440503907171,
+      "mean_abs_prob_diff": 0.002552409744267516,
+      "p95_abs_prob_diff": 0.015338850075874707,
+      "top_choice_agreement": "50/50",
+      "worst_pair": "term.fits/F1/3c8ee476b167"
+     }
+    },
+    "clm-raw": {
+     "served_vs_local": {
+      "max_abs_prob_diff": 0.059052156911363674,
+      "mean_abs_prob_diff": 0.00467965581911205,
+      "p95_abs_prob_diff": 0.01707659759288283,
+      "top_choice_agreement": "50/50",
+      "worst_pair": "term.fits/F7/2611d4b9d7d1",
+      "pass": false
+     },
+     "local_vs_local_repeat": {
+      "max_abs_prob_diff": 0.029712566279899266,
+      "mean_abs_prob_diff": 0.002913460720552826,
+      "p95_abs_prob_diff": 0.020550541402154236,
+      "top_choice_agreement": "50/50",
+      "worst_pair": "term.fits/F7/07e8bed38ae1"
+     }
+    }
+   },
+   "latency": {
+    "rank_fit_request": {
+     "state": "target_state of DP1.10003.001.brd_countdata observerDistance (fixture card)",
+     "state_tokens": 371,
+     "candidates": "12 PATO 'distance' OLS fixture terms '<label>: <definition>' + __none__",
+     "model": "clm-latest"
+    },
+    "systemone_warm_same_state": {
+     "n": 30,
+     "p50_ms": 1.7,
+     "p95_ms": 2.1,
+     "min_ms": 0.8,
+     "max_ms": 2.3,
+     "mean_ms": 1.6,
+     "server_header": {
+      "n": 30,
+      "p50_ms": 0.6,
+      "p95_ms": 0.6,
+      "min_ms": 0.1,
+      "max_ms": 0.9,
+      "mean_ms": 0.5
+     }
+    },
+    "systemone_cold_new_state": {
+     "n": 30,
+     "p50_ms": 113.4,
+     "p95_ms": 118.6,
+     "min_ms": 107.7,
+     "max_ms": 120.9,
+     "mean_ms": 113.8,
+     "server_header": {
+      "n": 30,
+      "p50_ms": 111.9,
+      "p95_ms": 116.9,
+      "min_ms": 106.1,
+      "max_ms": 119.3,
+      "mean_ms": 112.3
+     },
+     "input_tokens_per_request": [
+      371
+     ],
+     "note": "new state text each time (card rows varied); candidate vectors cached"
+    },
+    "embeddings_batch_32": {
+     "n": 30,
+     "p50_ms": 2885.2,
+     "p95_ms": 2929.9,
+     "min_ms": 2833.1,
+     "max_ms": 3098.0,
+     "mean_ms": 2886.3,
+     "prompt_tokens": 14004,
+     "texts": "first 32 distinct term.fits target_state contexts of the snapshot"
+    }
+   },
+   "slowdown_vs_m1a": {
+    "embeddings_batch_32": 1.023,
+    "systemone_cold": 1.03,
+    "max": 1.03
+   },
+   "drift": {
+    "source": "README.md at Contrastive-LM/CLM bb42c6c5 (gh api .../contents/README.md?ref=bb42c6c5...); issue #15 comment 2026-09-28 (vLLM 0.30.0, max-model-len 8192, GB10)",
+    "quickstart": {
+     "observed": {
+      "urgency": 0.8366,
+      "department": "billing",
+      "billing": 0.9888,
+      "frustration": 2.0,
+      "input_tokens": 98,
+      "latency_ms_header": 235.4
+     },
+     "issue15": {
+      "urgency": 0.8366,
+      "billing": 0.9888,
+      "frustration": 2.0
+     },
+     "readme_printed": {
+      "urgency": 0.41022,
+      "billing": 0.93878,
+      "frustration": 1.98386
+     },
+     "tolerance": 0.01,
+     "within_tolerance_of_issue15": {
+      "urgency": true,
+      "billing": true,
+      "frustration": true
+     },
+     "pass": true
+    },
+    "tides_rank": {
+     "top_candidate": "The Moon's gravitational pull.",
+     "top_prob": 0.9934,
+     "ranked": [
+      {
+       "rank": 1,
+       "candidate": "The Moon's gravitational pull.",
+       "prob": 0.99341
+      },
+      {
+       "rank": 2,
+       "candidate": "Because the Earth is round.",
+       "prob": 0.006562
+      },
+      {
+       "rank": 3,
+       "candidate": "Photosynthesis in plants.",
+       "prob": 2.8e-05
+      }
+     ],
+     "model_card": 0.993,
+     "readme": 0.997,
+     "tolerance": 0.005,
+     "pass": true
+    }
+   },
+   "seconds": 238.2
+  },
+  "B1": {
+   "format": "mesa-clm/batch-invariance-arm/1",
+   "arm": "B1",
+   "started_at": "2026-10-01T14:46:17+00:00",
+   "host": "sparky-1",
+   "command": "uv run python scripts/batch_invariance.py measure --arm B1",
+   "container": {
+    "cmd": [
+     "Qwen/Qwen3-8B",
+     "--revision",
+     "b968826d9c46dd6066d109eabc6255188de91218",
+     "--served-model-name",
+     "qwen3-8b",
+     "--runner",
+     "pooling",
+     "--dtype",
+     "bfloat16",
+     "--max-model-len",
+     "4096",
+     "--max-num-seqs",
+     "8",
+     "--no-enable-prefix-caching",
+     "--gpu-memory-utilization",
+     "0.20",
+     "--enforce-eager",
+     "--host",
+     "0.0.0.0",
+     "--port",
+     "8090",
+     "--middleware",
+     "vllm_auth.require_api_key",
+     "--disable-fastapi-docs"
+    ],
+    "env": {
+     "VLLM_NO_USAGE_STATS": "1",
+     "VLLM_BATCH_INVARIANT": "1",
+     "PYTHONPATH": "/opt/mesa-clm-auth"
+    },
+    "active_since": "Thu 2026-10-01 08:43:58 MDT",
+    "log_lines": [
+     "Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'TRITON_ATTN', 'FLEX_ATTENTION'].",
+     "Using FlashAttention version 2",
+     "non-default args: {'model_tag': 'Qwen/Qwen3-8B', 'host': '0.0.0.0', 'port': 8090, 'middleware': ['vllm_auth.require_api_key'], 'disable_fastapi_docs': True, 'model': 'Qwen/Qwen3-8B', 'runner': 'pooling', 'dtype': 'bfloat16', 'revision': 'b968826d9c46dd6066d109eabc6255188de91218', 'max_model_len': 40"
+    ]
+   },
+   "texts": {
+    "n": 120,
+    "goldens": 20,
+    "contexts": 100,
+    "texts_sha256": "8cb4294bd40164d35b79004ad0cc4fd0b52b03a462c43653a7fe2fe3a872f8f8"
+   },
+   "patterns": {
+    "a": "one text per request, sequential",
+    "b": "batches of 32 (EncoderClient batch=32)",
+    "c": "8 concurrent single-text requests",
+    "d": "repeat of (a)",
+    "seconds": {
+     "a": 39.44,
+     "b": 9.92,
+     "c": 10.09,
+     "d": 13.76
+    }
+   },
+   "vectors_file": ".local/serving/m1b/batch_invariance_B1_vectors.npz",
+   "pairwise": {
+    "a_vs_b": {
+     "max_abs_diff": 5.960464477539063e-08,
+     "min_cos": 0.9999999999999967,
+     "mean_cos": 0.9999999999999998,
+     "one_minus_min_cos": 3.3306690738754696e-15,
+     "bitwise_equal_rows": 104,
+     "worst_index": 5
+    },
+    "a_vs_c": {
+     "max_abs_diff": 5.960464477539063e-08,
+     "min_cos": 0.9999999999999967,
+     "mean_cos": 0.9999999999999998,
+     "one_minus_min_cos": 3.3306690738754696e-15,
+     "bitwise_equal_rows": 104,
+     "worst_index": 5
+    },
+    "a_vs_d": {
+     "max_abs_diff": 0.0,
+     "min_cos": 0.9999999999999998,
+     "mean_cos": 1.0,
+     "one_minus_min_cos": 2.220446049250313e-16,
+     "bitwise_equal_rows": 120,
+     "worst_index": 1
+    },
+    "b_vs_c": {
+     "max_abs_diff": 5.960464477539063e-08,
+     "min_cos": 0.9999999999999974,
+     "mean_cos": 1.0,
+     "one_minus_min_cos": 2.55351295663786e-15,
+     "bitwise_equal_rows": 116,
+     "worst_index": 9
+    },
+    "b_vs_d": {
+     "max_abs_diff": 5.960464477539063e-08,
+     "min_cos": 0.9999999999999967,
+     "mean_cos": 0.9999999999999998,
+     "one_minus_min_cos": 3.3306690738754696e-15,
+     "bitwise_equal_rows": 104,
+     "worst_index": 5
+    },
+    "c_vs_d": {
+     "max_abs_diff": 5.960464477539063e-08,
+     "min_cos": 0.9999999999999967,
+     "mean_cos": 0.9999999999999998,
+     "one_minus_min_cos": 3.3306690738754696e-15,
+     "bitwise_equal_rows": 104,
+     "worst_index": 5
+    }
+   },
+   "across_patterns": {
+    "min_cos": 0.9999999999999967,
+    "one_minus_min_cos": 3.3306690738754696e-15,
+    "max_abs_diff": 5.960464477539063e-08
+   },
+   "systemone": {
+    "n_pairs": 50,
+    "local_encoder_batch": 32,
+    "gate": 0.0001,
+    "clm-latest": {
+     "served_vs_local": {
+      "max_abs_prob_diff": 3.877138633479049e-06,
+      "mean_abs_prob_diff": 1.0687640949684045e-06,
+      "p95_abs_prob_diff": 3.2119258745133546e-06,
+      "top_choice_agreement": "50/50",
+      "worst_pair": "term.fits/F7/0279bc7c45df",
+      "pass": true
+     },
+     "local_vs_local_repeat": {
+      "max_abs_prob_diff": 8.773233828307525e-08,
+      "mean_abs_prob_diff": 6.783369364582762e-09,
+      "p95_abs_prob_diff": 3.6953499088498985e-08,
+      "top_choice_agreement": "50/50",
+      "worst_pair": "column.ontology_fits/F7/138322c78048"
+     }
+    },
+    "clm-raw": {
+     "served_vs_local": {
+      "max_abs_prob_diff": 6.648233912287527e-05,
+      "mean_abs_prob_diff": 1.2894428637278985e-05,
+      "p95_abs_prob_diff": 3.854234984948939e-05,
+      "top_choice_agreement": "50/50",
+      "worst_pair": "term.fits/F1/3c155ba401e3",
+      "pass": true
+     },
+     "local_vs_local_repeat": {
+      "max_abs_prob_diff": 2.944375966373869e-07,
+      "mean_abs_prob_diff": 3.097467126525477e-08,
+      "p95_abs_prob_diff": 2.8677513107533415e-07,
+      "top_choice_agreement": "50/50",
+      "worst_pair": "term.fits/F1/3ee1eac909a3"
+     }
+    }
+   },
+   "latency": {
+    "rank_fit_request": {
+     "state": "target_state of DP1.10003.001.brd_countdata observerDistance (fixture card)",
+     "state_tokens": 371,
+     "candidates": "12 PATO 'distance' OLS fixture terms '<label>: <definition>' + __none__",
+     "model": "clm-latest"
+    },
+    "systemone_warm_same_state": {
+     "n": 30,
+     "p50_ms": 1.1,
+     "p95_ms": 1.7,
+     "min_ms": 0.9,
+     "max_ms": 1.7,
+     "mean_ms": 1.2,
+     "server_header": {
+      "n": 30,
+      "p50_ms": 0.1,
+      "p95_ms": 0.6,
+      "min_ms": 0.1,
+      "max_ms": 0.6,
+      "mean_ms": 0.2
+     }
+    },
+    "systemone_cold_new_state": {
+     "n": 30,
+     "p50_ms": 116.0,
+     "p95_ms": 120.0,
+     "min_ms": 110.9,
+     "max_ms": 120.7,
+     "mean_ms": 115.7,
+     "server_header": {
+      "n": 30,
+      "p50_ms": 114.5,
+      "p95_ms": 118.2,
+      "min_ms": 109.2,
+      "max_ms": 119.6,
+      "mean_ms": 114.2
+     },
+     "input_tokens_per_request": [
+      371
+     ],
+     "note": "new state text each time (card rows varied); candidate vectors cached"
+    },
+    "embeddings_batch_32": {
+     "n": 30,
+     "p50_ms": 3266.6,
+     "p95_ms": 3417.8,
+     "min_ms": 3188.2,
+     "max_ms": 3520.3,
+     "mean_ms": 3290.9,
+     "prompt_tokens": 14004,
+     "texts": "first 32 distinct term.fits target_state contexts of the snapshot"
+    }
+   },
+   "slowdown_vs_m1a": {
+    "embeddings_batch_32": 1.158,
+    "systemone_cold": 1.054,
+    "max": 1.158
+   },
+   "drift": {
+    "source": "README.md at Contrastive-LM/CLM bb42c6c5 (gh api .../contents/README.md?ref=bb42c6c5...); issue #15 comment 2026-09-28 (vLLM 0.30.0, max-model-len 8192, GB10)",
+    "quickstart": {
+     "observed": {
+      "urgency": 0.8466,
+      "department": "billing",
+      "billing": 0.9903,
+      "frustration": 2.0,
+      "input_tokens": 98,
+      "latency_ms_header": 184.9
+     },
+     "issue15": {
+      "urgency": 0.8366,
+      "billing": 0.9888,
+      "frustration": 2.0
+     },
+     "readme_printed": {
+      "urgency": 0.41022,
+      "billing": 0.93878,
+      "frustration": 1.98386
+     },
+     "tolerance": 0.01,
+     "within_tolerance_of_issue15": {
+      "urgency": false,
+      "billing": true,
+      "frustration": true
+     },
+     "pass": false
+    },
+    "tides_rank": {
+     "top_candidate": "The Moon's gravitational pull.",
+     "top_prob": 0.9932,
+     "ranked": [
+      {
+       "rank": 1,
+       "candidate": "The Moon's gravitational pull.",
+       "prob": 0.993153
+      },
+      {
+       "rank": 2,
+       "candidate": "Because the Earth is round.",
+       "prob": 0.006819
+      },
+      {
+       "rank": 3,
+       "candidate": "Photosynthesis in plants.",
+       "prob": 2.8e-05
+      }
+     ],
+     "model_card": 0.993,
+     "readme": 0.997,
+     "tolerance": 0.005,
+     "pass": true
+    }
+   },
+   "seconds": 254.3
+  }
+ },
+ "verdicts": {
+  "B1": {
+   "min_cos": 0.9999999999999967,
+   "min_cos_pass": true,
+   "systemone_max_abs_prob_diff": {
+    "clm-latest": 3.877138633479049e-06,
+    "clm-raw": 6.648233912287527e-05
+   },
+   "systemone_pass": true,
+   "slowdown": 1.158,
+   "slowdown_pass": true,
+   "adopt": true
+  },
+  "B0_reference": {
+   "min_cos": 0.9998946107989615,
+   "min_cos_pass": false,
+   "systemone_max_abs_prob_diff": {
+    "clm-latest": 0.037672407000249986,
+    "clm-raw": 0.059052156911363674
+   },
+   "systemone_pass": false,
+   "slowdown": 1.03,
+   "slowdown_pass": true,
+   "adopt": false
+  }
+ },
+ "adopted": "B1",
+ "batch_invariance": "kernels",
+ "secondary": {
+  "drift_g_not_gated": {
+   "B0": {
+    "quickstart_pass": true,
+    "quickstart_observed": {
+     "urgency": 0.8366,
+     "department": "billing",
+     "billing": 0.9888,
+     "frustration": 2.0,
+     "input_tokens": 98,
+     "latency_ms_header": 235.4
+    },
+    "quickstart_within": {
+     "urgency": true,
+     "billing": true,
+     "frustration": true
+    },
+    "tides_pass": true,
+    "tides_top_prob": 0.9934
+   },
+   "B1": {
+    "quickstart_pass": false,
+    "quickstart_observed": {
+     "urgency": 0.8466,
+     "department": "billing",
+     "billing": 0.9903,
+     "frustration": 2.0,
+     "input_tokens": 98,
+     "latency_ms_header": 184.9
+    },
+    "quickstart_within": {
+     "urgency": false,
+     "billing": true,
+     "frustration": true
+    },
+    "tides_pass": true,
+    "tides_top_prob": 0.9932
+   }
+  },
+  "B1_vs_B0_one_text_per_request": {
+   "max_abs_diff": 0.015657812356948853,
+   "min_cos": 0.9993748406114121,
+   "mean_cos": 0.9999312131519024,
+   "one_minus_min_cos": 0.0006251593885878703,
+   "bitwise_equal_rows": 0,
+   "worst_index": 33
+  }
+ }
+}

@@ -1,0 +1,871 @@
+{
+ "format": "mesa-clm/serving-probes/2",
+ "started_at": "2026-10-01T15:21:31+00:00",
+ "host": "sparky-1",
+ "command": "uv run python scripts/serving_probes.py",
+ "binds": {
+  "command": "ss -Hltn '( sport = :8090 or sport = :8700 )'",
+  "listeners": [
+   "127.0.0.1:8090",
+   "127.0.0.1:8700"
+  ],
+  "loopback_only": true,
+  "ports_seen": [
+   "8090",
+   "8700"
+  ],
+  "docker_port": "8090/tcp -> 127.0.0.1:8090"
+ },
+ "auth": {
+  "enumeration": {
+   "command": "docker run --rm --gpus all --network none ... --entrypoint python3 <pinned image> /work/vllm_routes.py <recipe.args>",
+   "vllm_args": [
+    "Qwen/Qwen3-8B",
+    "--revision",
+    "b968826d9c46dd6066d109eabc6255188de91218",
+    "--served-model-name",
+    "qwen3-8b",
+    "--runner",
+    "pooling",
+    "--dtype",
+    "bfloat16",
+    "--max-model-len",
+    "4096",
+    "--max-num-seqs",
+    "8",
+    "--no-enable-prefix-caching",
+    "--gpu-memory-utilization",
+    "0.20",
+    "--enforce-eager",
+    "--host",
+    "0.0.0.0",
+    "--port",
+    "8090",
+    "--middleware",
+    "vllm_auth.require_api_key",
+    "--disable-fastapi-docs"
+   ],
+   "routes": [
+    {
+     "kind": "APIRoute",
+     "path": "/load",
+     "methods": [
+      "GET"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/version",
+     "methods": [
+      "GET"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/health",
+     "methods": [
+      "GET"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/metrics",
+     "methods": [
+      "GET"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "Mount",
+     "path": "/metrics",
+     "methods": [],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/tokenize",
+     "methods": [
+      "POST"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/detokenize",
+     "methods": [
+      "POST"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/v1/models",
+     "methods": [
+      "GET"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/ping",
+     "methods": [
+      "GET"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/ping",
+     "methods": [
+      "POST"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/invocations",
+     "methods": [
+      "POST"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/pooling",
+     "methods": [
+      "POST"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/v1/embeddings",
+     "methods": [
+      "POST"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/v2/embed",
+     "methods": [
+      "POST"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/score",
+     "methods": [
+      "POST"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/v1/score",
+     "methods": [
+      "POST"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/rerank",
+     "methods": [
+      "POST"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/v1/rerank",
+     "methods": [
+      "POST"
+     ],
+     "websocket": false
+    },
+    {
+     "kind": "APIRoute",
+     "path": "/v2/rerank",
+     "methods": [
+      "POST"
+     ],
+     "websocket": false
+    }
+   ],
+   "websocket_routes": [],
+   "middleware_outermost_first": [
+    "BaseHTTPMiddleware:require_api_key",
+    "ScalingMiddleware",
+    "AuthenticationMiddleware",
+    "CORSMiddleware",
+    "PrometheusInstrumentatorMiddleware"
+   ],
+   "verdict": {
+    "n_requests": 19,
+    "n_guarded": 18,
+    "unguarded": [],
+    "open_paths_reachable": true,
+    "pass": true
+   }
+  },
+  "n_routes": 19,
+  "encoder_routes": [
+   {
+    "route": "GET /health",
+    "no_key": 200,
+    "wrong_key": 200,
+    "other_units_key": 200,
+    "right_key": 200
+   },
+   {
+    "route": "GET /load",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "GET /metrics",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "GET /ping",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "GET /v1/models",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "GET /version",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "POST /detokenize",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "POST /invocations",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "POST /ping",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "POST /pooling",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "POST /rerank",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "POST /score",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "POST /tokenize",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "POST /v1/embeddings",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "POST /v1/rerank",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "POST /v1/score",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "route": "POST /v2/embed",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 400
+   },
+   {
+    "route": "POST /v2/rerank",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   }
+  ],
+  "encoder_unguarded_without_valid_key": [],
+  "encoder_every_route_but_health_401": true,
+  "encoder_health_open": true,
+  "encoder_right_key_status": {
+   "GET /health": 200,
+   "GET /load": 200,
+   "GET /metrics": 200,
+   "GET /ping": 200,
+   "GET /v1/models": 200,
+   "GET /version": 200,
+   "POST /detokenize": 200,
+   "POST /invocations": 200,
+   "POST /ping": 200,
+   "POST /pooling": 200,
+   "POST /rerank": 200,
+   "POST /score": 200,
+   "POST /tokenize": 200,
+   "POST /v1/embeddings": 200,
+   "POST /v1/rerank": 200,
+   "POST /v1/score": 200,
+   "POST /v2/embed": 400,
+   "POST /v2/rerank": 200
+  },
+  "unknown_paths": {
+   "GET /nonexistent": {
+    "no_key": 401,
+    "right_key": 404
+   },
+   "GET /metrics/anything": {
+    "no_key": 401,
+    "right_key": 200
+   },
+   "GET /docs": {
+    "no_key": 401,
+    "right_key": 404
+   },
+   "GET /openapi.json": {
+    "no_key": 401,
+    "right_key": 404
+   },
+   "GET /redoc": {
+    "no_key": 401,
+    "right_key": 404
+   },
+   "GET /health/": {
+    "no_key": 401,
+    "right_key": 307
+   }
+  },
+  "container_enumeration_pass": true,
+  "docker_bridge_address": {
+   "note": "the container's port on the docker bridge is reachable from any local account (address not recorded); only /health answers without the key",
+   "GET /health (no key)": 200,
+   "GET /version (no key)": 401,
+   "POST /pooling (no key)": 401,
+   "GET /v1/models (key)": 200
+  },
+  "named_routes": [
+   {
+    "unit": "encoder",
+    "route": "GET http://127.0.0.1:8090/v1/models",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "unit": "encoder",
+    "route": "POST http://127.0.0.1:8090/v1/embeddings",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "unit": "clm-serve",
+    "route": "GET http://127.0.0.1:8700/v1/models",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "unit": "clm-serve",
+    "route": "POST http://127.0.0.1:8700/v1/systemone",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "unit": "clm-serve",
+    "route": "POST http://127.0.0.1:8700/v1/rank",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   }
+  ],
+  "named_v1_routes_all_401_without_valid_key": true,
+  "right_key_all_200": true,
+  "clm_serve_open_routes": {
+   "clm-serve GET /health": 200,
+   "clm-serve GET /": 404,
+   "clm-serve GET /docs": 200,
+   "clm-serve GET /openapi.json": 200,
+   "clm-serve GET /redoc": 200
+  }
+ },
+ "versions": {
+  "vllm_version": "0.27.1",
+  "image_id": "sha256:2c211a1273b48e8929f893b267aeb1509e6b84654cdbde1bad56d79e3964224d",
+  "container_image_ref": "vllm/vllm-openai@sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967",
+  "image_repo_digests": [
+   "vllm/vllm-openai@sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967"
+  ],
+  "lock_image_digest": "sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967",
+  "image_digest_matches_lock": true,
+  "encoder_fp_lock": "c3b3d5e1a283",
+  "encoder_fp_recomputed": "c3b3d5e1a283",
+  "encoder_spec": {
+   "model": "Qwen/Qwen3-8B",
+   "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+   "dtype": "bfloat16",
+   "pooling": "LAST",
+   "normalize": true,
+   "max_len": 4096,
+   "truncation_side": "left",
+   "prefix_caching": false,
+   "route": "vllm",
+   "batch_invariance": "kernels"
+  },
+  "lock_sha": "59625b8efedb61ba48b22a74bd044893fe3fcc290807feadc32fe02bd88de3cb",
+  "recipe": {
+   "env": {
+    "HOME": "/tmp",
+    "HF_HOME": "/hf",
+    "HF_HUB_OFFLINE": "1",
+    "VLLM_NO_USAGE_STATS": "1",
+    "DO_NOT_TRACK": "1",
+    "PYTHONPATH": "/opt/mesa-clm-auth",
+    "VLLM_BATCH_INVARIANT": "1"
+   },
+   "auth": {
+    "middleware": "vllm_auth.require_api_key",
+    "file": "vllm_auth.py",
+    "sha256": "8b71d3aba6d695babea38a606f984312fc30e4c3eb8730518f5e3c5aa96215a4",
+    "mount": "/opt/mesa-clm-auth",
+    "open_paths": [
+     "/health"
+    ]
+   },
+   "truncate_prompt_tokens": 4095
+  },
+  "recipe_args": "Qwen/Qwen3-8B --revision b968826d9c46dd6066d109eabc6255188de91218 --served-model-name qwen3-8b --runner pooling --dtype bfloat16 --max-model-len 4096 --max-num-seqs 8 --no-enable-prefix-caching --gpu-memory-utilization 0.20 --enforce-eager --host 0.0.0.0 --port 8090 --middleware vllm_auth.require_api_key --disable-fastapi-docs",
+  "verify_serving_lock_require_live": [],
+  "verify_serving_lock_pass": true,
+  "head_npz_sha256": "0039c8bfafb2a5c2ec9e5c492a93edc419971b85efc4bee583b75e1ae3e722f8",
+  "units_enabled": {
+   "mesa-clm-encoder.service": "disabled",
+   "mesa-clm-serve.service": "disabled"
+  },
+  "units_active": {
+   "mesa-clm-encoder.service": "active",
+   "mesa-clm-serve.service": "active"
+  }
+ },
+ "models": {
+  "encoder": [
+   {
+    "id": "qwen3-8b",
+    "root": "Qwen/Qwen3-8B",
+    "max_model_len": 4096,
+    "owned_by": "vllm"
+   }
+  ],
+  "encoder_has_qwen3_8b": true,
+  "clm_serve": [
+   "clm-latest",
+   "clm-raw"
+  ],
+  "clm_serve_has_latest_and_raw": true,
+  "clm_serve_health": {
+   "ok": true,
+   "embedder": true,
+   "models": [
+    "clm-latest",
+    "clm-raw"
+   ],
+   "cache_device": "cpu",
+   "cache_reserved_mb": 536.9
+  }
+ },
+ "drift": {
+  "source": "README.md at Contrastive-LM/CLM bb42c6c5 (gh api .../contents/README.md?ref=bb42c6c5...); issue #15 comment 2026-09-28 (vLLM 0.30.0, max-model-len 8192, GB10)",
+  "quickstart": {
+   "observed": {
+    "urgency": 0.8466,
+    "department": "billing",
+    "billing": 0.9903,
+    "frustration": 2.0,
+    "input_tokens": 98,
+    "latency_ms_header": 185.2
+   },
+   "abs_delta_unrounded": {
+    "urgency": 0.0100116,
+    "billing": 0.0014636,
+    "frustration": 2.1e-05
+   },
+   "issue15": {
+    "urgency": 0.8366,
+    "billing": 0.9888,
+    "frustration": 2.0
+   },
+   "readme_printed": {
+    "urgency": 0.41022,
+    "billing": 0.93878,
+    "frustration": 1.98386
+   },
+   "tolerance": 0.01,
+   "within_tolerance_of_issue15": {
+    "urgency": false,
+    "billing": true,
+    "frustration": true
+   },
+   "pass": false
+  },
+  "tides_rank": {
+   "top_candidate": "The Moon's gravitational pull.",
+   "top_prob": 0.9932,
+   "ranked": [
+    {
+     "rank": 1,
+     "candidate": "The Moon's gravitational pull.",
+     "prob": 0.993153
+    },
+    {
+     "rank": 2,
+     "candidate": "Because the Earth is round.",
+     "prob": 0.006819
+    },
+    {
+     "rank": 3,
+     "candidate": "Photosynthesis in plants.",
+     "prob": 2.8e-05
+    }
+   ],
+   "model_card": 0.993,
+   "readme": 0.997,
+   "tolerance": 0.005,
+   "pass": true
+  }
+ },
+ "truncation": {
+  "text_sha256": "7a33ed862836d8a34c2578b432da99b6c47219d5346590a3c43c897f2904b300",
+  "text_tokens": 5005,
+  "corpus": "tests/fixtures/cards/*.md concatenated, first 4990 tokens, plus a target line",
+  "encoder_client": {
+   "request": "EncoderClient(max_len=4096).embed: truncate_prompt_tokens=4095, truncation_side=left",
+   "completed": true,
+   "seconds": 0.98,
+   "prompt_tokens_charged": 4095,
+   "cos_vs_last_4095_token_ids": 1.0,
+   "bitwise_equal_to_tail_ids": false,
+   "tail_ids_tokens_charged": 4095,
+   "cos_vs_first_4095_token_ids": 0.8126767,
+   "gate": 0.9999,
+   "pass": true
+  },
+  "clm_serve_systemone": {
+   "request": "the same text behind a run nonce (never cached) as the state of one Choice (2 candidates + __none__), clm-latest; clm-serve --max-tokens 4095",
+   "completed": true,
+   "seconds": 1.08,
+   "server_latency_ms": 1082.6,
+   "input_tokens": 4141,
+   "probabilities": {
+    "distance": 0.999897,
+    "temperature": 3.9e-05,
+    "__none__": 6.3e-05
+   },
+   "max_abs_prob_diff_vs_local_route": 9.205154416491723e-10
+  }
+ },
+ "goldens": {
+  "file": ".local/serving/encoder_golden_c3b3d5e1a283.npz",
+  "file_sha256": "b86cdd93241979547370e13bc903a2c1282c8da8a71e13f2ac9bb8ef7caf5c72",
+  "encoder_fp": "c3b3d5e1a283",
+  "n": 20,
+  "dtype": "float32",
+  "prompt_tokens": 294,
+  "texts_sha256": [
+   "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+   "9b0fa2f1d13bd58c8c4cbb22d8edf6dd31747d622c228998a7237524e09e26e3",
+   "10196960f95b6e365d0323159fcdec1bdb2a2c5abb261979f8ee7a50269a131c",
+   "80a2affc53b2da89d33414a674c9f4d1fc22272d68be01348d603aed0df30f0c",
+   "a0c5d0292f507e465bf8b3a92aa0716fd9252a825b276a793cf476c846f1b291",
+   "fe05f70b51e3cc534544fe71b75a60c66346167918acea7e38bfa8fe26f69fac",
+   "51468669fc30dac19f5eec49e210730f59a292bf0c41b318fb25aec02107271c",
+   "d2ea0a746e595f2f3c46e12318869792989b243469b311a215e924203196e567",
+   "e37dc1196c11a7935ae5b59dca5641b7634bab9069d814f340805a1019a61ce7",
+   "b5df74764b71afb21807ff2b2476ad461683cd08ef1e37bf94e2b082d638e8a4",
+   "9269c5ae57f3afa457b4b15a97ece33422b8df080dd55e7e000f7ba775a57e77",
+   "b238205f538cbf7ce0e65292f4784e530c577921906fe1786c39d0fda28d4704",
+   "88411cb1eedff659e67d30f1b64a7f45db05ac8bc4c4f7228126ea6f413cf138",
+   "4e1de7a17385d0309d5986a4ccce6d980f92ba377dba3434a8c899cac736a6da",
+   "81da3ad2edde4af8d859fd65ba6c4e5db1db218a1a832940eaf395323eafb2ac",
+   "fef1f747f3db48496dcbb43611e30059cd7343a576f73873fea72b626cabdff5",
+   "abd432d76b34637f1c888dfba899e30d8fc0f6b72a01abbf49cf12cb8c2f79da",
+   "d2435553f976a5ac564deb5123cb54e32aa21906a96e6ff2c3e14956c1af39da",
+   "4b72359e78c3e622284a309fdfda2bbd3b6245dda9f4472de3d508b535fd2202",
+   "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881"
+  ],
+  "one_by_one_vs_repeat": {
+   "min_cos": 1.0,
+   "mean_cos": 1.0,
+   "bitwise_identical": 20
+  },
+  "batch_vs_one_by_one": {
+   "min_cos": 1.0,
+   "mean_cos": 1.0,
+   "bitwise_identical": 16
+  },
+  "batch_vs_batch_repeat": {
+   "min_cos": 1.0,
+   "mean_cos": 1.0,
+   "bitwise_identical": 18
+  },
+  "vs_m1a_goldens": {
+   "m1a_encoder_fp": "852efc921a8a",
+   "min_cos": 0.999864648,
+   "mean_cos": 0.999967254,
+   "bitwise_identical": 0
+  },
+  "golden_gate_0_9999": {
+   "one_by_one_repeat_pass": true,
+   "batch_vs_one_by_one_pass": true
+  }
+ },
+ "parity": {
+  "n_pairs": 50,
+  "mix": {
+   "term.fits F7": 30,
+   "term.fits F1 noul": 10,
+   "column.ontology_fits F7": 10
+  },
+  "head_npz_sha256": "0039c8bfafb2a5c2ec9e5c492a93edc419971b85efc4bee583b75e1ae3e722f8",
+  "head_source_sha256": "b2b4a8c9c2d39263eff78a351eb909a342ce9b3bf21a3f07c1d1bf15f1c4eda5",
+  "head_scale": 100.0,
+  "gate": 0.0001,
+  "clm-latest": {
+   "served_vs_local": {
+    "max_abs_prob_diff": 3.877138633479049e-06,
+    "mean_abs_prob_diff": 1.0557775984292271e-06,
+    "p95_abs_prob_diff": 3.2570000998655143e-06,
+    "top_choice_agreement": "50/50",
+    "worst_pair": "term.fits/F7/0279bc7c45df",
+    "pass": true
+   },
+   "local_vs_local_repeat_noise_floor": {
+    "max_abs_prob_diff": 4.679283660546929e-08,
+    "mean_abs_prob_diff": 5.5925743708273854e-09,
+    "p95_abs_prob_diff": 3.374475672779375e-08,
+    "top_choice_agreement": "50/50",
+    "worst_pair": "term.fits/F7/0d370040cb21"
+   }
+  },
+  "clm-raw": {
+   "served_vs_local": {
+    "max_abs_prob_diff": 6.648233912287527e-05,
+    "mean_abs_prob_diff": 1.2910207817081027e-05,
+    "p95_abs_prob_diff": 3.8419718941661005e-05,
+    "top_choice_agreement": "50/50",
+    "worst_pair": "term.fits/F1/3c155ba401e3",
+    "pass": true
+   },
+   "local_vs_local_repeat_noise_floor": {
+    "max_abs_prob_diff": 3.915610209404008e-07,
+    "mean_abs_prob_diff": 8.431454094903757e-09,
+    "p95_abs_prob_diff": 0.0,
+    "top_choice_agreement": "50/50",
+    "worst_pair": "term.fits/F7/0b1785e813aa"
+   }
+  },
+  "head_only_clm_latest": {
+   "vectors_file": ".local/serving/m1b/parity_vectors.npz",
+   "n_questions": 50,
+   "n_candidates": 159,
+   "torch": "2.14.0+cu130",
+   "weights_only_load_ok": true,
+   "headpair_scale": 100.0,
+   "max_abs_projection_diff": 5.662441253662109e-07,
+   "max_abs_prob_diff": 4.5824314272024935e-06,
+   "projection_gate": 1e-05,
+   "projection_pass": true,
+   "prob_pass_1e-4": true
+  },
+  "pairs_file": ".local/serving/m1b/systemone_pairs.json"
+ },
+ "latency": {
+  "rank_fit_request": {
+   "state": "target_state of DP1.10003.001.brd_countdata observerDistance (fixture card)",
+   "state_tokens": 371,
+   "candidates": "12 PATO 'distance' OLS fixture terms '<label>: <definition>' + __none__",
+   "model": "clm-latest"
+  },
+  "systemone_warm_same_state": {
+   "n": 30,
+   "p50_ms": 1.6,
+   "p95_ms": 2.0,
+   "min_ms": 1.4,
+   "max_ms": 2.2,
+   "mean_ms": 1.6,
+   "server_header": {
+    "n": 30,
+    "p50_ms": 0.5,
+    "p95_ms": 0.9,
+    "min_ms": 0.2,
+    "max_ms": 1.0,
+    "mean_ms": 0.5
+   }
+  },
+  "systemone_cold_new_state": {
+   "n": 30,
+   "p50_ms": 116.0,
+   "p95_ms": 119.5,
+   "min_ms": 112.0,
+   "max_ms": 120.1,
+   "mean_ms": 116.2,
+   "server_header": {
+    "n": 30,
+    "p50_ms": 114.2,
+    "p95_ms": 117.8,
+    "min_ms": 110.4,
+    "max_ms": 118.6,
+    "mean_ms": 114.6
+   },
+   "input_tokens_per_request": [
+    371
+   ],
+   "note": "new state text each time (card rows varied); candidate vectors cached"
+  },
+  "embeddings_batch_32": {
+   "n": 30,
+   "p50_ms": 3273.5,
+   "p95_ms": 3285.0,
+   "min_ms": 3257.1,
+   "max_ms": 3288.1,
+   "mean_ms": 3273.4,
+   "prompt_tokens": 14004,
+   "texts": "first 32 distinct term.fits target_state contexts of the snapshot"
+  }
+ },
+ "footprint": {
+  "memavailable_now_gib": 78.31,
+  "memavailable_pre_start_gib": 107.46,
+  "memavailable_encoder_only_gib": 80.03,
+  "delta_both_units_gib": 29.15,
+  "delta_encoder_gib": 27.43,
+  "delta_clm_serve_gib": 1.72,
+  "reference_points": "MemAvailable logged by the restart before this run (both units stopped; encoder alone)",
+  "budget_vllm_gib": 24.3,
+  "docker_stats": {
+   "MemUsage": "3.088GiB / 121.7GiB",
+   "MemPerc": "2.54%",
+   "CPUPerc": "2.80%",
+   "PIDs": "169"
+  },
+  "nvidia_smi_compute_apps": [
+   "VLLM::EngineCore, 25153 MiB"
+  ],
+  "nvidia_smi_memory_used": "[N/A], [N/A]",
+  "clm_serve_proc_status": {
+   "VmHWM": "1257692 kB",
+   "VmRSS": "1250852 kB",
+   "RssAnon": "1005712 kB",
+   "RssFile": "245140 kB"
+  },
+  "clm_serve_unit_memory_current_bytes": "1037209600",
+  "clm_serve_unit_memory_peak_bytes": "1050275840",
+  "encoder_log": {
+   "model_loading": "14.11 GiB memory and 82.074253 seconds",
+   "kv_cache": "9.87 GiB",
+   "free_on_startup": "104.87/121.69 GiB",
+   "seq_pooling_type": "LAST",
+   "enable_prefix_caching": "False",
+   "resolved_pooling": "pooling_type=LAST(source=model_default), tok_pooling_type=ALL(source=model_default), use_activation=True(source=pooler_default)",
+   "version": "v0.27.1",
+   "routes": [
+    "POST /detokenize",
+    "GET /health",
+    "POST /invocations",
+    "GET /load",
+    "GET /metrics",
+    "GET /ping",
+    "POST /ping",
+    "POST /pooling",
+    "POST /rerank",
+    "POST /score",
+    "POST /tokenize",
+    "POST /v1/embeddings",
+    "GET /v1/models",
+    "POST /v1/rerank",
+    "POST /v1/score",
+    "POST /v2/embed",
+    "POST /v2/rerank",
+    "GET /version"
+   ]
+  }
+ },
+ "boundary": {
+  "token_ids_4096": {
+   "status": "timeout",
+   "seconds": 30.04
+  },
+  "gauges_5s_after": {
+   "vllm:num_requests_running": 0.0,
+   "vllm:num_requests_waiting": 0.0
+  },
+  "token_ids_4095_afterwards": {
+   "status": 200,
+   "prompt_tokens": 4095,
+   "seconds": 1.03
+  },
+  "note": "the clients never send this: truncate_prompt_tokens is max_len - 1 (DESIGN A4)"
+ },
+ "seconds": 244.6
+}

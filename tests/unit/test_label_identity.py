@@ -17,7 +17,7 @@ import pytest
 
 from mesa_clm.cards import DatasetCard
 from mesa_clm.identity import identity
-from mesa_clm.learn.labels import WEIGHTS, import_anyjev, labelled_targets
+from mesa_clm.learn.labels import WEIGHTS, import_anyjev, is_bench_card, labelled_targets
 from mesa_clm.provenance.labels import LabelRow, LabelStore
 from mesa_clm.registry import ANCHOR_KEY
 from mesa_clm.states import candidate_state, state_sha256, target_state, value_kind_state
@@ -144,9 +144,22 @@ def _anyjev_sidecar(path: Path, rows: list[dict[str, Any]]) -> None:
     con.close()
 
 
+def _off_bench(card: DatasetCard) -> DatasetCard:
+    """The fixture card under a name that is not a bench card's: an import skips consensus rows
+    on a bench card (a bench card's silver labels come only from the neon-avu-eval ingestion,
+    ``skipped["bench_silver"]``), so the import's own rules are tested off the bench."""
+    from mesa_clm.cards import parse_card
+    from tests.conftest import CARD_TEXT
+
+    renamed = parse_card(CARD_TEXT.replace("brd_countdata", "brd_offbench", 1))
+    assert renamed.name != card.name and not is_bench_card(renamed.name)
+    return renamed
+
+
 def test_import_anyjev_derives_identity_and_keeps_the_highest_weight(
     card: DatasetCard, tmp_path: Path
 ) -> None:
+    card = _off_bench(card)
     col = card.column("observerDistance")
     small = candidate_state(card, "column", col, "measurement", CAND, 3)
     large = candidate_state(card, "column", col, "measurement", CAND, 12)
@@ -250,8 +263,8 @@ def test_import_anyjev_derives_identity_and_keeps_the_highest_weight(
     src = tmp_path / "anyjev.duckdb"
     _anyjev_sidecar(src, rows)
     store = LabelStore(tmp_path / "labels.duckdb")
-    report = import_anyjev(f"duckdb:///{src}", store)
-    assert report.inserted == 4 and report.skipped_existing == 0
+    report = import_anyjev(f"duckdb:///{src}", store, trust_curator=True)
+    assert report.inserted == 4 and report.skipped_existing == 0 and report.demoted == 0
     assert report.skipped == {
         "inactive_task": 1,
         "key_mismatch": 1,
@@ -275,7 +288,9 @@ def test_import_anyjev_derives_identity_and_keeps_the_highest_weight(
     assert picked["state_json"]["n_candidates"] == 3  # the later row of equal weight won
     assert picked["origin"].endswith("neon-avu-eval/results/validated.json@deadbeef0000")
     assert picked["actor"] == "import-anyjev" and picked["fold_eligible"] is True
-    assert import_anyjev(str(src), store).inserted == 0  # idempotent
+    # The file's consensus row makes this card a bench card (D30): its curator rows say so.
+    assert picked["bench_card"] is True
+    assert import_anyjev(str(src), store, trust_curator=True).inserted == 0  # idempotent
     vk_rows = labelled_targets(store, "avu.value_kind")
     assert vk_rows.labels == [2] and vk_rows.states == [vk]
     with pytest.raises(FileNotFoundError):
@@ -283,6 +298,7 @@ def test_import_anyjev_derives_identity_and_keeps_the_highest_weight(
 
 
 def test_import_anyjev_counts_conflicts(card: DatasetCard, tmp_path: Path) -> None:
+    card = _off_bench(card)
     col = card.column("observerDistance")
     tk = TASKS["term.fits"].key
     rows = [
@@ -303,3 +319,65 @@ def test_import_anyjev_counts_conflicts(card: DatasetCard, tmp_path: Path) -> No
     report = import_anyjev(src, store)
     assert report.inserted == 1 and report.conflicts == 1
     assert labelled_targets(store, "term.fits").labels == [0]  # the later row won
+
+
+def test_import_anyjev_skips_consensus_rows_on_a_bench_card(
+    card: DatasetCard, tmp_path: Path
+) -> None:
+    """A bench card's silver labels come only from the neon-avu-eval ingestion (D30): a
+    consensus row in a mesa-anyjev file names its source without being it, so the import skips
+    it, with or without ``--trust-curator``; the same row on another card is imported."""
+    col = card.column("observerDistance")
+    tk = TASKS["term.fits"].key
+    rows = [
+        {
+            "question_id": "term.fits",
+            "question_key": tk,
+            "state": candidate_state(c, "column", col, "measurement", CAND, 3),
+            "label_index": 0,
+            "label_source": "consensus_all",
+            "weight": 0.8,
+            "ts": "2026-01-01 00:00:00+00",
+        }
+        for c in (card, _off_bench(card))
+    ]
+    src = tmp_path / "anyjev.duckdb"
+    _anyjev_sidecar(src, rows)
+    for trust in (False, True):
+        store = LabelStore(tmp_path / f"labels-{trust}.duckdb")
+        report = import_anyjev(src, store, trust_curator=trust)
+        assert report.skipped == {"bench_silver": 1} and report.inserted == 1
+        assert [r["card"] for r in store.labels_for("term.fits")] == ["DP1.10003.001.brd_offbench"]
+
+
+def test_import_anyjev_demotes_curator_rows_by_default(card: DatasetCard, tmp_path: Path) -> None:
+    """mesa-anyjev's defect (g) let a plain tool call mint curator labels (D21), so an import
+    takes them as agent_pick (weight 0, never fold-eligible) unless a curator vouches (A2)."""
+    col = card.column("observerDistance")
+    tk = TASKS["term.fits"].key
+    rows = [
+        {
+            "question_id": "term.fits",
+            "question_key": tk,
+            "state": candidate_state(card, "column", col, "measurement", option, 3),
+            "label_index": index,
+            "label_source": source,
+            "weight": weight,
+            "ts": "2026-01-01 00:00:00+00",
+        }
+        for option, index, source, weight in (
+            (CAND, 0, "curator", 1.0),
+            (OTHER, 1, "curator_implicit", 0.7),
+        )
+    ]
+    src = tmp_path / "anyjev.duckdb"
+    _anyjev_sidecar(src, rows)
+    store = LabelStore(tmp_path / "labels.duckdb")
+    report = import_anyjev(src, store)
+    assert report.demoted == 2 and report.summary()["demoted"] == 2
+    assert report.per_task == {"term.fits": {"agent_pick": 2}}
+    got = store.labels_for("term.fits")
+    assert {r["label_source"] for r in got} == {"agent_pick"}
+    assert all(r["weight"] == 0.0 and r["fold_eligible"] is False for r in got)
+    assert all(r["bench_card"] is False for r in got)
+    assert labelled_targets(store, "term.fits").weights == [0.0, 0.0]

@@ -1,0 +1,153 @@
+{
+ "format": "mesa-clm/fallback-parity/1",
+ "started_at": "2026-10-01T14:56:36+00:00",
+ "host": "sparky-1",
+ "commands": [
+  "uv run python scripts/fallback_parity.py dump",
+  "systemctl --user stop mesa-clm-serve.service mesa-clm-encoder.service",
+  "HF_HUB_OFFLINE=1 ~/.mesa/clm/serve/.venv/bin/python scripts/fallback_parity.py compare --batch 1 --diagnostic-batch 8",
+  "systemctl --user start mesa-clm-encoder.service mesa-clm-serve.service"
+ ],
+ "reference_route": {
+  "route": "vllm",
+  "encoder_fp": "c3b3d5e1a283",
+  "spec": {
+   "model": "Qwen/Qwen3-8B",
+   "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+   "dtype": "bfloat16",
+   "pooling": "LAST",
+   "normalize": true,
+   "max_len": 4096,
+   "truncation_side": "left",
+   "prefix_caching": false,
+   "route": "vllm",
+   "batch_invariance": "kernels"
+  },
+  "vectors_sha256": "c76248660a14d0a466e1c6054ec4637e3a6f42f5ef4d3355ec16881f61955ba1",
+  "golden_repeat_vs_encoder_golden_npz": {
+   "min_cos": 0.9998646482625806,
+   "mean_cos": 0.9999672542173548
+  }
+ },
+ "fallback_route": {
+  "route": "transformers",
+  "encoder_fp": "b171b1ba4536",
+  "spec": {
+   "model": "Qwen/Qwen3-8B",
+   "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+   "dtype": "bfloat16",
+   "pooling": "LAST",
+   "normalize": true,
+   "max_len": 4096,
+   "truncation_side": "left",
+   "prefix_caching": false,
+   "route": "transformers",
+   "batch_invariance": "serial"
+  },
+  "class": "serving/cuda_encoder.py CudaEncoder",
+  "device": "cuda",
+  "batch": 1,
+  "triton_deregistered": true,
+  "torch": "2.14.0+cu130",
+  "transformers": "5.17.0",
+  "gpu": "NVIDIA GB10",
+  "hf_hub_offline": "1"
+ },
+ "texts": {
+  "n": 220,
+  "goldens": 20,
+  "contexts": 200,
+  "tokens": 84660
+ },
+ "encoder_parity": {
+  "min_cos": {
+   "value": 0.9992596935260446,
+   "gate": 0.999,
+   "pass": true
+  },
+  "mean_cos": {
+   "value": 0.9999190624730279,
+   "gate": 0.9999,
+   "pass": true
+  },
+  "pass": true,
+  "per_kind": {
+   "golden": {
+    "n": 20,
+    "min_cos": 0.9998471202115893,
+    "mean_cos": 0.9999583401797691
+   },
+   "context": {
+    "n": 200,
+    "min_cos": 0.9992596935260446,
+    "mean_cos": 0.9999151347023536
+   }
+  },
+  "worst_text_sha256": "8cfa218cd45fc1121acb545635db4c08d9e7bcf94a2323c9617e9657092df1e3",
+  "worst_kind": "context",
+  "n_below_0_9999": 42,
+  "reference": "vLLM vectors from EncoderClient.embed, one text per request (the dump)",
+  "vs_batched_reference": {
+   "min_cos": 0.9992596935260446,
+   "mean_cos": 0.9999190624713304,
+   "min_pass": true,
+   "mean_pass": true
+  },
+  "vllm_batched_vs_single_request": {
+   "min_cos": 0.9999999999999962,
+   "mean_cos": 0.9999999999999999
+  }
+ },
+ "diagnostic_other_batch": {
+  "batch": 8,
+  "seconds": 25.62,
+  "vs_single_request_reference": {
+   "min_cos": 0.9986632092714096,
+   "mean_cos": 0.9999077189347932
+  },
+  "vs_batched_reference": {
+   "min_cos": 0.9986632092714096,
+   "mean_cos": 0.9999077189330091
+  },
+  "vs_primary_fallback_run": {
+   "min_cos": 0.9991306827153412,
+   "mean_cos": 0.9999185454782591
+  },
+  "worst_text_sha256": "8cfa218cd45fc1121acb545635db4c08d9e7bcf94a2323c9617e9657092df1e3"
+ },
+ "systemone_parity": {
+  "n_pairs": 20,
+  "engine": "clm.engine.Engine(embedder=CudaEncoder, device='cpu', action_cache='512MiB')",
+  "head": "CLM_v0.1-8B.pt",
+  "clm-latest": {
+   "n_questions": 20,
+   "max_abs_prob_diff": 0.05694897918023095,
+   "mean_abs_prob_diff": 0.014425117650894437,
+   "top_choice_agreement": "20/20",
+   "top_choice_agreement_rate": 1.0,
+   "worst_pair": "term.fits/F7/07e8bed38ae1"
+  },
+  "clm-raw": {
+   "n_questions": 20,
+   "max_abs_prob_diff": 0.07437992444703781,
+   "mean_abs_prob_diff": 0.020400407895270797,
+   "top_choice_agreement": "19/20",
+   "top_choice_agreement_rate": 0.95,
+   "worst_pair": "term.fits/F7/0b1785e813aa"
+  }
+ },
+ "timing_s": {
+  "model_load": 104.8,
+  "embed_all": 27.61,
+  "embed_ms_per_text": 125.5,
+  "systemone_all_pairs_both_models": 12.18
+ },
+ "memory_gib": {
+  "memavailable_before": 107.02,
+  "memavailable_low_water": 89.24,
+  "peak_footprint_memavailable_delta": 17.78,
+  "torch_cuda_max_allocated": 14.6,
+  "torch_cuda_max_reserved": 14.96,
+  "process_max_rss": 4.89
+ }
+}

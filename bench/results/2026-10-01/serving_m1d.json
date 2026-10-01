@@ -1,0 +1,198 @@
+{
+ "format": "mesa-clm/endpoint-checks/1",
+ "what": "The encoder endpoint before and after the one restart of the units for the DESIGN A5 revision before the M1 merge (the encoder unit requires its socket unit; mesa-clm-encoder-proxy instead of systemd-socket-proxyd). Both records were written by scripts/endpoint_checks.py; 'before_restart' held 100 idle connections, 'after_restart' 1,000.",
+ "restart": {
+  "reset_failed_then_restart": "systemctl --user reset-failed mesa-clm-encoder.service; systemctl --user restart mesa-clm-encoder.service mesa-clm-serve.service",
+  "at": "2026-10-01T20:25:21Z",
+  "returned": "2026-10-01T20:27:25Z"
+ },
+ "notes": [
+  "before: systemd-socket-proxyd under the user manager's soft RLIMIT_NOFILE of 1,024 took six descriptors per connection (100 idle connections: 609 descriptors), so about 170 idle connections exhaust it",
+  "after: mesa-clm-encoder-proxy under LimitNOFILE=16384 takes two per connection (1,000 idle connections: 2,009 descriptors) and the endpoint answered a keyed GET /v1/models while they were held",
+  "the proxy process recorded here started before the listen-backlog fix of serving/encoder_proxy.py (asyncio's default backlog of 100 on 127.0.0.1:8090, instead of net.core.somaxconn 4096); the installed copy has the fix, which takes effect at the next start of the units"
+ ],
+ "before_restart": {
+  "format": "mesa-clm/endpoint-checks/1",
+  "command": "uv run python scripts/endpoint_checks.py --out <scratch file> --idle 100",
+  "started": "2026-10-01T20:24:13+00:00",
+  "units": {
+   "mesa-clm-encoder.service": {
+    "Requires": "app.slice basic.target",
+    "Wants": "mesa-clm-encoder-proxy.socket mesa-clm-headroom.timer",
+    "After": "app.slice basic.target",
+    "StartLimitIntervalUSec": "1h",
+    "StartLimitBurst": "3"
+   },
+   "mesa-clm-encoder-proxy.socket": {
+    "Listen": "127.0.0.1:8090 (Stream)",
+    "PartOf": "mesa-clm-encoder.service",
+    "ActiveState": "active"
+   },
+   "mesa-clm-encoder-proxy.service": {
+    "Type": "notify",
+    "MainPID": "1374227",
+    "ExecStart": "{ path=/usr/lib/systemd/systemd-socket-proxyd ; argv[]=/usr/lib/systemd/systemd-socket-proxyd ~/.mesa/clm/run/encoder.sock ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+    "LimitNOFILE": "500000",
+    "LimitNOFILESoft": "1024"
+   },
+   "mesa-clm-serve.service": {
+    "Requires": "app.slice basic.target mesa-clm-encoder.service",
+    "After": "app.slice basic.target mesa-clm-encoder.service",
+    "ActiveState": "active"
+   }
+  },
+  "enabled": [
+   "disabled",
+   "disabled",
+   "static",
+   "disabled",
+   "static",
+   "static"
+  ],
+  "listeners": {
+   "8090": [
+    {
+     "host": "127.0.0.1",
+     "uid": 1000,
+     "cgroup": "/user.slice/user-1000.slice/user@1000.service/init.scope"
+    }
+   ],
+   "8700": [
+    {
+     "host": "127.0.0.1",
+     "uid": 1000,
+     "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/mesa-clm-serve.service"
+    }
+   ]
+  },
+  "client_port_owner_check": {
+   "encoder": "this account's socket (the key may be sent)",
+   "clm-serve": "this account's socket (the key may be sent)"
+  },
+  "run_directory": {
+   "mode": "0o700",
+   "owner_is_this_account": true,
+   "entries": [
+    "encoder.sock"
+   ],
+   "encoder_sock_is_socket": true,
+   "encoder_sock_owner_is_this_account": true
+  },
+  "lock_problems_require_live": [],
+  "idle_connections": {
+   "idle_connections_held": 100,
+   "proxy_while_held": {
+    "max_open_files": [
+     "1024",
+     "500000"
+    ],
+    "fds": 609
+   },
+   "keyed_get_v1_models": {
+    "answered": [
+     "qwen3-8b"
+    ],
+    "ms": 6.0
+   },
+   "proxy_after_release": {
+    "max_open_files": [
+     "1024",
+     "500000"
+    ],
+    "fds": 15
+   }
+  }
+ },
+ "after_restart": {
+  "format": "mesa-clm/endpoint-checks/1",
+  "command": "uv run python scripts/endpoint_checks.py --out bench/results/2026-10-01/serving_m1d.json --idle 1000",
+  "started": "2026-10-01T20:28:39+00:00",
+  "units": {
+   "mesa-clm-encoder.service": {
+    "Requires": "basic.target app.slice mesa-clm-encoder-proxy.socket",
+    "Wants": "mesa-clm-headroom.timer",
+    "After": "basic.target app.slice mesa-clm-encoder-proxy.socket",
+    "StartLimitIntervalUSec": "1h",
+    "StartLimitBurst": "3"
+   },
+   "mesa-clm-encoder-proxy.socket": {
+    "Listen": "127.0.0.1:8090 (Stream)",
+    "PartOf": "mesa-clm-encoder.service",
+    "ActiveState": "active"
+   },
+   "mesa-clm-encoder-proxy.service": {
+    "Type": "simple",
+    "MainPID": "2231315",
+    "ExecStart": "{ path=~/.mesa/clm/serve/.venv/bin/python ; argv[]=~/.mesa/clm/serve/.venv/bin/python -I ~/.mesa/clm/bin/mesa-clm-encoder-proxy --connections-max 4096 ~/.mesa/clm/run/encoder.sock ; ignore_errors=no ; start_time=[Thu 2026-10-01 14:25:22 MDT] ; stop_time=[n/a] ; pid=2231315 ; code=(null) ; status=0/0 }",
+    "LimitNOFILE": "16384",
+    "LimitNOFILESoft": "16384"
+   },
+   "mesa-clm-serve.service": {
+    "Requires": "mesa-clm-encoder.service app.slice basic.target",
+    "After": "mesa-clm-encoder.service app.slice basic.target",
+    "ActiveState": "active"
+   }
+  },
+  "enabled": [
+   "disabled",
+   "disabled",
+   "static",
+   "disabled",
+   "static",
+   "static"
+  ],
+  "listeners": {
+   "8090": [
+    {
+     "host": "127.0.0.1",
+     "uid": 1000,
+     "cgroup": "/user.slice/user-1000.slice/user@1000.service/init.scope"
+    }
+   ],
+   "8700": [
+    {
+     "host": "127.0.0.1",
+     "uid": 1000,
+     "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/mesa-clm-serve.service"
+    }
+   ]
+  },
+  "client_port_owner_check": {
+   "encoder": "this account's socket (the key may be sent)",
+   "clm-serve": "this account's socket (the key may be sent)"
+  },
+  "run_directory": {
+   "mode": "0o700",
+   "owner_is_this_account": true,
+   "entries": [
+    "encoder.sock"
+   ],
+   "encoder_sock_is_socket": true,
+   "encoder_sock_owner_is_this_account": true
+  },
+  "lock_problems_require_live": [],
+  "idle_connections": {
+   "idle_connections_held": 1000,
+   "proxy_while_held": {
+    "max_open_files": [
+     "16384",
+     "16384"
+    ],
+    "fds": 2009
+   },
+   "keyed_get_v1_models": {
+    "answered": [
+     "qwen3-8b"
+    ],
+    "ms": 9.1
+   },
+   "proxy_after_release": {
+    "max_open_files": [
+     "16384",
+     "16384"
+    ],
+    "fds": 11
+   }
+  }
+ }
+}

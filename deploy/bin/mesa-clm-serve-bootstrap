@@ -1,0 +1,330 @@
+#!/usr/bin/env bash
+# mesa-clm-serve-bootstrap: build the clm-serve side under ~/.mesa/clm, idempotently (plan §6.2).
+#
+# Usage: deploy/bin/mesa-clm-serve-bootstrap [--repo DIR]
+#   --repo DIR   the mesa-clm checkout (default: the checkout this script sits in)
+#
+# Every pin comes from the checkout's serving/serving.lock.json, whose lock_sha is re-verified
+# first. Each step is skipped when it is already done and verified:
+#   1. clone Contrastive-LM/CLM at the pinned commit into ~/.mesa/clm/serve/CLM
+#   2. assert the pristine src/clm/schema.py sha256
+#   3. apply serving/patches in lock order; skipped when the tree already equals the pinned
+#      commit plus the series, refused when it carries any other change
+#   4. uv venv --python 3.11.16 ~/.mesa/clm/serve/.venv (uv-managed CPython ships Python.h)
+#   5. uv pip install --require-hashes -r serving/requirements-serve.txt, then the clone with
+#      --no-deps (contrastive-lm's unconditional vllm requirement is never installed)
+#   6. download the head at the pinned revision into ~/.mesa/clm/heads, verify size and sha256
+#   7. mkdir ~/.mesa/clm/heads/served (promoted heads only reach clm-serve here, DESIGN D15)
+#   8. export the head to ~/.mesa/clm/heads/npz/<sha8>.npz (serving/export_head.py)
+#   9. install deploy/bin/* and the encoder's endpoint proxy serving/encoder_proxy.py (as
+#      mesa-clm-encoder-proxy; DESIGN A5) into ~/.mesa/clm/bin, the encoder's bearer guard
+#      serving/vllm_auth.py into ~/.mesa/clm/serve/vllm-auth (0700 directory, 0600 file, sha256
+#      checked against the lock's recipe; DESIGN A4) and the lock into
+#      ~/.mesa/clm/serving.lock.json
+# It never creates keys, installs or enables units, or starts anything; the runbook
+# (docs/deploy/serving.md) covers those steps. A running encoder reads the guard only at start:
+# restart the units after a bootstrap that changed it.
+set -euo pipefail
+umask 077
+
+log() { printf 'mesa-clm-serve-bootstrap: %s\n' "$*"; }
+die() {
+  printf 'mesa-clm-serve-bootstrap: error: %s\n' "$*" >&2
+  exit 1
+}
+usage() {
+  cat <<'USAGE'
+usage: mesa-clm-serve-bootstrap [--repo DIR]
+  --repo DIR   the mesa-clm checkout (default: the checkout this script sits in)
+USAGE
+}
+
+repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --repo)
+      [[ $# -ge 2 ]] || die "--repo needs a directory"
+      repo="$(cd "$2" && pwd)"
+      shift 2
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
+lock="$repo/serving/serving.lock.json"
+[[ -f "$lock" ]] || die "no serving/serving.lock.json under $repo; run from a mesa-clm checkout or pass --repo"
+for tool in git uv python3 sha256sum flock install; do
+  command -v "$tool" >/dev/null 2>&1 || die "$tool is not installed"
+done
+
+PYTHON_VERSION="3.11.16"
+CLM_URL="https://github.com/Contrastive-LM/CLM.git"
+clm_home="$HOME/.mesa/clm"
+serve="$clm_home/serve"
+clone="$serve/CLM"
+venv="$serve/.venv"
+heads="$clm_home/heads"
+
+# -- pins from the lock ---------------------------------------------------------------------
+pins="$(
+  python3 - "$lock" "$repo/serving/patches" <<'PY'
+import hashlib
+import json
+import re
+import sys
+from pathlib import Path
+
+lock_path, patches = Path(sys.argv[1]), Path(sys.argv[2])
+d = json.loads(lock_path.read_text(encoding="utf-8"))
+body = {k: v for k, v in d.items() if k != "lock_sha"}
+canon = json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+if hashlib.sha256(canon.encode("utf-8")).hexdigest() != d.get("lock_sha"):
+    sys.exit(f"{lock_path}: lock_sha does not match the content (edited without re-signing)")
+hex40, hex64 = re.compile(r"[0-9a-f]{40}"), re.compile(r"[0-9a-f]{64}")
+name = re.compile(r"[A-Za-z0-9._-]+/[A-Za-z0-9._-]+")
+
+
+def need(ok, what):
+    if not ok:
+        sys.exit(f"{lock_path}: malformed {what}")
+
+
+h, e = d["head"], d["encoder"]
+need(hex40.fullmatch(d["clm_commit"]), "clm_commit")
+need(hex64.fullmatch(d["schema_sha256"]), "schema_sha256")
+need(name.fullmatch(h["repo"]), "head.repo")
+need(hex40.fullmatch(h["revision"]), "head.revision")
+need(re.fullmatch(r"[A-Za-z0-9._-]+\.pt", h["file"]), "head.file")
+need(isinstance(h["size"], int) and h["size"] > 0, "head.size")
+need(hex64.fullmatch(h["sha256"]), "head.sha256")
+need(name.fullmatch(e["model"]), "encoder.model")
+need(hex40.fullmatch(e["revision"]), "encoder.revision")
+print(f"CLM_COMMIT={d['clm_commit']}")
+print(f"SCHEMA_SHA256={d['schema_sha256']}")
+print(f"HEAD_REPO={h['repo']}")
+print(f"HEAD_REVISION={h['revision']}")
+print(f"HEAD_FILE={h['file']}")
+print(f"HEAD_SIZE={h['size']}")
+print(f"HEAD_SHA256={h['sha256']}")
+org, model = e["model"].split("/")
+print(f"ENCODER_SNAPSHOT=hub/models--{org}--{model}/snapshots/{e['revision']}")
+for p in d["patches"]:
+    need(re.fullmatch(r"[0-9]{4}-[a-z0-9-]+", p["id"]), "patch id")
+    need(hex64.fullmatch(p["sha256"]), "patch sha256")
+    f = patches / f"{p['id']}.patch"
+    if not f.is_file():
+        sys.exit(f"{f}: patch file missing")
+    if hashlib.sha256(f.read_bytes()).hexdigest() != p["sha256"]:
+        sys.exit(f"{f}: sha256 differs from the lock")
+    print(f"PATCH={p['id']}:{p['sha256']}")
+r = d.get("recipe")
+if r is not None:
+    a = r["auth"]
+    need(re.fullmatch(r"[A-Za-z0-9_]+\.py", a["file"]), "recipe.auth.file")
+    need(hex64.fullmatch(a["sha256"]), "recipe.auth.sha256")
+    f = patches.parent / a["file"]
+    if not f.is_file():
+        sys.exit(f"{f}: the encoder's bearer guard is missing")
+    if hashlib.sha256(f.read_bytes()).hexdigest() != a["sha256"]:
+        sys.exit(f"{f}: sha256 differs from the lock's recipe")
+    print(f"AUTH_FILE={a['file']}")
+    print(f"AUTH_SHA256={a['sha256']}")
+PY
+)" || die "cannot use $lock"
+
+PATCH_IDS=()
+PATCH_SHAS=()
+CLM_COMMIT="" SCHEMA_SHA256="" HEAD_REPO="" HEAD_REVISION="" HEAD_FILE="" HEAD_SIZE="" HEAD_SHA256=""
+ENCODER_SNAPSHOT="" AUTH_FILE="" AUTH_SHA256=""
+while IFS='=' read -r key value; do
+  case "$key" in
+    CLM_COMMIT) CLM_COMMIT=$value ;;
+    SCHEMA_SHA256) SCHEMA_SHA256=$value ;;
+    HEAD_REPO) HEAD_REPO=$value ;;
+    HEAD_REVISION) HEAD_REVISION=$value ;;
+    HEAD_FILE) HEAD_FILE=$value ;;
+    HEAD_SIZE) HEAD_SIZE=$value ;;
+    HEAD_SHA256) HEAD_SHA256=$value ;;
+    ENCODER_SNAPSHOT) ENCODER_SNAPSHOT=$value ;;
+    AUTH_FILE) AUTH_FILE=$value ;;
+    AUTH_SHA256) AUTH_SHA256=$value ;;
+    PATCH)
+      PATCH_IDS+=("${value%%:*}")
+      PATCH_SHAS+=("${value##*:}")
+      ;;
+    *) die "unexpected pin line from the lock reader" ;;
+  esac
+done <<<"$pins"
+[[ ${#PATCH_IDS[@]} -gt 0 ]] || die "the lock lists no patches"
+log "lock $lock verified: CLM ${CLM_COMMIT:0:12}, ${#PATCH_IDS[@]} patches, head ${HEAD_SHA256:0:12}"
+
+mkdir -p "$serve" "$heads"
+exec 9>"$serve/.bootstrap.lock"
+flock -n 9 || die "another mesa-clm-serve-bootstrap is running"
+tmpdir="$(mktemp -d "${TMPDIR:-/tmp}/mesa-clm-bootstrap.XXXXXX")"
+trap 'rm -rf "$tmpdir"' EXIT
+
+# -- 1. clone at the pinned commit ----------------------------------------------------------
+if [[ ! -d "$clone/.git" ]]; then
+  [[ ! -e "$clone" ]] || die "$clone exists but is not a git clone; move it aside"
+  log "cloning $CLM_URL at ${CLM_COMMIT:0:12}"
+  git clone --quiet --no-checkout "$CLM_URL" "$clone"
+  git -C "$clone" -c advice.detachedHead=false checkout --quiet --detach "$CLM_COMMIT"
+fi
+origin="$(git -C "$clone" remote get-url origin)"
+[[ "$origin" == "$CLM_URL" ]] || die "$clone has origin $origin, not $CLM_URL"
+if [[ "$(git -C "$clone" rev-parse HEAD)" != "$CLM_COMMIT" ]]; then
+  git -C "$clone" diff --quiet HEAD || die "$clone is on another commit and has local changes; inspect it or move it aside"
+  git -C "$clone" cat-file -e "$CLM_COMMIT^{commit}" 2>/dev/null || git -C "$clone" fetch --quiet origin "$CLM_COMMIT"
+  git -C "$clone" -c advice.detachedHead=false checkout --quiet --detach "$CLM_COMMIT"
+  log "checked out ${CLM_COMMIT:0:12}"
+fi
+
+# -- 2. the pristine text contract ----------------------------------------------------------
+pristine_schema="$(git -C "$clone" show "$CLM_COMMIT:src/clm/schema.py" | sha256sum | cut -d' ' -f1)"
+[[ "$pristine_schema" == "$SCHEMA_SHA256" ]] || die "src/clm/schema.py at ${CLM_COMMIT:0:12} has sha256 $pristine_schema, lock $SCHEMA_SHA256"
+
+# -- 3. the patch series --------------------------------------------------------------------
+series_tree() { # the pinned tree with every patch applied, built in a scratch index
+  local idx="$tmpdir/series.index" id
+  GIT_INDEX_FILE="$idx" git -C "$clone" read-tree "$CLM_COMMIT"
+  for id in "${PATCH_IDS[@]}"; do
+    GIT_INDEX_FILE="$idx" git -C "$clone" apply --cached "$repo/serving/patches/$id.patch"
+  done
+  GIT_INDEX_FILE="$idx" git -C "$clone" write-tree
+}
+worktree_tree() { # the tree of the tracked files as they are on disk
+  local idx="$tmpdir/worktree.index"
+  rm -f "$idx"
+  GIT_INDEX_FILE="$idx" git -C "$clone" read-tree HEAD
+  GIT_INDEX_FILE="$idx" git -C "$clone" add -u
+  GIT_INDEX_FILE="$idx" git -C "$clone" write-tree
+}
+expected_tree="$(series_tree)" || die "the patch series does not apply to ${CLM_COMMIT:0:12}"
+pristine_tree="$(git -C "$clone" rev-parse "$CLM_COMMIT^{tree}")"
+current_tree="$(worktree_tree)"
+if [[ "$current_tree" == "$expected_tree" ]]; then
+  log "patches already applied (tree ${expected_tree:0:12})"
+elif [[ "$current_tree" == "$pristine_tree" ]]; then
+  for id in "${PATCH_IDS[@]}"; do
+    git -C "$clone" apply --check "$repo/serving/patches/$id.patch" || die "patch $id does not apply"
+    git -C "$clone" apply "$repo/serving/patches/$id.patch"
+    log "applied $id"
+  done
+  [[ "$(worktree_tree)" == "$expected_tree" ]] || die "the patched tree differs from the expected series tree"
+else
+  die "$clone has changes that are not the patch series; inspect 'git -C $clone diff' or move the clone aside"
+fi
+git -C "$clone" diff --quiet HEAD -- src/clm/schema.py src/clm/client.py || die "the series touched schema.py or client.py (DESIGN D4)"
+[[ "$(sha256sum "$clone/src/clm/schema.py" | cut -d' ' -f1)" == "$SCHEMA_SHA256" ]] || die "schema.py sha256 changed"
+python3 - "$serve/patches.applied.json" "$CLM_COMMIT" "$expected_tree" "${PATCH_IDS[@]}" -- "${PATCH_SHAS[@]}" <<'PY'
+import json
+import os
+import sys
+
+out, commit, tree, *rest = sys.argv[1:]
+cut = rest.index("--")
+ids, shas = rest[:cut], rest[cut + 1 :]
+doc = {"clm_commit": commit, "tree": tree, "patches": [{"id": i, "sha256": s} for i, s in zip(ids, shas)]}
+tmp = out + ".tmp"
+with open(tmp, "w", encoding="utf-8") as fh:
+    json.dump(doc, fh, indent=2)
+    fh.write("\n")
+os.replace(tmp, out)
+PY
+
+# -- 4. the serve venv ----------------------------------------------------------------------
+if [[ ! -x "$venv/bin/python" ]]; then
+  log "creating $venv (CPython $PYTHON_VERSION)"
+  uv venv --quiet --managed-python --python "$PYTHON_VERSION" "$venv"
+fi
+pyver="$("$venv/bin/python" -c 'import platform; print(platform.python_version())')"
+[[ "$pyver" == "$PYTHON_VERSION" ]] || die "$venv runs Python $pyver, not $PYTHON_VERSION; move it aside and re-run"
+"$venv/bin/python" -c 'import os, sys, sysconfig; sys.exit(0 if os.path.exists(os.path.join(sysconfig.get_paths()["include"], "Python.h")) else 1)' ||
+  die "$venv has no Python.h (torch 2.14 compiles its Triton kernels against it)"
+
+# -- 5. hash-pinned requirements, then the patched clone without its dependencies -----------
+log "installing serving/requirements-serve.txt (hash-pinned)"
+uv pip install --quiet --python "$venv/bin/python" --require-hashes -r "$repo/serving/requirements-serve.txt"
+uv pip install --quiet --python "$venv/bin/python" --no-deps --no-build-isolation -e "$clone"
+"$venv/bin/python" - "$clone" <<'PY'
+import importlib.util
+import os
+import sys
+
+clone = os.path.realpath(sys.argv[1])
+if importlib.util.find_spec("vllm") is not None:
+    sys.exit("vllm is importable in the serve venv; it must never be installed there")
+wanted = ("torch", "transformers", "fastapi", "uvicorn", "numpy", "requests", "huggingface_hub", "clm")
+missing = [m for m in wanted if importlib.util.find_spec(m) is None]
+if missing:
+    sys.exit(f"missing in the serve venv: {', '.join(missing)}")
+import clm.server  # the patched server; imports fastapi, not torch
+
+origin = os.path.realpath(clm.server.__file__)
+if not origin.startswith(os.path.join(clone, "src") + os.sep):
+    sys.exit(f"clm resolves to {origin}, not the patched clone")
+import torch
+
+print(f"mesa-clm-serve-bootstrap: torch {torch.__version__} (CUDA {torch.version.cuda}); clm from {os.path.dirname(origin)}")
+PY
+
+# -- 6. the head ----------------------------------------------------------------------------
+head_path="$heads/$HEAD_FILE"
+head_ok() {
+  [[ "$(stat -c %s "$1")" == "$HEAD_SIZE" ]] && [[ "$(sha256sum "$1" | cut -d' ' -f1)" == "$HEAD_SHA256" ]]
+}
+if [[ -f "$head_path" ]]; then
+  head_ok "$head_path" || die "$head_path exists but its size or sha256 differs from the lock; move it aside and re-run"
+  log "head $HEAD_FILE present and verified"
+else
+  log "downloading $HEAD_REPO $HEAD_FILE at ${HEAD_REVISION:0:12}"
+  env -u HF_HUB_OFFLINE "$venv/bin/hf" download "$HEAD_REPO" "$HEAD_FILE" \
+    --revision "$HEAD_REVISION" --local-dir "$heads" >/dev/null
+  if ! head_ok "$head_path"; then
+    mv -f "$head_path" "$head_path.rejected"
+    die "the downloaded head does not match the lock (kept as $head_path.rejected)"
+  fi
+  log "head verified: $HEAD_SIZE bytes, sha256 ${HEAD_SHA256:0:12}"
+fi
+
+# -- 7./8. served heads directory and the npz export ----------------------------------------
+mkdir -p "$heads/served" "$heads/npz"
+"$venv/bin/python" "$repo/serving/export_head.py" "$head_path" \
+  --out "$heads/npz/${HEAD_SHA256:0:8}.npz" --expect-sha256 "$HEAD_SHA256"
+
+# -- 9. scripts and the lock ----------------------------------------------------------------
+mkdir -p "$clm_home/bin"
+for f in mesa-clm-encoder-run mesa-clm-serve-bootstrap mesa-clm-wait-http mesa-clm-check-headroom; do
+  install -m 0700 "$repo/deploy/bin/$f" "$clm_home/bin/$f"
+done
+# The encoder's loopback endpoint (mesa-clm-encoder-proxy.service runs it with the serve venv's
+# Python): it relays 127.0.0.1:8090 to run/encoder.sock without following a symlink (DESIGN A5).
+install -m 0700 "$repo/serving/encoder_proxy.py" "$clm_home/bin/mesa-clm-encoder-proxy"
+if [[ -n "$AUTH_FILE" ]]; then
+  auth_dir="$serve/vllm-auth"
+  install -d -m 0700 "$auth_dir"
+  chmod 0700 "$auth_dir"
+  install -m 0600 "$repo/serving/$AUTH_FILE" "$auth_dir/$AUTH_FILE"
+  [[ "$(sha256sum "$auth_dir/$AUTH_FILE" | cut -d' ' -f1)" == "$AUTH_SHA256" ]] ||
+    die "$auth_dir/$AUTH_FILE does not match the lock's sha256 after install"
+  log "installed the encoder's bearer guard into $auth_dir (sha256 ${AUTH_SHA256:0:12})"
+else
+  log "warning: the lock has no container recipe; the encoder's bearer guard is not installed"
+fi
+install -m 0600 "$lock" "$clm_home/serving.lock.json"
+log "installed deploy/bin and mesa-clm-encoder-proxy into $clm_home/bin and the lock into $clm_home/serving.lock.json"
+
+if [[ ! -f "$HOME/.cache/huggingface/$ENCODER_SNAPSHOT/config.json" ]]; then
+  log "warning: the encoder snapshot ~/.cache/huggingface/$ENCODER_SNAPSHOT is missing; the offline encoder cannot start"
+fi
+[[ -f "$clm_home/secrets/clm.env" && -f "$clm_home/secrets/encoder.env" ]] ||
+  log "next: create the keys, then install the units (docs/deploy/serving.md)"
+log "done"

@@ -1,0 +1,135 @@
+{
+  "kind": "systemone",
+  "path": "/v1/systemone",
+  "body": {
+    "state": {
+      "card": {
+        "dataset": "DP1.10003.001.brd_countdata",
+        "product_title": "Breeding landbird point counts",
+        "product_description": "Count, distance from observer, and taxonomic identification of breeding landbirds observed during point counts",
+        "sites": [
+          {
+            "code": "HARV",
+            "name": "Harvard Forest & Quabbin Watershed NEON",
+            "domain": "D01",
+            "habitat": "temperate deciduous/mixed forest"
+          },
+          {
+            "code": "SRER",
+            "name": "Santa Rita Experimental Range NEON",
+            "domain": "D14",
+            "habitat": "semi-arid desert grassland/shrubland"
+          }
+        ],
+        "rows": 15484,
+        "months": "2020-04 to 2024-06",
+        "columns": [
+          "uid",
+          "siteID",
+          "startDate",
+          "scientificName",
+          "observerDistance",
+          "detectionMethod",
+          "identificationHistoryID"
+        ]
+      },
+      "scope": "column",
+      "aspect": "taxon",
+      "column": {
+        "name": "scientificName",
+        "description": "Scientific name, associated with the taxonID.",
+        "dtype": "string",
+        "unit": "",
+        "profile": "179 distinct; top: Campylorhynchus brunneicapillus (1098), Zenaida macroura (1010)"
+      }
+    },
+    "model": "clm-raw",
+    "questions": {
+      "ontology": {
+        "type": "choice",
+        "instructions": null,
+        "criteria": {
+          "envo": "ENVO: environments, biomes, habitats and environmental materials",
+          "ncbitaxon": "NCBITaxon: organisms and taxa at every rank",
+          "pato": "PATO: qualities and attributes of things (size, sex, age, colour)",
+          "uo": "UO: units of measurement (meter, degree Celsius, percent)",
+          "__none__": "None of these ontologies has a suitable term for this target."
+        }
+      },
+      "annotate": {
+        "type": "choice",
+        "instructions": null,
+        "criteria": {
+          "Yes": "This column records a scientific concept, such as an organism, a measured property, an environment or a method, that deserves an ontology annotation.",
+          "No": "This column is an identifier, a bookkeeping field, a timestamp, a free-text remark or otherwise needs no ontology annotation."
+        }
+      }
+    },
+    "temperature": 1.0
+  },
+  "body_json": "{\"state\":{\"card\":{\"dataset\":\"DP1.10003.001.brd_countdata\",\"product_title\":\"Breeding landbird point counts\",\"product_description\":\"Count, distance from observer, and taxonomic identification of breeding landbirds observed during point counts\",\"sites\":[{\"code\":\"HARV\",\"name\":\"Harvard Forest & Quabbin Watershed NEON\",\"domain\":\"D01\",\"habitat\":\"temperate deciduous/mixed forest\"},{\"code\":\"SRER\",\"name\":\"Santa Rita Experimental Range NEON\",\"domain\":\"D14\",\"habitat\":\"semi-arid desert grassland/shrubland\"}],\"rows\":15484,\"months\":\"2020-04 to 2024-06\",\"columns\":[\"uid\",\"siteID\",\"startDate\",\"scientificName\",\"observerDistance\",\"detectionMethod\",\"identificationHistoryID\"]},\"scope\":\"column\",\"aspect\":\"taxon\",\"column\":{\"name\":\"scientificName\",\"description\":\"Scientific name, associated with the taxonID.\",\"dtype\":\"string\",\"unit\":\"\",\"profile\":\"179 distinct; top: Campylorhynchus brunneicapillus (1098), Zenaida macroura (1010)\"}},\"model\":\"clm-raw\",\"questions\":{\"ontology\":{\"type\":\"choice\",\"instructions\":null,\"criteria\":{\"envo\":\"ENVO: environments, biomes, habitats and environmental materials\",\"ncbitaxon\":\"NCBITaxon: organisms and taxa at every rank\",\"pato\":\"PATO: qualities and attributes of things (size, sex, age, colour)\",\"uo\":\"UO: units of measurement (meter, degree Celsius, percent)\",\"__none__\":\"None of these ontologies has a suitable term for this target.\"}},\"annotate\":{\"type\":\"choice\",\"instructions\":null,\"criteria\":{\"Yes\":\"This column records a scientific concept, such as an organism, a measured property, an environment or a method, that deserves an ontology annotation.\",\"No\":\"This column is an identifier, a bookkeeping field, a timestamp, a free-text remark or otherwise needs no ontology annotation.\"}}},\"temperature\":1.0}",
+  "response": {
+    "model": "clm-raw",
+    "answers": {
+      "ontology": {
+        "type": "choice",
+        "choice": "ncbitaxon",
+        "confidence": 0.928036635398189,
+        "probabilities": {
+          "envo": 0.018426591757267085,
+          "ncbitaxon": 0.9424293083185512,
+          "pato": 0.013166606209484408,
+          "uo": 0.025869666710481895,
+          "__none__": 0.00010782700421540372
+        }
+      },
+      "annotate": {
+        "type": "choice",
+        "choice": "Yes",
+        "confidence": 0.954877544446637,
+        "probabilities": {
+          "Yes": 0.9774387722233185,
+          "No": 0.022561227776681517
+        }
+      }
+    },
+    "usage": {
+      "billing_units": 2,
+      "input_tokens": 188,
+      "output_tokens": 0
+    }
+  },
+  "latency_ms": "12.5",
+  "parsed": {
+    "model": "clm-raw",
+    "answers": {
+      "ontology": {
+        "type": "choice",
+        "choice": "ncbitaxon",
+        "confidence": 0.928036635398189,
+        "probabilities": {
+          "envo": 0.018426591757267085,
+          "ncbitaxon": 0.9424293083185512,
+          "pato": 0.013166606209484408,
+          "uo": 0.025869666710481895,
+          "__none__": 0.00010782700421540372
+        }
+      },
+      "annotate": {
+        "type": "choice",
+        "choice": "Yes",
+        "confidence": 0.954877544446637,
+        "probabilities": {
+          "Yes": 0.9774387722233185,
+          "No": 0.022561227776681517
+        }
+      }
+    },
+    "usage": {
+      "billing_units": 2,
+      "input_tokens": 188,
+      "output_tokens": 0
+    },
+    "latency_ms": 12.5
+  }
+}

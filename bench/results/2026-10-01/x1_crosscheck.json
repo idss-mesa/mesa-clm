@@ -1,0 +1,5384 @@
+{
+ "format": "mesa-clm/x1-crosscheck/1",
+ "started_at": "2026-10-01T18:26:09+00:00",
+ "seconds": 85.7,
+ "host": "sparky-1",
+ "command": "uv run python scripts/x1_crosscheck.py --out bench/results/2026-10-01/x1_crosscheck.json",
+ "what": "plan §5.6 X1: offline rank_fit scores from the float32 feature store vs clm-serve /v1/systemone (and /v1/rank) <= 1e-4 in probability; diagnostics, no label read",
+ "snapshot": "bench/snapshots/2026-09-29.parquet",
+ "labels_sha256": "aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+ "serving": {
+  "lock": "~/.mesa/clm/serving.lock.json",
+  "lock_sha": "dd33f9fedbaee0129b09a21311227118461bed9326c942c2af7d0bd9b31b5237",
+  "encoder_fp": "c3b3d5e1a283",
+  "vector_recipe_sha256": "ed486dcd74a3b69e62316031e9c8fe6f184e1ead959a1bff537a33217135f89d"
+ },
+ "store": {
+  "path": "~/.mesa/clm/features/c3b3d5e1a283/features.duckdb",
+  "format": "mesa-clm-features/2",
+  "vector_recipe_sha256": "ed486dcd74a3b69e62316031e9c8fe6f184e1ead959a1bff537a33217135f89d",
+  "serving_lock_sha": "dd33f9fedbaee0129b09a21311227118461bed9326c942c2af7d0bd9b31b5237"
+ },
+ "clm_model_fp": {
+  "clm-latest": "78be8c462b2e",
+  "clm-raw": "9f44b0301ee3"
+ },
+ "draw": {
+  "rule": "per (task, framing) stratum of the F4/F7/F9 groups, a share proportional to the stratum's group count (largest remainder), groups ordered by sha256('task|framing|target_sha256'), first n taken",
+  "strata_sizes": {
+   "term.fits/F4": 143,
+   "term.fits/F7": 143,
+   "term.fits/F9": 143,
+   "column.ontology_fits/F4": 60,
+   "column.ontology_fits/F7": 60,
+   "column.ontology_fits/F9": 60
+  },
+  "drawn": {
+   "term.fits/F4": 47,
+   "term.fits/F7": 47,
+   "term.fits/F9": 47,
+   "column.ontology_fits/F4": 20,
+   "column.ontology_fits/F7": 20,
+   "column.ontology_fits/F9": 19
+  },
+  "groups": 200,
+  "options": 649,
+  "distinct_texts": 307
+ },
+ "gate": 0.0001,
+ "fresh_vectors": {
+  "texts": 307,
+  "seconds": 30.9,
+  "bitwise_equal_to_store": "307/307"
+ },
+ "served": {
+  "clm-latest": {
+   "calls_systemone": 200,
+   "calls_rank": 200,
+   "input_tokens_systemone": 61535,
+   "latency_ms_p50": 138.75,
+   "latency_ms_p95": 261.4949999999998
+  },
+  "clm-raw": {
+   "calls_systemone": 200,
+   "calls_rank": 200,
+   "input_tokens_systemone": 0,
+   "latency_ms_p50": 0.3,
+   "latency_ms_p95": 0.6
+  }
+ },
+ "results": {
+  "clm-latest": {
+   "store_vs_served": {
+    "max_abs_prob_diff": 5.2011760394155004e-06,
+    "mean_abs_prob_diff": 7.164160451071967e-07,
+    "p95_abs_prob_diff": 2.7388738066569382e-06,
+    "top_choice_agreement": "200/200",
+    "worst_group": "term.fits/F7/8c3f30cfb8d0",
+    "pass": true,
+    "max_abs_s_c_diff": 3.492301357410632e-05
+   },
+   "store_vs_rank": {
+    "max_abs_prob_diff": 5.2011760394155004e-06,
+    "mean_abs_prob_diff": 7.164160451071967e-07,
+    "p95_abs_prob_diff": 2.7388738066569382e-06,
+    "top_choice_agreement": "200/200",
+    "worst_group": "term.fits/F7/8c3f30cfb8d0",
+    "pass": true,
+    "max_abs_s_c_diff": 3.492301357410632e-05
+   },
+   "rank_vs_served": {
+    "max_abs_prob_diff": 0.0,
+    "mean_abs_prob_diff": 0.0,
+    "p95_abs_prob_diff": 0.0,
+    "top_choice_agreement": "200/200",
+    "worst_group": "term.fits/F4/1b85f0503c4b",
+    "pass": true,
+    "max_abs_s_c_diff": 0.0
+   },
+   "fp16_vs_served": {
+    "max_abs_prob_diff": 0.0013107960654877293,
+    "mean_abs_prob_diff": 0.00012338299097290433,
+    "p95_abs_prob_diff": 0.0004349581794969093,
+    "top_choice_agreement": "199/200",
+    "worst_group": "term.fits/F9/a213d5ff9852",
+    "pass": false,
+    "max_abs_s_c_diff": 0.006300031052550281
+   }
+  },
+  "clm-raw": {
+   "store_vs_served": {
+    "max_abs_prob_diff": 7.465798778238941e-05,
+    "mean_abs_prob_diff": 1.482836144699155e-05,
+    "p95_abs_prob_diff": 3.9988372163098066e-05,
+    "top_choice_agreement": "200/200",
+    "worst_group": "term.fits/F4/2b46b47a8ce1",
+    "pass": true,
+    "max_abs_s_c_diff": 0.00032116240389890027
+   },
+   "store_vs_rank": {
+    "max_abs_prob_diff": 7.465798778238941e-05,
+    "mean_abs_prob_diff": 1.482836144699155e-05,
+    "p95_abs_prob_diff": 3.9988372163098066e-05,
+    "top_choice_agreement": "200/200",
+    "worst_group": "term.fits/F4/2b46b47a8ce1",
+    "pass": true,
+    "max_abs_s_c_diff": 0.00032116240389890027
+   },
+   "rank_vs_served": {
+    "max_abs_prob_diff": 0.0,
+    "mean_abs_prob_diff": 0.0,
+    "p95_abs_prob_diff": 0.0,
+    "top_choice_agreement": "200/200",
+    "worst_group": "term.fits/F4/1b85f0503c4b",
+    "pass": true,
+    "max_abs_s_c_diff": 0.0
+   },
+   "fp16_vs_served": {
+    "max_abs_prob_diff": 0.003588449288219775,
+    "mean_abs_prob_diff": 0.00035636474917323887,
+    "p95_abs_prob_diff": 0.001025465980424045,
+    "top_choice_agreement": "200/200",
+    "worst_group": "term.fits/F7/0b1785e813aa",
+    "pass": false,
+    "max_abs_s_c_diff": 0.013357379673733405
+   }
+  }
+ },
+ "noul_supplement": {
+  "rule": "F1 pairs per task, proportional to the pair counts, ordered by sha256('task|F1|target_sha256|option_key'), first n",
+  "pairs": {
+   "term.fits": 30,
+   "column.ontology_fits": 20
+  },
+  "clm-latest": {
+   "max_abs_prob_diff": 5.536814230322484e-06,
+   "mean_abs_prob_diff": 1.9527646935979526e-06,
+   "p95_abs_prob_diff": 4.365945340328858e-06,
+   "top_choice_agreement": "50/50",
+   "worst_group": "term.fits/F1/a213d5ff9852/ENVO:01000212",
+   "pass": true
+  },
+  "clm-raw": {
+   "max_abs_prob_diff": 6.982812104106007e-05,
+   "mean_abs_prob_diff": 2.1749143560382265e-05,
+   "p95_abs_prob_diff": 5.87982890540739e-05,
+   "top_choice_agreement": "50/50",
+   "worst_group": "term.fits/F1/b6e0245c7a19/OBI:0001621",
+   "pass": true
+  }
+ },
+ "verdict": {
+  "gate": 0.0001,
+  "store_vs_served_pass": true,
+  "store_vs_rank_pass": true,
+  "noul_store_vs_served_pass": true,
+  "fp16_vs_served_pass": false
+ },
+ "groups": {
+  "clm-latest": [
+   {
+    "id": "term.fits/F4/1b85f0503c4b",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.9310621928497365e-10,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 9.841880424215889e-09
+    },
+    "winner": {
+     "store": "GENEPIO:0001174",
+     "served": "GENEPIO:0001174"
+    }
+   },
+   {
+    "id": "term.fits/F4/4da3f5810f3b",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.2407138570712526e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00011298624533995216
+    },
+    "winner": {
+     "store": "PATO:0001167",
+     "served": "PATO:0001167"
+    }
+   },
+   {
+    "id": "term.fits/F4/f84d2082a212",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3357000050451262e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.175150802850121e-05
+    },
+    "winner": {
+     "store": "OBI:0600016",
+     "served": "OBI:0600016"
+    }
+   },
+   {
+    "id": "term.fits/F4/19fbf7841c67",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0008542994377478e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.5164051839766657e-06
+    },
+    "winner": {
+     "store": "OBI:0001616",
+     "served": "OBI:0001616"
+    }
+   },
+   {
+    "id": "term.fits/F4/1e16435f81a2",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.705870948473745e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.089363584789066e-05
+    },
+    "winner": {
+     "store": "UO:0000187",
+     "served": "UO:0000187"
+    }
+   },
+   {
+    "id": "term.fits/F4/29f8f39e3f82",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.512528046201169e-10,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.169210550182203e-07
+    },
+    "winner": {
+     "store": "NCBITaxon:6656",
+     "served": "NCBITaxon:6656"
+    }
+   },
+   {
+    "id": "term.fits/F4/2b46b47a8ce1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4122532593016657e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.3932546103064625e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/edeb1728ce10",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.473798499380564e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.834792595994746e-07
+    },
+    "winner": {
+     "store": "NCBITaxon:50557",
+     "served": "NCBITaxon:50557"
+    }
+   },
+   {
+    "id": "term.fits/F4/2606c10be55c",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.096205332292939e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.994171619134401e-05
+    },
+    "winner": {
+     "store": "UO:0000033",
+     "served": "UO:0000033"
+    }
+   },
+   {
+    "id": "term.fits/F4/186631558e16",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3193139036804524e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.154506241456918e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/ff3324de2e4f",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.575071484077322e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00044918741111110716
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/b6e0245c7a19",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.252756532780594e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 8.761788792494354e-07
+    },
+    "winner": {
+     "store": "OBI:0001621",
+     "served": "OBI:0001621"
+    }
+   },
+   {
+    "id": "term.fits/F4/8c3f30cfb8d0",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.8505443340477434e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00025604108261895187
+    },
+    "winner": {
+     "store": "ENVO:01001209",
+     "served": "ENVO:01001209"
+    }
+   },
+   {
+    "id": "term.fits/F4/9fcbd0d4c18c",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.245603870689507e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.805181476819076e-05
+    },
+    "winner": {
+     "store": "OBI:0001619",
+     "served": "OBI:0001619"
+    }
+   },
+   {
+    "id": "term.fits/F4/aaa63036f7f0",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.674232024935108e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003720302663037245
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/752de3c64748",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.3045897063498373e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003005357450961421
+    },
+    "winner": {
+     "store": "IAO:0000584",
+     "served": "IAO:0000584"
+    }
+   },
+   {
+    "id": "term.fits/F4/44bc91443c63",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.8044156703296323e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.42646607898465e-06
+    },
+    "winner": {
+     "store": "TAXRANK:0000006",
+     "served": "TAXRANK:0000006"
+    }
+   },
+   {
+    "id": "term.fits/F4/7608d4a845d1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.9998877025826385e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002941714800857448
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/865cf90f8780",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3454477622021344e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002749343775453328
+    },
+    "winner": {
+     "store": "OBI:0002920",
+     "served": "OBI:0002920"
+    }
+   },
+   {
+    "id": "term.fits/F4/a08e4ec58854",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0683906038512492e-10,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.543679382426868e-08
+    },
+    "winner": {
+     "store": "PATO:0001629",
+     "served": "PATO:0001629"
+    }
+   },
+   {
+    "id": "term.fits/F4/515da5e55c6b",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.61558934522688e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.2110239089242505e-05
+    },
+    "winner": {
+     "store": "OBI:0002920",
+     "served": "OBI:0002920"
+    }
+   },
+   {
+    "id": "term.fits/F4/43827fb1d181",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.2075553013080054e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0001381978973088449
+    },
+    "winner": {
+     "store": "NCBITaxon:7041",
+     "served": "NCBITaxon:7041"
+    }
+   },
+   {
+    "id": "term.fits/F4/cef5524bf249",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.1602718492406154e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.272704744050451e-06
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/b6c3d2cfec3b",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3248887542616217e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.397209042883432e-06
+    },
+    "winner": {
+     "store": "OBI:0000073",
+     "served": "OBI:0000073"
+    }
+   },
+   {
+    "id": "term.fits/F4/6794820e54f7",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4136066827097338e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00015298563714707947
+    },
+    "winner": {
+     "store": "ENVO:01001206",
+     "served": "ENVO:01001206"
+    }
+   },
+   {
+    "id": "term.fits/F4/b6a0dca75760",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.9068947272614665e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00036788809416660184
+    },
+    "winner": {
+     "store": "OBI:0002913",
+     "served": "OBI:0002913"
+    }
+   },
+   {
+    "id": "term.fits/F4/47b35cb588b9",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.678991548714208e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.000413835551795666
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/2ea2f6752797",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.345990056719984e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.7912814456197985e-05
+    },
+    "winner": {
+     "store": "OBI:0100051",
+     "served": "OBI:0100051"
+    }
+   },
+   {
+    "id": "term.fits/F4/a213d5ff9852",
+    "n_candidates": 9,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.2822787118247376e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00021993743581372183
+    },
+    "winner": {
+     "store": "ENVO:01000218",
+     "served": "ENVO:01000218"
+    }
+   },
+   {
+    "id": "term.fits/F4/491747ef0bd4",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.370354511840091e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.775307557217337e-05
+    },
+    "winner": {
+     "store": "IAO:0000100",
+     "served": "IAO:0000100"
+    }
+   },
+   {
+    "id": "term.fits/F4/437fdb61eb5f",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.103762399487181e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.4327212300990766e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/d993f121d485",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.1207148804289773e-10,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.9553694287467176e-08
+    },
+    "winner": {
+     "store": "BCO:0000084",
+     "served": "BCO:0000084"
+    }
+   },
+   {
+    "id": "term.fits/F4/e9d074982b6c",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.1796649389446412e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.5493524576924997e-06
+    },
+    "winner": {
+     "store": "PCO:0000010",
+     "served": "PCO:0000010"
+    }
+   },
+   {
+    "id": "term.fits/F4/cb811d40ea32",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.197155259599299e-10,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.65688855869162e-07
+    },
+    "winner": {
+     "store": "BCO:0000042",
+     "served": "BCO:0000042"
+    }
+   },
+   {
+    "id": "term.fits/F4/611609644d90",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.1780573589147423e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.99326003608369e-06
+    },
+    "winner": {
+     "store": "TAXRANK:0000006",
+     "served": "TAXRANK:0000006"
+    }
+   },
+   {
+    "id": "term.fits/F4/9a12246f2877",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.4671467357176456e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.6304547685308535e-06
+    },
+    "winner": {
+     "store": "TAXRANK:0000006",
+     "served": "TAXRANK:0000006"
+    }
+   },
+   {
+    "id": "term.fits/F4/d990d135bddc",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.703570866126938e-11,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.895339329927026e-09
+    },
+    "winner": {
+     "store": "OBI:0001141",
+     "served": "OBI:0001141"
+    }
+   },
+   {
+    "id": "term.fits/F4/403b3bd24dfb",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4956137717994557e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.8138390806287106e-07
+    },
+    "winner": {
+     "store": "GENEPIO:0100584",
+     "served": "GENEPIO:0100584"
+    }
+   },
+   {
+    "id": "term.fits/F4/075df81a43fb",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.2042232233066006e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00043420927256984654
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/4bd40065e00f",
+    "n_candidates": 8,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.1068088300889585e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003135333171838117
+    },
+    "winner": {
+     "store": "ENVO:01000177",
+     "served": "ENVO:01000177"
+    }
+   },
+   {
+    "id": "term.fits/F4/3c155ba401e3",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.730728902559768e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005768260627290189
+    },
+    "winner": {
+     "store": "PATO:0001555",
+     "served": "PATO:0001555"
+    }
+   },
+   {
+    "id": "term.fits/F4/301321c59ef6",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 7.17050147739165e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.8681939103037948e-05
+    },
+    "winner": {
+     "store": "OBI:0000659",
+     "served": "OBI:0000659"
+    }
+   },
+   {
+    "id": "term.fits/F4/5404be707a35",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.193974744826079e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 9.999186974218865e-05
+    },
+    "winner": {
+     "store": "OBI:0000272",
+     "served": "OBI:0000272"
+    }
+   },
+   {
+    "id": "term.fits/F4/93d638d2320d",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.6471837315820164e-10,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.784487381919277e-06
+    },
+    "winner": {
+     "store": "BCO:0000055",
+     "served": "BCO:0000055"
+    }
+   },
+   {
+    "id": "term.fits/F4/f923655dceb7",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.8506605020961473e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.4271029431871599e-05
+    },
+    "winner": {
+     "store": "OBI:0002913",
+     "served": "OBI:0002913"
+    }
+   },
+   {
+    "id": "term.fits/F4/253bbb618f0b",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.566191105451846e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.670407979569553e-07
+    },
+    "winner": {
+     "store": "PATO:0001687",
+     "served": "PATO:0001687"
+    }
+   },
+   {
+    "id": "term.fits/F4/d67dde579b69",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.153685601027135e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.194086349737115e-05
+    },
+    "winner": {
+     "store": "OBI:0001900",
+     "served": "OBI:0001900"
+    }
+   },
+   {
+    "id": "term.fits/F7/8c3f30cfb8d0",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.2011760394155004e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0009861600337109921
+    },
+    "winner": {
+     "store": "ENVO:01000212",
+     "served": "ENVO:01000212"
+    }
+   },
+   {
+    "id": "term.fits/F7/6f6189152add",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.7463433072714167e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003719768758517761
+    },
+    "winner": {
+     "store": "PCO:0000019",
+     "served": "PCO:0000019"
+    }
+   },
+   {
+    "id": "term.fits/F7/c5cd3e8b21e0",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.5023946176604426e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.8507872121278505e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/c635c4d78087",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.5940660114122096e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.2070247668734027e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/3456cd5f4d83",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 7.638409904586752e-10,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.379403478794021e-07
+    },
+    "winner": {
+     "store": "PCO:0000002",
+     "served": "PCO:0000002"
+    }
+   },
+   {
+    "id": "term.fits/F7/ecd81384bea6",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.0123776146574457e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002946067182851564
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/0d370040cb21",
+    "n_candidates": 8,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3200678702779411e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00017502330141794253
+    },
+    "winner": {
+     "store": "ENVO:00000446",
+     "served": "ENVO:00000446"
+    }
+   },
+   {
+    "id": "term.fits/F7/0b1785e813aa",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.245159557214606e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.3694024292626494e-06
+    },
+    "winner": {
+     "store": "IAO:0000100",
+     "served": "IAO:0000100"
+    }
+   },
+   {
+    "id": "term.fits/F7/8ab93f6a404a",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.172720290349872e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.204344715099452e-06
+    },
+    "winner": {
+     "store": "NCBITaxon:41073",
+     "served": "NCBITaxon:41073"
+    }
+   },
+   {
+    "id": "term.fits/F7/f73792f2106e",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.6109831618992274e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00015545041891032452
+    },
+    "winner": {
+     "store": "BCO:0000042",
+     "served": "BCO:0000042"
+    }
+   },
+   {
+    "id": "term.fits/F7/43827fb1d181",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.6799340527294824e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.3152400176136854e-05
+    },
+    "winner": {
+     "store": "NCBITaxon:2903183",
+     "served": "NCBITaxon:2903183"
+    }
+   },
+   {
+    "id": "term.fits/F7/29f8f39e3f82",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.958352390725592e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.2801569096998477e-06
+    },
+    "winner": {
+     "store": "NCBITaxon:6656",
+     "served": "NCBITaxon:6656"
+    }
+   },
+   {
+    "id": "term.fits/F7/1b85f0503c4b",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0115679627276108e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.095653132028197e-06
+    },
+    "winner": {
+     "store": "GENEPIO:0001174",
+     "served": "GENEPIO:0001174"
+    }
+   },
+   {
+    "id": "term.fits/F7/1be1057b429d",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.198060682772173e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.9192127487819306e-07
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/238d18b96912",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.324910101791534e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00019202390046335616
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/9261ffa52722",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4180423614854054e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.0213378877337725e-06
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/e9d074982b6c",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.5035462989365644e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002579917540814769
+    },
+    "winner": {
+     "store": "PCO:0000010",
+     "served": "PCO:0000010"
+    }
+   },
+   {
+    "id": "term.fits/F7/c5fb4e8c4a80",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.658527198670733e-11,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.6930679625513108e-09
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/27035864a9ed",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.461383721343637e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00027842393257460074
+    },
+    "winner": {
+     "store": "PCO:0000001",
+     "served": "PCO:0000001"
+    }
+   },
+   {
+    "id": "term.fits/F7/d990d135bddc",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4120273276185813e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005675443604178376
+    },
+    "winner": {
+     "store": "OBI:0001141",
+     "served": "OBI:0001141"
+    }
+   },
+   {
+    "id": "term.fits/F7/b6e0245c7a19",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.378533313779352e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003287139178145271
+    },
+    "winner": {
+     "store": "OBI:0001621",
+     "served": "OBI:0001621"
+    }
+   },
+   {
+    "id": "term.fits/F7/65948f1e9ab1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3620094874156052e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.570901577987923e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/752de3c64748",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.539184909111647e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0004196964848435236
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/81146ba2e7c1",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.3058008353782355e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.000616483123885736
+    },
+    "winner": {
+     "store": "NCBITaxon:8782",
+     "served": "NCBITaxon:8782"
+    }
+   },
+   {
+    "id": "term.fits/F7/3e08946a6927",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 7.584268001212952e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.4139751088548813e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/b9b84b8c9629",
+    "n_candidates": 5,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.206346943651077e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005841475849484024
+    },
+    "winner": {
+     "store": "PATO:0001555",
+     "served": "PATO:0001555"
+    }
+   },
+   {
+    "id": "term.fits/F7/818f2bc33e1d",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.38893247628269e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 8.690447336978657e-06
+    },
+    "winner": {
+     "store": "BCO:0000054",
+     "served": "BCO:0000054"
+    }
+   },
+   {
+    "id": "term.fits/F7/318c0b3906d9",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.327027459614328e-12,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.5734384069148197e-09
+    },
+    "winner": {
+     "store": "OBI:0001900",
+     "served": "OBI:0001900"
+    }
+   },
+   {
+    "id": "term.fits/F7/2ea2f6752797",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.4739386872418834e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.956799006575115e-06
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/ccf18d87f5b1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.757462874396598e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00016999458002314033
+    },
+    "winner": {
+     "store": "UO:0010008",
+     "served": "UO:0010008"
+    }
+   },
+   {
+    "id": "term.fits/F7/f72bfc86b089",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.016290748980026e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00016208499024139567
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/61650c24ea81",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.0884123458908554e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0001462344288664097
+    },
+    "winner": {
+     "store": "PATO:0001519",
+     "served": "PATO:0001519"
+    }
+   },
+   {
+    "id": "term.fits/F7/458983dfaab2",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.405237220150298e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 9.3122483301733e-05
+    },
+    "winner": {
+     "store": "BCO:0000054",
+     "served": "BCO:0000054"
+    }
+   },
+   {
+    "id": "term.fits/F7/96388cb57732",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.279553325579725e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.0212215407796634e-06
+    },
+    "winner": {
+     "store": "BCO:0000054",
+     "served": "BCO:0000054"
+    }
+   },
+   {
+    "id": "term.fits/F7/425123c9feb5",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.395622175834006e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002122956417275751
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/8f51bd847c0a",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.020206360698774e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.2546554227338066e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/e1d166f2f664",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.807691745668279e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.665023889666753e-07
+    },
+    "winner": {
+     "store": "ENVO:01001110",
+     "served": "ENVO:01001110"
+    }
+   },
+   {
+    "id": "term.fits/F7/9a55850946cd",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.826841572518447e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.88328069352395e-05
+    },
+    "winner": {
+     "store": "PCO:0000002",
+     "served": "PCO:0000002"
+    }
+   },
+   {
+    "id": "term.fits/F7/301321c59ef6",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.653212528896289e-10,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 8.285539432328903e-08
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/9c2784463ce5",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.7027956540102167e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.747160289794941e-05
+    },
+    "winner": {
+     "store": "NCIT:C81286",
+     "served": "NCIT:C81286"
+    }
+   },
+   {
+    "id": "term.fits/F7/6b18b90caf68",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.771848827582307e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 8.291325201315036e-05
+    },
+    "winner": {
+     "store": "NCBITaxon:7041",
+     "served": "NCBITaxon:7041"
+    }
+   },
+   {
+    "id": "term.fits/F7/7608d4a845d1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.772846805061945e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.863942407694948e-07
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/1e16435f81a2",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.008658103513916e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00017662976048765655
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/aaa63036f7f0",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4382614477170819e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00010985533206803177
+    },
+    "winner": {
+     "store": "NCBITaxon:8782",
+     "served": "NCBITaxon:8782"
+    }
+   },
+   {
+    "id": "term.fits/F7/8fec694d34c1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.6904899975515864e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.8932257245460327e-06
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/bc43ab00a3ea",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.674675892079598e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00014923248220183316
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/7f220bea1b01",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.752260197413925e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0004144419787425191
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F9/96388cb57732",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.544098846621155e-12,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.928037390460126e-09
+    },
+    "winner": {
+     "store": "BCO:0000054",
+     "served": "BCO:0000054"
+    }
+   },
+   {
+    "id": "term.fits/F9/43827fb1d181",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.345593762726367e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002476609202548552
+    },
+    "winner": {
+     "store": "NCBITaxon:7041",
+     "served": "NCBITaxon:7041"
+    }
+   },
+   {
+    "id": "term.fits/F9/bc43ab00a3ea",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.5982972527248264e-11,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.6868417773707733e-10
+    },
+    "winner": {
+     "store": "OBI:0001620",
+     "served": "OBI:0001620"
+    }
+   },
+   {
+    "id": "term.fits/F9/d67dde579b69",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.738169259774992e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00042428727383769793
+    },
+    "winner": {
+     "store": "OBI:0100051",
+     "served": "OBI:0100051"
+    }
+   },
+   {
+    "id": "term.fits/F9/3e08946a6927",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3026097415158588e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00035953344429751066
+    },
+    "winner": {
+     "store": "ENVO:01000976",
+     "served": "ENVO:01000976"
+    }
+   },
+   {
+    "id": "term.fits/F9/f6c981a06688",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.0613626916521355e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.805177841602173e-06
+    },
+    "winner": {
+     "store": "NCBITaxon:50557",
+     "served": "NCBITaxon:50557"
+    }
+   },
+   {
+    "id": "term.fits/F9/752de3c64748",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.472543164004984e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.979543732184453e-06
+    },
+    "winner": {
+     "store": "IAO:0000584",
+     "served": "IAO:0000584"
+    }
+   },
+   {
+    "id": "term.fits/F9/0b1785e813aa",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.109639264124944e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.3871452375453543e-05
+    },
+    "winner": {
+     "store": "IAO:0000100",
+     "served": "IAO:0000100"
+    }
+   },
+   {
+    "id": "term.fits/F9/45c00c3d8401",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3385349248995482e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.065131919031797e-05
+    },
+    "winner": {
+     "store": "OBI:0001911",
+     "served": "OBI:0001911"
+    }
+   },
+   {
+    "id": "term.fits/F9/97ca0644161f",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.488777930928948e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.4277356828795718e-05
+    },
+    "winner": {
+     "store": "OBI:0002648",
+     "served": "OBI:0002648"
+    }
+   },
+   {
+    "id": "term.fits/F9/c4bfdb297042",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0103627379187685e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.2371054855297992e-05
+    },
+    "winner": {
+     "store": "OBI:0000268",
+     "served": "OBI:0000268"
+    }
+   },
+   {
+    "id": "term.fits/F9/9c2784463ce5",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.435125519400642e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.779841685203067e-07
+    },
+    "winner": {
+     "store": "NCIT:C81286",
+     "served": "NCIT:C81286"
+    }
+   },
+   {
+    "id": "term.fits/F9/255abf4dabed",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.2998997186810485e-11,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.2090838047716943e-09
+    },
+    "winner": {
+     "store": "BCO:0000054",
+     "served": "BCO:0000054"
+    }
+   },
+   {
+    "id": "term.fits/F9/874f221a047e",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.278681294451198e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.511224573258474e-07
+    },
+    "winner": {
+     "store": "OBI:0002913",
+     "served": "OBI:0002913"
+    }
+   },
+   {
+    "id": "term.fits/F9/a213d5ff9852",
+    "n_candidates": 9,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.145210540482889e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0013107960654877293
+    },
+    "winner": {
+     "store": "ENVO:01000816",
+     "served": "ENVO:01000816"
+    }
+   },
+   {
+    "id": "term.fits/F9/d993f121d485",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.922717623476956e-11,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.000019849431947e-09
+    },
+    "winner": {
+     "store": "BCO:0000084",
+     "served": "BCO:0000084"
+    }
+   },
+   {
+    "id": "term.fits/F9/19fbf7841c67",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.56305221995338e-10,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.1279944351082491e-07
+    },
+    "winner": {
+     "store": "OBI:0001616",
+     "served": "OBI:0001616"
+    }
+   },
+   {
+    "id": "term.fits/F9/8fb8c7f67977",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.6175000489867557e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.459168269357658e-05
+    },
+    "winner": {
+     "store": "OBI:0002919",
+     "served": "OBI:0002919"
+    }
+   },
+   {
+    "id": "term.fits/F9/de29d3e7c5a5",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.230738291979065e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.608729250512368e-07
+    },
+    "winner": {
+     "store": "PATO:0045001",
+     "served": "PATO:0045001"
+    }
+   },
+   {
+    "id": "term.fits/F9/c5cd3e8b21e0",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.230738291979065e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.608729250512368e-07
+    },
+    "winner": {
+     "store": "PATO:0045001",
+     "served": "PATO:0045001"
+    }
+   },
+   {
+    "id": "term.fits/F9/8f3fea063fb6",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3573267493641183e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.672167323183321e-06
+    },
+    "winner": {
+     "store": "ENVO:01001780",
+     "served": "ENVO:01001780"
+    }
+   },
+   {
+    "id": "term.fits/F9/6844814d9ab4",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.9843195692436097e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.0914836829089012e-07
+    },
+    "winner": {
+     "store": "OBI:0002913",
+     "served": "OBI:0002913"
+    }
+   },
+   {
+    "id": "term.fits/F9/9a12246f2877",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.076406989739212e-10,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.1536340858178873e-08
+    },
+    "winner": {
+     "store": "TAXRANK:0000006",
+     "served": "TAXRANK:0000006"
+    }
+   },
+   {
+    "id": "term.fits/F9/a81a577af14d",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.4856372007854445e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.6645681507609922e-06
+    },
+    "winner": {
+     "store": "OBI:0001930",
+     "served": "OBI:0001930"
+    }
+   },
+   {
+    "id": "term.fits/F9/04d0a201755d",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.32389204614477e-12,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.2587999753677082e-08
+    },
+    "winner": {
+     "store": "ENVO:01000976",
+     "served": "ENVO:01000976"
+    }
+   },
+   {
+    "id": "term.fits/F9/d38eedc18681",
+    "n_candidates": 7,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.1224632736072113e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.4521453875516195e-05
+    },
+    "winner": {
+     "store": "ENVO:01000179",
+     "served": "ENVO:01000179"
+    }
+   },
+   {
+    "id": "term.fits/F9/0279bc7c45df",
+    "n_candidates": 14,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.0958782122049158e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.760824839668889e-05
+    },
+    "winner": {
+     "store": "ENVO:01000179",
+     "served": "ENVO:01000179"
+    }
+   },
+   {
+    "id": "term.fits/F9/4bd40065e00f",
+    "n_candidates": 8,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.062264599846159e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.6828356141448424e-05
+    },
+    "winner": {
+     "store": "ENVO:01000179",
+     "served": "ENVO:01000179"
+    }
+   },
+   {
+    "id": "term.fits/F9/d990d135bddc",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.333511410299252e-13,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.098402976524198e-10
+    },
+    "winner": {
+     "store": "OBI:0001141",
+     "served": "OBI:0001141"
+    }
+   },
+   {
+    "id": "term.fits/F9/d405633e2b04",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3461286041405174e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.010047968490028e-06
+    },
+    "winner": {
+     "store": "PATO:0000140",
+     "served": "PATO:0000140"
+    }
+   },
+   {
+    "id": "term.fits/F9/b6c3d2cfec3b",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.9201399103378948e-13,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 8.131665341082339e-10
+    },
+    "winner": {
+     "store": "OBI:0000073",
+     "served": "OBI:0000073"
+    }
+   },
+   {
+    "id": "term.fits/F9/edeb1728ce10",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.456017100804786e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.3688262130440165e-06
+    },
+    "winner": {
+     "store": "NCBITaxon:50557",
+     "served": "NCBITaxon:50557"
+    }
+   },
+   {
+    "id": "term.fits/F9/b9b84b8c9629",
+    "n_candidates": 5,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.6708963704037405e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 8.154878621846606e-05
+    },
+    "winner": {
+     "store": "PCO:0000003",
+     "served": "PCO:0000003"
+    }
+   },
+   {
+    "id": "term.fits/F9/eb0b2b62195f",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.569139342768164e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.988526005669016e-07
+    },
+    "winner": {
+     "store": "IAO:0000584",
+     "served": "IAO:0000584"
+    }
+   },
+   {
+    "id": "term.fits/F9/8fec694d34c1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0014662534378626e-10,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.153596174141569e-08
+    },
+    "winner": {
+     "store": "OBCS:0000002",
+     "served": "OBCS:0000002"
+    }
+   },
+   {
+    "id": "term.fits/F9/458983dfaab2",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 7.468663132392805e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.1565678820500978e-07
+    },
+    "winner": {
+     "store": "BCO:0000054",
+     "served": "BCO:0000054"
+    }
+   },
+   {
+    "id": "term.fits/F9/cfc3e70f9869",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.2735295955388498e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.1016327925439384e-06
+    },
+    "winner": {
+     "store": "UO:0000189",
+     "served": "UO:0000189"
+    }
+   },
+   {
+    "id": "term.fits/F9/7608d4a845d1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.651550864075986e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00020354110606755904
+    },
+    "winner": {
+     "store": "BCO:0000003",
+     "served": "BCO:0000003"
+    }
+   },
+   {
+    "id": "term.fits/F9/cef5524bf249",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.223774822675885e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005095845340341021
+    },
+    "winner": {
+     "store": "NCBITaxon:177272",
+     "served": "NCBITaxon:177272"
+    }
+   },
+   {
+    "id": "term.fits/F9/cb811d40ea32",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.823588849153221e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.4933693881502563e-07
+    },
+    "winner": {
+     "store": "BCO:0000042",
+     "served": "BCO:0000042"
+    }
+   },
+   {
+    "id": "term.fits/F9/c635c4d78087",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.482349665468348e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00031471829823181974
+    },
+    "winner": {
+     "store": "PATO:0000011",
+     "served": "PATO:0000011"
+    }
+   },
+   {
+    "id": "term.fits/F9/1590438a3ff3",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.9186451322438245e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 9.710139087744374e-06
+    },
+    "winner": {
+     "store": "NCBITaxon:247448",
+     "served": "NCBITaxon:247448"
+    }
+   },
+   {
+    "id": "term.fits/F9/6f6189152add",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.2289644167884362e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00033409581203469596
+    },
+    "winner": {
+     "store": "PCO:0000001",
+     "served": "PCO:0000001"
+    }
+   },
+   {
+    "id": "term.fits/F9/4d862ff1e6fb",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.13455978900153e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.2831778084532175e-07
+    },
+    "winner": {
+     "store": "TAXRANK:0000005",
+     "served": "TAXRANK:0000005"
+    }
+   },
+   {
+    "id": "term.fits/F9/b7f14dad8bf9",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.4498413905837957e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.834717173241021e-05
+    },
+    "winner": {
+     "store": "PATO:0001894",
+     "served": "PATO:0001894"
+    }
+   },
+   {
+    "id": "term.fits/F9/3ee1eac909a3",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.758859972753271e-11,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 9.413447468091199e-09
+    },
+    "winner": {
+     "store": "UO:0000027",
+     "served": "UO:0000027"
+    }
+   },
+   {
+    "id": "term.fits/F9/32a6c505e031",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 7.619255152913063e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00030182861958183427
+    },
+    "winner": {
+     "store": "OBI:0001900",
+     "served": "OBI:0001900"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/29f8f39e3f82",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.293621299200552e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002084738504189998
+    },
+    "winner": {
+     "store": "ncbitaxon",
+     "served": "ncbitaxon"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/2611d4b9d7d1",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.8672653412377116e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.8397280222348655e-05
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/8c3f30cfb8d0",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.331288011248045e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 8.86453355664063e-06
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/04d0a201755d",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.9892858117719356e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0001209841816810775
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/5404be707a35",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.9516651358353343e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00026269743237139487
+    },
+    "winner": {
+     "store": "bco",
+     "served": "bco"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/4d862ff1e6fb",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.2279993196780996e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00012025467232969905
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/186631558e16",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.847566481807174e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00023788007600267225
+    },
+    "winner": {
+     "store": "uo",
+     "served": "uo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/9202bbd5f628",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.26008812009848e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00011823725296300491
+    },
+    "winner": {
+     "store": "uo",
+     "served": "uo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/8adb116eb904",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.705034979122445e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00033313867287787513
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/9261ffa52722",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.6885823004020306e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005282432685298488
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/29188aaf6ce3",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3500165735313985e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00017269039055400892
+    },
+    "winner": {
+     "store": "ncbitaxon",
+     "served": "ncbitaxon"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/138322c78048",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.165187079101628e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.0849318703876065e-05
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/1a24f0e8ef03",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.206235320162847e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.372231464983225e-05
+    },
+    "winner": {
+     "store": "ncbitaxon",
+     "served": "ncbitaxon"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/818f2bc33e1d",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 7.830307875988929e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00014763405579859556
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/874f221a047e",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0859989089118116e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00014084309780404425
+    },
+    "winner": {
+     "store": "bco",
+     "served": "bco"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/0d370040cb21",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0708564368577811e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.491118957718589e-07
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/2606c10be55c",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 7.389744550168054e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00011856737460269606
+    },
+    "winner": {
+     "store": "uo",
+     "served": "uo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/089ceeb413fa",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.1095262190407027e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00029925274155828685
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/6794820e54f7",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.687546213879898e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.608035902211924e-07
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/1e637bb56b99",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.185659592351789e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.6713421843970195e-05
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/1e637bb56b99",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.278908005694859e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.0517822831873636e-05
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/81146ba2e7c1",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.895707223420473e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.000592214948644143
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/8adb116eb904",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.6171647719276372e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002378990336680542
+    },
+    "winner": {
+     "store": "bco",
+     "served": "bco"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/2611d4b9d7d1",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.296770687471028e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.942594019101797e-05
+    },
+    "winner": {
+     "store": "pato",
+     "served": "pato"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/4bd40065e00f",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.624345535913065e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.492346526303482e-06
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/138322c78048",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.320425683352781e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00013919733194922568
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/96388cb57732",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.2197404234147733e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0004058252095904269
+    },
+    "winner": {
+     "store": "genepio",
+     "served": "genepio"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/df77fc4f3c19",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.715792423422906e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00018151043968470115
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/2606c10be55c",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.103408091093996e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.0583519357787452e-05
+    },
+    "winner": {
+     "store": "uo",
+     "served": "uo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/d67dde579b69",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.264685166283701e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.424050410569482e-05
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/9202bbd5f628",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.915305456485662e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.2278634216443827e-05
+    },
+    "winner": {
+     "store": "uo",
+     "served": "uo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/6794820e54f7",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.3403082666527695e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.0570966213551145e-05
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/43827fb1d181",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.335867540618878e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002815130962092738
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/5404be707a35",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.215482587310309e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00019579646282319452
+    },
+    "winner": {
+     "store": "genepio",
+     "served": "genepio"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/089ceeb413fa",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.040446435788937e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.000408938122370639
+    },
+    "winner": {
+     "store": "genepio",
+     "served": "genepio"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/29f8f39e3f82",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0743980490834915e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003650693516649428
+    },
+    "winner": {
+     "store": "ncbitaxon",
+     "served": "ncbitaxon"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/3ee1eac909a3",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.395117620375032e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.183062795621751e-06
+    },
+    "winner": {
+     "store": "uo",
+     "served": "uo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/515da5e55c6b",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.3632157774289286e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00030583600893246965
+    },
+    "winner": {
+     "store": "bco",
+     "served": "bco"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/977130c7dc7b",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.0519778609617845e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.4368048137890221e-05
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/1a24f0e8ef03",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.1591023787449473e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003813876323509602
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/138322c78048",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0351455879131777e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003544718000014768
+    },
+    "winner": {
+     "store": "pato",
+     "served": "pato"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/0279bc7c45df",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3487817529522772e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.0793529381381006e-07
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/3ee1eac909a3",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.397475099529366e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.2922121502750442e-05
+    },
+    "winner": {
+     "store": "uo",
+     "served": "uo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/b9b84b8c9629",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.937128308407095e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.063064938542415e-05
+    },
+    "winner": {
+     "store": "pato",
+     "served": "pato"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/77bf030797bc",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.189397279028782e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.9377340969971577e-05
+    },
+    "winner": {
+     "store": "pato",
+     "served": "pato"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/238d18b96912",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.193337301197417e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.618779569258823e-05
+    },
+    "winner": {
+     "store": "bco",
+     "served": "bco"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/874f221a047e",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.266991222769828e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.2709790301101975e-05
+    },
+    "winner": {
+     "store": "bco",
+     "served": "bco"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/a213d5ff9852",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.811758360389026e-10,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.1914962827486164e-07
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/9261ffa52722",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3515693653154415e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.656527500880193e-05
+    },
+    "winner": {
+     "store": "genepio",
+     "served": "genepio"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/81146ba2e7c1",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.7758839371561095e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.534232721426946e-06
+    },
+    "winner": {
+     "store": "ncbitaxon",
+     "served": "ncbitaxon"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/f6c981a06688",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.207649867942308e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.043387943955922e-06
+    },
+    "winner": {
+     "store": "ncbitaxon",
+     "served": "ncbitaxon"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/977130c7dc7b",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.770241972910767e-11,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.7695983334806726e-08
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/cb811d40ea32",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.7362256177211322e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.623316393674969e-05
+    },
+    "winner": {
+     "store": "bco",
+     "served": "bco"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/8fcad0977033",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.1770545144406128e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 9.920420957876264e-05
+    },
+    "winner": {
+     "store": "bco",
+     "served": "bco"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/818f2bc33e1d",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.676025314320214e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 8.727325582658096e-06
+    },
+    "winner": {
+     "store": "bco",
+     "served": "bco"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/04d0a201755d",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.811790802415004e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.062166863276872e-05
+    },
+    "winner": {
+     "store": "bco",
+     "served": "bco"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/07e8bed38ae1",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3487817529522772e-09,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.0793529381381006e-07
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/2611d4b9d7d1",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.184110517832293e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.000154283701477409
+    },
+    "winner": {
+     "store": "pato",
+     "served": "pato"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/8ab93f6a404a",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 7.414649444599519e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.49677350733025e-05
+    },
+    "winner": {
+     "store": "ncbitaxon",
+     "served": "ncbitaxon"
+    }
+   }
+  ],
+  "clm-raw": [
+   {
+    "id": "term.fits/F4/1b85f0503c4b",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.481483287660515e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0006320044930493984
+    },
+    "winner": {
+     "store": "GENEPIO:0001174",
+     "served": "GENEPIO:0001174"
+    }
+   },
+   {
+    "id": "term.fits/F4/4da3f5810f3b",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.1948281101600315e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00045894466488194396
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/f84d2082a212",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.1499817982071363e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.4662455488447662e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/19fbf7841c67",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.2938369762682811e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00010115822627149162
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/1e16435f81a2",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4680483669704536e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00023491495092919923
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/29f8f39e3f82",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.7316304937306168e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.666092103922104e-06
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/2b46b47a8ce1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 7.465798778238941e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0004557943319086766
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/edeb1728ce10",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.7284396963977997e-11,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.966704700848368e-07
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/2606c10be55c",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.034604682888853e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00037620051086334483
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/186631558e16",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.5181605937119045e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00022385584099193778
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/ff3324de2e4f",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.945619906880026e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.778681761075099e-06
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/b6e0245c7a19",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.0369418878535273e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00013762691686070028
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/8c3f30cfb8d0",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.4838076161937117e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003553880940254661
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/9fcbd0d4c18c",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.068875240711753e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002864742784300378
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/aaa63036f7f0",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.900115007673179e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.610443052419313e-07
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/752de3c64748",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.2171884639266004e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005916705813618917
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/44bc91443c63",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.870198073854953e-11,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.807545888636412e-09
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/7608d4a845d1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.001744875585359e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.36460267001959e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/865cf90f8780",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.316344442259254e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00010872229166314362
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/a08e4ec58854",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.321876800010948e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00022346332275802183
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/515da5e55c6b",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.0210683823795872e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.006872823430265e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/43827fb1d181",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.7835507606776416e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.724677915626032e-06
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/cef5524bf249",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.510821931908923e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.2114039182064005e-06
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/b6c3d2cfec3b",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.8182891837212907e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.0526977230695955e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/6794820e54f7",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.065719889110529e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0001857743616751062
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/b6a0dca75760",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.559897116028887e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00045296632530411607
+    },
+    "winner": {
+     "store": "OBI:0002913",
+     "served": "OBI:0002913"
+    }
+   },
+   {
+    "id": "term.fits/F4/47b35cb588b9",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.1515851378338677e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002395514737515425
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/2ea2f6752797",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.934763736612723e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0001524229573112157
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/a213d5ff9852",
+    "n_candidates": 9,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.9132384663944624e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005018289114109842
+    },
+    "winner": {
+     "store": "ENVO:01000218",
+     "served": "ENVO:01000218"
+    }
+   },
+   {
+    "id": "term.fits/F4/491747ef0bd4",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.332148808471436e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0006242652493333445
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/437fdb61eb5f",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0438744509816411e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.27151439577411e-06
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/d993f121d485",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.856973208918762e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00012901870422214745
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/e9d074982b6c",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.049525469675743e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00028290928977059426
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/cb811d40ea32",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.8037391917877805e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00041985888828638407
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/611609644d90",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.468469790211202e-11,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.1523256151256677e-08
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/9a12246f2877",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.549405462408231e-11,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.8738512963523135e-09
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/d990d135bddc",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.1717321157476164e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0007521224775366431
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/403b3bd24dfb",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.308422201375727e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.03928431135614e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/075df81a43fb",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 7.720646428011069e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.4535204928937135e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/4bd40065e00f",
+    "n_candidates": 8,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.2911736044628483e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005064708075513957
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/3c155ba401e3",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.7013145321431722e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.4294991801389045e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/301321c59ef6",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.719732764752905e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.7926662718754685e-06
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/5404be707a35",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.7142339244168312e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00016185534678923863
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/93d638d2320d",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.332084183682582e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0006008460644263136
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/f923655dceb7",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.4946468309028358e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00010057314509920312
+    },
+    "winner": {
+     "store": "OBI:0002913",
+     "served": "OBI:0002913"
+    }
+   },
+   {
+    "id": "term.fits/F4/253bbb618f0b",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.077022243809125e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00033714304006093876
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F4/d67dde579b69",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4248029906904769e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0001613867157290727
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/8c3f30cfb8d0",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.815557912173473e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0007602327198971692
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/6f6189152add",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.5339842175332574e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003570557712706257
+    },
+    "winner": {
+     "store": "PCO:0000001",
+     "served": "PCO:0000001"
+    }
+   },
+   {
+    "id": "term.fits/F7/c5cd3e8b21e0",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.568207143110012e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003512657244096884
+    },
+    "winner": {
+     "store": "PATO:0045001",
+     "served": "PATO:0045001"
+    }
+   },
+   {
+    "id": "term.fits/F7/c635c4d78087",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.093109687100302e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00018180826240188352
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/3456cd5f4d83",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.5185076640555906e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002529085960945171
+    },
+    "winner": {
+     "store": "PCO:0000002",
+     "served": "PCO:0000002"
+    }
+   },
+   {
+    "id": "term.fits/F7/ecd81384bea6",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.306022580128575e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003252198679162266
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/0d370040cb21",
+    "n_candidates": 8,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.393493724057617e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00029502269748304943
+    },
+    "winner": {
+     "store": "ENVO:01000218",
+     "served": "ENVO:01000218"
+    }
+   },
+   {
+    "id": "term.fits/F7/0b1785e813aa",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.8778610922420835e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.003588449288219775
+    },
+    "winner": {
+     "store": "IAO:0000088",
+     "served": "IAO:0000088"
+    }
+   },
+   {
+    "id": "term.fits/F7/8ab93f6a404a",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.970928476346394e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.001510168571308368
+    },
+    "winner": {
+     "store": "NCBITaxon:41073",
+     "served": "NCBITaxon:41073"
+    }
+   },
+   {
+    "id": "term.fits/F7/f73792f2106e",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.2769848500293612e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0004987809350549544
+    },
+    "winner": {
+     "store": "BCO:0000042",
+     "served": "BCO:0000042"
+    }
+   },
+   {
+    "id": "term.fits/F7/43827fb1d181",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.7518615112066538e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0009222102358826811
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/29f8f39e3f82",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.7674764901554063e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0007353273766957658
+    },
+    "winner": {
+     "store": "NCBITaxon:6656",
+     "served": "NCBITaxon:6656"
+    }
+   },
+   {
+    "id": "term.fits/F7/1b85f0503c4b",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.893876168294507e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003215992966548731
+    },
+    "winner": {
+     "store": "GENEPIO:0001174",
+     "served": "GENEPIO:0001174"
+    }
+   },
+   {
+    "id": "term.fits/F7/1be1057b429d",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.1355308326743696e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005879000691803027
+    },
+    "winner": {
+     "store": "IAO:0000584",
+     "served": "IAO:0000584"
+    }
+   },
+   {
+    "id": "term.fits/F7/238d18b96912",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.037527541323916e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.000358574401919165
+    },
+    "winner": {
+     "store": "ENVO:01000978",
+     "served": "ENVO:01000978"
+    }
+   },
+   {
+    "id": "term.fits/F7/9261ffa52722",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.2059459049650343e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00029678437715413564
+    },
+    "winner": {
+     "store": "OBI:0100051",
+     "served": "OBI:0100051"
+    }
+   },
+   {
+    "id": "term.fits/F7/e9d074982b6c",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0666209542931071e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005634230243256599
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/c5fb4e8c4a80",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.1405919987625985e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0007519024184480527
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/27035864a9ed",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.695479868923382e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0009593505575375416
+    },
+    "winner": {
+     "store": "PCO:0000002",
+     "served": "PCO:0000002"
+    }
+   },
+   {
+    "id": "term.fits/F7/d990d135bddc",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.2378030727580591e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00011589871056227885
+    },
+    "winner": {
+     "store": "OBI:0001141",
+     "served": "OBI:0001141"
+    }
+   },
+   {
+    "id": "term.fits/F7/b6e0245c7a19",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.6422735354904017e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0008714177336420215
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/65948f1e9ab1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.315462933950464e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0006205710922024821
+    },
+    "winner": {
+     "store": "PATO:0001167",
+     "served": "PATO:0001167"
+    }
+   },
+   {
+    "id": "term.fits/F7/752de3c64748",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0804890079429974e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0007725026501789745
+    },
+    "winner": {
+     "store": "IAO:0000584",
+     "served": "IAO:0000584"
+    }
+   },
+   {
+    "id": "term.fits/F7/81146ba2e7c1",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.705392558039371e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0006991041536356102
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/3e08946a6927",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 7.190692250136355e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00029825898063726153
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/b9b84b8c9629",
+    "n_candidates": 5,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.200292294529671e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0006408555993581144
+    },
+    "winner": {
+     "store": "GECKO:0000008",
+     "served": "GECKO:0000008"
+    }
+   },
+   {
+    "id": "term.fits/F7/818f2bc33e1d",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0361534782288295e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0004082757975759632
+    },
+    "winner": {
+     "store": "OBI:0002913",
+     "served": "OBI:0002913"
+    }
+   },
+   {
+    "id": "term.fits/F7/318c0b3906d9",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.5668612208807886e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.001317491833832396
+    },
+    "winner": {
+     "store": "OBI:0001900",
+     "served": "OBI:0001900"
+    }
+   },
+   {
+    "id": "term.fits/F7/2ea2f6752797",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4869929958027939e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0010268136251395665
+    },
+    "winner": {
+     "store": "OBI:0100051",
+     "served": "OBI:0100051"
+    }
+   },
+   {
+    "id": "term.fits/F7/ccf18d87f5b1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.3156916469767594e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00021408367518988003
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/f72bfc86b089",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.1698629863120544e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002168918065464931
+    },
+    "winner": {
+     "store": "UO:0000185",
+     "served": "UO:0000185"
+    }
+   },
+   {
+    "id": "term.fits/F7/61650c24ea81",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.988410220699066e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00029737448420608104
+    },
+    "winner": {
+     "store": "PATO:0001519",
+     "served": "PATO:0001519"
+    }
+   },
+   {
+    "id": "term.fits/F7/458983dfaab2",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.7751981364797516e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00034653088195835124
+    },
+    "winner": {
+     "store": "OBI:0000659",
+     "served": "OBI:0000659"
+    }
+   },
+   {
+    "id": "term.fits/F7/96388cb57732",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0557427155832855e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.4641452183800086e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/425123c9feb5",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.1477334758258628e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0008443343358477406
+    },
+    "winner": {
+     "store": "PCO:0000001",
+     "served": "PCO:0000001"
+    }
+   },
+   {
+    "id": "term.fits/F7/8f51bd847c0a",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4073407477166455e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.96569816263348e-05
+    },
+    "winner": {
+     "store": "BCO:0000025",
+     "served": "BCO:0000025"
+    }
+   },
+   {
+    "id": "term.fits/F7/e1d166f2f664",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.721440658579269e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.7420241870654856e-05
+    },
+    "winner": {
+     "store": "ENVO:01001110",
+     "served": "ENVO:01001110"
+    }
+   },
+   {
+    "id": "term.fits/F7/9a55850946cd",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3691038181190551e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.002053059488248854
+    },
+    "winner": {
+     "store": "IAO:0000101",
+     "served": "IAO:0000101"
+    }
+   },
+   {
+    "id": "term.fits/F7/301321c59ef6",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.7832567618780715e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005051754561324895
+    },
+    "winner": {
+     "store": "OBI:0000659",
+     "served": "OBI:0000659"
+    }
+   },
+   {
+    "id": "term.fits/F7/9c2784463ce5",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.584484708949674e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.478199065354293e-05
+    },
+    "winner": {
+     "store": "NCIT:C81286",
+     "served": "NCIT:C81286"
+    }
+   },
+   {
+    "id": "term.fits/F7/6b18b90caf68",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3134618716437174e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0011689732129174235
+    },
+    "winner": {
+     "store": "NCBITaxon:7041",
+     "served": "NCBITaxon:7041"
+    }
+   },
+   {
+    "id": "term.fits/F7/7608d4a845d1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.961753949771607e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002086637338131192
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F7/1e16435f81a2",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.704832693956662e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.7115548955559667e-05
+    },
+    "winner": {
+     "store": "UO:0000187",
+     "served": "UO:0000187"
+    }
+   },
+   {
+    "id": "term.fits/F7/aaa63036f7f0",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.1760371282653068e-13,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.304384867847865e-11
+    },
+    "winner": {
+     "store": "NCBITaxon:8782",
+     "served": "NCBITaxon:8782"
+    }
+   },
+   {
+    "id": "term.fits/F7/8fec694d34c1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.1626927071461957e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.000899030890223862
+    },
+    "winner": {
+     "store": "OBCS:0000002",
+     "served": "OBCS:0000002"
+    }
+   },
+   {
+    "id": "term.fits/F7/bc43ab00a3ea",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.0734970031450786e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00014819999818094232
+    },
+    "winner": {
+     "store": "OBI:0001620",
+     "served": "OBI:0001620"
+    }
+   },
+   {
+    "id": "term.fits/F7/7f220bea1b01",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.356471389523666e-08,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0009677602773561222
+    },
+    "winner": {
+     "store": "OBI:0001624",
+     "served": "OBI:0001624"
+    }
+   },
+   {
+    "id": "term.fits/F9/96388cb57732",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.372728354946285e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0001786650245806376
+    },
+    "winner": {
+     "store": "BCO:0000054",
+     "served": "BCO:0000054"
+    }
+   },
+   {
+    "id": "term.fits/F9/43827fb1d181",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.6071837261665287e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0012062116692228286
+    },
+    "winner": {
+     "store": "NCBITaxon:7041",
+     "served": "NCBITaxon:7041"
+    }
+   },
+   {
+    "id": "term.fits/F9/bc43ab00a3ea",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.0091595106797033e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.7206031377245985e-05
+    },
+    "winner": {
+     "store": "OBI:0001620",
+     "served": "OBI:0001620"
+    }
+   },
+   {
+    "id": "term.fits/F9/d67dde579b69",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.710259904610158e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0008278731101658554
+    },
+    "winner": {
+     "store": "OBI:0100051",
+     "served": "OBI:0100051"
+    }
+   },
+   {
+    "id": "term.fits/F9/3e08946a6927",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.070760125129418e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002516849924388831
+    },
+    "winner": {
+     "store": "OBI:0002920",
+     "served": "OBI:0002920"
+    }
+   },
+   {
+    "id": "term.fits/F9/f6c981a06688",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.6994994168018085e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002849384868505167
+    },
+    "winner": {
+     "store": "NCBITaxon:50557",
+     "served": "NCBITaxon:50557"
+    }
+   },
+   {
+    "id": "term.fits/F9/752de3c64748",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.2005587205815615e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005536041134423242
+    },
+    "winner": {
+     "store": "IAO:0000584",
+     "served": "IAO:0000584"
+    }
+   },
+   {
+    "id": "term.fits/F9/0b1785e813aa",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.2029527954123846e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0015549039782299934
+    },
+    "winner": {
+     "store": "IAO:0000100",
+     "served": "IAO:0000100"
+    }
+   },
+   {
+    "id": "term.fits/F9/45c00c3d8401",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.1892621411390145e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0006223330057038567
+    },
+    "winner": {
+     "store": "OBI:0001911",
+     "served": "OBI:0001911"
+    }
+   },
+   {
+    "id": "term.fits/F9/97ca0644161f",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.050110917112269e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0004231112067158982
+    },
+    "winner": {
+     "store": "OBI:0001479",
+     "served": "OBI:0001479"
+    }
+   },
+   {
+    "id": "term.fits/F9/c4bfdb297042",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.060590603503165e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0007957191782891337
+    },
+    "winner": {
+     "store": "OBI:0000268",
+     "served": "OBI:0000268"
+    }
+   },
+   {
+    "id": "term.fits/F9/9c2784463ce5",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.9410868488112243e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 9.512327097915829e-05
+    },
+    "winner": {
+     "store": "NCIT:C81286",
+     "served": "NCIT:C81286"
+    }
+   },
+   {
+    "id": "term.fits/F9/255abf4dabed",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.001102614694993e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 9.896912991004536e-06
+    },
+    "winner": {
+     "store": "BCO:0000054",
+     "served": "BCO:0000054"
+    }
+   },
+   {
+    "id": "term.fits/F9/874f221a047e",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.960515880396258e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.349403195444637e-05
+    },
+    "winner": {
+     "store": "OBI:0002913",
+     "served": "OBI:0002913"
+    }
+   },
+   {
+    "id": "term.fits/F9/a213d5ff9852",
+    "n_candidates": 9,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.8886999180955932e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00019795066661579264
+    },
+    "winner": {
+     "store": "ENVO:01000218",
+     "served": "ENVO:01000218"
+    }
+   },
+   {
+    "id": "term.fits/F9/d993f121d485",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.69446727892742e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00020488437893206868
+    },
+    "winner": {
+     "store": "BCO:0000084",
+     "served": "BCO:0000084"
+    }
+   },
+   {
+    "id": "term.fits/F9/19fbf7841c67",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.315416024929577e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.130899391862562e-06
+    },
+    "winner": {
+     "store": "OBI:0001616",
+     "served": "OBI:0001616"
+    }
+   },
+   {
+    "id": "term.fits/F9/8fb8c7f67977",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.5616024472808743e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0009666789135400755
+    },
+    "winner": {
+     "store": "OBI:0002919",
+     "served": "OBI:0002919"
+    }
+   },
+   {
+    "id": "term.fits/F9/de29d3e7c5a5",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.6633139152965057e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.048028676362613e-05
+    },
+    "winner": {
+     "store": "PATO:0045001",
+     "served": "PATO:0045001"
+    }
+   },
+   {
+    "id": "term.fits/F9/c5cd3e8b21e0",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.6633139152965057e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.048028676362613e-05
+    },
+    "winner": {
+     "store": "PATO:0045001",
+     "served": "PATO:0045001"
+    }
+   },
+   {
+    "id": "term.fits/F9/8f3fea063fb6",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.503681546878414e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.340837884862168e-06
+    },
+    "winner": {
+     "store": "ENVO:01001780",
+     "served": "ENVO:01001780"
+    }
+   },
+   {
+    "id": "term.fits/F9/6844814d9ab4",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.760584699890156e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00023610213602087704
+    },
+    "winner": {
+     "store": "OBI:0002913",
+     "served": "OBI:0002913"
+    }
+   },
+   {
+    "id": "term.fits/F9/9a12246f2877",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4494091147287946e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 8.82987455839146e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F9/a81a577af14d",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.0810913594904168e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00041140774453740647
+    },
+    "winner": {
+     "store": "OBI:0001930",
+     "served": "OBI:0001930"
+    }
+   },
+   {
+    "id": "term.fits/F9/04d0a201755d",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.239497055636641e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00023937206904822705
+    },
+    "winner": {
+     "store": "ENVO:01000976",
+     "served": "ENVO:01000976"
+    }
+   },
+   {
+    "id": "term.fits/F9/d38eedc18681",
+    "n_candidates": 7,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.012856663525687e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00016534962884942606
+    },
+    "winner": {
+     "store": "ENVO:01000218",
+     "served": "ENVO:01000218"
+    }
+   },
+   {
+    "id": "term.fits/F9/0279bc7c45df",
+    "n_candidates": 14,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.0235210066721354e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00017745598554708142
+    },
+    "winner": {
+     "store": "ENVO:01000218",
+     "served": "ENVO:01000218"
+    }
+   },
+   {
+    "id": "term.fits/F9/4bd40065e00f",
+    "n_candidates": 8,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.7207943811446977e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00014417863903370964
+    },
+    "winner": {
+     "store": "ENVO:01000218",
+     "served": "ENVO:01000218"
+    }
+   },
+   {
+    "id": "term.fits/F9/d990d135bddc",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.944885743680572e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.733104586143508e-05
+    },
+    "winner": {
+     "store": "OBI:0001141",
+     "served": "OBI:0001141"
+    }
+   },
+   {
+    "id": "term.fits/F9/d405633e2b04",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.732211753417313e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0008225815761088162
+    },
+    "winner": {
+     "store": "PATO:0000140",
+     "served": "PATO:0000140"
+    }
+   },
+   {
+    "id": "term.fits/F9/b6c3d2cfec3b",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4372357728387186e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00012696893294983358
+    },
+    "winner": {
+     "store": "OBI:0000073",
+     "served": "OBI:0000073"
+    }
+   },
+   {
+    "id": "term.fits/F9/edeb1728ce10",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.388370176746427e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003399762665918238
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F9/b9b84b8c9629",
+    "n_candidates": 5,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.6849559569376282e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003718832091818003
+    },
+    "winner": {
+     "store": "PCO:0000003",
+     "served": "PCO:0000003"
+    }
+   },
+   {
+    "id": "term.fits/F9/eb0b2b62195f",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0754701183723903e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.000581579183352332
+    },
+    "winner": {
+     "store": "IAO:0000584",
+     "served": "IAO:0000584"
+    }
+   },
+   {
+    "id": "term.fits/F9/8fec694d34c1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 5.356856205840366e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0009804005705406071
+    },
+    "winner": {
+     "store": "OBCS:0000002",
+     "served": "OBCS:0000002"
+    }
+   },
+   {
+    "id": "term.fits/F9/458983dfaab2",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.709577555970455e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00036058119744153405
+    },
+    "winner": {
+     "store": "BCO:0000054",
+     "served": "BCO:0000054"
+    }
+   },
+   {
+    "id": "term.fits/F9/cfc3e70f9869",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.57338436326121e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.978415281922441e-05
+    },
+    "winner": {
+     "store": "UO:0000189",
+     "served": "UO:0000189"
+    }
+   },
+   {
+    "id": "term.fits/F9/7608d4a845d1",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4342279760354293e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.317216394833512e-05
+    },
+    "winner": {
+     "store": "BCO:0000003",
+     "served": "BCO:0000003"
+    }
+   },
+   {
+    "id": "term.fits/F9/cef5524bf249",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.492487868855259e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00019835414488178493
+    },
+    "winner": {
+     "store": "NCBITaxon:177272",
+     "served": "NCBITaxon:177272"
+    }
+   },
+   {
+    "id": "term.fits/F9/cb811d40ea32",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.564844944985545e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.239889125942867e-05
+    },
+    "winner": {
+     "store": "BCO:0000042",
+     "served": "BCO:0000042"
+    }
+   },
+   {
+    "id": "term.fits/F9/c635c4d78087",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.7211962589784866e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003732947299496525
+    },
+    "winner": {
+     "store": "PATO:0000011",
+     "served": "PATO:0000011"
+    }
+   },
+   {
+    "id": "term.fits/F9/1590438a3ff3",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.3786419512533685e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0007038521271875153
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F9/6f6189152add",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.2565263049501016e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002623187676427108
+    },
+    "winner": {
+     "store": "PCO:0000001",
+     "served": "PCO:0000001"
+    }
+   },
+   {
+    "id": "term.fits/F9/4d862ff1e6fb",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.9928226161546334e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00042252688545352246
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "term.fits/F9/b7f14dad8bf9",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.191165937704854e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0006495472436489069
+    },
+    "winner": {
+     "store": "PATO:0001894",
+     "served": "PATO:0001894"
+    }
+   },
+   {
+    "id": "term.fits/F9/3ee1eac909a3",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.9082557609628736e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.756855782977367e-05
+    },
+    "winner": {
+     "store": "UO:0000027",
+     "served": "UO:0000027"
+    }
+   },
+   {
+    "id": "term.fits/F9/32a6c505e031",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.424978579148364e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0005689096513763203
+    },
+    "winner": {
+     "store": "OBI:0100051",
+     "served": "OBI:0100051"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/29f8f39e3f82",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.344820751433502e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0001680017827307978
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/2611d4b9d7d1",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.8065752064089224e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.321623230885141e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/8c3f30cfb8d0",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.5536896242073226e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.505230870592957e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/04d0a201755d",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.4687854446314716e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 9.787133126426539e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/5404be707a35",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.4530649754828104e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.1390953476917223e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/4d862ff1e6fb",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.591551721960021e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00016802999038112443
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/186631558e16",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.8603797143329492e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 3.6433445516736995e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/9202bbd5f628",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.1680215788206771e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00033693156698362536
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/8adb116eb904",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 9.790594773847333e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.337482389739968e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/9261ffa52722",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.877227898218543e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00014386320827766697
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/29188aaf6ce3",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.4054330874535559e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.000535533419214751
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/138322c78048",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.995913276020005e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00014193894186653733
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/1a24f0e8ef03",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.391335016643792e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.763987810518013e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/818f2bc33e1d",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.3743596629142013e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 8.235954946389512e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/874f221a047e",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.262655581675155e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 4.7882621321937435e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/0d370040cb21",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.613159161672488e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 5.795615130799181e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/2606c10be55c",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.2938538845874703e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00029392950044010435
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/089ceeb413fa",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.849204180004449e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 9.819698190471904e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/6794820e54f7",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.4377044695045313e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 9.652085570412486e-06
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F4/1e637bb56b99",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.7962397665279017e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.6505265834187988e-05
+    },
+    "winner": {
+     "store": "__none__",
+     "served": "__none__"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/1e637bb56b99",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.876951341701517e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00013066293692293174
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/81146ba2e7c1",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.0748798134361266e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.4852923421785772e-05
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/8adb116eb904",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.3411212744017806e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00023178704788057863
+    },
+    "winner": {
+     "store": "genepio",
+     "served": "genepio"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/2611d4b9d7d1",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.736866698160867e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 9.669576958344292e-06
+    },
+    "winner": {
+     "store": "pato",
+     "served": "pato"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/4bd40065e00f",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.113767814906133e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00022933718355155897
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/138322c78048",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.015606110106205e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003639234941748004
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/96388cb57732",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.5081697204155642e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00018282309820816245
+    },
+    "winner": {
+     "store": "genepio",
+     "served": "genepio"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/df77fc4f3c19",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.1631615976680507e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002326843476579965
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/2606c10be55c",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.3632349416556906e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.163972514072746e-06
+    },
+    "winner": {
+     "store": "uo",
+     "served": "uo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/d67dde579b69",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.315614296339753e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.0219212807194289e-05
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/9202bbd5f628",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0112381877659324e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.0287315573144864e-06
+    },
+    "winner": {
+     "store": "uo",
+     "served": "uo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/6794820e54f7",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.078653995063462e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00011678783874902177
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/43827fb1d181",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.820660725157744e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 7.817712984070635e-05
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/5404be707a35",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.1969199314131327e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00016033209476823407
+    },
+    "winner": {
+     "store": "genepio",
+     "served": "genepio"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/089ceeb413fa",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.6634889418581933e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.000590032102811916
+    },
+    "winner": {
+     "store": "genepio",
+     "served": "genepio"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/29f8f39e3f82",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.7552083744785136e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00019392080042712756
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/3ee1eac909a3",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.60757236213934e-07,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 1.0857455954102133e-05
+    },
+    "winner": {
+     "store": "uo",
+     "served": "uo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/515da5e55c6b",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.992788237436318e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00014569151139137704
+    },
+    "winner": {
+     "store": "obi",
+     "served": "obi"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/977130c7dc7b",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.186872994116353e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 6.659519106516631e-05
+    },
+    "winner": {
+     "store": "envo",
+     "served": "envo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F7/1a24f0e8ef03",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0742788940643067e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 2.4948210712390576e-05
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/138322c78048",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 4.526769577434253e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0008213257406354812
+    },
+    "winner": {
+     "store": "pato",
+     "served": "pato"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/0279bc7c45df",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.0193828759951238e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00033966849128064247
+    },
+    "winner": {
+     "store": "gaz",
+     "served": "gaz"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/3ee1eac909a3",
+    "n_candidates": 1,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.193902868907749e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003240727257732834
+    },
+    "winner": {
+     "store": "uo",
+     "served": "uo"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/b9b84b8c9629",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.2926460037837595e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0004219313864195079
+    },
+    "winner": {
+     "store": "pato",
+     "served": "pato"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/77bf030797bc",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.2125251479339072e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00046862523231494535
+    },
+    "winner": {
+     "store": "pato",
+     "served": "pato"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/238d18b96912",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.3670141016229884e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0008169915666600414
+    },
+    "winner": {
+     "store": "obi",
+     "served": "obi"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/874f221a047e",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.136767062583701e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0010569568433083099
+    },
+    "winner": {
+     "store": "obi",
+     "served": "obi"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/a213d5ff9852",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.0182334476527277e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00028024471594811917
+    },
+    "winner": {
+     "store": "gaz",
+     "served": "gaz"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/9261ffa52722",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.52027822646539e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00043311575951843206
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/81146ba2e7c1",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.6479840891796558e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0003520384589461023
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/f6c981a06688",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.5063871138393248e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00021257077524750034
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/977130c7dc7b",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.14176872126837e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002867560935453928
+    },
+    "winner": {
+     "store": "gaz",
+     "served": "gaz"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/cb811d40ea32",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 3.830640872964919e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0010253950517548072
+    },
+    "winner": {
+     "store": "obi",
+     "served": "obi"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/8fcad0977033",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.1097544864641096e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0007669482479009115
+    },
+    "winner": {
+     "store": "obi",
+     "served": "obi"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/818f2bc33e1d",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 6.759509821097076e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0011399714303290676
+    },
+    "winner": {
+     "store": "obi",
+     "served": "obi"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/04d0a201755d",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.584635427960169e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0006677388665902728
+    },
+    "winner": {
+     "store": "obi",
+     "served": "obi"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/07e8bed38ae1",
+    "n_candidates": 2,
+    "max_abs_prob_diff": {
+     "store_vs_served": 2.0193828759951238e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.00033966849128064247
+    },
+    "winner": {
+     "store": "gaz",
+     "served": "gaz"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/2611d4b9d7d1",
+    "n_candidates": 4,
+    "max_abs_prob_diff": {
+     "store_vs_served": 8.45113636926964e-06,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0007433711294841105
+    },
+    "winner": {
+     "store": "pato",
+     "served": "pato"
+    }
+   },
+   {
+    "id": "column.ontology_fits/F9/8ab93f6a404a",
+    "n_candidates": 3,
+    "max_abs_prob_diff": {
+     "store_vs_served": 1.6081088576869185e-05,
+     "rank_vs_served": 0.0,
+     "fp16_vs_served": 0.0002904681151623123
+    },
+    "winner": {
+     "store": "taxrank",
+     "served": "taxrank"
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,36 @@
+mesa-clm serving patch 0006: compare the API key in constant time
+
+Local patch (no upstream pull request). create_app() auth() (bb42c6c:78-80) compares the
+Authorization header with `!=`, whose run time depends on the length of the matching
+prefix; this patch uses hmac.compare_digest over UTF-8 bytes instead (plan 6.3, 6.4).
+Behaviour is otherwise unchanged: no key configured means no check, a wrong or missing
+header is a 401. Generated against the tree with 0001..0005 applied.
+Series: apply 0001..0006 in order with `git apply` to Contrastive-LM/CLM
+bb42c6c5bf914fd449bed2f6ca65be80602cb1f7. Touches: src/clm/server.py.
+Never touches src/clm/schema.py or src/clm/client.py (DESIGN D4).
+
+diff --git a/src/clm/server.py b/src/clm/server.py
+index 5347416..e67a5ab 100644
+--- a/src/clm/server.py
++++ b/src/clm/server.py
+@@ -21,6 +21,7 @@ from __future__ import annotations
+ 
+ import argparse
+ import asyncio
++import hmac
+ import ipaddress
+ import os
+ import time
+@@ -78,8 +79,11 @@ def create_app(engine: Engine, api_key: str | None = None, ui: bool = True, cors
+         app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET", "POST", "OPTIONS"],
+                            allow_headers=["*"], allow_credentials=False, expose_headers=["X-CLM-Latency-Ms"])
+ 
++    expected = f"Bearer {api_key}".encode() if api_key else None
++
+     def auth(authorization: str | None):
+-        if api_key and authorization != f"Bearer {api_key}":
++        # mesa-clm 0006: a constant-time comparison, so response timing does not leak the key
++        if expected is not None and not hmac.compare_digest((authorization or "").encode(), expected):
+             raise HTTPException(401, "invalid API key")
+ 
+     @app.get("/health")

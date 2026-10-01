@@ -1,6 +1,6 @@
 ---
 title: "Provenance"
-description: "The mesa_clm sidecar: a per-host DuckDB opened under a flock, its tables and fingerprints, the direct/spool/none history backends and the lock set, source tags, export, prune and revert."
+description: "The mesa_clm sidecar: a per-host DuckDB opened under a flock, its tables and fingerprints, the migrate, export, import and prune verbs, the direct/spool/none history backends and the lock set, source tags, and revert."
 type: Reference
 tags:
   - concepts
@@ -9,7 +9,7 @@ tags:
   - history
 generated:
   by: "claude/fable-5.1"
-  at: "2026-09-29T00:00:00Z"
+  at: "2026-10-01T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -28,7 +28,9 @@ stale_after: "2027-03-31T00:00:00Z"
 Decision provenance is a sidecar owned by mesa-clm: schema `mesa_clm` in a DuckDB file per host
 at `~/.mesa/clm/provenance.duckdb`, **opened per operation under
 `flock(~/.mesa/clm/locks/provenance.lock)`**, with a run's rows buffered and committed in one
-transaction (DESIGN D11). Postgres is an optional dialect with the same CHECK constraints; a
+transaction (DESIGN D11). The file, its `.wal`, the `locks/` directory and the lock file are
+owner-only (0600/0700) whatever the umask: the sidecar holds owners and curator labels, and the
+CLI's trust boundary is the account that owns it (DESIGN A2). Postgres is an optional dialect with the same CHECK constraints; a
 parity test compares both DDLs. It is never a column on mesa-ducklake's `avu_changes` (the
 13-column Parquet layout is a hard contract) and never a table in schema `mesa`.
 
@@ -44,6 +46,16 @@ ids), `human_overrides` (`via ∈ {elicitation, cli, tool}` and what was offered
 (identity `(task_key, target_sha256, option_key, label_source)`, product code, leak group,
 `fold_eligible`, `bench_card`), `audits`, `clm_calls`, `schema_versions`. DuckDB 1.5.5 rejects
 `UNIQUE NULLS NOT DISTINCT`, so nullable key columns are `NOT NULL DEFAULT ''` sentinels.
+
+A rank_fit question is one CLM Choice over a candidate group, so it is one `decisions` row
+(the answered candidate's `s_c` and `p_fit` on the row) with one `decision_options` row per
+candidate and one for the anchor, plus a `decision_groups` row with the OLS search log, the
+top `p_fit`, the group margin and whether the anchor won. Every CLM request of a run is a
+`clm_calls` row (latency, input tokens, status), and a run that fails is still committed with
+status `failed` so the post-mortem has its rows. Writes buffer the whole run and commit it in
+one transaction; the DuckDB store passes each table's rows as one JSON parameter per chunk
+(DuckDB 1.5.6 pays a failed `pandas` import per bound value otherwise; see
+[Architecture](../develop/architecture.md)).
 
 Decisions are never updated; only a link's write status and snapshot id, and a run's status,
 change. Corrections are new rows. Every AVU written by mesa-clm carries a mesa-ducklake `source`
@@ -73,13 +85,34 @@ Upstream, the plan proposes the lock and the spool recorder to mesa-ducklake and
 per-write client to mesa-mcp (plan §7.3); until then mesa-clm's recorder is interim with the
 identical format.
 
-## Export, prune, retry, revert
+## Schema, export, import, prune (milestone M1)
 
-`provenance export --run-id R` writes a run's rows as Parquet to
-`<project>/.mesa/clm/runs/<run_id>/` (read-back verified, never under `.mesa/ducklake/`) and
-re-exports after reconcile; `prune` deletes local rows only for **terminal** runs (applied,
-every link `written|spooled` with a snapshot id, no open elicitation) or abandoned ones past
-`MESA_CLM_PROVENANCE__TTL_DAYS` (DESIGN D29). `history retry --run-id R` closes the crash window
-between an iRODS write and the link update. `mesa-clm revert --run-id R` deletes exactly the
-written triples with the stored unit, records `op=delete`, and marks links `reverted`
-(DESIGN D31).
+```bash
+mesa-clm provenance migrate [--dsn DSN]              # create or upgrade the mesa_clm schema
+mesa-clm provenance export --run-id R --out DIR      # DIR/<run_id>/<table>.parquet + manifest.json
+mesa-clm provenance import DIR/<run_id>              # commit an exported run into this sidecar
+mesa-clm provenance prune [--ttl-days N] [--dry-run] # delete terminal and long-abandoned runs' rows
+```
+
+`migrate` runs the DuckDB bootstrap (`CREATE … IF NOT EXISTS`) or applies the packaged Postgres
+migrations (`pg` extra); `mesa-clm doctor` reports the schema version without creating
+anything but the lock file (`sidecar schema`). `export` stages the run's rows through an
+in-memory DuckDB carrying the sidecar DDL (so the Parquet columns are the schema's types and the
+CHECKs re-validate every row), with the new `exported_at` on the copy's run row, writes one file
+per table read back and hashed, writes `manifest.json` last, verifies the whole directory as an
+importer would, and only then stamps the store's run row with the same `exported_at`: a failed
+export (an unwritable or non-directory `--out`, a full disk) leaves the run unmarked, so `prune`
+never takes it for exported. The export is owner-only (the run directory 0700, files 0600). `import` verifies every file's sha256 and row count against the manifest
+and never overwrites a run the store already holds. `prune` deletes local rows only for
+**terminal** runs (applied, exported, every `written` or `spooled` link with a snapshot id, no
+group escalated to a human) or abandoned ones past `MESA_CLM_PROVENANCE__TTL_DAYS` (DESIGN D29);
+`--dry-run` lists what would go and deletes nothing. Labels and audits are never pruned
+(DESIGN D30).
+
+## Project export, retry, revert (milestone M3, planned)
+
+Once `apply` writes, the export lands in `<project>/.mesa/clm/runs/<run_id>/` (never under
+`.mesa/ducklake/`) and is re-exported after reconcile (`export --push`). `history retry
+--run-id R` closes the crash window between an iRODS write and the link update. `mesa-clm revert
+--run-id R` deletes exactly the written triples with the stored unit, records `op=delete`, and
+marks links `reverted` (DESIGN D31).

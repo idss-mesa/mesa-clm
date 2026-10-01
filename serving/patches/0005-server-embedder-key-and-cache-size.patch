@@ -1,0 +1,31 @@
+mesa-clm serving patch 0005: the embedder key and host cache size from the environment
+
+Local patch (no upstream pull request). clm-serve main() builds its Embedder without an
+api_key and with the default 200,000-entry host LRU (about 3.3 GB of fp32 4096-d vectors),
+so it cannot reach a keyed encoder. After this patch it passes
+api_key=os.environ.get("CLM_EMB_API_KEY") and
+cache_size=int(os.environ.get("CLM_EMB_CACHE_SIZE", "200000")); mesa-clm sets
+CLM_EMB_CACHE_SIZE=20000 in clm.env (plan 6.3, 6.5). Generated against the tree with
+0001..0004 applied (the Engine(Embedder(...)) call sits at bb42c6c:203, line 240 after 0002).
+Series: apply 0001..0006 in order with `git apply` to Contrastive-LM/CLM
+bb42c6c5bf914fd449bed2f6ca65be80602cb1f7. Touches: src/clm/server.py.
+Never touches src/clm/schema.py or src/clm/client.py (DESIGN D4).
+
+diff --git a/src/clm/server.py b/src/clm/server.py
+index c76ba8d..5347416 100644
+--- a/src/clm/server.py
++++ b/src/clm/server.py
+@@ -237,7 +237,12 @@ def main() -> None:
+             raise SystemExit(f"--model expects NAME=PATH, got {spec!r}")
+         extra[name] = path
+     device = args.device or default_device()
+-    engine = Engine(Embedder(args.emb_url, args.emb_model, max_tokens=args.max_tokens), checkpoint=ckpt,
++    # mesa-clm 0005: the encoder's bearer key and the host LRU size come from the environment
++    # (the default 200,000 cached fp32 4096-d vectors is about 3.3 GB of host memory).
++    engine = Engine(Embedder(args.emb_url, args.emb_model, max_tokens=args.max_tokens,
++                             api_key=os.environ.get("CLM_EMB_API_KEY"),
++                             cache_size=int(os.environ.get("CLM_EMB_CACHE_SIZE", "200000"))),
++                    checkpoint=ckpt,
+                     models=extra, checkpoint_dir=args.ckpt_dir, device=device,
+                     action_cache=args.action_cache)
+     if not engine.heads and not extra:

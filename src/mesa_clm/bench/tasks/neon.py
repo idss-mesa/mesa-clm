@@ -12,8 +12,11 @@ Five tasks: ``neon_term_fits``, ``neon_ontology_fits``, ``neon_annotate``, ``neo
 have no labels in mesa-clm (``column.ontology`` is asked as ``ontology_fits``, ``avu.keep`` is a
 rule, D25) and the ``neon_term_choice26`` control measured the logprob top-20 cap, which CLM
 does not have. Rows that may not enter a fold are dropped here, once, and counted in
-``meta["excluded"]``: ``fold_eligible=False`` (teacher and agent labels, D19, D21) and
-``bench_card=True`` (curator labels recorded on a bench card, D30). Every task sets
+``meta["excluded"]``: ``fold_eligible=False`` (teacher and agent labels, D19, D21) and curator
+labels on a bench card (``bench_card=True``, or a curator source on one of the fixed
+:data:`~mesa_clm.learn.labels.BENCH_CARDS` whatever its tag, D30). They are dropped *before*
+the per-identity highest-weight selection (``labelled_targets(fold_only=True)``), so a curator
+answer can neither remove a pre-registered item nor change its label. Every task sets
 ``meta["masked"]`` (the anyjev-learn-bench §5 defect: no cell could ever be cited because no
 task set it): the item set carries every option restriction serving applies, which for
 ``column.ontology_fits`` is the aspect mask (labels exist only for aspect-allowed registry
@@ -58,9 +61,11 @@ MASKS: Final[dict[str, str | None]] = {
 
 
 def _eligible(ls: LabelledSet) -> tuple[list[int], collections.Counter[str]]:
-    """Indices of the rows a pre-registered fold may use and why the others were dropped."""
+    """Indices of the rows a pre-registered fold may use and why the rows were dropped: the
+    counts ``labelled_targets(fold_only=True)`` made before its selection, plus (defensively)
+    any selected entry that still is not fold-eligible or on a bench card."""
     keep: list[int] = []
-    excluded: collections.Counter[str] = collections.Counter()
+    excluded: collections.Counter[str] = collections.Counter(ls.excluded)
     for i in range(len(ls)):
         if ls.fold_eligible and not ls.fold_eligible[i]:
             excluded["not_fold_eligible"] += 1
@@ -87,7 +92,7 @@ def neon_task(
     """
     spec = SPECS[task_id]
     min_weight = min_weight_for(task_id, policy_path)
-    ls = labelled_targets(store, task_id, min_weight=min_weight)
+    ls = labelled_targets(store, task_id, min_weight=min_weight, fold_only=True)
     keep, excluded = _eligible(ls)
     items = [(ls.states[i], ls.labels[i]) for i in keep]
     sources = (

@@ -300,3 +300,270 @@ def test_neon_task_drops_teacher_and_bench_card_rows(tmp_path: Path) -> None:
     }  # agent_pick is below 0.5
     assert task.meta["label_sources"] == {"consensus_all": 1}
     assert "neon_annotate" not in tasks_from_store(st)  # empty tasks are dropped
+
+
+# -- a curator answer never changes a pre-registered item (D30) ----------------------------------
+
+
+def _curator_flip(store: LabelStore, *, tagged: bool, card: str, source: str = "curator") -> int:
+    """A curator answer at weight 1.0 on an existing ``consensus_negative`` identity of
+    ``card``, labelled Yes (a flip), tagged ``bench_card`` or not as the sidecar recorded it."""
+    negatives = [
+        r
+        for r in store.labels_for("term.fits", sources=["consensus_negative"])
+        if r["card"] == card
+    ]
+    row = negatives[0]
+    return store.insert_labels(
+        [
+            LabelRow(
+                task_id="term.fits",
+                task_key=row["task_key"],
+                target_sha256=row["target_sha256"],
+                option_key=row["option_key"],
+                label_source=source,  # type: ignore[arg-type]
+                label="Yes",
+                label_index=0,
+                weight=1.0,
+                state_sha256=row["state_sha256"],
+                state_json=row["state_json"],
+                card=card,
+                product_code=row["product_code"],
+                leak_group=row["leak_group"],
+                bench_card=tagged,
+                origin="override:test",
+                actor="curator",
+            )
+        ]
+    )
+
+
+def _items(task: Task) -> list[tuple[str, int]]:
+    return sorted(
+        (key, label) for key, (_, label) in zip(task.option_keys, task.items, strict=True)
+    )
+
+
+@pytest.mark.parametrize("tagged", [True, False])
+def test_a_curator_answer_on_a_bench_card_leaves_the_bench_items_unchanged(
+    tmp_path: Path, tagged: bool
+) -> None:
+    """The finding the fold filter answers: a tagged 1.0 curator row used to win its identity
+    in ``labelled_targets`` and then be dropped as ``bench_card``, removing the silver item
+    (285 -> 284 term.fits items); an untagged one (recorded while the sidecar held no silver
+    labels, so tagging failed open) replaced the silver label in the test fold. Both now leave
+    the pre-registered items and labels exactly as they were, and the row is reported."""
+    st = LabelStore(tmp_path / "labels.duckdb")
+    assert (
+        ingest_neon_eval(
+            st, NEON_EVAL_ROOT, TermResolver(RecordingOLS(None, OLS_DIR, "replay"))
+        ).inserted
+        == 934
+    )
+    before = neon_task(st, "neon_term_fits", "term.fits")
+    assert len(before.items) == 285 and before.class_counts() == {0: 86, 1: 199}
+    card = "DP1.10022.001.bet_expertTaxonomistIDProcessed"
+    assert _curator_flip(st, tagged=tagged, card=card) == 1
+    assert _curator_flip(st, tagged=tagged, card=card, source="curator_implicit") == 1
+    after = neon_task(st, "neon_term_fits", "term.fits")
+    assert _items(after) == _items(before)
+    assert after.class_counts() == {0: 86, 1: 199} and after.cards == before.cards
+    assert after.meta["excluded"] == {"bench_card": 2}
+    assert after.meta["label_sources"] == before.meta["label_sources"]
+    # Without the fold filter the curator rows still compete (a fitter excludes them itself).
+    competing = labelled_targets(st, "term.fits", min_weight=0.5)
+    assert {"curator", "curator_implicit"} & set(competing.sources)
+
+
+def test_a_gold_row_never_changes_a_bench_item(tmp_path: Path) -> None:
+    """``gold`` (weight 1.0, fold-eligible) is reserved: nothing in mesa-clm or mesa-anyjev
+    produces it. A gold row in a mesa-anyjev file used to pass ``labels import-anyjev`` without a
+    terminal or ``--trust-curator`` untouched and replace a bench item's silver label in the
+    fold. The import now skips it, and a gold row written any other way is dropped from the
+    folds on a bench card like a curator row."""
+    from mesa_clm.learn.labels import fold_exclusion, import_anyjev
+    from tests.unit.test_label_identity import _anyjev_sidecar
+
+    st = LabelStore(tmp_path / "labels.duckdb")
+    ingest_neon_eval(st, NEON_EVAL_ROOT, TermResolver(RecordingOLS(None, OLS_DIR, "replay")))
+    before = neon_task(st, "neon_term_fits", "term.fits")
+    card = "DP1.10003.001.brd_countdata"
+    silver = next(
+        r for r in st.labels_for("term.fits", sources=["consensus_negative"]) if r["card"] == card
+    )
+    src = tmp_path / "anyjev.duckdb"
+    _anyjev_sidecar(
+        src,
+        [
+            {
+                "question_id": "term.fits",
+                "question_key": TERM.key,
+                "state": silver["state_json"],
+                "label_index": 0,  # Yes: a flip of the consensus_negative item
+                "label_source": "gold",
+                "weight": 1.0,
+                "ts": "2026-01-01 00:00:00+00",
+            }
+        ],
+    )
+    report = import_anyjev(src, st)
+    assert report.skipped["reserved_source"] == 1 and report.inserted == 0
+    assert not st.labels_for("term.fits", sources=["gold"])
+    assert _items(neon_task(st, "neon_term_fits", "term.fits")) == _items(before)
+    # Written directly (untagged), it still cannot reach a fold on a bench card.
+    assert _curator_flip(st, tagged=False, card=card, source="gold") == 1
+    after = neon_task(st, "neon_term_fits", "term.fits")
+    assert _items(after) == _items(before) and after.meta["excluded"] == {"bench_card": 1}
+    row = {"fold_eligible": True, "bench_card": False, "label_source": "gold"}
+    assert fold_exclusion({**row, "card": card}) == "bench_card"
+    assert fold_exclusion({**row, "card": "DP1.00004.001.BP_30min"}) is None
+
+
+def test_a_consensus_row_from_elsewhere_never_changes_a_bench_item(tmp_path: Path) -> None:
+    """The review of 70dbefe: the gold fix left the consensus sources open. A ``consensus_all``
+    row in a mesa-anyjev file (no terminal, no ``--trust-curator``) on a ``consensus_negative``
+    identity of a bench card entered under the source name it gave and, at 0.8 over 0.5,
+    replaced the silver label (term.fits 86/199 -> 87/198). The import now skips consensus rows
+    on a bench card (``bench_silver``), and the fold filter takes a bench card's consensus rows
+    only from the neon-avu-eval ingestion: written any other way, one is dropped like a curator
+    row. Elsewhere a consensus row is an ordinary label."""
+    from mesa_clm.learn.labels import NEON_EVAL_ORIGIN, fold_exclusion, import_anyjev
+    from tests.unit.test_label_identity import _anyjev_sidecar
+
+    st = LabelStore(tmp_path / "labels.duckdb")
+    ingest_neon_eval(st, NEON_EVAL_ROOT, TermResolver(RecordingOLS(None, OLS_DIR, "replay")))
+    before = neon_task(st, "neon_term_fits", "term.fits")
+    assert all(
+        r["origin"].startswith(NEON_EVAL_ORIGIN)
+        for task_id in ("term.fits", "column.ontology_fits")
+        for r in st.labels_for(task_id)
+    )
+    card = "DP1.10003.001.brd_countdata"
+    silver = next(
+        r for r in st.labels_for("term.fits", sources=["consensus_negative"]) if r["card"] == card
+    )
+    src = tmp_path / "anyjev.duckdb"
+    _anyjev_sidecar(
+        src,
+        [
+            {
+                "question_id": "term.fits",
+                "question_key": TERM.key,
+                "state": silver["state_json"],
+                "label_index": 0,  # Yes: a flip of the consensus_negative item
+                "label_source": "consensus_all",
+                "weight": 0.8,
+                "ts": "2026-01-01 00:00:00+00",
+            }
+        ],
+    )
+    report = import_anyjev(src, st)
+    assert report.skipped["bench_silver"] == 1 and report.inserted == 0
+    assert _items(neon_task(st, "neon_term_fits", "term.fits")) == _items(before)
+    # --trust-curator vouches for curator rows, not for silver labels.
+    assert import_anyjev(src, st, trust_curator=True).skipped["bench_silver"] == 1
+    # Written directly (another origin), it still cannot reach a fold on a bench card.
+    assert _curator_flip(st, tagged=False, card=card, source="consensus_all") == 1
+    after = neon_task(st, "neon_term_fits", "term.fits")
+    assert _items(after) == _items(before) and after.meta["excluded"] == {"bench_card": 1}
+    row = {
+        "fold_eligible": True,
+        "bench_card": False,
+        "label_source": "consensus_all",
+        "origin": "anyjev-import:labels.duckdb@0123456789ab " + NEON_EVAL_ORIGIN + "deadbeef0000",
+    }
+    assert fold_exclusion({**row, "card": card}) == "bench_card"
+    assert fold_exclusion({**row, "card": ""}) == "bench_card"
+    assert fold_exclusion({**row, "card": "DP1.00004.001.BP_30min"}) is None
+
+
+def test_curator_rows_on_other_cards_still_compete(tmp_path: Path) -> None:
+    """A curator answer on a card that is not a bench card is a fold-eligible label: the fold
+    filter drops bench-card and not-fold-eligible rows only."""
+    from mesa_clm.learn.labels import BENCH_CARDS, fold_exclusion, is_bench_card
+
+    assert len(BENCH_CARDS) == 7 and is_bench_card("") and is_bench_card("x", ["x"])
+    assert not is_bench_card("DP1.00004.001.BP_30min")
+    row = {"fold_eligible": True, "bench_card": False, "label_source": "curator"}
+    assert fold_exclusion({**row, "card": "DP1.00004.001.BP_30min"}) is None
+    assert fold_exclusion({**row, "card": "DP1.10003.001.brd_countdata"}) == "bench_card"
+    assert fold_exclusion({**row, "card": ""}) == "bench_card"
+    assert fold_exclusion({**row, "fold_eligible": False, "card": "c"}) == "not_fold_eligible"
+    silver = {
+        **row,
+        "label_source": "consensus_all",
+        "card": "DP1.10003.001.brd_countdata",
+        "origin": "neon-avu-eval/results/validated.json@0123456789ab",
+    }
+    assert fold_exclusion(silver) is None
+
+
+def test_the_bench_cards_are_the_snapshots_and_the_fixtures() -> None:
+    """The fixed list equals the cards of the frozen snapshot and the committed eval copy."""
+    import duckdb
+
+    from mesa_clm.learn.labels import BENCH_CARDS
+
+    snapshot = Path(__file__).resolve().parents[2] / "bench" / "snapshots" / "2026-09-29.parquet"
+    con = duckdb.connect()
+    try:
+        cards = {
+            str(r[0])
+            for r in con.execute(
+                "SELECT DISTINCT card FROM read_parquet(?)", [str(snapshot)]
+            ).fetchall()
+        }
+    finally:
+        con.close()
+    assert cards == set(BENCH_CARDS)
+    assert {p.stem for p in (NEON_EVAL_ROOT / "cards").glob("*.md")} == set(BENCH_CARDS)
+
+
+def test_the_live_smoke_card_is_not_a_bench_card() -> None:
+    """Live runs before the M2 cells exist use non-bench cards only (DESIGN, "G1 freeze"); the
+    engine test's card must stay outside the fixed list."""
+    from mesa_clm.learn.labels import is_bench_card
+
+    srer = Path(__file__).resolve().parents[1] / "fixtures" / "cards-srer"
+    cards = sorted(p.stem for p in srer.glob("*.md"))
+    assert cards == ["DP1.00004.001.BP_30min"]
+    assert not any(is_bench_card(c) for c in cards)
+
+
+def test_the_doctor_and_latency_questions_are_not_bench_items() -> None:
+    """The doctor's golden ``/v1/systemone`` question runs on every ``doctor --serve`` and the
+    latency probe's rank-fit on every probe run, after G1 too, so neither may ask a labelled
+    bench item. Until 2026-10-01 both asked brd_countdata's observerDistance, which is one
+    (DESIGN, "G1 freeze", item 7 of the disclosure)."""
+    import importlib.util
+
+    import duckdb
+
+    from mesa_clm import health
+    from mesa_clm.identity import target_sha256
+    from mesa_clm.learn.labels import is_bench_card
+
+    snapshot = Path(__file__).resolve().parents[2] / "bench" / "snapshots" / "2026-09-29.parquet"
+    con = duckdb.connect()
+    try:
+        labelled = {
+            str(r[0])
+            for r in con.execute(
+                "SELECT DISTINCT target_sha256 FROM read_parquet(?)", [str(snapshot)]
+            ).fetchall()
+        }
+    finally:
+        con.close()
+    golden = health.GOLDEN_STATE
+    assert not is_bench_card(str(golden["card"]["dataset"]))
+    for task in ("term.fits", "column.ontology_fits"):
+        assert target_sha256(task, golden) not in labelled, task
+    path = Path(__file__).resolve().parents[2] / "scripts" / "serving_probes.py"
+    spec = importlib.util.spec_from_file_location("serving_probes_under_test", path)
+    assert spec is not None and spec.loader is not None
+    probes = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(probes)
+    state, _ = probes.rank_fit_request(None)
+    assert not is_bench_card(str(state["card"]["dataset"]))
+    assert target_sha256("term.fits", state) not in labelled
+    assert not is_bench_card(probes.SMOKE_CARD.stem)
