@@ -8,7 +8,12 @@ through an in-memory DuckDB that carries the sidecar DDL itself, so the Parquet 
 schema's types (JSON stays JSON, timestamps stay ``TIMESTAMPTZ``) even for an empty table and the
 CHECKs re-validate every row on the way out; ``ORDER BY`` per table
 (:data:`mesa_clm.provenance.store.RUN_TABLE_ORDER`) makes the bytes a function of the rows.
-The run row is stamped ``exported_at`` first, so the copy says when it was taken.
+The copy's run row carries the new ``exported_at``, so it says when it was taken; the store's run
+row is stamped with the same value only after every file and the manifest are written and read
+back, so a failed export (an unwritable ``--out``, a full disk) leaves the store as it was and
+``prune`` never takes a run for exported when no copy exists. An export is owner-only like the
+sidecar it copies: the run directory (and any directory it creates) ``0700``, every file
+``0600`` (:mod:`mesa_clm.perms`).
 
 ``import_run`` reads such a directory back (sha256 and row counts verified against the manifest)
 and commits it into a store in one transaction. ``prune`` deletes the local rows of runs that are
@@ -33,6 +38,7 @@ import duckdb
 from pydantic import BaseModel
 
 from mesa_clm import __version__
+from mesa_clm.perms import private_dir, tighten_file, write_private_text
 from mesa_clm.provenance.models import (
     AvuLinkRow,
     ClmCallRow,
@@ -131,17 +137,19 @@ def export_run(
     store: ProvenanceStore, run_id: UUID, out_dir: str | Path, *, now: datetime | None = None
 ) -> dict[str, str]:
     """Write ``<out_dir>/<run_id>/<table>.parquet`` for every run table (empty tables included,
-    typed) plus ``manifest.json``; returns ``{table: path, "manifest": path}``. The run is
-    stamped ``exported_at`` before the copy is taken and every file is read back (row count) and
-    hashed into the manifest."""
+    typed) plus ``manifest.json``; returns ``{table: path, "manifest": path}``. The copy's run
+    row carries the new ``exported_at``; every file is read back (row count) and hashed into the
+    manifest, the finished export is verified with :func:`read_export`, and only then is the
+    store's run row stamped with the same ``exported_at`` (module docstring). Files ``0600``,
+    directories created ``0700``. ``OSError`` (an unwritable or non-directory ``out_dir``, a
+    full disk) leaves the store unchanged."""
     run = store.run(run_id)
     if run is None:
         raise KeyError(f"run {run_id} not found")
     stamp = now or _now()
-    store.finish_run(run_id, str(run["status"]), exported_at=stamp)
     frames = run_rows(store, run_id)
-    target = Path(out_dir).expanduser() / str(run_id)
-    target.mkdir(parents=True, exist_ok=True)
+    frames["runs"] = [{**frames["runs"][0], "exported_at": stamp}]
+    target = private_dir(Path(out_dir).expanduser() / str(run_id))
     written: dict[str, str] = {}
     tables: dict[str, dict[str, Any]] = {}
     con = _scratch()
@@ -150,16 +158,20 @@ def export_run(
             _stage(con, table, frames[table])
             path = target / f"{table}.parquet"
             tmp = target / f".{table}.parquet.tmp"
-            con.execute(  # COPY targets cannot be bound parameters; the path is a quoted literal
-                f"COPY (SELECT * FROM {SCHEMA}.{table} ORDER BY {RUN_TABLE_ORDER[table]}) "  # noqa: S608
-                f"TO {_lit(tmp)} (FORMAT PARQUET)"
-            )
-            got = con.execute(f"SELECT count(*) FROM read_parquet({_lit(tmp)})").fetchone()  # noqa: S608
-            n = int(got[0]) if got else -1
-            if n != len(frames[table]):
+            try:
+                con.execute(  # COPY targets cannot be bound parameters; the path is a quoted literal
+                    f"COPY (SELECT * FROM {SCHEMA}.{table} ORDER BY {RUN_TABLE_ORDER[table]}) "  # noqa: S608
+                    f"TO {_lit(tmp)} (FORMAT PARQUET)"
+                )
+                tighten_file(tmp)  # DuckDB writes it with the umask's mode
+                got = con.execute(f"SELECT count(*) FROM read_parquet({_lit(tmp)})").fetchone()  # noqa: S608
+                n = int(got[0]) if got else -1
+                if n != len(frames[table]):
+                    raise RuntimeError(f"{table}: wrote {len(frames[table])} rows, read back {n}")
+                os.replace(tmp, path)
+            except BaseException:
                 tmp.unlink(missing_ok=True)
-                raise RuntimeError(f"{table}: wrote {len(frames[table])} rows, read back {n}")
-            os.replace(tmp, path)
+                raise
             written[table] = str(path)
             tables[table] = {
                 "file": path.name,
@@ -178,10 +190,11 @@ def export_run(
         "tables": tables,
     }
     manifest_path = target / MANIFEST_NAME
-    tmp_manifest = target / f".{MANIFEST_NAME}.tmp"
-    tmp_manifest.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    os.replace(tmp_manifest, manifest_path)  # manifest last: its presence means "complete"
+    # Manifest last, atomically: its presence means "complete".
+    write_private_text(manifest_path, json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     written["manifest"] = str(manifest_path)
+    read_export(target)  # the copy as an importer will see it, before the store says "exported"
+    store.finish_run(run_id, str(run["status"]), exported_at=stamp)
     return written
 
 

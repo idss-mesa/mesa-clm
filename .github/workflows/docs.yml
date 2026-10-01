@@ -6,18 +6,19 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Read-only by default; only the deploy job (main pushes) may write Pages.
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
 
 jobs:
   okf-conformance:
     runs-on: ubuntu-latest
+    # Per ref: a newer push to the same PR or branch supersedes the check; runs of other refs
+    # (a PR and main) never cancel each other, so scripts/wait_for_checks.sh sees no false
+    # "cancel".
+    concurrency:
+      group: docs-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
@@ -32,6 +33,14 @@ jobs:
   deploy:
     needs: okf-conformance
     if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # One Pages deployment at a time, never cancelled midway (GitHub's Pages starter workflow).
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

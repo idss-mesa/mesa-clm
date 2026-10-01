@@ -9,12 +9,16 @@
   ``GET /health`` (``{"ok", "embedder", "models", "cache"}``, unguarded); errors ``401``
   (bad bearer key on ``/v1/*``), ``422`` (malformed body, unknown model, bad temperature) as
   ``{"detail": ...}``; every 200 carries ``X-CLM-Latency-Ms``;
-* the encoder (port ``encoder_port``, default 8090): ``POST /v1/embeddings`` (base64 float32
-  from :class:`mesa_clm.clm.fake.FakeEncoder`, honouring ``truncate_prompt_tokens`` with
-  ``truncation_side: left`` on whitespace tokens), ``GET /v1/models`` (OpenAI ``{"data": [...]}``),
-  ``POST /tokenize`` (``len(text.split())`` tokens, unguarded like vLLM's, or 404 when
-  ``tokenize_supported=False``); errors ``401`` on ``/v1/*`` with a wrong key, ``404`` for an
-  unknown model, ``400`` for a malformed body, all as vLLM's ``{"error": {...}}``.
+* the encoder (port ``encoder_port``, default 8090) behind the bearer guard of DESIGN A4
+  (``serving/vllm_auth.py``): every path but exactly ``/health`` answers ``401`` without the
+  right key, unknown paths included; with it ``POST /v1/embeddings`` (base64 float32 from
+  :class:`mesa_clm.clm.fake.FakeEncoder`, honouring ``truncate_prompt_tokens`` with
+  ``truncation_side: left`` on whitespace tokens; an input may be a text or a list of token ids
+  from ``/tokenize``), ``GET /v1/models`` (OpenAI ``{"data": [...]}`` with ``owned_by`` and
+  ``root``, settable to impersonate the in-process fallback), ``POST /tokenize``
+  (``count`` = ``len(text.split())`` and one stable id per word, or 404 when
+  ``tokenize_supported=False``); errors ``404`` for an unknown model or route, ``400`` for a
+  malformed body, all as vLLM's ``{"error": {...}}``.
 
 The two servers share one handler and are told apart by the request's port, so a test points
 ``ClmHttpClient`` at ``http://127.0.0.1:8700`` and ``EncoderClient`` at ``http://127.0.0.1:8090``
@@ -75,6 +79,8 @@ class FakeClmServer:
         tokenize_supported: bool = True,
         clm_port: int = CLM_PORT,
         encoder_port: int = ENCODER_PORT,
+        encoder_root: str | None = "Qwen/Qwen3-8B",
+        encoder_owned_by: str = "vllm",
     ) -> None:
         self.clm = clm or FakeClm(encoder)
         self.encoder = encoder or self.clm.encoder
@@ -86,10 +92,15 @@ class FakeClmServer:
         self.tokenize_supported = tokenize_supported
         self.clm_port = clm_port
         self.encoder_port = encoder_port
+        self.encoder_root = encoder_root
+        self.encoder_owned_by = encoder_owned_by
         self.requests: list[httpx.Request] = []
         # Scripted failures consumed one per request before any route runs.
         self.fail_next: list[Failure] = []
         self.embedded_texts: list[str] = []
+        # /tokenize ids: one stable id per distinct word, so token-id inputs decode back.
+        self._word_ids: dict[str, int] = {}
+        self._id_words: dict[int, str] = {}
 
     # -- helpers for tests -----------------------------------------------------------------------
 
@@ -193,40 +204,40 @@ class FakeClmServer:
 
     # -- the encoder -----------------------------------------------------------------------------
 
+    def _word_id(self, word: str) -> int:
+        if word not in self._word_ids:
+            self._word_ids[word] = len(self._word_ids) + 1
+            self._id_words[self._word_ids[word]] = word
+        return self._word_ids[word]
+
     def _encoder(self, request: httpx.Request) -> httpx.Response:
         path, method = request.url.path, request.method
-        if path == "/health" and method == "GET":
+        if path == "/health":
             return httpx.Response(200, content=b"")
+        # The bearer guard (serving/vllm_auth.py, DESIGN A4): everything else needs the key.
+        if not self._authorised(request, self.encoder_api_key):
+            return httpx.Response(401, json={"error": "Unauthorized"})
         if path == "/tokenize" and method == "POST":
             if not self.tokenize_supported:
                 return _vllm_error(404, "Not Found", "NotFoundError")
             body = self._body(request)
             if body is None or not isinstance(body.get("prompt"), str):
                 return _vllm_error(400, "tokenize needs a string 'prompt'")
-            n = FakeEncoder.count_tokens(body["prompt"])
+            ids = [self._word_id(w) for w in body["prompt"].split()]
             return httpx.Response(
                 200,
-                json={"count": n, "max_model_len": self.max_model_len, "tokens": list(range(n))},
+                json={"count": len(ids), "max_model_len": self.max_model_len, "tokens": ids},
             )
-        if not path.startswith("/v1/"):
-            return _vllm_error(404, "Not Found", "NotFoundError")
-        if not self._authorised(request, self.encoder_api_key):
-            return httpx.Response(401, json={"error": "Unauthorized"})
         if path == "/v1/models" and method == "GET":
-            return httpx.Response(
-                200,
-                json={
-                    "object": "list",
-                    "data": [
-                        {
-                            "id": self.encoder_model,
-                            "object": "model",
-                            "owned_by": "vllm",
-                            "max_model_len": self.max_model_len,
-                        }
-                    ],
-                },
-            )
+            entry: dict[str, Any] = {
+                "id": self.encoder_model,
+                "object": "model",
+                "owned_by": self.encoder_owned_by,
+                "max_model_len": self.max_model_len,
+            }
+            if self.encoder_root is not None:
+                entry["root"] = self.encoder_root
+            return httpx.Response(200, json={"object": "list", "data": [entry]})
         if path == "/v1/embeddings" and method == "POST":
             return self._embeddings(request)
         return _vllm_error(404, "Not Found", "NotFoundError")
@@ -242,8 +253,14 @@ class FakeClmServer:
         inputs = body.get("input")
         if isinstance(inputs, str):
             inputs = [inputs]
+        if isinstance(inputs, list):
+            # Token-id inputs (lists of ids from /tokenize) decode back to their words.
+            inputs = [
+                " ".join(self._id_words.get(int(i), "?") for i in t) if isinstance(t, list) else t
+                for t in inputs
+            ]
         if not isinstance(inputs, list) or not all(isinstance(t, str) for t in inputs):
-            return _vllm_error(400, "'input' must be a string or a list of strings")
+            return _vllm_error(400, "'input' must be a string, a list of strings or of id lists")
         fmt = body.get("encoding_format", "float")
         if fmt not in ("float", "base64"):
             return _vllm_error(400, "encoding_format must be 'float' or 'base64'")

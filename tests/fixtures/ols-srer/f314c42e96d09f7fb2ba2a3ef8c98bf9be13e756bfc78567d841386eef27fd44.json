@@ -1,0 +1,71 @@
+{
+ "args": {
+  "ontology_id": "envo",
+  "parent_iri": "http://purl.obolibrary.org/obo/ENVO_00000428",
+  "query": "desert biome",
+  "size": 20
+ },
+ "method": "search_term_descendants",
+ "response": [
+  {
+   "curie": "ENVO:01000179",
+   "description": "A desert ecosystem which is undergoing climactic ecological succession.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000179",
+   "isRoot": false,
+   "label": "desert biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000184",
+   "description": "Preliminary definition. The semantics and definitions of \"mediterranean\", \"subtropical\", \"tropical\", \"temperate\", \"polar\", and similar climate types may be transferred to an \"environmental condition\" class once the semantics of this class have been established.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000184",
+   "isRoot": false,
+   "label": "subtropical desert biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000183",
+   "description": "Preliminary definition. The semantics and definitions of \"mediterranean\", \"subtropical\", \"tropical\", \"temperate\", \"polar\", and similar climate types may be transferred to an \"environmental condition\" class once the semantics of this class have been established.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000183",
+   "isRoot": false,
+   "label": "tropical desert biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000185",
+   "description": "A montane desert biome is a desert biome which occurs in regions elevated above sea level and which has community structure determined by elevation-dependent environmental conditions.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000185",
+   "isRoot": false,
+   "label": "montane desert biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000186",
+   "description": "Preliminary definition. The semantics and definitions of \"mediterranean\", \"subtropical\", \"tropical\", \"temperate\", \"polar\", and similar climate types may be transferred to an \"environmental condition\" class once the semantics of this class have been established.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000186",
+   "isRoot": false,
+   "label": "polar desert biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  },
+  {
+   "curie": "ENVO:01000182",
+   "description": "Preliminary definition. The semantics and definitions of \"mediterranean\", \"subtropical\", \"tropical\", \"temperate\", \"polar\", and similar climate types may be transferred to an \"environmental condition\" class once the semantics of this class have been established.",
+   "hasChildren": false,
+   "iri": "http://purl.obolibrary.org/obo/ENVO_01000182",
+   "isRoot": false,
+   "label": "temperate desert biome",
+   "ontologyId": "envo",
+   "synonyms": []
+  }
+ ]
+}

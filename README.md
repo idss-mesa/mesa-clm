@@ -56,7 +56,8 @@ uv run mesa-clm bench baselines --snapshot bench/snapshots/today.parquet        
 uv run mesa-clm bench mde --snapshot bench/snapshots/today.parquet                   # minimum detectable effect
 ```
 
-`labels import-anyjev --dsn <sidecar>` reads a mesa-anyjev sidecar read-only.
+`labels import-anyjev --dsn <sidecar>` reads a mesa-anyjev sidecar read-only (its curator rows
+arrive as weight-0 `agent_pick` unless `--trust-curator` is given at a terminal).
 
 Annotation (milestone M1; every outcome is proposed-only until evidence-cited autos land in M4):
 
@@ -69,12 +70,15 @@ uv run mesa-clm --provenance duckdb:////tmp/clm.duckdb review --run-id <id or pr
 uv run mesa-clm framings --check          # framing keys match framings.lock.json
 ```
 
-On the serving host, `--provider clm` (the default) talks to the loopback encoder and
-clm-serve with the keys named by `MESA_CLM_CLM__API_KEY_FILE` and
-`MESA_CLM_ENCODER__API_KEY_FILE` (`mesa-clm serve keys --init` creates them and prints those
-lines); `mesa-clm doctor --serve` checks the stack first. `provenance migrate|export|import|prune`
-maintain the sidecar. `plan`, `apply`, `revert` and the `mesa_clm_*` MCP tools arrive with M3;
-`mesa-clm --help` lists what exists.
+Answers given at an interactive terminal are curator labels; `review --pick` and `feedback` run
+without one (a script, an agent's shell) are recorded as an agent's answers at weight 0 and say
+so (DESIGN A2). On the serving host, `--provider clm` (the default) talks to the loopback encoder
+and clm-serve with the keys `mesa-clm serve keys --init` writes, `~/.mesa/clm/secrets/clm.key`
+and `encoder.key`, read by default (`MESA_CLM_CLM__API_KEY_FILE` and
+`MESA_CLM_ENCODER__API_KEY_FILE` name others); `mesa-clm doctor --serve` checks the stack first.
+`features build|export-npz|project|stats` keep the per-encoder feature cache, and `provenance
+migrate|export|import|prune` maintain the sidecar. `plan`, `apply`, `revert` and the
+`mesa_clm_*` MCP tools arrive with M3; `mesa-clm --help` lists what exists.
 
 ## Links
 

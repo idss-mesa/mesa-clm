@@ -221,8 +221,9 @@ class AnnotationRun:
     ``abstained`` lists what was decided but proposes nothing (``{group_id, reason, task_id,
     scope, column_name, site_code, ontology_id}``; ``group_id`` is ``None`` for a column without
     an aspect). ``n_calls``/``input_tokens`` count the requests to clm-serve and the encoder
-    tokens it reported; ``degraded`` is true when any group fell back to ``ols_rank`` or a CLM
-    answer was unavailable (D28). ``buffer`` holds the rows (committed when a store was given)."""
+    tokens it reported, ``n_failed_calls`` those that got no answer; ``degraded`` is true when
+    any group fell back to ``ols_rank`` or a CLM answer was unavailable (D28). ``buffer`` holds
+    the rows (committed when a store was given)."""
 
     run_id: UUID
     owner: str
@@ -240,6 +241,7 @@ class AnnotationRun:
     fingerprint: dict[str, str]
     clm_model: str = ""
     buffer: RunBuffer | None = None
+    n_failed_calls: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         """The ``mesa_clm_annotate`` output (plan §7.1) minus the tool's ``next_step``."""
@@ -253,6 +255,7 @@ class AnnotationRun:
             "abstained": [dict(a) for a in self.abstained],
             "n_decisions": self.n_decisions,
             "n_calls": self.n_calls,
+            "n_failed_calls": self.n_failed_calls,
             "input_tokens": self.input_tokens,
             "outcomes": dict(self.outcomes),
             "degraded": self.degraded,
@@ -765,6 +768,7 @@ class _Pass:
             abstained=self.abstained,
             n_decisions=len(self.buffer.decisions),
             n_calls=len(self.calls),
+            n_failed_calls=sum(c.status != "ok" for c in self.calls),
             input_tokens=input_tokens,
             outcomes=dict(self.rec.outcomes),
             degraded=self.degraded,

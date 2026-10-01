@@ -12,6 +12,7 @@ import re
 import shlex
 import shutil
 import stat
+import subprocess
 import sys
 from collections.abc import Sequence
 from pathlib import Path
@@ -26,6 +27,7 @@ from mesa_clm.secrets import SecretError
 ROOT = Path(__file__).resolve().parents[2]
 LOCK = ROOT / "serving" / "serving.lock.json"
 PATCHES = ROOT / "serving" / "patches"
+AUTH = ROOT / "serving" / "vllm_auth.py"
 
 
 def _mode(path: Path) -> int:
@@ -176,7 +178,7 @@ def test_render_units_keeps_percent_h() -> None:
     units = serving.render_units()
     assert tuple(units) == serving.UNIT_NAMES
     for name, text in units.items():
-        assert name.endswith(".timer") or "%h/.mesa/clm/" in text, name
+        assert name.endswith((".timer", ".socket")) or "%h/.mesa/clm/" in text, name
         assert str(Path.home()) not in text, name
 
 
@@ -199,6 +201,12 @@ def test_encoder_unit_matches_the_plan() -> None:
     ]
     assert _directive(text, "Restart") == ["on-failure"]
     assert _directive(text, "TimeoutStartSec") == ["900"]
+    # DESIGN A5: the loopback endpoint and the headroom timer come up with the encoder.
+    assert _directive(text, "Wants") == ["mesa-clm-encoder-proxy.socket mesa-clm-headroom.timer"]
+    # A recipe that dies after the model load is not reloaded on the shared GPU forever.
+    unit_section = text.split("[Service]", 1)[0]
+    assert _directive(unit_section, "StartLimitIntervalSec") == ["1h"]
+    assert _directive(unit_section, "StartLimitBurst") == ["3"]
 
 
 def test_serve_unit_matches_the_plan() -> None:
@@ -214,7 +222,7 @@ def test_serve_unit_matches_the_plan() -> None:
         "%h/.mesa/clm/serve/.venv/bin/clm-serve",
         *("--host", "127.0.0.1", "--port", "8700"),
         *("--emb-url", "http://127.0.0.1:8090/v1/embeddings", "--emb-model", "qwen3-8b"),
-        *("--max-tokens", "4096", "--ckpt", "%h/.mesa/clm/heads/CLM_v0.1-8B.pt"),
+        *("--max-tokens", "4095", "--ckpt", "%h/.mesa/clm/heads/CLM_v0.1-8B.pt"),
         *("--ckpt-dir", "%h/.mesa/clm/heads/served", "--device", "cpu"),
         *("--action-cache", "512MiB", "--no-download", "--no-ui"),
     ]
@@ -228,6 +236,27 @@ def test_headroom_timer_runs_every_five_minutes() -> None:
     timer = units["mesa-clm-headroom.timer"]
     assert _directive(timer, "OnUnitActiveSec") == ["5min"]
     assert _directive(timer, "Unit") == ["mesa-clm-headroom.service"]
+    assert _directive(timer, "PartOf") == ["mesa-clm-encoder.service"]
+
+
+def test_the_encoder_endpoint_is_a_loopback_socket_and_a_proxy() -> None:
+    """DESIGN A5: 127.0.0.1:8090 belongs to a socket unit that hands connections to
+    systemd-socket-proxyd, which forwards them to the container's unix socket; neither unit can be
+    enabled on its own, and both stop with the encoder."""
+    units = serving.render_units()
+    sock = units["mesa-clm-encoder-proxy.socket"]
+    assert _directive(sock, "ListenStream") == ["127.0.0.1:8090"]
+    assert _directive(sock, "PartOf") == ["mesa-clm-encoder.service"]
+    proxy = units["mesa-clm-encoder-proxy.service"]
+    assert _directive(proxy, "Type") == ["notify"]
+    assert _directive(proxy, "Requires") == ["mesa-clm-encoder-proxy.socket"]
+    assert _directive(proxy, "PartOf") == ["mesa-clm-encoder.service"]
+    assert _directive(proxy, "ExecStart") == [
+        "/usr/lib/systemd/systemd-socket-proxyd %h/.mesa/clm/run/encoder.sock"
+    ]
+    for text in (sock, proxy):
+        assert "[Install]" not in text
+    assert serving.ENCODER_SOCKET == "/run/mesa-clm/encoder.sock"
 
 
 def test_install_sections_only_name_targets() -> None:
@@ -278,6 +307,35 @@ def test_committed_lock_verifies_and_equals_the_build() -> None:
     assert re.fullmatch(r"sha256:[0-9a-f]{64}", lock.image.digest)
 
 
+def test_committed_lock_pins_the_container_recipe() -> None:
+    """DESIGN A3, A4: the whole argument list, the non-secret environment, the bearer guard (its
+    sha256 is the committed module's) and the cap one below the window."""
+    lock = load_serving_lock(LOCK)
+    recipe = lock.recipe
+    assert recipe is not None
+    assert recipe.args == list(serving.ENCODER_ARGS)
+    assert recipe.env == serving.ENCODER_ENV
+    assert recipe.truncate_prompt_tokens == lock.encoder.max_len - 1 == 4095
+    assert recipe.auth.sha256 == hashlib.sha256(AUTH.read_bytes()).hexdigest()
+    assert recipe.auth.open_paths == ["/health"]
+    assert recipe.flag("--middleware") == recipe.auth.middleware == "vllm_auth.require_api_key"
+    assert "--disable-fastapi-docs" in recipe.args
+    assert recipe.env["PYTHONPATH"] == recipe.auth.mount
+    assert recipe.env["VLLM_NO_USAGE_STATS"] == recipe.env["DO_NOT_TRACK"] == "1"
+    assert not {"VLLM_API_KEY", "CLM_API_KEY", "CLM_EMB_API_KEY"} & set(recipe.env)
+    # DESIGN A5: no network, the API on a unix socket, the rendezvous on loopback, and the KV
+    # cache pinned to 8 sequences of the whole window (4.5 GiB, plan §6.5's budget).
+    assert recipe.network == "none"
+    assert recipe.flag("--uds") == "/run/mesa-clm/encoder.sock"
+    assert "--host" not in recipe.args and "--port" not in recipe.args
+    assert recipe.env["VLLM_HOST_IP"] == "127.0.0.1" and recipe.env["GLOO_SOCKET_IFNAME"] == "lo"
+    assert recipe.flag("--kv-cache-memory-bytes") == str(8 * 4096 * 147_456) == "4831838208"
+    assert serving.KV_BYTES_PER_TOKEN == 144 * 1024
+    assert serving.FALLBACK_ENCODER.route == "transformers"
+    assert serving.FALLBACK_ENCODER.batch_invariance == "serial"
+    assert serving.FALLBACK_ENCODER.max_len == lock.encoder.max_len
+
+
 def test_lock_patches() -> None:
     lock = load_serving_lock(LOCK)
     assert [p.id[:4] for p in lock.patches] == ["0001", "0002", "0003", "0004", "0005", "0006"]
@@ -301,22 +359,48 @@ def test_no_patch_touches_the_vendored_files() -> None:
         assert not {"src/clm/schema.py", "src/clm/client.py"} & set(touched), path
 
 
-def _encoder_run_args() -> tuple[str, list[str]]:
+def _encoder_run_argv() -> list[str]:
     script = (ROOT / "deploy" / "bin" / "mesa-clm-encoder-run").read_text(encoding="utf-8")
     joined = script.replace("\\\n", " ")
     (line,) = [ln for ln in joined.splitlines() if ln.startswith("exec docker run")]
-    argv = shlex.split(line)
+    return shlex.split(line)
+
+
+def _encoder_run_args() -> tuple[str, list[str]]:
+    argv = _encoder_run_argv()
     (i,) = [k for k, a in enumerate(argv) if a.startswith("vllm/vllm-openai@")]
     return argv[i], argv[i + 1 :]
 
 
+def _docker_options(flag: str) -> list[str]:
+    argv = _encoder_run_argv()
+    (i,) = [k for k, a in enumerate(argv) if a.startswith("vllm/vllm-openai@")]
+    return [argv[k + 1] for k in range(i) if argv[k] == flag]
+
+
 def test_encoder_run_matches_the_lock() -> None:
     lock = load_serving_lock(LOCK)
+    assert lock.recipe is not None
     image, args = _encoder_run_args()
     assert image == f"{lock.image.ref}@{lock.image.digest}"
-    assert serving.recipe_mismatches(lock.encoder, args) == []
+    assert serving.recipe_mismatches(lock.encoder, args, lock.recipe) == []
+    assert args == lock.recipe.args
     assert args[args.index("--served-model-name") + 1] == "qwen3-8b"
     assert args[args.index("--gpu-memory-utilization") + 1] == "0.20"
+    env = dict(e.split("=", 1) for e in _docker_options("-e"))
+    assert env == lock.recipe.env
+    mounts = _docker_options("-v")
+    assert f"$auth_dir:{lock.recipe.auth.mount}:ro" in mounts
+    script = (ROOT / "deploy" / "bin" / "mesa-clm-encoder-run").read_text(encoding="utf-8")
+    assert f'auth_dir="$HOME/.mesa/clm/{serving.AUTH_DIR}"' in script.splitlines()
+    assert "$HOME/.cache/huggingface:/hf:ro" in mounts
+    assert 'env_file="$HOME/.mesa/clm/secrets/encoder.env"' in script.splitlines()
+    assert _docker_options("--env-file") == ["$env_file"]
+    # DESIGN A5: nothing published, no network, the socket directory mounted read-write.
+    assert _docker_options("-p") == []
+    assert _docker_options("--network") == [lock.recipe.network] == ["none"]
+    assert f'run_dir="$HOME/.mesa/clm/{serving.RUN_DIR}"' in script.splitlines()
+    assert f"$run_dir:{serving.SOCKET_MOUNT}" in mounts
 
 
 def test_recipe_mismatches_names_the_differences() -> None:
@@ -327,6 +411,15 @@ def test_recipe_mismatches_names_the_differences() -> None:
     assert any("--max-model-len" in w for w in wrong)
     assert any("prefix caching" in w for w in wrong)
     assert serving.recipe_mismatches(serving.ENCODER, []) != []
+    recipe = load_serving_lock(LOCK).recipe
+    assert recipe is not None
+    unguarded = [a for a in args if a not in ("--middleware", serving.AUTH_MIDDLEWARE)]
+    (only,) = serving.recipe_mismatches(serving.ENCODER, unguarded, recipe)
+    assert "missing: --middleware vllm_auth.require_api_key" in only
+    (extra,) = serving.recipe_mismatches(serving.ENCODER, [*args, "--enable-log-requests"], recipe)
+    assert "not in the lock: --enable-log-requests" in extra
+    (order,) = serving.recipe_mismatches(serving.ENCODER, [*args, "--enforce-eager"], recipe)
+    assert "order or repetition" in order
 
 
 # -- live checks with fakes ----------------------------------------------------------------------
@@ -334,6 +427,29 @@ def test_recipe_mismatches_names_the_differences() -> None:
 COMMIT = serving.CLM_COMMIT
 IMAGE_ID = "sha256:" + "ab" * 32
 TAG_ENV = json.dumps(["PATH=/usr/bin", "VLLM_IMAGE_TAG=vllm/vllm-openai:v0.27.1"])
+# What `docker inspect` reports for a correctly started container: the locked environment, the
+# key by name only (the template never prints its value), the read-only mounts.
+GOOD_ENV: dict[str, str | None] = {
+    **serving.ENCODER_ENV,
+    "PATH": None,
+    "VLLM_API_KEY": None,
+    "VLLM_IMAGE_TAG": None,
+}
+GOOD_MOUNTS = {"/hf": False, serving.AUTH_MOUNT: False, serving.SOCKET_MOUNT: True}
+
+
+def inspect_line(
+    image: str,
+    cmd: list[str],
+    env: dict[str, str | None] | None = None,
+    mounts: dict[str, bool] | None = None,
+    network: str = "none",
+) -> str:
+    env_text = "".join(
+        f"{k}={v};" if v is not None else f"{k};" for k, v in (env or GOOD_ENV).items()
+    )
+    mounts_text = "".join(f"{d}={str(rw).lower()};" for d, rw in (mounts or GOOD_MOUNTS).items())
+    return f"{image}\t{json.dumps(cmd)}\t{env_text}\t{mounts_text}\t{network}\n"
 
 
 class FakeHost:
@@ -344,6 +460,9 @@ class FakeHost:
         self.image_present = True
         self.image_env = TAG_ENV
         self.container: tuple[str, list[str]] | None = None
+        self.container_env: dict[str, str | None] | None = None
+        self.container_mounts: dict[str, bool] | None = None
+        self.container_network = "none"
         self.schema = schema
         self.commit = COMMIT
         self.diff_rc = 0
@@ -369,7 +488,10 @@ class FakeHost:
             if self.container is None:
                 return serving.CommandResult(1, "")
             image, cmd = self.container
-            return serving.CommandResult(0, f"{image}\t{json.dumps(cmd)}\n")
+            line = inspect_line(
+                image, cmd, self.container_env, self.container_mounts, self.container_network
+            )
+            return serving.CommandResult(0, line)
         raise AssertionError(argv)
 
 
@@ -407,6 +529,7 @@ def test_nothing_installed_is_skipped_not_failed(tmp_path: Path) -> None:
         "serve clone",
         "venv schema",
         "head",
+        "auth module",
         "image",
     }
 
@@ -418,7 +541,7 @@ def test_require_live_turns_absence_into_problems(tmp_path: Path) -> None:
         LOCK, home=tmp_path / "home", repo=ROOT, require_live=True, runner=host.run, docker=_docker
     )
     names = {p.split(":", 1)[0] for p in problems}
-    assert names == {"installed lock", "serve clone", "venv schema", "head", "image"}
+    assert names == {"installed lock", "serve clone", "venv schema", "head", "auth module", "image"}
 
 
 def test_docker_unreachable_is_a_skip(tmp_path: Path) -> None:
@@ -461,6 +584,10 @@ def _install(tmp_path: Path) -> tuple[Path, Path, FakeHost]:
     python = home / "serve" / ".venv" / "bin" / "python"
     python.parent.mkdir(parents=True)
     python.write_text("", encoding="utf-8")
+    guard = home / serving.AUTH_INSTALLED
+    guard.parent.mkdir(mode=0o700)
+    guard.write_bytes(AUTH.read_bytes())
+    guard.chmod(0o600)
     return lock_path, home, FakeHost(schema=schema)
 
 
@@ -513,6 +640,149 @@ def test_a_container_with_another_recipe_is_a_problem(tmp_path: Path) -> None:
         lock_path, home=home, repo=ROOT, runner=host.run, docker=_docker
     )
     assert any(p.startswith("encoder container: ") and "prefix caching" in p for p in problems)
+
+
+@pytest.mark.parametrize(
+    ("env", "mounts", "expect"),
+    [
+        (
+            {k: v for k, v in GOOD_ENV.items() if k != "VLLM_BATCH_INVARIANT"},
+            None,
+            "env VLLM_BATCH_INVARIANT None, lock '1'",
+        ),
+        ({**GOOD_ENV, "VLLM_BATCH_INVARIANT": "0"}, None, "env VLLM_BATCH_INVARIANT '0'"),
+        (
+            {k: v for k, v in GOOD_ENV.items() if k != "VLLM_API_KEY"},
+            None,
+            "VLLM_API_KEY is missing",
+        ),
+        ({**GOOD_ENV, "PYTHONPATH": "/elsewhere"}, None, "env PYTHONPATH '/elsewhere'"),
+        ({k: v for k, v in GOOD_ENV.items() if k != "DO_NOT_TRACK"}, None, "env DO_NOT_TRACK None"),
+        (None, {"/hf": False}, "/opt/mesa-clm-auth is not mounted"),
+        (None, {"/hf": False, serving.AUTH_MOUNT: True}, "mounted read-write"),
+        (
+            None,
+            {"/hf": False, serving.AUTH_MOUNT: False},
+            "/run/mesa-clm (the API socket's directory) is not mounted read-write",
+        ),
+        (
+            {**GOOD_ENV, "VLLM_HOST_IP": "0.0.0.0"},  # noqa: S104 - the mismatch under test
+            None,
+            "env VLLM_HOST_IP '0.0.0.0'",
+        ),
+    ],
+)
+def test_a_container_with_another_environment_is_a_problem(
+    tmp_path: Path, env: dict[str, str | None] | None, mounts: dict[str, bool] | None, expect: str
+) -> None:
+    lock_path, home, host = _install(tmp_path)
+    _, args = _encoder_run_args()
+    host.container = (IMAGE_ID, args)
+    host.container_env, host.container_mounts = env, mounts
+    problems = serving.verify_serving_lock(
+        lock_path, home=home, repo=ROOT, runner=host.run, docker=_docker
+    )
+    assert [p for p in problems if expect in p], problems
+
+
+def test_a_stray_batch_invariance_variable_is_a_problem() -> None:
+    """A lock without ``VLLM_BATCH_INVARIANT`` (batch_invariance none) refuses a container that
+    sets it: the variable changes every vector (DESIGN A3)."""
+    recipe = load_serving_lock(LOCK).recipe
+    assert recipe is not None
+    plain = recipe.model_copy(
+        update={"env": {k: v for k, v in recipe.env.items() if k != "VLLM_BATCH_INVARIANT"}}
+    )
+    state = serving.ContainerState(
+        IMAGE_ID, list(recipe.args), {**GOOD_ENV, "VLLM_BATCH_INVARIANT": "1"}, GOOD_MOUNTS, "none"
+    )
+    assert serving.environment_mismatches(plain, state) == [
+        "env VLLM_BATCH_INVARIANT is set; the lock does not set it"
+    ]
+    assert serving.environment_mismatches(recipe, state) == []
+
+
+def test_a_container_on_a_network_is_a_problem(tmp_path: Path) -> None:
+    """DESIGN A5: the lock's container has no network; one started on the default bridge (the
+    pre-A5 recipe, whose engine listeners the bridge address exposed) is refused."""
+    lock_path, home, host = _install(tmp_path)
+    _, args = _encoder_run_args()
+    host.container = (IMAGE_ID, args)
+    host.container_network = "bridge"
+    problems = serving.verify_serving_lock(
+        lock_path, home=home, repo=ROOT, runner=host.run, docker=_docker
+    )
+    assert any("network 'bridge', lock 'none'" in p for p in problems), problems
+
+
+def test_the_inspect_template_never_asks_for_the_key() -> None:
+    """The template prints values for the watched names only; ``VLLM_API_KEY`` is not one."""
+    fmt = serving.inspect_format({"PYTHONPATH", "VLLM_BATCH_INVARIANT"})
+    assert '"PYTHONPATH" "VLLM_BATCH_INVARIANT"' in fmt and "VLLM_API_KEY" not in fmt
+    assert fmt.startswith("{{.Image}}\t{{json .Config.Cmd}}\t{{range .Config.Env}}")
+    assert fmt.endswith("\t{{.HostConfig.NetworkMode}}")
+    state = serving.parse_inspect(
+        'img\t["a","b"]\tPYTHONPATH=/x;VLLM_API_KEY;\t/hf=false;/y=true;\tnone\n'
+    )
+    assert state == serving.ContainerState(
+        "img",
+        ["a", "b"],
+        {"PYTHONPATH": "/x", "VLLM_API_KEY": None},
+        {"/hf": False, "/y": True},
+        "none",
+    )
+    assert serving.parse_inspect("too\tfew\n") is None
+    assert serving.parse_inspect("img\tnot json\t\t\tnone\n") is None
+
+
+def test_the_auth_module_must_be_private_and_locked(tmp_path: Path) -> None:
+    lock_path, home, host = _install(tmp_path)
+    guard = home / serving.AUTH_INSTALLED
+
+    def auth_problems() -> list[str]:
+        problems = serving.verify_serving_lock(
+            lock_path, home=home, repo=ROOT, runner=host.run, docker=lambda args: None
+        )
+        return [p for p in problems if p.startswith("auth module: ")]
+
+    assert auth_problems() == []
+    guard.chmod(0o644)
+    assert "private" in auth_problems()[0]
+    guard.chmod(0o600)
+    guard.parent.chmod(0o755)
+    assert "private" in auth_problems()[0]
+    guard.parent.chmod(0o700)
+    guard.write_bytes(AUTH.read_bytes() + b"# edited\n")
+    assert "sha256 differs" in auth_problems()[0]
+    guard.unlink()
+    assert auth_problems() == []  # absent is a skip without require_live
+    assert any(
+        p.startswith("auth module: ")
+        for p in serving.verify_serving_lock(
+            lock_path,
+            home=home,
+            repo=ROOT,
+            require_live=True,
+            runner=host.run,
+            docker=lambda args: None,
+        )
+    )
+
+
+def test_a_lock_without_a_recipe_skips_the_new_checks(tmp_path: Path) -> None:
+    """Locks written before DESIGN A3 still verify; the guard and environment checks skip."""
+    lock_path, home, host = _install(tmp_path)
+    body = json.loads(lock_path.read_text(encoding="utf-8"))
+    body.pop("recipe")
+    old = tmp_path / "old.lock.json"
+    old.write_text(json.dumps(sign_lock_body(body)), encoding="utf-8")
+    (home / "serving.lock.json").write_text(old.read_text(encoding="utf-8"), encoding="utf-8")
+    _, args = _encoder_run_args()
+    host.container = (IMAGE_ID, args)
+    host.container_env = {}
+    checks = _check(tmp_path, host, lock=old)
+    assert _statuses(checks)["auth module"] == ["skip"]
+    assert _statuses(checks)["encoder container"] == ["ok"]
 
 
 def test_schema_and_installed_lock_drift(tmp_path: Path) -> None:
@@ -608,5 +878,128 @@ def test_default_lock_path_is_the_checkout() -> None:
     assert serving.load_lock().lock_sha == load_serving_lock(LOCK).lock_sha
 
 
-def test_serving_home_default() -> None:
+def test_serving_home_default(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.undo()  # the suite's per-test serving home (tests/conftest.py)
     assert serving.serving_home() == Path(os.path.expanduser("~/.mesa/clm"))
+
+
+# -- the encoder's network namespace (DESIGN A5) ---------------------------------------------------
+
+# /proc/net/tcp and tcp6 rows as the kernel prints them (little-endian words): 127.0.0.1:8090,
+# 0.0.0.0:53581, 172.17.0.2:38747 listening, one established row; [::]:53581, [::1]:9000.
+PROC_TCP = """\
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode
+   0: 0100007F:1F9A 00000000:0000 0A 00000000:00000000 00:00000000 00000000  1000        0 1 1
+   1: 00000000:D14D 00000000:0000 0A 00000000:00000000 00:00000000 00000000  1000        0 2 1
+   2: 020011AC:975B 00000000:0000 0A 00000000:00000000 00:00000000 00000000  1000        0 3 1
+   3: 0100007F:1F9A 0100007F:C000 01 00000000:00000000 00:00000000 00000000  1000        0 4 1
+"""
+PROC_TCP6 = """\
+  sl  local_address                         remote_address                        st tx_queue
+   0: 00000000000000000000000000000000:D14D 00000000000000000000000000000000:0000 0A 0
+   1: 00000000000000000000000001000000:2328 00000000000000000000000000000000:0000 0A 0
+"""
+
+
+def _proc(tmp_path: Path, pid: int, interfaces: Sequence[str], tcp: str, tcp6: str) -> Path:
+    net = tmp_path / "proc" / str(pid) / "net"
+    net.mkdir(parents=True)
+    dev = "Inter-|   Receive\n face |bytes\n" + "".join(f"  {i}: 0 0\n" for i in interfaces)
+    (net / "dev").write_text(dev, encoding="ascii")
+    (net / "tcp").write_text(tcp, encoding="ascii")
+    (net / "tcp6").write_text(tcp6, encoding="ascii")
+    return tmp_path / "proc"
+
+
+def test_proc_listeners_are_decoded() -> None:
+    v4 = serving.parse_proc_listeners(PROC_TCP)
+    assert [(str(a), p) for a, p in v4] == [
+        ("127.0.0.1", 8090),
+        ("0.0.0.0", 53581),  # noqa: S104 - a decoded wildcard bind
+        ("172.17.0.2", 38747),
+    ]
+    v6 = serving.parse_proc_listeners(PROC_TCP6)
+    assert [(str(a), p) for a, p in v6] == [("::", 53581), ("::1", 9000)]
+
+
+def test_a_bridged_namespace_with_engine_listeners_is_a_problem(tmp_path: Path) -> None:
+    """The pre-A5 container: eth0 on the docker bridge and the engine's rendezvous and Gloo
+    sockets on its address and the wildcard, reachable from any local account."""
+    proc = _proc(tmp_path, 41, ["eth0", "lo"], PROC_TCP, PROC_TCP6)
+    state = serving.read_netns(41, proc)
+    assert state is not None and state.interfaces == ["eth0", "lo"]
+    assert "[::]:53581" in state.listeners and "172.17.0.2:38747" in state.listeners
+    (problem,) = serving.netns_problems(state)
+    assert "172.17.0.2:38747" in problem and "[::]:53581" in problem and "eth0" in problem
+    assert "127.0.0.1:8090" not in problem and "[::1]:9000" not in problem
+
+
+def test_a_loopback_only_namespace_is_isolated(tmp_path: Path) -> None:
+    """``--network none``: a wildcard bind inside a namespace whose only interface is ``lo``
+    reaches nothing outside it."""
+    proc = _proc(tmp_path, 42, ["lo"], PROC_TCP, PROC_TCP6)
+    state = serving.read_netns(42, proc)
+    assert state is not None and serving.netns_problems(state) == []
+    assert serving.read_netns(43, proc) is None
+    only_loopback = serving.NetnsState(1, ["eth0", "lo"], ["127.0.0.1:8090", "[::1]:9000"])
+    assert serving.netns_problems(only_loopback) == []
+    mapped = serving.NetnsState(1, ["eth0", "lo"], ["[::ffff:127.0.0.1]:1", "[::ffff:10.0.0.1]:2"])
+    (problem,) = serving.netns_problems(mapped)
+    assert "[::ffff:10.0.0.1]:2" in problem and "127.0.0.1]:1" not in problem
+
+
+def test_container_pid() -> None:
+    def runner(stdout: str, rc: int = 0) -> Any:
+        return lambda argv: serving.CommandResult(rc, stdout)
+
+    assert serving.container_pid(runner("4186240\n"), _docker) == 4186240
+    assert serving.container_pid(runner("0\n"), _docker) is None  # not running
+    assert serving.container_pid(runner("", 1), _docker) is None
+    assert serving.container_pid(runner("123\n"), lambda args: None) is None
+
+
+def _encoder_run_sandbox(tmp_path: Path, env_text: str | None) -> Any:
+    """Run deploy/bin/mesa-clm-encoder-run with HOME in ``tmp_path``: the checks before docker
+    only (no guard installed, so a script that passes the key check stops at the guard)."""
+    home = tmp_path / "home"
+    secrets = home / ".mesa" / "clm" / "secrets"
+    secrets.mkdir(parents=True)
+    if env_text is not None:
+        (secrets / "encoder.env").write_text(env_text, encoding="utf-8")
+    script = ROOT / "deploy" / "bin" / "mesa-clm-encoder-run"
+    return subprocess.run(
+        ["/usr/bin/env", "bash", str(script)],
+        env={"HOME": str(home), "PATH": os.environ.get("PATH", "/usr/bin:/bin")},
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=30,
+    )
+
+
+@pytest.mark.parametrize(
+    "env_text",
+    [
+        None,
+        "# no key line\n",
+        "VLLM_API_KEY=\n",
+        "VLLM_API_KEY=short\n",
+        'VLLM_API_KEY="quoted-but-long-enough-0123456789"\n',
+    ],
+)
+def test_the_run_script_refuses_an_unusable_key_before_docker(
+    tmp_path: Path, env_text: str | None
+) -> None:
+    """The guard is resolved only after the model load, so the script checks the key line first
+    (finding: the restart loop that reloaded 16 GiB every two minutes)."""
+    res = _encoder_run_sandbox(tmp_path, env_text)
+    assert res.returncode == 1
+    assert "encoder.env" in res.stderr and "vllm_auth.py" not in res.stderr
+    assert "quoted-but-long-enough" not in res.stderr + res.stdout  # the key is never echoed
+
+
+def test_the_run_script_accepts_a_usable_key(tmp_path: Path) -> None:
+    key = "Ab0._~+/=-" * 4
+    res = _encoder_run_sandbox(tmp_path, f"# generated\nVLLM_API_KEY={key}\n")
+    assert res.returncode == 1 and "vllm_auth.py is missing" in res.stderr
+    assert key not in res.stderr + res.stdout

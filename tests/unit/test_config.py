@@ -393,3 +393,114 @@ def test_load_config_reads_the_real_environment_when_env_is_omitted(
             monkeypatch.delenv(name, raising=False)
     monkeypatch.setenv("MESA_CLM_POLICY__PROFILE", "dev")
     assert load_config().policy.profile == "dev"
+
+
+# -- YAML errors never echo the file -------------------------------------------------------------
+
+FAKE_KEY = "sk-FAKE-config-echo-0123456789abcdef"
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        f'clm:\n  api_key: "{FAKE_KEY}"x\n',  # parser error with a snippet of the line
+        f"clm:\n\tapi_key: {FAKE_KEY}\n",  # scanner error (a tab) quoting the line
+        f"clm:\n  api_key: !{FAKE_KEY} x\n",  # an unknown tag: the constructor names it
+    ],
+)
+def test_a_yaml_error_names_the_line_never_the_content(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], text: str
+) -> None:
+    from mesa_clm.cli import EXIT_CONFIG, main
+    from mesa_clm.config import ConfigError
+
+    cfg = tmp_path / "config.yaml"
+    cfg.write_text(text, encoding="utf-8")
+    with pytest.raises(ConfigError) as exc:
+        load_config(cfg, env={})
+    assert FAKE_KEY[:12] not in str(exc.value) and "line 2" in str(exc.value)
+    assert main(["--config", str(cfg), "framings", "--check"]) == EXIT_CONFIG
+    err = capsys.readouterr().err
+    assert err.startswith("config error: ") and "invalid YAML at line 2" in err
+    assert FAKE_KEY[:12] not in err
+
+
+def test_unreadable_config_files_are_config_errors(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from mesa_clm.cli import EXIT_CONFIG, main
+    from mesa_clm.config import ConfigError
+
+    with pytest.raises(ConfigError, match="no such file"):
+        load_config(tmp_path / "missing.yaml", env={})
+    with pytest.raises(ConfigError, match="cannot read"):
+        load_config(tmp_path, env={})
+    binary = tmp_path / "binary.yaml"
+    binary.write_bytes(b"clm:\n  api_key: \xff\xfe\n")
+    with pytest.raises(ConfigError, match="not UTF-8"):
+        load_config(binary, env={})
+    assert main(["--config", str(binary), "framings", "--check"]) == EXIT_CONFIG
+    assert "not UTF-8" in capsys.readouterr().err
+
+
+# -- the serving pair's default key files (plan §6.4) ---------------------------------------------
+
+
+def _home_keys(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, mode: int = 0o600) -> Path:
+    """A serving home with secrets/clm.key and encoder.key (what `serve keys --init` writes)."""
+    from mesa_clm import serving
+
+    home = tmp_path / "home"
+    monkeypatch.setattr(serving, "DEFAULT_HOME", str(home))
+    secrets = home / "secrets"
+    secrets.mkdir(parents=True)
+    for name in ("clm", "encoder"):
+        path = secrets / f"{name}.key"
+        path.write_text(f"{name}-default-key-0123456789\n", encoding="utf-8")
+        path.chmod(mode)
+    return secrets
+
+
+def test_the_serving_key_files_are_the_default(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    cfg = load_config(env={})
+    assert cfg.clm.resolved_api_key() is None and cfg.clm.effective_api_key_file() == (None, False)
+    sha = config_sha256(cfg)
+    secrets = _home_keys(monkeypatch, tmp_path)
+    cfg = load_config(env={})
+    assert cfg.clm.resolved_api_key() == "clm-default-key-0123456789"
+    assert cfg.encoder.resolved_api_key() == "encoder-default-key-0123456789"
+    assert cfg.clm.effective_api_key_file() == (str(secrets / "clm.key"), True)
+    assert cfg.encoder.effective_api_key_file() == (str(secrets / "encoder.key"), True)
+    assert config_sha256(cfg) == sha  # resolved at use time, never stored: the hash is unchanged
+    assert cfg.clm.api_key_file is None
+    # Explicit settings win: a value, another file, an explicit empty value (switches it off).
+    own = tmp_path / "own.key"
+    own.write_text("own-key-0123456789\n", encoding="utf-8")
+    own.chmod(0o600)
+    assert load_config(env={"MESA_CLM_CLM__API_KEY": "v" * 20}).clm.resolved_api_key() == "v" * 20
+    explicit = load_config(env={"MESA_CLM_CLM__API_KEY_FILE": str(own)})
+    assert explicit.clm.resolved_api_key() == "own-key-0123456789"
+    assert explicit.clm.effective_api_key_file() == (str(own), False)
+    off = load_config(env={"MESA_CLM_CLM__API_KEY_FILE": ""})
+    assert off.clm.resolved_api_key() is None and off.clm.effective_api_key_file() == (None, False)
+    assert off.encoder.resolved_api_key() == "encoder-default-key-0123456789"
+    yaml_file = tmp_path / "c.yaml"
+    yaml_file.write_text("encoder:\n  api_key_file: null\n", encoding="utf-8")
+    assert load_config(yaml_file, env={}).encoder.resolved_api_key() is None
+    # Only the auto and file modes read it.
+    assert load_config(env={"MESA_CLM_SECRETS": "file"}).clm.resolved_api_key() is not None
+    assert load_config(env={"MESA_CLM_SECRETS": "env"}).clm.resolved_api_key() is None
+
+
+def test_a_loose_default_key_file_fails_loudly(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from mesa_clm.secrets import SecretError
+
+    secrets = _home_keys(monkeypatch, tmp_path, mode=0o644)
+    cfg = load_config(env={})
+    with pytest.raises(SecretError, match="0600") as exc:
+        cfg.clm.resolved_api_key()
+    assert str(secrets / "clm.key") in str(exc.value) and "default-key" not in str(exc.value)

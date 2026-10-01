@@ -1,0 +1,125 @@
+{
+ "format": "mesa-clm/features-build/3",
+ "date": "2026-10-01",
+ "host": "sparky-1",
+ "what": "the feature store rebuilt in format 2 (float32 vectors, the vector recipe and lock_sha stamped) on the DESIGN A5 recipe, after the format-1 store (float16 vectors only; features_build.json) failed X1's cross-check; diagnostics, not bench cells",
+ "serving": {
+  "lock": "~/.mesa/clm/serving.lock.json (byte-identical to serving/serving.lock.json)",
+  "lock_sha": "dd33f9fedbaee0129b09a21311227118461bed9326c942c2af7d0bd9b31b5237",
+  "encoder_fp": "c3b3d5e1a283",
+  "vector_recipe_sha256": "ed486dcd74a3b69e62316031e9c8fe6f184e1ead959a1bff537a33217135f89d",
+  "units": "both restarted once at 18:17-18:20Z for DESIGN A5, not enabled at boot"
+ },
+ "retired_format1_store": "moved to .local/features-format1/c3b3d5e1a283 (git-ignored) before the rebuild; nothing reads it",
+ "build": {
+  "started": "2026-10-01T18:21:05Z",
+  "finished": "2026-10-01T18:24:49Z",
+  "command": "uv run mesa-clm features build --snapshot bench/snapshots/2026-09-29.parquet",
+  "exit": 0,
+  "output": [
+   "feature store ~/.mesa/clm/features/c3b3d5e1a283/features.duckdb (encoder_fp c3b3d5e1a283)",
+   "  serving lock ~/.mesa/clm/serving.lock.json (lock_sha dd33f9fedbae, vector recipe ed486dcd74a3); encoder http://127.0.0.1:8090 serving qwen3-8b",
+   "  encoder container: mesa-clm-encoder: pinned image and recipe",
+   "  snapshot bench/snapshots/2026-09-29.parquet; labels_sha256 aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+   "  tasks term.fits, column.ontology_fits; framings F1, F4, F7, F9, joint4096@S1, joint4096@S1ns",
+   "  manifest: 5018 rows, 1563 distinct texts (state 1400, action 163)",
+   "  already stored 0, embedded 1563 (1563 new vectors), truncated 0 (recorded, not embedded), encoder tokens 620336, batch 1, 223.7 s",
+   "  fp16 round-trip min cosine 0.9999999 (gate >= 0.9999)"
+  ],
+  "wall_clock": "3:44.02",
+  "max_rss_kib": 202056,
+  "texts": 1563,
+  "embedded": 1563,
+  "truncated": 0,
+  "encoder_tokens": 620336,
+  "batch": 1,
+  "seconds_reported": 223.7
+ },
+ "vs_format1_store": {
+  "what": "every new float32 vector cast to float16 against the format-1 store's float16 blob of the same text",
+  "vectors": 1563,
+  "float16_casts_bitwise_equal": 1563,
+  "fp16_cos_equal": 1563,
+  "float16_digest_sha256": "e5610655160612a8195b4bc624b20f339b81d8d06c9135e812aabd798b7f7c0e",
+  "digest_definition": "sha256 over the float16 casts concatenated in text_sha256 order (features_build.json#/rerun/scratch_rebuild/vs_canonical_store/vectors_digest_sha256 is the same digest of the format-1 store)",
+  "texts_tokens_truncated": {
+   "new": [
+    1563,
+    620336,
+    0
+   ],
+   "format1": [
+    1563,
+    620336,
+    0
+   ]
+  }
+ },
+ "vectors_by_lock_sha": {
+  "dd33f9fedbaee0129b09a21311227118461bed9326c942c2af7d0bd9b31b5237": 1563
+ },
+ "project": {
+  "command": "uv run mesa-clm features project",
+  "clm_model_fp": "78be8c462b2e",
+  "state": 1563,
+  "action": 1563,
+  "wall_seconds": 3.01
+ },
+ "export_npz": {
+  "command": "uv run mesa-clm features export-npz --out ~/.mesa/clm/features/c3b3d5e1a283/textcache",
+  "bytes": 13054678,
+  "sha256": "c66280953f442fd90df5dbabd0c1b08249c973faeebce624f18268b7def07293",
+  "byte_identical_to_the_format1_export": true,
+  "mode": "0o600",
+  "wall_seconds": 0.32
+ },
+ "stats": {
+  "root": "~/.mesa/clm/features",
+  "live_encoder_fp": "c3b3d5e1a283",
+  "stores": [
+   {
+    "path": "~/.mesa/clm/features/c3b3d5e1a283/features.duckdb",
+    "encoder_fp": "c3b3d5e1a283",
+    "exists": true,
+    "format": "mesa-clm-features/2",
+    "dim": 4096,
+    "created_at": "2026-10-01T18:21:06+00:00",
+    "encoder_spec": {
+     "batch_invariance": "kernels",
+     "dtype": "bfloat16",
+     "max_len": 4096,
+     "model": "Qwen/Qwen3-8B",
+     "normalize": true,
+     "pooling": "LAST",
+     "prefix_caching": false,
+     "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+     "route": "vllm",
+     "truncation_side": "left"
+    },
+    "vector_recipe_sha256": "ed486dcd74a3b69e62316031e9c8fe6f184e1ead959a1bff537a33217135f89d",
+    "serving_lock_sha": "dd33f9fedbaee0129b09a21311227118461bed9326c942c2af7d0bd9b31b5237",
+    "vectors_by_lock_sha": {
+     "dd33f9fedbaee0129b09a21311227118461bed9326c942c2af7d0bd9b31b5237": 1563
+    },
+    "texts": 1563,
+    "vectors": 1563,
+    "truncated": 0,
+    "tokens": {
+     "total": 620336,
+     "max": 685,
+     "p50": 450.0,
+     "p95": 588.7999999999997
+    },
+    "fp16_min_cosine": 0.9999999471243575,
+    "projections": {
+     "78be8c462b2e": {
+      "action": 1563,
+      "state": 1563
+     }
+    },
+    "bytes": 57421824,
+    "vector_recipe_matches_live": true
+   }
+  ]
+ }
+}

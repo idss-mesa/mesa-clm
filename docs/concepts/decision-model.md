@@ -9,7 +9,7 @@ tags:
   - framings
 generated:
   by: "claude/fable-5.1"
-  at: "2026-09-29T20:00:00Z"
+  at: "2026-10-01T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -80,9 +80,10 @@ never `auto` (DESIGN D28); `decider.tier: ols_rank` selects it for every candida
 Each CLM question is stored as one `decisions` row with one `decision_options` row per candidate
 and one for the anchor (`s_c`, `p_fit`, rank, masked), and each candidate group as a
 `decision_groups` row ([Provenance](provenance.md)). The groups a reviewer is asked about are
-the `term.fits` groups that are proposed, escalated or anchor-won and not yet settled; a parent
-that a specificity child replaced is asked through the refinement group, which offers the parent
-too.
+the `term.fits` groups that are proposed, escalated or anchor-won, or that only an agent has
+answered, and that no curator has settled; a parent that a specificity child replaced is asked
+through the refinement group, which offers the parent too. A curator's answer is final in M1,
+an agent's is replaced by a curator's (DESIGN A2).
 
 ## Rendering, anchors and the token guard
 

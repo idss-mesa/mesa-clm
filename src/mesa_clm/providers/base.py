@@ -56,6 +56,7 @@ __all__ = [
     "ArtifactRef",
     "CallStatus",
     "ClmCall",
+    "DeciderRefused",
     "DecisionProvider",
     "DecisionRecord",
     "FramingOptions",
@@ -129,6 +130,17 @@ CALL_STATUSES: Final[tuple[str, ...]] = get_args(CallStatus)
 class TierUnavailable(RuntimeError):
     """The requested tier cannot be served honestly by this provider (no artifact for the
     question key, a tier that lands in a later milestone, a tier the provider does not have)."""
+
+
+class DeciderRefused(RuntimeError):
+    """clm-serve refused a request for a reason no fallback may paper over: the key
+    (401/403) or the route (404). ``status`` is the HTTP status. A transport error, a 5xx or a
+    timeout is not this: those records become ``unavailable`` and the group falls back to
+    ``ols_rank`` (D28)."""
+
+    def __init__(self, status: int, message: str) -> None:
+        super().__init__(message)
+        self.status = status
 
 
 # -- small maths ------------------------------------------------------------------------------

@@ -1,0 +1,45 @@
+{
+ "format": "mesa-clm/encoder-netns/1",
+ "what": "the encoder container's network namespace read from /proc/<container pid>/net/{dev,tcp,tcp6} (mesa_clm.serving.read_netns; the container runs as this user, nothing was connected to), before and after the DESIGN A5 restart; addresses on the docker bridge are masked, loopback and wildcard binds kept",
+ "before": {
+  "measured_at": "2026-10-01T18:17:01+00:00",
+  "recipe": "lock_sha 59625b8e... (A3/A4, docker bridge, -p 127.0.0.1:8090:8090)",
+  "network_mode": "bridge",
+  "interfaces": [
+   "eth0",
+   "lo"
+  ],
+  "listeners": [
+   "0.0.0.0:8090",
+   "<bridge address>:34985",
+   "<bridge address>:35817",
+   "<bridge address>:38027",
+   "<bridge address>:38747",
+   "<bridge address>:44139",
+   "<bridge address>:45477",
+   "[::]:53581"
+  ],
+  "problems_count": 1,
+  "lock_sha": "59625b8efedb61ba48b22a74bd044893fe3fcc290807feadc32fe02bd88de3cb",
+  "verdict": "netns_problems: 1 (listeners on non-loopback addresses in a namespace with eth0)"
+ },
+ "after": {
+  "measured_at": "2026-10-01T18:20:53+00:00",
+  "network_mode": "none",
+  "interfaces": [
+   "lo"
+  ],
+  "listeners": [
+   "127.0.0.1:34519",
+   "127.0.0.1:35463",
+   "127.0.0.1:40041",
+   "127.0.0.1:40397",
+   "127.0.0.1:41795",
+   "127.0.0.1:44701",
+   "[::]:55793"
+  ],
+  "problems": [],
+  "lock_sha": "dd33f9fedbaee0129b09a21311227118461bed9326c942c2af7d0bd9b31b5237",
+  "verdict": "netns_problems: none (the only interface is lo)"
+ }
+}

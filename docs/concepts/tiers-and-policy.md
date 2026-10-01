@@ -8,7 +8,7 @@ tags:
   - policy
 generated:
   by: "claude/fable-5.1"
-  at: "2026-09-29T20:00:00Z"
+  at: "2026-10-01T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -59,8 +59,11 @@ run is marked `degraded`.
 When `annotate --provider clm` finds clm-serve not answering before it starts, tier `auto` runs
 `ols_rank` for the whole card only if `decider.ols_rank_fallback` is `true`
 (`MESA_CLM_DECIDER__OLS_RANK_FALLBACK`); otherwise, and always for an explicit CLM tier, the
-command refuses (exit 1), as the plugin tool will with `decider_unavailable`. Either way nothing
-is ever `auto` without a calibrated, cited tier.
+command refuses (exit 1), as the plugin tool will with `decider_unavailable`. A serving pair that
+answers but cannot be used as configured (a missing or rejected key, an unserved `clm.model`, an
+encoder that is not the serving lock's) is never degraded: the command stops (exit 2), and a
+request clm-serve refuses mid-run (401, 403, 404) fails the run instead of turning its groups
+into `ols_rank` proposals. Either way nothing is ever `auto` without a calibrated, cited tier.
 
 ## Outcomes
 

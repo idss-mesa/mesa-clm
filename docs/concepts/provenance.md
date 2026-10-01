@@ -9,7 +9,7 @@ tags:
   - history
 generated:
   by: "claude/fable-5.1"
-  at: "2026-09-29T20:00:00Z"
+  at: "2026-10-01T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -28,7 +28,9 @@ stale_after: "2027-03-31T00:00:00Z"
 Decision provenance is a sidecar owned by mesa-clm: schema `mesa_clm` in a DuckDB file per host
 at `~/.mesa/clm/provenance.duckdb`, **opened per operation under
 `flock(~/.mesa/clm/locks/provenance.lock)`**, with a run's rows buffered and committed in one
-transaction (DESIGN D11). Postgres is an optional dialect with the same CHECK constraints; a
+transaction (DESIGN D11). The file, its `.wal`, the `locks/` directory and the lock file are
+owner-only (0600/0700) whatever the umask: the sidecar holds owners and curator labels, and the
+CLI's trust boundary is the account that owns it (DESIGN A2). Postgres is an optional dialect with the same CHECK constraints; a
 parity test compares both DDLs. It is never a column on mesa-ducklake's `avu_changes` (the
 13-column Parquet layout is a hard contract) and never a table in schema `mesa`.
 
@@ -94,10 +96,13 @@ mesa-clm provenance prune [--ttl-days N] [--dry-run] # delete terminal and long-
 
 `migrate` runs the DuckDB bootstrap (`CREATE … IF NOT EXISTS`) or applies the packaged Postgres
 migrations (`pg` extra); `mesa-clm doctor` reports the schema version without creating
-anything (`sidecar schema`). `export` stamps the run's `exported_at`, stages its rows through an
+anything but the lock file (`sidecar schema`). `export` stages the run's rows through an
 in-memory DuckDB carrying the sidecar DDL (so the Parquet columns are the schema's types and the
-CHECKs re-validate every row), writes one file per table read back and hashed, and writes
-`manifest.json` last. `import` verifies every file's sha256 and row count against the manifest
+CHECKs re-validate every row), with the new `exported_at` on the copy's run row, writes one file
+per table read back and hashed, writes `manifest.json` last, verifies the whole directory as an
+importer would, and only then stamps the store's run row with the same `exported_at`: a failed
+export (an unwritable or non-directory `--out`, a full disk) leaves the run unmarked, so `prune`
+never takes it for exported. The export is owner-only (the run directory 0700, files 0600). `import` verifies every file's sha256 and row count against the manifest
 and never overwrites a run the store already holds. `prune` deletes local rows only for
 **terminal** runs (applied, exported, every `written` or `spooled` link with a snapshot id, no
 group escalated to a human) or abandoned ones past `MESA_CLM_PROVENANCE__TTL_DAYS` (DESIGN D29);

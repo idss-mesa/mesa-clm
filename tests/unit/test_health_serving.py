@@ -83,6 +83,9 @@ def _probes(tmp_path: Path, server: FakeClmServer | None = None, **runner: Any) 
         runner=Runner(**runner),
         docker=lambda args: None,
         meminfo=_meminfo(tmp_path, 64),
+        golden_dirs=(tmp_path / "goldens",),
+        proc=tmp_path / "proc",
+        features_dir=tmp_path / "features",
     )
 
 
@@ -330,11 +333,31 @@ def test_serve_mode_is_green_against_the_fake_stack(tmp_path: Path) -> None:
     assert rep.ok, rep.lines()
     assert "serving" not in by
     for name in ("serving binds", "encoder health", "clm-serve health", "encoder auth",
-                 "clm-serve auth", "encoder models", "clm-serve models", "clm golden"):  # fmt: skip
+                 "clm-serve auth", "encoder models", "clm-serve models", "clm golden",
+                 "encoder long input", "clm parity"):  # fmt: skip
         assert by[name].status == "ok", (name, by[name])
     assert by["serving binds"].detail.startswith("loopback only")
-    assert by["encoder auth"].detail == "GET /v1/models without a key -> 401"
-    assert by["encoder models"].detail == "qwen3-8b"
+    assert by["encoder auth"].detail == (
+        f"{len(health.ENCODER_GUARDED_ROUTES)} routes answer 401 without a key (an unknown path too)"
+    )
+    assert by["clm-serve auth"].detail == "3 routes answer 401 without a key"
+    assert by["encoder long input"].detail.endswith("cos with its last 4095 token ids 1.0000000 "
+                                                     "(gate 0.9999)")  # fmt: skip
+    assert "clm-raw max |Δp| 0.0e+00" in by["clm parity"].detail
+    # No golden reference for this encoder_fp, and the fake's quickstart is far from issue #15.
+    assert (
+        by["encoder goldens"].status == "warn"
+        and "no golden reference" in by["encoder goldens"].detail
+    )
+    assert by["clm drift"].status == "warn" and "|Δ| " in by["clm drift"].detail
+    # Every encoder route was asked without a key; the guarded ones only.
+    unauthenticated = {
+        (r.method, r.url.path)
+        for r in server.requests
+        if r.url.port == 8090 and "authorization" not in r.headers
+    }
+    assert set(health.ENCODER_GUARDED_ROUTES) | {("GET", "/health")} == unauthenticated
+    assert by["encoder models"].detail == "qwen3-8b; route vllm as the lock"
     assert (
         "clm-latest" in by["clm-serve models"].detail and "clm-raw" in by["clm-serve models"].detail
     )
@@ -396,3 +419,250 @@ def test_ss_missing_is_a_warning(tmp_path: Path) -> None:
     server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
     rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=_probes(tmp_path, server))
     assert _by(rep)["serving binds"].status == "warn" and rep.ok
+
+
+# -- the full serve-mode probes -----------------------------------------------------------------
+
+
+def _golden_file(tmp_path: Path, server: FakeClmServer, *, shift: bool = False) -> Path:
+    """An encoder golden for the checkout lock's encoder_fp, recorded through the fake."""
+    import numpy as np
+
+    from mesa_clm.clm.encoder import EncoderClient
+    from mesa_clm.serving import load_lock
+
+    texts = ["hello world", "What causes tides on Earth?", "x"]
+    with EncoderClient(
+        "http://127.0.0.1:8090", ENC_KEY, transport=server.transport(), retries=1
+    ) as enc:
+        vectors = np.stack([enc.embed([t])[0][0] for t in texts])
+    if shift:
+        vectors = np.roll(vectors, 1, axis=0)
+    fp = load_lock().encoder_fp
+    path = tmp_path / "goldens" / health.GOLDEN_FILE.format(fp=fp)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    np.savez(path, texts=np.array(texts), vectors=vectors, encoder_fp=np.array(fp))
+    return path
+
+
+def test_encoder_goldens_are_bitwise_one_text_per_request(tmp_path: Path) -> None:
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    _golden_file(tmp_path, server)
+    probes = _probes(tmp_path, server, ss=(0, SS_LOOPBACK))
+    rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=probes)
+    c = _by(rep)["encoder goldens"]
+    assert c.status == "ok" and "3/3 bitwise one text per request" in c.detail
+    assert "one batch vs one by one min cos 1 - " in c.detail
+    _golden_file(tmp_path, server, shift=True)
+    rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=probes)
+    c = _by(rep)["encoder goldens"]
+    assert c.status == "fail" and "0/3 bitwise" in c.detail and not rep.ok
+
+
+def test_systemone_parity_with_the_pinned_heads_export(tmp_path: Path) -> None:
+    from mesa_clm.serving import HEADS_DIR, load_lock
+
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    lock = load_lock()
+    head = server.clm.heads["clm-latest"]
+    home = tmp_path / "serving-home"
+    npz = home / HEADS_DIR / "npz" / f"{lock.head.sha256[:8]}.npz"
+    npz.parent.mkdir(parents=True)
+    head.source_sha256 = lock.head.sha256
+    head.to_npz(npz)
+    probes = _probes(tmp_path, server, ss=(0, SS_LOOPBACK))
+    probes.home = home
+    rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=probes)
+    c = _by(rep)["clm parity"]
+    assert c.status == "ok", c
+    assert "clm-latest max |Δp|" in c.detail and "clm-raw max |Δp|" in c.detail
+    # A head exported from another checkpoint is not the lock's: clm-latest is skipped.
+    head.source_sha256 = "0" * 64
+    head.to_npz(npz)
+    rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=probes)
+    assert "clm-latest skipped" in _by(rep)["clm parity"].detail
+
+
+def test_quick_auto_serve_mode_runs_only_the_light_probes(tmp_path: Path) -> None:
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    probes = _probes(tmp_path, server, ss=(0, SS_LOOPBACK), units=(0, "active\nactive\n"))
+    rep = doctor(_keyed(tmp_path), quick=True, serve=None, probes=probes)
+    by = _by(rep)
+    assert by["encoder auth"].status == "ok" and by["clm golden"].status == "ok"
+    for name in ("encoder goldens", "encoder long input", "clm parity", "clm drift"):
+        assert name not in by
+
+
+def test_the_wrong_route_on_8090_fails_the_encoder_models_check(tmp_path: Path) -> None:
+    server = FakeClmServer(
+        clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY, encoder_owned_by="mesa-clm-fallback"
+    )
+    rep = doctor(
+        _keyed(tmp_path), quick=True, serve=True, probes=_probes(tmp_path, server, ss=(0, ""))
+    )
+    c = _by(rep)["encoder models"]
+    assert c.status == "fail" and "not the lock's route 'vllm'" in c.detail
+
+
+def test_urls_are_checked_by_the_loopback_rule_and_printed_redacted(tmp_path: Path) -> None:
+    import httpx
+
+    seen: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(str(request.url.host))
+        raise httpx.ConnectError("refused", request=request)
+
+    cfg = _keyed(tmp_path, MESA_CLM_CLM__BASE_URL="http://user:s3cr3t-pw@clm.example.org:8700")
+    probes = _probes(tmp_path)
+    probes.transport = httpx.MockTransport(handler)
+    for serve in (True, False):
+        rep = doctor(cfg, quick=True, serve=serve, probes=probes)
+        text = "\n".join(rep.lines()) + json.dumps(rep.as_dict())
+        assert "s3cr3t" not in text and "user:" not in text
+        c = _by(rep)["clm-serve url"]
+        assert c.status == "fail" and c.detail.startswith("http://clm.example.org:8700: not probed")
+    assert "clm.example.org" not in seen and seen  # the encoder was probed, clm-serve never
+
+
+def test_permissions_warn_with_the_fix(tmp_path: Path) -> None:
+    import os
+
+    home = tmp_path / "home"
+    (home / "locks").mkdir(parents=True)
+    os.chmod(home, 0o700)
+    os.chmod(home / "locks", 0o775)  # noqa: S103 - a deliberately loose mode
+    (home / "locks" / "provenance.lock").write_text("")
+    os.chmod(home / "locks" / "provenance.lock", 0o664)
+    probes = _probes(tmp_path)
+    probes.home = home
+    rep = doctor(_cfg(tmp_path), quick=True, probes=probes)
+    c = _by(rep)["permissions"]
+    assert c.status == "warn" and rep.ok
+    assert f"chmod 700 {home / 'locks'}" in c.detail
+    assert f"chmod 600 {home / 'locks' / 'provenance.lock'}" in c.detail
+    os.chmod(home / "locks", 0o700)
+    os.chmod(home / "locks" / "provenance.lock", 0o600)
+    assert _by(doctor(_cfg(tmp_path), quick=True, probes=probes))["permissions"].status == "ok"
+
+
+def test_the_default_key_files_are_named_and_end_the_no_key_warning(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from mesa_clm import serving
+
+    home = tmp_path / "keys-home"
+    secrets = home / "secrets"
+    secrets.mkdir(parents=True)
+    for name, key in (("clm", CLM_KEY), ("encoder", ENC_KEY)):
+        (secrets / f"{name}.key").write_text(key + "\n")
+        (secrets / f"{name}.key").chmod(0o600)
+    monkeypatch.setattr(serving, "DEFAULT_HOME", str(home))
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    rep = doctor(_cfg(tmp_path), quick=True, serve=True, probes=_probes(tmp_path, server))
+    by = _by(rep)
+    assert by["clm key file"].detail == (
+        f"{secrets / 'clm.key'} (default): regular file, mode 0600 or stricter (not read)"
+    )
+    assert by["encoder key file"].status == "ok"
+    assert by["encoder models"].status == "ok" and by["clm golden"].status == "ok"
+    assert "no key configured" not in json.dumps(rep.as_dict())
+    assert CLM_KEY not in json.dumps(rep.as_dict())
+
+
+# -- the feature store, the encoder's network namespace, the headroom timer ----------------------
+
+
+def _feature_store(tmp_path: Path, lock: Any) -> Any:
+    from mesa_clm.clm.fake import FakeEncoder
+    from mesa_clm.learn.features import FeatureStore
+
+    store = FeatureStore.for_lock(tmp_path / "features", lock)
+    texts = ["hello world", "What causes tides on Earth?"]
+    vectors, _ = FakeEncoder().embed(texts)
+    store.add(texts, vectors, [2, 5])
+    return store
+
+
+def test_feature_store_check(tmp_path: Path) -> None:
+    from mesa_clm.serving import load_lock
+
+    lock = load_lock()
+    probes = _probes(tmp_path)
+
+    def check() -> Check:
+        return _by(doctor(_cfg(tmp_path), quick=True, probes=probes))["feature store"]
+
+    c = check()
+    assert c.status == "ok" and c.detail.startswith(f"none yet for encoder_fp {lock.encoder_fp}")
+    store = _feature_store(tmp_path, lock)
+    (tmp_path / "features" / "852efc921a8a").mkdir()
+    (tmp_path / "features" / "852efc921a8a" / "features.duckdb").write_bytes(b"")
+    c = check()
+    assert c.status == "ok", c
+    assert "mesa-clm-features/2, 2 vectors" in c.detail and "is the live lock's" in c.detail
+    assert "other fingerprints, never read here: 852efc921a8a" in c.detail
+    # Built under another vector recipe (another image, say): every read is refused, K4.
+    con = duckdb.connect(str(store.path))
+    try:
+        con.execute("UPDATE meta SET value = 'f' || value WHERE key = 'vector_recipe_sha256'")
+    finally:
+        con.close()
+    c = check()
+    assert c.status == "fail" and "vector recipe" in c.detail and "rebuild" in c.detail
+    con = duckdb.connect(str(store.path))
+    try:
+        con.execute("UPDATE meta SET value = 'mesa-clm-features/1' WHERE key = 'format'")
+    finally:
+        con.close()
+    c = check()
+    assert c.status == "fail" and "float16" in c.detail
+
+
+def _netns_probes(tmp_path: Path, interfaces: list[str], tcp: str, **runner: Any) -> ServeProbes:
+    from tests.unit.test_serving import PROC_TCP6, _proc
+
+    tmp_path.mkdir(parents=True, exist_ok=True)
+    probes = _probes(tmp_path, **runner)
+    probes.proc = _proc(tmp_path, 4186240, interfaces, tcp, PROC_TCP6)
+    probes.docker = lambda args: ["docker", *args]
+    return probes
+
+
+def test_encoder_network_check(tmp_path: Path) -> None:
+    """DESIGN A5: the engine's sockets inside the container are invisible to ``ss`` on the host;
+    the doctor reads the container's namespace, fails a bridged one with non-loopback listeners
+    and passes one whose only interface is ``lo``."""
+    from tests.unit.test_serving import PROC_TCP
+
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+    pid = {"docker": (0, "4186240\n"), "ss": (0, SS_LOOPBACK)}
+    bridged = _netns_probes(tmp_path / "a", ["eth0", "lo"], PROC_TCP, **pid)
+    bridged.transport = server.transport()
+    rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=bridged)
+    c = _by(rep)["encoder network"]
+    assert c.status == "fail" and "172.17.0.2:38747" in c.detail and "eth0" in c.detail
+    assert not rep.ok
+    isolated = _netns_probes(tmp_path / "b", ["lo"], PROC_TCP, **pid)
+    isolated.transport = server.transport()
+    c = _by(doctor(_keyed(tmp_path), quick=True, serve=True, probes=isolated))["encoder network"]
+    assert c.status == "ok" and "only interface is lo" in c.detail
+    missing = _probes(tmp_path, server, ss=(0, SS_LOOPBACK))
+    c = _by(doctor(_keyed(tmp_path), quick=True, serve=True, probes=missing))["encoder network"]
+    assert c.status == "warn" and "cannot be inspected" in c.detail
+
+
+def test_headroom_timer_check(tmp_path: Path) -> None:
+    server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
+
+    def timer(units: tuple[int, str]) -> Check:
+        probes = _probes(tmp_path, server, ss=(0, SS_LOOPBACK), units=units)
+        return _by(doctor(_keyed(tmp_path), quick=True, serve=True, probes=probes))[
+            "headroom timer"
+        ]
+
+    assert timer((0, "active\n")).status == "ok"
+    c = timer((3, "inactive\n"))
+    assert c.status == "warn" and "mesa-clm-headroom.timer is inactive" in c.detail
+    assert "start only" in c.detail
+    assert timer((127, "")).detail == "skipped: systemctl not available"

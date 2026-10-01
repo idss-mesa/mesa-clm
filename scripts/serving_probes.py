@@ -1,20 +1,37 @@
 #!/usr/bin/env python3
-"""Live serving probes for milestone M1 track A (plan §6.1, §6.4, §6.6, §6.8, §8 M1-A).
+"""Live serving probes for milestone M1 (plan §6.1, §6.4, §6.6, §6.8, §8 M1-A; DESIGN A3, A4).
 
 Runs against the two loopback units on the GPU host (``mesa-clm-encoder.service`` on :8090,
 ``mesa-clm-serve.service`` on :8700) with mesa-clm's own clients (``EncoderClient``,
 ``ClmHttpClient``, ``HeadProjector``) and writes one JSON record::
 
-    uv run python scripts/serving_probes.py            # full run -> bench/results/<date>/serving_m1.json
+    uv run python scripts/serving_probes.py --mem-pre-start GIB --mem-encoder-only GIB \
+        --out bench/results/2026-10-01/serving_m1c.json \
+        --golden-out .local/serving/m1c/encoder_golden_<encoder_fp>.npz
+        # full run (serving_m1b.json is the A3/A4 recipe's, serving_m1c.json DESIGN A5's)
     uv run python scripts/serving_probes.py --quick    # binds, 401s, health, one systemone
 
-Sections of the full run: (a) loopback binds; (b) the auth matrix (every route with no key, a
-wrong key, the other unit's key and the right key; open routes); (c) served models; (d) upstream
-drift probes (the CLM README quickstart at ``bb42c6c5`` and the model-card tides rank); (e) the
-5,000-token left-truncation probe; (f) golden encoder vectors (``.local/serving/
-encoder_golden.npz``); (g) clm-serve ``/v1/systemone`` vs the local head projection over 50
-(state, question) pairs for ``clm-latest`` and ``clm-raw``; (h) memory footprint; (i) latency
-p50/p95; plus versions, the image digest and ``encoder_fp``.
+Sections of the full run: (a) loopback binds; (b) routes and auth: the encoder's real route
+table, enumerated by building vLLM's app for the locked arguments in a throwaway copy of the
+pinned container (``serving/vllm_routes.py``; no model, no network), then every route on the
+live :8090 requested with no key, a wrong key, the other unit's key and (for the routes that only
+read or compute) the right key - every route but ``/health`` must answer 401 without the right
+key (DESIGN A4); the same matrix on clm-serve; the container's docker-bridge address (not
+recorded) probed too, since a container port is reachable there from any local account (under
+DESIGN A5 the container has no network and so no bridge address), and the container's own
+network namespace (interfaces and every listening socket, ``/proc/<pid>/net``), which ``ss`` on
+the host cannot see; (c)
+served models; (d) upstream drift probes (the CLM README quickstart at ``bb42c6c5`` and the
+model-card tides rank); (e) a ~5,000-token text through ``EncoderClient`` (truncated to
+``max_len - 1``) and as a clm-serve ``/v1/systemone`` state, both completing, the left-truncated
+vector against the embedding of the last 4,095 token ids; (f) golden encoder vectors and
+determinism (one text per request twice, a batch twice, against the M1-A goldens and, bitwise,
+against the existing reference of the same ``encoder_fp`` when there is one: a recipe change that
+keeps ``encoder_fp`` must leave it unchanged) written to ``--golden-out``; (g) clm-serve ``/v1/systemone`` vs the local
+head projection over 50 (state, question) pairs for ``clm-latest`` and ``clm-raw``; (h) memory
+footprint; (i) latency p50/p95; (j) last, one request of exactly 4,096 token ids with a hard
+timeout (the window boundary the cap avoids) and the engine's request gauges after it; plus
+versions, the image digest, ``encoder_fp`` and ``verify_serving_lock(require_live=True)``.
 
 Keys are read from the 0600 files under ``~/.mesa/clm/secrets`` and never printed, logged or
 written: before anything is written the serialised output is checked for both key values and
@@ -28,7 +45,10 @@ import datetime as dt
 import functools
 import hashlib
 import json
+import os
+import pwd
 import re
+import shlex
 import subprocess
 import sys
 import time
@@ -40,23 +60,25 @@ import duckdb
 import httpx
 import numpy as np
 
-from mesa_clm import framings, render
+from mesa_clm import framings, render, serving
 from mesa_clm.cards import load_card
 from mesa_clm.clm.encoder import EncoderClient, decode_base64_f32
 from mesa_clm.clm.fingerprint import EncoderSpec, encoder_fp
 from mesa_clm.clm.headproj import RAW_SCALE, HeadProjector
-from mesa_clm.clm.http import Choice, ClmHttpClient, Noul, Score
+from mesa_clm.clm.http import Choice, ClmHttpClient, Noul, Score, question_to_dict
 from mesa_clm.registry import ANCHOR_KEY, ANCHORS, ONTOLOGY_REGISTRY
 from mesa_clm.states import target_state
 from mesa_clm.tasks import TASKS
 
 ROOT = Path(__file__).resolve().parents[1]
-DATE = "2026-09-29"
+DATE = "2026-10-01"
 ENC_URL = "http://127.0.0.1:8090"
 CLM_URL = "http://127.0.0.1:8700"
 SECRETS = Path("~/.mesa/clm/secrets").expanduser()
 HEAD_NPZ = Path("~/.mesa/clm/heads/npz/b2b4a8c9.npz").expanduser()
 SERVE_PY = Path("~/.mesa/clm/serve/.venv/bin/python").expanduser()
+AUTH_DIR = Path("~/.mesa/clm/serve/vllm-auth").expanduser()
+M1A_GOLDENS = ROOT / ".local/serving/encoder_golden.npz"
 TOKENIZER_JSON = Path(
     "~/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/"
     "b968826d9c46dd6066d109eabc6255188de91218/tokenizer.json"
@@ -67,13 +89,16 @@ CARDS = ROOT / "tests/fixtures/cards"
 OLS = ROOT / "tests/fixtures/ols"
 MODEL = "qwen3-8b"
 MAX_LEN = 4096
+CAP = MAX_LEN - 1  # truncate_prompt_tokens every client sends (DESIGN A4)
 WRONG_KEY = "mesa-clm-probe-wrong-key"
+# The throwaway enumeration container's key: a fixed dummy, never the encoder's key.
+ROUTE_DUMMY_KEY = "mesa-clm-route-enumeration-dummy"
 # Dotted quads allowed in the output: loopback, and the wildcard peer column of `ss`.
 LOOPBACK_OR_WILDCARD = frozenset({"127.0.0.1", "0.0.0.0"})  # noqa: S104
 
-# Footprint reference points recorded during the M1-A bring-up (caller-provided, same host).
-MEMAVAILABLE_PRE_START_GIB = 107.8
-MEMAVAILABLE_ENCODER_ONLY_GIB = 80.3
+# Footprint reference points: MemAvailable with both units stopped and with the encoder alone,
+# recorded by whoever restarts the units before the run (--mem-pre-start, --mem-encoder-only).
+MEM_REFERENCE: dict[str, float | None] = {"pre_start": None, "encoder_only": None}
 
 # Upstream drift references (plan §6.8; RESEARCH.md issue #15 and the model card).
 ISSUE15 = {"urgency": 0.8366, "billing": 0.9888, "frustration": 2.0000, "tolerance": 0.01}
@@ -204,7 +229,146 @@ def probe_binds() -> dict[str, Any]:
 # -- (b) auth matrix -----------------------------------------------------------------------------
 
 
-def probe_auth(http: Http, enc_key: str, clm_key: str) -> dict[str, Any]:
+def enumerate_routes() -> dict[str, Any]:
+    """The encoder's route table for the locked ``vllm serve`` arguments, from vLLM's own
+    ``build_app`` in a throwaway copy of the pinned container (``serving/vllm_routes.py``): the
+    installed guard on ``PYTHONPATH``, a dummy key, no network, no model (``--gpus all`` only
+    because vLLM's argument parser infers the device)."""
+    lock = json.loads(LOCK.read_text(encoding="utf-8"))
+    uid = os.getuid()
+    gid = pwd.getpwuid(uid).pw_gid
+    image = f"{lock['image']['ref']}@{lock['image']['digest']}"
+    argv = [
+        *("docker", "run", "--rm", "--gpus", "all", "--network", "none", "--user", f"{uid}:{gid}"),
+        *("-e", "HOME=/tmp", "-e", f"VLLM_API_KEY={ROUTE_DUMMY_KEY}"),
+        *("-e", "PYTHONPATH=/opt/mesa-clm-auth", "-e", "VLLM_NO_USAGE_STATS=1"),
+        *("-e", "DO_NOT_TRACK=1", "-e", "HF_HUB_OFFLINE=1"),
+        *("-v", f"{AUTH_DIR}:/opt/mesa-clm-auth:ro"),
+        *("-v", f"{ROOT / 'serving' / 'vllm_routes.py'}:/work/vllm_routes.py:ro"),
+        *("--entrypoint", "python3", image, "/work/vllm_routes.py"),
+        json.dumps(lock["recipe"]["args"]),
+    ]
+    out = run(["sg", "docker", "-c", shlex.join(argv)], timeout=600.0)
+    try:
+        table: dict[str, Any] = json.loads(out.splitlines()[-1])
+    except (IndexError, json.JSONDecodeError):
+        return {"error": "route enumeration failed", "tail": out.splitlines()[-3:]}
+    table["command"] = (
+        "docker run --rm --gpus all --network none ... --entrypoint python3 <pinned image> "
+        "/work/vllm_routes.py <recipe.args>"
+    )
+    return table
+
+
+# Requests that only read or compute, sent with the right key to show the route still works.
+SAFE_WITH_KEY: dict[tuple[str, str], Any] = {
+    ("GET", "/health"): None,
+    ("GET", "/load"): None,
+    ("GET", "/version"): None,
+    ("GET", "/metrics"): None,
+    ("GET", "/ping"): None,
+    ("POST", "/ping"): None,
+    ("GET", "/v1/models"): None,
+    ("POST", "/tokenize"): {"model": MODEL, "prompt": "hello world"},
+    ("POST", "/detokenize"): {"model": MODEL, "tokens": [14990, 1879]},
+    ("POST", "/v1/embeddings"): {"model": MODEL, "input": ["probe"]},
+    ("POST", "/pooling"): {"model": MODEL, "input": "probe"},
+    ("POST", "/invocations"): {"model": MODEL, "input": "probe"},
+    ("POST", "/score"): {"model": MODEL, "text_1": "a", "text_2": "b"},
+    ("POST", "/v1/score"): {"model": MODEL, "text_1": "a", "text_2": "b"},
+    ("POST", "/rerank"): {"model": MODEL, "query": "a", "documents": ["b"]},
+    ("POST", "/v1/rerank"): {"model": MODEL, "query": "a", "documents": ["b"]},
+    ("POST", "/v2/rerank"): {"model": MODEL, "query": "a", "documents": ["b"]},
+    ("POST", "/v2/embed"): {
+        "model": MODEL,
+        "texts": ["probe"],
+        "input_type": "search_query",
+        "embedding_types": ["float"],
+    },
+}
+UNKNOWN_PATHS = (
+    "/nonexistent",
+    "/metrics/anything",
+    "/docs",
+    "/openapi.json",
+    "/redoc",
+    "/health/",
+)
+
+
+def _bridge_url() -> str | None:
+    """The encoder container's docker-bridge base URL (kept in memory, never recorded)."""
+    ip = sg_docker(
+        "docker inspect mesa-clm-encoder --format '{{range .NetworkSettings.Networks}}"
+        "{{.IPAddress}}{{end}}'"
+    )
+    return f"http://{ip}:8090" if re.fullmatch(r"(?:\d{1,3}\.){3}\d{1,3}", ip) else None
+
+
+def probe_netns() -> dict[str, Any]:
+    """The encoder container's network namespace (DESIGN A5): its interfaces and every listening
+    TCP socket, read from ``/proc/<pid>/net`` of the container's main process (the container
+    runs as this user; nothing is connected to)."""
+    pid_text = sg_docker("docker inspect mesa-clm-encoder --format '{{.State.Pid}}'")
+    network = sg_docker("docker inspect mesa-clm-encoder --format '{{.HostConfig.NetworkMode}}'")
+    if not pid_text.isdigit():
+        return {"error": "the encoder container is not running", "network_mode": network}
+    state = serving.read_netns(int(pid_text))
+    if state is None:
+        return {"error": "/proc/<pid>/net is not readable", "network_mode": network}
+    return {
+        "network_mode": network,
+        "interfaces": state.interfaces,
+        "listeners": state.listeners,
+        "problems": serving.netns_problems(state),
+        "isolated": state.interfaces == ["lo"],
+    }
+
+
+def probe_auth(http: Http, enc_key: str, clm_key: str, routes: dict[str, Any]) -> dict[str, Any]:
+    """Every enumerated encoder route, unknown paths, the bridge address and clm-serve's routes
+    with no key, a wrong key, the other unit's key and (read/compute routes) the right key."""
+    pairs = sorted({(p["method"], p["path"]) for p in routes.get("probes", [])})
+    rows = []
+    for method, path in pairs:
+        body = SAFE_WITH_KEY.get((method, path), {"model": MODEL, "input": "probe"})
+        body = None if method == "GET" else body
+        url = f"{ENC_URL}{path}"
+        row: dict[str, Any] = {
+            "route": f"{method} {path}",
+            "no_key": http.status(method, url, None, body),
+            "wrong_key": http.status(method, url, WRONG_KEY, body),
+            "other_units_key": http.status(method, url, clm_key, body),
+        }
+        if (method, path) in SAFE_WITH_KEY:
+            row["right_key"] = http.status(method, url, enc_key, body)
+        rows.append(row)
+    guarded = [r for r in rows if r["route"] != "GET /health"]
+    unguarded = [
+        r["route"]
+        for r in guarded
+        if not (r["no_key"] == r["wrong_key"] == r["other_units_key"] == 401)
+    ]
+    unknown = {
+        f"GET {path}": {
+            "no_key": http.status("GET", f"{ENC_URL}{path}"),
+            "right_key": http.status("GET", f"{ENC_URL}{path}", enc_key),
+        }
+        for path in UNKNOWN_PATHS
+    }
+    bridge_base = _bridge_url()
+    bridge = (
+        {
+            "GET /health (no key)": http.status("GET", f"{bridge_base}/health"),
+            "GET /version (no key)": http.status("GET", f"{bridge_base}/version"),
+            "POST /pooling (no key)": http.status(
+                "POST", f"{bridge_base}/pooling", None, {"model": MODEL, "input": "probe"}
+            ),
+            "GET /v1/models (key)": http.status("GET", f"{bridge_base}/v1/models", enc_key),
+        }
+        if bridge_base
+        else {"none": "the container has no bridge address (no network, DESIGN A5)"}
+    )
     emb_body = {"model": MODEL, "input": ["probe"]}
     so_body = {
         "state": "probe",
@@ -212,16 +376,15 @@ def probe_auth(http: Http, enc_key: str, clm_key: str) -> dict[str, Any]:
         "questions": {"q": {"type": "noul", "instructions": "Is this a probe?"}},
     }
     rank_body = {"context": "probe", "question": None, "answers": ["a", "b"], "model": "clm-latest"}
-    guarded = [
+    clm_rows = []
+    for unit, method, url, body, right, other in (
         ("encoder", "GET", f"{ENC_URL}/v1/models", None, enc_key, clm_key),
         ("encoder", "POST", f"{ENC_URL}/v1/embeddings", emb_body, enc_key, clm_key),
         ("clm-serve", "GET", f"{CLM_URL}/v1/models", None, clm_key, enc_key),
         ("clm-serve", "POST", f"{CLM_URL}/v1/systemone", so_body, clm_key, enc_key),
         ("clm-serve", "POST", f"{CLM_URL}/v1/rank", rank_body, clm_key, enc_key),
-    ]
-    rows = []
-    for unit, method, url, body, right, other in guarded:
-        rows.append(
+    ):
+        clm_rows.append(
             {
                 "unit": unit,
                 "route": f"{method} {url}",
@@ -231,61 +394,48 @@ def probe_auth(http: Http, enc_key: str, clm_key: str) -> dict[str, Any]:
                 "right_key": http.status(method, url, right, body),
             }
         )
-    all_401 = all(
-        r["no_key"] == 401 and r["wrong_key"] == 401 and r["other_units_key"] == 401 for r in rows
-    )
-    tok_body = {"model": MODEL, "prompt": "hello world"}
-    open_routes = {
-        "encoder GET /health": http.status("GET", f"{ENC_URL}/health"),
-        "encoder GET /metrics": http.status("GET", f"{ENC_URL}/metrics"),
-        "encoder GET /version": http.status("GET", f"{ENC_URL}/version"),
-        "encoder POST /tokenize (no key)": http.status(
-            "POST", f"{ENC_URL}/tokenize", None, tok_body
-        ),
-        "encoder POST /tokenize (key)": http.status(
-            "POST", f"{ENC_URL}/tokenize", enc_key, tok_body
-        ),
-        "clm-serve GET /health": http.status("GET", f"{CLM_URL}/health"),
-        "clm-serve GET / (--no-ui)": http.status("GET", f"{CLM_URL}/"),
+    clm_open = {
+        f"clm-serve GET {path}": http.status("GET", f"{CLM_URL}{path}")
+        for path in ("/health", "/", "/docs", "/openapi.json", "/redoc")
     }
-    # Routes the pooling runner registers outside /v1 and /v2 (startup log), unauthenticated.
-    unguarded_bodies = {
-        "POST /pooling": {"model": MODEL, "input": "probe"},
-        "POST /invocations": {"model": MODEL, "input": "probe"},
-        "POST /score": {"model": MODEL, "text_1": "a", "text_2": "b"},
-        "POST /rerank": {"model": MODEL, "query": "a", "documents": ["b"]},
-        "POST /detokenize": {"model": MODEL, "tokens": [14990]},
-        "POST /v1/score": {"model": MODEL, "text_1": "a", "text_2": "b"},
-        "POST /v2/embed": {
-            "model": MODEL,
-            "texts": ["probe"],
-            "input_type": "search_query",
-            "embedding_types": ["float"],
-        },
-    }
-    non_v1 = {
-        f"encoder {route} (no key)": http.status(
-            route.split()[0], f"{ENC_URL}{route.split()[1]}", None, body
-        )
-        for route, body in unguarded_bodies.items()
-    }
-    non_v1["encoder GET /load (no key)"] = http.status("GET", f"{ENC_URL}/load")
-    non_v1["encoder GET /openapi.json (no key)"] = http.status("GET", f"{ENC_URL}/openapi.json")
+    verdict = routes.get("verdict") or {}
     return {
-        "guarded": rows,
-        "named_v1_routes_all_401_without_valid_key": all_401,
-        "right_key_all_200": all(r["right_key"] == 200 for r in rows),
-        "open_routes": open_routes,
-        "tokenize": {
-            "works_under_runner_pooling": open_routes["encoder POST /tokenize (no key)"] == 200,
-            "guarded_by_key": open_routes["encoder POST /tokenize (no key)"] == 401,
+        "enumeration": {
+            k: routes.get(k)
+            for k in (
+                "command",
+                "vllm_args",
+                "routes",
+                "websocket_routes",
+                "middleware_outermost_first",
+                "verdict",
+                "error",
+            )
+            if k in routes
         },
-        "encoder_routes_outside_v1_v2_without_key": non_v1,
-        "note": (
-            "vLLM's API-key middleware guards only the /v1, /v2, /inference and /cohere prefixes; "
-            "a 200 above without a key means that route is reachable by any local user on "
-            "loopback."
+        "n_routes": len(routes.get("routes") or []),
+        "encoder_routes": rows,
+        "encoder_unguarded_without_valid_key": unguarded,
+        "encoder_every_route_but_health_401": bool(guarded) and not unguarded,
+        "encoder_health_open": next(
+            (r["no_key"] == 200 for r in rows if r["route"] == "GET /health"), False
         ),
+        "encoder_right_key_status": {
+            r["route"]: r.get("right_key") for r in rows if "right_key" in r
+        },
+        "unknown_paths": unknown,
+        "container_enumeration_pass": bool(verdict.get("pass")),
+        "docker_bridge_address": {
+            "note": "a container on the docker bridge is reachable on its bridge address from any "
+            "local account (address not recorded); under DESIGN A5 (--network none) there is none",
+            **bridge,
+        },
+        "named_routes": clm_rows,
+        "named_v1_routes_all_401_without_valid_key": all(
+            r["no_key"] == r["wrong_key"] == r["other_units_key"] == 401 for r in clm_rows
+        ),
+        "right_key_all_200": all(r["right_key"] == 200 for r in clm_rows),
+        "clm_serve_open_routes": clm_open,
     }
 
 
@@ -345,9 +495,14 @@ def probe_drift(clm: ClmHttpClient) -> dict[str, Any]:
         "latency_ms_header": r.latency_ms,
     }
     tol = ISSUE15["tolerance"]
-    within = {
-        k: abs(observed[k] - ISSUE15[k]) <= tol for k in ("urgency", "billing", "frustration")
+    # Compared unrounded (the record shows 4 decimals): rounding first can flip an edge case.
+    exact = {
+        "urgency": float(urgency),
+        "billing": float(dept.probabilities["billing"]),  # type: ignore[union-attr]
+        "frustration": float(frus.score),  # type: ignore[union-attr]
     }
+    abs_delta = {k: abs(v - ISSUE15[k]) for k, v in exact.items()}
+    within = {k: d <= tol for k, d in abs_delta.items()}
     ranked = clm.rank(TIDES[0], None, TIDES[1], model="clm-latest")
     top = ranked[0]
     return {
@@ -357,6 +512,7 @@ def probe_drift(clm: ClmHttpClient) -> dict[str, Any]:
         ),
         "quickstart": {
             "observed": observed,
+            "abs_delta_unrounded": {k: round(d, 7) for k, d in abs_delta.items()},
             "issue15": {k: ISSUE15[k] for k in ("urgency", "billing", "frustration")},
             "readme_printed": README_PRINTED,
             "tolerance": tol,
@@ -388,8 +544,12 @@ def _embed_raw(enc: EncoderClient, body: dict[str, Any]) -> tuple[np.ndarray, in
     return vec, int((j.get("usage") or {}).get("prompt_tokens") or 0)
 
 
-def _tokenize(http: Http, text: str) -> list[int]:
-    r = http.client.post(f"{ENC_URL}/tokenize", json={"model": MODEL, "prompt": text})
+def _tokenize(http: Http, text: str, key: str) -> list[int]:
+    r = http.client.post(
+        f"{ENC_URL}/tokenize",
+        json={"model": MODEL, "prompt": text},
+        headers={"Authorization": f"Bearer {key}"},
+    )
     r.raise_for_status()
     return [int(t) for t in r.json()["tokens"]]
 
@@ -411,125 +571,174 @@ def _bounded(enc_key: str, body: dict[str, Any], timeout: float) -> dict[str, An
     except httpx.TimeoutException:
         outcome = {"status": "timeout"}
     outcome["seconds"] = round(time.perf_counter() - t0, 2)
-    time.sleep(3.0)  # let the server abort a disconnected request before the next one
     return outcome
 
 
-def probe_truncation(enc: EncoderClient, http: Http, enc_key: str) -> dict[str, Any]:
-    """Left truncation (PR #6) on a ~5,000-token text, and the max-model-len boundary.
-
-    At ``truncate_prompt_tokens = 4096 = --max-model-len`` the truncated request never
-    completes on this image (found in M1-A), so the boundary is recorded with hard timeouts and
-    the left-truncation proof runs at 4095 through ``EncoderClient(max_len=4095)``.
-    """
+def long_text(http: Http, enc_key: str) -> tuple[str, list[int]]:
+    """~5,000 tokens: the fixture cards concatenated, cut at 4,990 tokens, plus a target line."""
     import tokenizers
 
     tok = tokenizers.Tokenizer.from_file(str(TOKENIZER_JSON))
     corpus = "\n\n".join(p.read_text(encoding="utf-8") for p in sorted(CARDS.glob("*.md")))
-    head_ids = _tokenize(http, corpus)[:4990]
+    head_ids = _tokenize(http, corpus, enc_key)[:4990]
     text = (
         tok.decode(head_ids)
         + "\n\nTarget column: observerDistance (meter), the radial distance to the bird."
     )
-    ids = _tokenize(http, text)
+    return text, _tokenize(http, text, enc_key)
+
+
+def probe_truncation(
+    enc: EncoderClient, http: Http, enc_key: str, clm: ClmHttpClient, head: HeadProjector
+) -> dict[str, Any]:
+    """A ~5,000-token text completes through ``EncoderClient`` (``truncate_prompt_tokens`` =
+    ``max_len - 1``, left) and as a clm-serve state (``--max-tokens 4095``); the left-truncated
+    vector equals the embedding of the last 4,095 token ids (DESIGN A4)."""
+    text, ids = long_text(http, enc_key)
     b64 = {"model": MODEL, "encoding_format": "base64"}
-
-    boundary: dict[str, Any] = {}
-    for n in (2048, 2049, MAX_LEN - 1, MAX_LEN):
-        boundary[f"token_ids_{n}"] = [
-            _bounded(enc_key, {**b64, "input": [ids[:n]]}, 30.0) for _ in range(2)
-        ]
-    boundary["text_truncate_4096_left"] = _bounded(enc_key, {**enc.request_body([text])}, 60.0)
-    boundary["text_no_truncation"] = _bounded(enc_key, {**b64, "input": [text]}, 30.0)
-
-    limit = MAX_LEN - 1
-    left_client = EncoderClient(ENC_URL, enc_key, max_len=limit, retries=1)
-    v_left, t_left = left_client.embed([text])
-    v_left = v_left[0]
-    v_tail_ids, t_tail = _embed_raw(enc, {**b64, "input": [ids[-limit:]]})
-    tail_text = tok.decode(ids[-limit:])
-    v_tail_text, t_tail_text = _embed_raw(enc, {**b64, "input": [tail_text]})
-    v_right, t_right = _embed_raw(enc, {**b64, "input": [text], "truncate_prompt_tokens": limit})
-    v_head_ids, _ = _embed_raw(enc, {**b64, "input": [ids[:limit]]})
-    c_left_tail = cos(v_left, v_tail_ids)
-    hangs = [
-        k
-        for k, v in boundary.items()
-        if any(o["status"] == "timeout" for o in (v if isinstance(v, list) else [v]))
-    ]
+    t0 = time.perf_counter()
+    v_client, t_client = enc.embed([text])
+    client_s = time.perf_counter() - t0
+    v_tail, t_tail = _embed_raw(enc, {**b64, "input": [ids[-CAP:]]})
+    v_head, _ = _embed_raw(enc, {**b64, "input": [ids[:CAP]]})
+    c_tail = cos(v_client[0], v_tail)
+    choice = Choice(
+        criteria={
+            "distance": "distance: A spatial quality inhering in a bearer by virtue of the "
+            "bearer's distance from another entity.",
+            "temperature": "temperature: A physical quality of the thermal energy of a system.",
+            ANCHOR_KEY: ANCHORS["term"],
+        }
+    )
+    question = {"fit": question_to_dict(choice)}  # the wire form both routes take
+    # A run nonce keeps the state out of clm-serve's caches, so the request is a cold one.
+    state = f"Probe run {time.time_ns()}.\n\n{text}"
+    t1 = time.perf_counter()
+    served = clm.system_one(state, question, model="clm-latest")
+    served_s = time.perf_counter() - t1
+    local = local_answers(enc, head, state, question, "clm-latest")
+    sp, lp = _probs(served.answers["fit"]), _probs(local["fit"])
     return {
         "text_sha256": sha256_text(text),
         "text_tokens": len(ids),
         "corpus": "tests/fixtures/cards/*.md concatenated, first 4990 tokens, plus a target line",
-        "max_model_len_boundary": boundary,
-        "requests_that_timed_out": hangs,
-        "left": {
-            "request": f"EncoderClient(max_len={limit}).embed: truncate_prompt_tokens={limit}, "
-            "truncation_side=left",
-            "prompt_tokens_charged": t_left,
-            f"cos_vs_last_{limit}_token_ids": round(c_left_tail, 7),
-            "cos_vs_decoded_tail_text": round(cos(v_left, v_tail_text), 7),
-            "decoded_tail_text_tokens_charged": t_tail_text,
+        "encoder_client": {
+            "request": f"EncoderClient(max_len={MAX_LEN}).embed: truncate_prompt_tokens="
+            f"{enc.truncate_prompt_tokens}, truncation_side=left",
+            "completed": True,
+            "seconds": round(client_s, 2),
+            "prompt_tokens_charged": t_client,
+            f"cos_vs_last_{CAP}_token_ids": round(c_tail, 9),
+            "bitwise_equal_to_tail_ids": bool(np.array_equal(v_client[0], v_tail)),
             "tail_ids_tokens_charged": t_tail,
+            f"cos_vs_first_{CAP}_token_ids": round(cos(v_client[0], v_head), 7),
             "gate": 0.9999,
-            "pass": c_left_tail >= 0.9999,
+            "pass": c_tail >= 0.9999 and t_client == CAP,
         },
-        "right_default": {
-            "request": f"truncate_prompt_tokens={limit} without truncation_side",
-            "prompt_tokens_charged": t_right,
-            f"cos_vs_first_{limit}_token_ids": round(cos(v_right, v_head_ids), 7),
-            "cos_vs_left_truncated": round(cos(v_right, v_left), 7),
+        "clm_serve_systemone": {
+            "request": "the same text behind a run nonce (never cached) as the state of one "
+            "Choice (2 candidates + __none__), clm-latest; clm-serve --max-tokens 4095",
+            "completed": True,
+            "seconds": round(served_s, 2),
+            "server_latency_ms": served.latency_ms,
+            "input_tokens": served.usage.input_tokens,
+            "probabilities": {k: round(v, 6) for k, v in sp.items()},
+            "max_abs_prob_diff_vs_local_route": max(abs(sp[k] - lp[k]) for k in sp),
         },
+    }
+
+
+def probe_boundary(enc_key: str, http: Http, text_ids: list[int]) -> dict[str, Any]:
+    """Last: one request of exactly ``MAX_LEN`` token ids (the window the cap stays below) with a
+    30 s timeout, then the engine's request gauges from ``/metrics`` (with the key) a few seconds
+    later, to show whether the abandoned request was aborted."""
+    b64 = {"model": MODEL, "encoding_format": "base64"}
+    outcome = _bounded(enc_key, {**b64, "input": [text_ids[:MAX_LEN]]}, 30.0)
+    time.sleep(5.0)
+    metrics = http.client.get(
+        f"{ENC_URL}/metrics", headers={"Authorization": f"Bearer {enc_key}"}
+    ).text
+    gauges = {
+        name: float(m.group(1))
+        for name in ("vllm:num_requests_running", "vllm:num_requests_waiting")
+        if (m := re.search(rf"^{re.escape(name)}{{[^}}]*}} ([0-9.e+]+)$", metrics, re.M))
+    }
+    after = _bounded(enc_key, {**b64, "input": [text_ids[: MAX_LEN - 1]]}, 60.0)
+    return {
+        f"token_ids_{MAX_LEN}": outcome,
+        "gauges_5s_after": gauges,
+        f"token_ids_{MAX_LEN - 1}_afterwards": after,
+        "note": "the clients never send this: truncate_prompt_tokens is max_len - 1 (DESIGN A4)",
     }
 
 
 # -- (f) goldens ---------------------------------------------------------------------------------
 
 
-def probe_goldens(enc: EncoderClient, out: Path) -> dict[str, Any]:
+def probe_goldens(enc: EncoderClient, out: Path, reference: Path | None) -> dict[str, Any]:
+    """Golden vectors and determinism: one text per request twice (the doctor's reference), the
+    20 texts as one batch twice, the M1-A goldens (batched, ``852efc921a8a``) for scale and,
+    bitwise, the existing reference of this ``encoder_fp`` (``reference``) when there is one."""
     texts = list(GOLDEN_TEXTS)
-    batch, tokens = enc.embed(texts)
     single = np.stack([enc.embed([t])[0][0] for t in texts])
     single2 = np.stack([enc.embed([t])[0][0] for t in texts])
-    again, _ = enc.embed(texts)
+    batch, tokens = enc.embed(texts)
+    batch2, _ = enc.embed(texts)
     shas = [sha256_text(t) for t in texts]
+    lock = json.loads(LOCK.read_text())
+    previous: dict[str, Any] | None = None
+    if reference is not None and reference.is_file():
+        with np.load(reference, allow_pickle=False) as npz:
+            ref_texts = [str(t) for t in npz["texts"]]
+            ref_vectors = np.asarray(npz["vectors"], dtype=np.float32)
+            ref_fp = str(npz["encoder_fp"])
+        same = ref_texts == texts and ref_fp == lock["encoder_fp"]
+        previous = {
+            "file_sha256": sha256_file(reference),
+            "encoder_fp": ref_fp,
+            "same_texts_and_encoder_fp": same,
+            "bitwise_equal_rows": int(np.sum(np.all(single == ref_vectors, axis=1))) if same else 0,
+            "n": len(texts),
+        }
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("wb") as fh:
         np.savez(
             fh,
             texts=np.array(texts),
             text_sha256=np.array(shas),
-            vectors=batch.astype(np.float32),
-            encoder_fp=np.array(json.loads(LOCK.read_text())["encoder_fp"]),
+            vectors=single.astype(np.float32),
+            encoder_fp=np.array(lock["encoder_fp"]),
             route=np.array("vllm"),
+            pattern=np.array("one text per request"),
         )
-    cs_single = [cos(batch[i], single[i]) for i in range(len(texts))]
-    cs_again = [cos(batch[i], again[i]) for i in range(len(texts))]
-    cs_single2 = [cos(single[i], single2[i]) for i in range(len(texts))]
+
+    def stats(x: np.ndarray, y: np.ndarray) -> dict[str, Any]:
+        cs = [cos(x[i], y[i]) for i in range(len(texts))]
+        return {
+            "min_cos": round(min(cs), 9),
+            "mean_cos": round(float(np.mean(cs)), 9),
+            "bitwise_identical": int(np.sum(np.all(x == y, axis=1))),
+        }
+
+    with np.load(M1A_GOLDENS, allow_pickle=False) as npz:
+        m1a = np.asarray(npz["vectors"], dtype=np.float32)
+        m1a_fp = str(npz["encoder_fp"])
     return {
         "file": str(out.relative_to(ROOT)),
         "file_sha256": sha256_file(out),
+        "encoder_fp": lock["encoder_fp"],
         "n": len(texts),
         "dtype": "float32",
         "prompt_tokens": tokens,
         "texts_sha256": shas,
-        "batch_vs_one_by_one": {
-            "min_cos": round(min(cs_single), 7),
-            "mean_cos": round(float(np.mean(cs_single)), 7),
-        },
-        "batch_vs_batch_repeat": {
-            "min_cos": round(min(cs_again), 7),
-            "mean_cos": round(float(np.mean(cs_again)), 7),
-        },
-        "one_by_one_vs_one_by_one_repeat": {
-            "min_cos": round(min(cs_single2), 7),
-            "mean_cos": round(float(np.mean(cs_single2)), 7),
-            "bitwise_identical": int(np.sum(np.all(single == single2, axis=1))),
-        },
+        "one_by_one_vs_repeat": stats(single, single2),
+        "batch_vs_one_by_one": stats(batch, single),
+        "batch_vs_batch_repeat": stats(batch, batch2),
+        "vs_m1a_goldens": {"m1a_encoder_fp": m1a_fp, **stats(single, m1a)},
+        "vs_reference_same_encoder_fp": previous,
         "golden_gate_0_9999": {
-            "batch_vs_one_by_one_pass": min(cs_single) >= 0.9999,
-            "batch_vs_batch_repeat_pass": min(cs_again) >= 0.9999,
-            "one_by_one_repeat_pass": min(cs_single2) >= 0.9999,
+            "one_by_one_repeat_pass": stats(single, single2)["min_cos"] >= 0.9999,
+            "batch_vs_one_by_one_pass": stats(batch, single)["min_cos"] >= 0.9999,
         },
     }
 
@@ -760,13 +969,18 @@ def probe_footprint() -> dict[str, Any]:
             "--format=csv,noheader",
         ]
     )
+    pre, enc_only = MEM_REFERENCE["pre_start"], MEM_REFERENCE["encoder_only"]
     return {
         "memavailable_now_gib": now,
-        "memavailable_pre_start_gib": MEMAVAILABLE_PRE_START_GIB,
-        "memavailable_encoder_only_gib": MEMAVAILABLE_ENCODER_ONLY_GIB,
-        "delta_both_units_gib": round(MEMAVAILABLE_PRE_START_GIB - now, 2),
-        "delta_encoder_gib": round(MEMAVAILABLE_PRE_START_GIB - MEMAVAILABLE_ENCODER_ONLY_GIB, 2),
-        "delta_clm_serve_gib": round(MEMAVAILABLE_ENCODER_ONLY_GIB - now, 2),
+        "memavailable_pre_start_gib": pre,
+        "memavailable_encoder_only_gib": enc_only,
+        "delta_both_units_gib": round(pre - now, 2) if pre is not None else None,
+        "delta_encoder_gib": round(pre - enc_only, 2)
+        if pre is not None and enc_only is not None
+        else None,
+        "delta_clm_serve_gib": round(enc_only - now, 2) if enc_only is not None else None,
+        "reference_points": "MemAvailable logged by the restart before this run "
+        "(both units stopped; encoder alone)",
         "budget_vllm_gib": 24.3,
         "docker_stats": stats,
         "nvidia_smi_compute_apps": apps.splitlines(),
@@ -802,6 +1016,10 @@ def encoder_log_facts() -> dict[str, Any]:
     patterns = {
         "model_loading": r"Model loading took ([\d.]+ GiB memory and [\d.]+ seconds)",
         "kv_cache": r"Available KV cache memory: ([\d.]+ GiB)",
+        "kv_cache_tokens": r"GPU KV cache size: ([\d,]+) tokens",
+        "kv_cache_reserved": r"reserved ([\d.]+ GiB) memory for KV Cache as specified",
+        "desired_utilization": r"Desired GPU memory utilization is \(([\d.]+, [\d.]+ GiB)\)",
+        "listen": r"Starting vLLM server on (unix:\S+)",
         "free_on_startup": r"Free memory on device \(([\d./]+ GiB)\) on startup",
         "seq_pooling_type": r"seq_pooling_type='(\w+)'",
         "enable_prefix_caching": r"enable_prefix_caching=(\w+)",
@@ -917,8 +1135,14 @@ def probe_versions(http: Http) -> dict[str, Any]:
     )
     digests = json.loads(repo_digests) if repo_digests.startswith("[") else [repo_digests]
     spec = EncoderSpec(**lock["encoder"])
+    enc_key = read_key("encoder")
+    problems = serving.verify_serving_lock(require_live=True)
     return {
-        "vllm_version": http.client.get(f"{ENC_URL}/version").json().get("version"),
+        "vllm_version": http.client.get(
+            f"{ENC_URL}/version", headers={"Authorization": f"Bearer {enc_key}"}
+        )
+        .json()
+        .get("version"),
         "image_id": image_id,
         "container_image_ref": config_image,
         "image_repo_digests": digests,
@@ -927,7 +1151,12 @@ def probe_versions(http: Http) -> dict[str, Any]:
         and lock["image"]["digest"] in config_image,
         "encoder_fp_lock": lock["encoder_fp"],
         "encoder_fp_recomputed": encoder_fp(spec),
+        "encoder_spec": lock["encoder"],
         "lock_sha": lock["lock_sha"],
+        "recipe": {k: v for k, v in lock.get("recipe", {}).items() if k != "args"},
+        "recipe_args": " ".join(lock.get("recipe", {}).get("args", [])),
+        "verify_serving_lock_require_live": problems,
+        "verify_serving_lock_pass": problems == [],
         "head_npz_sha256": sha256_file(HEAD_NPZ),
         "units_enabled": {
             u: run(["systemctl", "--user", "is-enabled", u])
@@ -958,29 +1187,50 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--out",
         type=Path,
-        help=f"default bench/results/{DATE}/serving_m1.json (--quick: .local/serving/quick_probe.json)",
+        help=f"default bench/results/{DATE}/serving_m1b.json (--quick: .local/serving/quick_probe.json)",
     )
-    ap.add_argument("--golden-out", type=Path, default=ROOT / ".local/serving/encoder_golden.npz")
-    ap.add_argument("--pairs-out", type=Path, default=ROOT / ".local/serving/systemone_pairs.json")
+    ap.add_argument("--golden-out", type=Path)
+    ap.add_argument(
+        "--golden-reference",
+        type=Path,
+        help="existing goldens of this encoder_fp to compare bitwise "
+        "(default .local/serving/encoder_golden_<encoder_fp>.npz)",
+    )
+    ap.add_argument(
+        "--pairs-out", type=Path, default=ROOT / ".local/serving/m1b/systemone_pairs.json"
+    )
     ap.add_argument("--repeats", type=int, default=30)
+    ap.add_argument("--mem-pre-start", type=float, help="MemAvailable GiB with both units stopped")
+    ap.add_argument("--mem-encoder-only", type=float, help="MemAvailable GiB, encoder alone up")
+    ap.add_argument("--no-boundary", action="store_true", help="skip the 4096-token-id request")
     ap.add_argument("--quick", action="store_true", help="binds, 401s, health, one systemone")
     args = ap.parse_args(argv)
     if args.out is None:
         args.out = ROOT / (
             ".local/serving/quick_probe.json"
             if args.quick
-            else f"bench/results/{DATE}/serving_m1.json"
+            else f"bench/results/{DATE}/serving_m1b.json"
         )
+    MEM_REFERENCE.update(pre_start=args.mem_pre_start, encoder_only=args.mem_encoder_only)
+    lock = json.loads(LOCK.read_text(encoding="utf-8"))
+    golden_out = (
+        args.golden_out or ROOT / f".local/serving/encoder_golden_{lock['encoder_fp']}.npz"
+    ).resolve()
+    golden_ref: Path | None = args.golden_reference or (
+        ROOT / f".local/serving/encoder_golden_{lock['encoder_fp']}.npz"
+    )
+    if golden_ref is not None and golden_ref.resolve() == golden_out.resolve():
+        golden_ref = None  # the run would compare the new file with itself
 
     enc_key, clm_key = read_key("encoder"), read_key("clm")
     http = Http()
     enc = EncoderClient(
         ENC_URL, enc_key, max_len=MAX_LEN, timeout=120.0, retries=1, tokenizer_json=TOKENIZER_JSON
     )
-    clm = ClmHttpClient(CLM_URL, clm_key, timeout=120.0, retries=1)
+    clm = ClmHttpClient(CLM_URL, clm_key, timeout=300.0, retries=1)
     started = dt.datetime.now(dt.UTC).isoformat(timespec="seconds")
     payload: dict[str, Any] = {
-        "format": "mesa-clm/serving-probes/1",
+        "format": "mesa-clm/serving-probes/2",
         "started_at": started,
         "host": "sparky-1",
         "command": "uv run python scripts/serving_probes.py" + (" --quick" if args.quick else ""),
@@ -992,7 +1242,10 @@ def main(argv: list[str] | None = None) -> int:
         payload[name] = fn()
 
     section("binds", probe_binds)
-    section("auth", lambda: probe_auth(http, enc_key, clm_key))
+    section("netns", probe_netns)
+    section("routes", enumerate_routes)
+    section("auth", lambda: probe_auth(http, enc_key, clm_key, payload["routes"]))
+    del payload["routes"]  # recorded under auth.enumeration
     if args.quick:
         section("health", lambda: {"encoder": enc.healthy(), "clm_serve": clm.health()})
         state, q = rank_fit_request(None)
@@ -1008,11 +1261,14 @@ def main(argv: list[str] | None = None) -> int:
         section("versions", lambda: probe_versions(http))
         section("models", lambda: probe_models(enc, clm, http))
         section("drift", lambda: probe_drift(clm))
-        section("truncation", lambda: probe_truncation(enc, http, enc_key))
-        section("goldens", lambda: probe_goldens(enc, args.golden_out))
+        section("truncation", lambda: probe_truncation(enc, http, enc_key, clm, head))
+        section("goldens", lambda: probe_goldens(enc, golden_out, golden_ref))
         section("parity", lambda: probe_parity(enc, clm, head, args.pairs_out))
         section("latency", lambda: probe_latency(enc, clm, args.repeats))
         section("footprint", probe_footprint)
+        if not args.no_boundary:
+            _, ids = long_text(http, enc_key)
+            section("boundary", lambda: probe_boundary(enc_key, http, ids))
     payload["seconds"] = round(time.perf_counter() - t0, 1)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(dump_checked(payload, [enc_key, clm_key]), encoding="utf-8")

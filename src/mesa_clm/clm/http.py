@@ -241,6 +241,11 @@ class HttpEndpoint:
         """The base URL as it may appear in a log or an error (no userinfo, query or fragment)."""
         return redact_url(self.base_url)
 
+    @property
+    def has_key(self) -> bool:
+        """Whether a bearer key is sent (never the key itself)."""
+        return self._api_key is not None
+
     def close(self) -> None:
         self._client.close()
 

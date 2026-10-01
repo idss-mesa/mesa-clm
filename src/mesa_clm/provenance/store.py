@@ -22,7 +22,9 @@ method is one operation: take ``fcntl.flock`` on :func:`mesa_clm.provenance.labe
 so the CLI, the bench and the MCP plugin serialise on one file), open the DuckDB file, run one
 transaction, close, release. Writers take the exclusive lock; reads open the file ``read_only``
 under a shared lock, which DuckDB allows several processes to hold at once. A read on a file that
-does not exist returns nothing and creates nothing (D29).
+does not exist returns nothing and creates nothing (D29). Everything the store creates is
+owner-only whatever the process umask: missing directories ``0700``, the lock file, the database
+and its ``.wal`` ``0600`` (:mod:`mesa_clm.perms`; the sidecar holds owners and curator labels).
 
 **Buffering (D11).** A run's rows are collected in a :class:`RunBuffer` while the pipeline runs
 (no lock held, no half-written run visible) and written by :meth:`DuckDBStore.commit_run` in one
@@ -32,7 +34,6 @@ phase, the tools and tests, each one its own transaction.
 
 from __future__ import annotations
 
-import fcntl
 import json
 import re
 from collections.abc import Iterable, Iterator, Mapping, Sequence
@@ -45,7 +46,16 @@ from uuid import UUID
 import duckdb
 from pydantic import BaseModel
 
-from mesa_clm.provenance.labels import LABELS_DDL, LabelRow, LabelStore, lock_path_for
+from mesa_clm.config import duckdb_path
+from mesa_clm.perms import private_dir
+from mesa_clm.provenance.labels import (
+    LABELS_DDL,
+    LabelRow,
+    LabelStore,
+    lock_path_for,
+    sidecar_lock,
+    tighten_duckdb,
+)
 from mesa_clm.provenance.models import (
     CALIBRATED_CALIBRATIONS,
     CALIBRATED_LEVELS,
@@ -808,21 +818,24 @@ class DuckDBStore:
         """One operation: take the flock (shared for a read-only open, exclusive otherwise),
         open DuckDB, yield, close, release. Session time zone UTC so ``TIMESTAMPTZ`` values come
         back as UTC datetimes whatever the host's zone. ``read_only`` refuses a missing file
-        (callers check ``path.exists()`` first and return nothing)."""
-        self.lock_path.parent.mkdir(parents=True, exist_ok=True)
+        (callers check ``path.exists()`` first and return nothing). Owner-only on disk whatever
+        the umask: whatever an operation creates (the lock directory and file, a write's missing
+        directories) is ``0700``/``0600``, and a write also tightens an existing lock directory,
+        lock file, database and ``.wal`` this user owns; a read changes no existing mode
+        (:func:`~mesa_clm.provenance.labels.sidecar_lock`)."""
         if not read_only:
-            self.path.parent.mkdir(parents=True, exist_ok=True)
-        with self.lock_path.open("a+") as lock:
-            fcntl.flock(lock.fileno(), fcntl.LOCK_SH if read_only else fcntl.LOCK_EX)
+            private_dir(self.path.parent, tighten=False)
+        with sidecar_lock(self.lock_path, shared=read_only, tighten=not read_only):
+            con = duckdb.connect(str(self.path), read_only=read_only)
             try:
-                con = duckdb.connect(str(self.path), read_only=read_only)
-                try:
-                    con.execute("SET TimeZone = 'UTC'")
-                    yield con
-                finally:
-                    con.close()
+                if not read_only:
+                    tighten_duckdb(self.path)
+                con.execute("SET TimeZone = 'UTC'")
+                yield con
             finally:
-                fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+                con.close()
+                if not read_only:
+                    tighten_duckdb(self.path)
 
     @staticmethod
     def _bootstrap(con: duckdb.DuckDBPyConnection) -> None:
@@ -1098,17 +1111,11 @@ class DuckDBStore:
 
 # -- dispatch ---------------------------------------------------------------------------------------------
 
-_DUCKDB_RE = re.compile(r"^duckdb:///(.+)$")
-
 
 def duckdb_file(dsn: str) -> Path | None:
     """The file behind ``duckdb:///<path>`` (or a bare ``*.duckdb`` path), home expanded;
-    ``None`` for any other dialect."""
-    if m := _DUCKDB_RE.match(dsn):
-        return Path(m.group(1)).expanduser()
-    if dsn.endswith(".duckdb"):
-        return Path(dsn).expanduser()
-    return None
+    ``None`` for any other dialect (:func:`mesa_clm.config.duckdb_path`, the one parser)."""
+    return duckdb_path(dsn)
 
 
 def is_postgres_dsn(dsn: str) -> bool:

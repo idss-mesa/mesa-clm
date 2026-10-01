@@ -6,27 +6,32 @@ The in-process fallback (``serving/cuda_encoder.py`` ``CudaEncoder``, the recipe
 parity run shows the two encoders agree. The run is sequential, never concurrent, because both
 need the GPU:
 
-1. ``dump`` - with the vLLM encoder and clm-serve **running**, in mesa-clm's environment::
+1. ``dump`` - with the vLLM encoder and clm-serve **running** on the final recipe, in
+   mesa-clm's environment::
 
        uv run python scripts/fallback_parity.py dump
 
    embeds the 20 golden texts (``.local/serving/encoder_golden.npz``) and the first 200 distinct
    state-only contexts of the collapse spike (``.local/serving/collapse_contexts.json``) through
-   ``EncoderClient`` and records clm-serve's ``/v1/systemone`` answers (``clm-latest`` and
+   ``EncoderClient``, **one text per request** (the reference; DESIGN A3) and in batches of 32
+   (recorded beside it), and records clm-serve's ``/v1/systemone`` answers (``clm-latest`` and
    ``clm-raw``) for the first 20 pairs of the serving probes
-   (``.local/serving/systemone_pairs.json``) -> ``.local/serving/vllm_ref.npz`` and
-   ``.local/serving/vllm_ref_systemone.json``;
+   (``.local/serving/systemone_pairs.json``) -> ``.local/serving/m1b/vllm_ref.npz`` and
+   ``.local/serving/m1b/vllm_ref_systemone.json``;
 2. stop both units (``systemctl --user stop mesa-clm-serve.service mesa-clm-encoder.service``);
 3. ``compare`` - in the **serve venv** (torch, transformers, the patched CLM; no mesa_clm)::
 
        HF_HUB_OFFLINE=1 ~/.mesa/clm/serve/.venv/bin/python scripts/fallback_parity.py compare
 
-   loads ``CudaEncoder`` (bf16, left truncation, max_len 4096, offline), embeds the same texts,
-   and answers the same 20 pairs through CLM's ``Engine(embedder=CudaEncoder, device="cpu",
-   action_cache="512MiB")``; writes ``bench/results/2026-09-29/fallback_parity.json`` with the
-   gates (min cosine >= 0.999, mean >= 0.9999) evaluated as pre-registered, never tuned.
+   loads ``CudaEncoder`` (bf16, left truncation, max_len 4096, **batch 1**: one sequence per
+   forward pass, no padding; offline), embeds the same texts, and answers the same 20 pairs
+   through CLM's ``Engine(embedder=CudaEncoder, device="cpu", action_cache="512MiB")``; writes
+   ``bench/results/2026-10-01/fallback_parity.json`` with the gates (min cosine >= 0.999, mean
+   >= 0.9999 against the one-text-per-request reference) evaluated as pre-registered, never
+   tuned. A diagnostic re-embed at batch 8 (the M1-A recipe) is recorded, not gated.
 
-The process exits when done, which frees the GPU memory.
+The process exits when done, which frees the GPU memory. The M1-A run of this script
+(batch 8, batched reference) is ``bench/results/2026-09-29/fallback_parity.json``.
 """
 
 from __future__ import annotations
@@ -46,13 +51,13 @@ from typing import Any
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-DATE = "2026-09-29"
+DATE = "2026-10-01"
 LOCAL = ROOT / ".local/serving"
 GOLDEN = LOCAL / "encoder_golden.npz"
 CONTEXTS = LOCAL / "collapse_contexts.json"
 PAIRS = LOCAL / "systemone_pairs.json"
-REF = LOCAL / "vllm_ref.npz"
-REF_SO = LOCAL / "vllm_ref_systemone.json"
+REF = LOCAL / "m1b" / "vllm_ref.npz"
+REF_SO = LOCAL / "m1b" / "vllm_ref_systemone.json"
 OUT = ROOT / f"bench/results/{DATE}/fallback_parity.json"
 LOCK = ROOT / "serving/serving.lock.json"
 HEAD_PT = Path("~/.mesa/clm/heads/CLM_v0.1-8B.pt").expanduser()
@@ -118,11 +123,11 @@ def dump() -> int:
     )
     texts, kinds = reference_texts()
     t0 = time.perf_counter()
-    vectors, tokens = enc.embed(texts)
-    seconds = time.perf_counter() - t0
-    # One text per request as well: batch-1 vLLM vectors are bitwise reproducible (serving
-    # probes), batched ones vary at ~1e-4 cosine with the batch composition.
+    # The reference is one text per request (DESIGN A3): bitwise reproducible on every recipe
+    # measured, and the pattern the doctor's golden check uses. Batches of 32 are recorded too.
     single = np.stack([enc.embed([t])[0][0] for t in texts])
+    seconds = time.perf_counter() - t0
+    vectors, tokens = enc.embed(texts)
     s64 = single.astype(np.float64)
     b64 = vectors.astype(np.float64)
     batch_vs_single = np.sum(s64 * b64, axis=1) / (
@@ -136,6 +141,7 @@ def dump() -> int:
         np.linalg.norm(v64, axis=1) * np.linalg.norm(golden_vectors, axis=1)
     )
     lock = json.loads(LOCK.read_text(encoding="utf-8"))
+    REF.parent.mkdir(parents=True, exist_ok=True)
     with REF.open("wb") as fh:
         np.savez(
             fh,
@@ -168,7 +174,7 @@ def dump() -> int:
                 "vectors_sha256": hashlib.sha256(REF.read_bytes()).hexdigest(),
                 "n_texts": len(texts),
                 "prompt_tokens": tokens,
-                "embed_seconds": round(seconds, 2),
+                "embed_seconds_one_text_per_request": round(seconds, 2),
                 "vllm_batched_vs_single_request": {
                     "min_cos": float(batch_vs_single.min()),
                     "mean_cos": float(batch_vs_single.mean()),
@@ -218,6 +224,8 @@ class MemSampler:
 
 
 def compare(max_len: int, batch: int, diagnostic_batch: int) -> int:
+    """The fallback against the vLLM reference; the gates use the one-text-per-request
+    reference vectors (module docstring)."""
     os.environ.setdefault("HF_HUB_OFFLINE", "1")
     sys.path.insert(0, str(ROOT / "serving"))
     import torch
@@ -234,7 +242,16 @@ def compare(max_len: int, batch: int, diagnostic_batch: int) -> int:
     ref_so = json.loads(REF_SO.read_text(encoding="utf-8"))
     lock = json.loads(LOCK.read_text(encoding="utf-8"))
     vllm_spec = dict(lock["encoder"])
-    fallback_spec = {**vllm_spec, "route": "transformers", "max_len": max_len}
+    # The fallback route's EncoderSpec (mesa_clm.serving.FALLBACK_ENCODER): one sequence per
+    # forward pass at batch 1 is "serial" batch invariance (DESIGN A3); any other batch is not.
+    fallback_spec = {
+        **vllm_spec,
+        "route": "transformers",
+        "max_len": max_len,
+        "batch_invariance": "serial" if batch == 1 else "none",
+    }
+    if fallback_spec["batch_invariance"] == "none":
+        del fallback_spec["batch_invariance"]
     if encoder_fp(vllm_spec) != lock["encoder_fp"]:
         raise SystemExit("inline encoder_fp disagrees with serving.lock.json; refusing to record")
 
@@ -249,11 +266,12 @@ def compare(max_len: int, batch: int, diagnostic_batch: int) -> int:
         torch.cuda.synchronize()
         embed_s = time.perf_counter() - t1
         v64 = vecs.astype(np.float64)
-        cos = np.sum(v64 * ref, axis=1) / (
-            np.linalg.norm(v64, axis=1) * np.linalg.norm(ref, axis=1)
-        )
-        cos_single = np.sum(v64 * ref_single, axis=1) / (
+        # Primary: the one-text-per-request reference (DESIGN A3); the batched one beside it.
+        cos = np.sum(v64 * ref_single, axis=1) / (
             np.linalg.norm(v64, axis=1) * np.linalg.norm(ref_single, axis=1)
+        )
+        cos_batched = np.sum(v64 * ref, axis=1) / (
+            np.linalg.norm(v64, axis=1) * np.linalg.norm(ref, axis=1)
         )
         t2 = time.perf_counter()
         engine = Engine(embedder=enc, checkpoint=str(HEAD_PT), device="cpu", action_cache="512MiB")
@@ -297,19 +315,19 @@ def compare(max_len: int, batch: int, diagnostic_batch: int) -> int:
             diagnostic = {
                 "batch": diagnostic_batch,
                 "seconds": round(time.perf_counter() - t3, 2),
-                "vs_batched_reference": {
-                    "min_cos": float(dcos.min()),
-                    "mean_cos": float(dcos.mean()),
-                },
                 "vs_single_request_reference": {
                     "min_cos": float(dcos_single.min()),
                     "mean_cos": float(dcos_single.mean()),
+                },
+                "vs_batched_reference": {
+                    "min_cos": float(dcos.min()),
+                    "mean_cos": float(dcos.mean()),
                 },
                 "vs_primary_fallback_run": {
                     "min_cos": float(dself.min()),
                     "mean_cos": float(dself.mean()),
                 },
-                "worst_text_sha256": sha256_text(texts[int(np.argmin(dcos))]),
+                "worst_text_sha256": sha256_text(texts[int(np.argmin(dcos_single))]),
             }
             enc.batch = batch
         peak_alloc = torch.cuda.max_memory_allocated() / 1024**3
@@ -344,6 +362,7 @@ def compare(max_len: int, batch: int, diagnostic_batch: int) -> int:
             "systemctl --user stop mesa-clm-serve.service mesa-clm-encoder.service",
             "HF_HUB_OFFLINE=1 ~/.mesa/clm/serve/.venv/bin/python scripts/fallback_parity.py compare"
             f" --batch {batch} --diagnostic-batch {diagnostic_batch}",
+            "systemctl --user start mesa-clm-encoder.service mesa-clm-serve.service",
         ],
         "reference_route": {
             "route": "vllm",
@@ -378,12 +397,12 @@ def compare(max_len: int, batch: int, diagnostic_batch: int) -> int:
             "worst_text_sha256": sha256_text(texts[worst_i]),
             "worst_kind": kinds[worst_i],
             "n_below_0_9999": int((cos < 0.9999).sum()),
-            "reference": "vLLM vectors from EncoderClient.embed in batches of 32 (the dump)",
-            "vs_single_request_reference": {
-                "min_cos": float(cos_single.min()),
-                "mean_cos": float(cos_single.mean()),
-                "min_pass": bool(cos_single.min() >= GATE_MIN),
-                "mean_pass": bool(cos_single.mean() >= GATE_MEAN),
+            "reference": "vLLM vectors from EncoderClient.embed, one text per request (the dump)",
+            "vs_batched_reference": {
+                "min_cos": float(cos_batched.min()),
+                "mean_cos": float(cos_batched.mean()),
+                "min_pass": bool(cos_batched.min() >= GATE_MIN),
+                "mean_pass": bool(cos_batched.mean() >= GATE_MEAN),
             },
             "vllm_batched_vs_single_request": ref_so["vllm_batched_vs_single_request"],
         },
@@ -472,9 +491,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("mode", choices=["dump", "compare", "head"])
     ap.add_argument("--vectors", type=Path, default=LOCAL / "parity_vectors.npz")
     ap.add_argument("--max-len", type=int, default=4096)
-    ap.add_argument("--batch", type=int, default=8)
+    ap.add_argument("--batch", type=int, default=1, help="the fallback recipe: 1 (DESIGN A3)")
     ap.add_argument(
-        "--diagnostic-batch", type=int, default=1, help="0 disables the diagnostic re-embed"
+        "--diagnostic-batch", type=int, default=8, help="0 disables the diagnostic re-embed"
     )
     args = ap.parse_args(argv)
     if args.mode == "dump":

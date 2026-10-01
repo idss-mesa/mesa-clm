@@ -17,7 +17,7 @@ the X1 framing) and `RESEARCH.md` the verified facts; read both before changing 
 ```bash
 uv sync --all-extras                                # dev install; nothing here pulls torch or vllm
 uv run pytest -q                                    # hermetic suite (fake CLM transport, OLS fixtures, DuckDB)
-uv run ruff check src tests scripts && uv run ruff format --check src tests
+uv run ruff check src tests scripts && uv run ruff format --check src tests scripts
 uv run mypy --strict src
 sha256sum -c vendored.sha256                        # vendored CLM schema.py/LICENSE, AnyJev metrics, CLM client oracle
 uv run mesa-clm doctor [--quick] [--serve] [--json] # pins, locks, stores, host; --serve (or both units active): live probes
@@ -25,12 +25,16 @@ uv run mesa-clm framings --check                    # framing keys match framing
 MESA_CLM_OLS__FIXTURES=replay MESA_CLM_OLS__FIXTURES_DIR=tests/fixtures/ols \
   uv run mesa-clm --provenance duckdb:////tmp/p.duckdb annotate --card tests/fixtures/cards/DP1.10003.001.brd_countdata.md --provider fake --out /tmp/run.json
 uv run mesa-clm explain --run-id <id|prefix>        # owner = --actor ($USER); review --run-id (TTY) | review --pick G=KEY|none --decline G
-uv run mesa-clm feedback --group-id G --action pick|reject|decline [--option-key CURIE]   # via=cli curator labels (DESIGN A2)
+uv run mesa-clm feedback --group-id G --action pick|reject|decline [--option-key KEY|none]  # TTY: via=cli curator; no TTY: via=tool agent_pick (A2)
 uv run mesa-clm provenance migrate|export --run-id R --out DIR|import PATH|prune [--dry-run]
 uv run mesa-clm serve keys --init|--rotate | serve units | serve lock --check   # never prints a key
+uv run mesa-clm features build --snapshot bench/snapshots/2026-09-29.parquet | export-npz --out DIR | project | stats [--json]
+uv run python scripts/doctor_record.py --out bench/results/<date>/doctor_serve.json   # doctor --serve as a results file
 MESA_CLM_LIVE=1 uv run pytest -q -m live            # real EMBL-EBI OLS: fixture recording and closure only
-MESA_CLM_ENGINE=1 uv run pytest -q -m engine        # real encoder :8090 + clm-serve :8700 (goldens, wire parity)
-MESA_CLM_GPU=1 ~/.mesa/clm/serve/.venv/bin/python -m pytest tests/serve tests/gpu   # serve venv + CUDA
+MESA_CLM_ENGINE=1 uv run pytest -q -m engine        # real encoder :8090 + clm-serve :8700 (doctor --serve, non-bench annotate, offline vs /v1/systemone and /v1/rank)
+MESA_CLM_CLM_SRC=~/.mesa/clm/serve/CLM/src uvx --with fastapi --with httpx --with numpy --with requests \
+  --with uvicorn --with pytest-asyncio pytest -q -p no:cacheprovider serving/tests   # serve side, CPU only (as serving.yml)
+uv run python scripts/x1_crosscheck.py --out bench/results/<date>/x1_crosscheck.json   # X1's 200-group store vs clm-serve check
 MESA_CLM_TEST_PG_DSN=postgresql://... uv run pytest -q -m requires_postgres          # docker postgres:16
 MESA_CLM_E2E=1 uv run pytest -q -m e2e              # spawns the real mesa-mcp over MCP stdio
 MESA_CLM_NEON_ROOT=<clm root> uv run pytest -q -m neon                              # neon-ducklake adapter
@@ -46,10 +50,14 @@ and `bench mde`, both stamped with the `labels_sha256` of `bench/snapshots/<date
 `doctor`. M1 adds `framings`, `annotate` (`--provider clm|fake`, `--tier
 auto|zero_shot|…|ols_rank`; clm-serve down at tier auto runs `ols_rank` only with
 `decider.ols_rank_fallback: true`, otherwise exit 1), `explain`, `review`, `feedback`,
-`provenance migrate|export|import|prune` and `serve keys|units|lock`. Global options
-`--config`, `--provenance`, `--actor` go before the verb (the last two are accepted after it
-too); exit codes 0 ok, 1 the verb failed, 2 config or usage. A `duckdb:///` DSN with a relative
-path is relative to the working directory; use four slashes for an absolute path.
+`provenance migrate|export|import|prune`, `serve keys|units|lock` and `features
+build|export-npz|project|stats`. Global options `--config`, `--provenance`, `--actor` go before
+the verb (`labels`, `bench`, `annotate`, `explain`, `review`, `feedback` and `provenance` also
+take the last two after it; `doctor`, `framings`, `serve` and `features` do not); exit codes 0
+ok, 1 the verb failed, 2 config or usage. A `duckdb:///` DSN with a relative path is relative to
+the working directory; use four slashes for an absolute path (a bare `*.duckdb` path works
+too). Keys default to `~/.mesa/clm/secrets/{clm,encoder}.key` when those exist; everything
+mesa-clm writes under `~/.mesa/clm` is owner-only (0700/0600) whatever the umask.
 
 ## Fixed decisions (do not re-litigate; details in DESIGN.md)
 
@@ -83,16 +91,26 @@ path is relative to the working directory; use four slashes for an absolute path
 - **Sidecar and history (D11, D12, D13).** Per-host DuckDB opened per operation under a flock;
   the plugin always spools (`mesa-spool/1`); `direct` is CLI-only and needs the whole lock set
   free; one snapshot per (run, project); never an empty `record_changes`.
-- **Labels (D19, D20, D21, D30).** Curator labels only from MRTR elicitation or the CLI
-  (`review`, `review --pick`, `feedback`: `via='cli'`, DESIGN A2); a plain tool pick is
-  `agent_pick` at weight 0; runs carry an `owner`; weights are sample weights in every fitter.
+- **Labels (D19, D20, D21, D30).** The bench cards are the fixed seven neon-avu-eval tables
+  (`learn.labels.BENCH_CARDS`, fail-closed), and the bench drops bench-card curator rows and
+  non-fold-eligible rows before it picks a target's label. Curator labels only from MRTR elicitation or the CLI at an
+  interactive terminal (`review`, `review --pick`, `feedback`: `via='cli'` only when stdin is a
+  TTY, DESIGN A2); without one, and from a plain tool call, an answer is `agent_pick` at weight
+  0; a curator's answer settles a group; runs carry an `owner`; weights are sample weights in
+  every fitter.
 - **Planner (D22).** The planner plans; Claude is a recorded second opinion; neither ever
   decides or writes.
 - **Contexts (D23, D26).** Builders and `state_sha256` byte-identical to mesa-anyjev; every
   context view ends with the target; raw cards are never sent; `card_path` is CLI-only.
-- **Serving (D15, D16, D17).** Serving never fits; heads reach clm-serve only through
-  promotion plus a restart; encoder :8090 and clm-serve :8700 on loopback with keys; remote
-  URLs only with `MESA_CLM_CLM__ALLOW_REMOTE=1` **and** https.
+- **Serving (D15, D16, D17, A3, A4, A5).** Serving never fits; heads reach clm-serve only through
+  promotion plus a restart; encoder :8090 and clm-serve :8700 on loopback with keys, the
+  encoder answering nothing but `/health` without its key (A4); the vLLM encoder runs its
+  batch-invariant kernels (`encoder_fp` c3b3d5e1a283, A3) in a container with no network, on a
+  unix socket that a loopback socket unit proxies, with its KV cache pinned to 4.5 GiB (A5), and
+  clients truncate at 4,095 tokens; `features build` and annotate check the running container
+  against the lock first;
+  remote URLs only with `MESA_CLM_CLM__ALLOW_REMOTE=1` **and** https. Never start, stop or
+  enable the units as a side effect: that is the operator's.
 - MIT, Copyright (c) 2026 The Regents of the University of New Mexico. "anyjev" appears only
   where mesa-anyjev is named as the source of a port.
 
@@ -114,24 +132,34 @@ flock) **M0** · `learn/labels.py` (`ingest_neon_eval`, `import_anyjev`, `labell
 CP thresholds, typed cells, lookup_prob, novel-key, LOPO, MDE simulation, neon tasks reading the
 policy `min_weight`) **M0** · `health.py` (doctor: vendored shas, config, versions and D0 pins,
 mesa-mcp plugin API, policy, provenance path, key files) **M0**; framings lock, schema sha,
-sidecar schema, serving lock, host/gpu_budget and the serve-mode probes through injectable
-`ServeProbes` **M1** · `mcp_tools/__init__.py` (entry-point stub, registers nothing) **M0**, the
-five `mesa_clm_*` tools M3 · `cli.py` (`labels`, `bench`, `doctor`) **M0**; `framings`,
-`annotate`, `explain`, `review`, `feedback`, `provenance`, `serve` **M1**; the other verbs with
-their milestones · `_vendor/clm/` (CLM `schema.py` + `LICENSE`, byte-identical) **M0** ·
+sidecar schema, feature store, permissions, serving lock, host/gpu_budget and the serve-mode
+probes (encoder network namespace, headroom timer, 401 matrix, encoder goldens, long input,
+systemone parity, drift) through injectable `ServeProbes` **M1** ·
+`perms.py` (owner-only directories and files) **M1** · `mcp_tools/__init__.py` (entry-point
+stub, registers nothing) **M0**, the five `mesa_clm_*` tools M3 · `cli.py` (`labels`, `bench`,
+`doctor`) **M0**; `framings`, `annotate`, `explain`, `review`, `feedback`, `provenance`,
+`serve`, `features` **M1**; the other verbs with their milestones · `_vendor/clm/` (CLM `schema.py` + `LICENSE`, byte-identical) **M0** ·
 `framings.py`, `render.py` + `framings.lock.json` (framings, `question_key`, lock; typed facade
 over the vendored `to_text`/`build_pairs`) **M1** · `clm/{http,encoder,headproj,fingerprint,fake}.py`
 (`ClmHttpClient`, `EncoderClient`, numpy head projection, fingerprints, deterministic fake)
 **M1** · `providers/{base,tiered,claude_provider,live}.py` (`DecisionRecord`, `_honest`, tier
-routing, second opinion; `live.clm_provider` builds the real provider over the serving lock the
-host runs, `live.clm_status` the `/health` pre-flight) **M1** · `pipeline.py`
-(`Annotator.annotate` Q1–Q8) **M1** · `policy.py` (`outcome()`, `masked()`) **M1** ·
+routing, `DeciderRefused`, second opinion; `live.clm_provider` builds the real provider over the
+serving lock the host runs and refuses a lock that contradicts the schema or the checkout,
+`live.preflight` the keyed pre-flight, `live.encoder_problems` the encoder against the lock,
+`live.container_check` the running container against the lock's recipe)
+**M1** · `pipeline.py` (`Annotator.annotate` Q1–Q8) **M1** · `policy.py` (`outcome()`, `masked()`) **M1** ·
 `provenance/{models,store,store_postgres,migrate,export}.py` (sidecar `mesa_clm`, migrations
 including `LABELS_DDL`, export/import/prune; `store.bulk_insert` binds one JSON value per chunk
 because DuckDB 1.5.6 probes `import pandas` per bound value) **M1** · `service.py`
-(`DecisionService`) **M1** · `serving.py` (keys, units, lock verification) **M1** ·
-`learn/features.py` (feature cache, npz export) M1 · `apply.py`, `revert.py`, `irods_io.py`, `history/` (two-phase apply, revert,
-backends, spool, recorder, lock set) M3 · `learn/{linear,calibrate,fit}.py`, `artifacts.py`,
+(`DecisionService`: owners, pending groups, one answer per group) **M1** · `serving.py` (keys,
+units incl. the encoder's loopback socket proxy, the lock and its container recipe, lock
+verification, the container's network namespace) **M1** · `learn/features.py`
+(`FeatureStore`: float32 vectors, the lock's vector recipe and `lock_sha` stamped, format 2; the
+X1/X2 manifest, `builder_ordered`, TextCache npz export) and `learn/offline.py` (offline
+rank_fit/noul scoring from the cached float32 vectors; `scripts/x1_crosscheck.py` checks it
+against clm-serve) **M1** · `apply.py`,
+`revert.py`, `irods_io.py`, `history/` (two-phase apply, revert, backends, spool, recorder, lock
+set) M3 · `learn/{linear,calibrate,fit}.py`, `artifacts.py`,
 `learn/teacher.py` M4 · `bench/{run,framing,e2e}.py` M2–M4 · `adapters/neon.py` M6 ·
 `learn/finetune.py` M7. `serving/` and `deploy/` hold the serve-venv side (patches, encoder
 scripts, units) and never import `mesa_clm`.
@@ -144,8 +172,10 @@ scripts, units) and never import `mesa_clm`.
   `gpu`, `serve`, `requires_postgres`, `e2e`, `neon` are opt-in through the environment
   variables above and excluded by default (`addopts` in `pyproject.toml`). An autouse fixture
   in `tests/conftest.py` makes the doctor offline (`health.ServeProbes.offline`: no serving
-  home, refused connections, missing commands); tests that exercise serving checks inject their
-  own `ServeProbes`. The live checks are `tests/engine/` (`MESA_CLM_ENGINE=1`, key-file env).
+  home, refused connections, missing commands) and points `serving.DEFAULT_HOME` at an empty
+  per-test path (no installed lock, no default key files); tests that exercise serving checks
+  inject their own `ServeProbes` or home. The live checks are `tests/engine/`
+  (`MESA_CLM_ENGINE=1`; keys from the configuration or the default key files).
 - Vendored files (`vendored.sha256`) are byte-identical to upstream and never edited; CI checks
   the hashes.
 - Every number in docs or tables names the results JSON it came from (AnyJev ground rule 1);

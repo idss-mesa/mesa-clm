@@ -33,6 +33,7 @@ from mesa_clm.providers import (
     CalibratorError,
     ClaudeStructuredProvider,
     ClmCall,
+    DeciderRefused,
     DecisionProvider,
     DecisionRecord,
     DecisionRequest,
@@ -492,12 +493,14 @@ def test_a_failed_request_gives_unavailable_records(
 
 
 def test_refused_and_breaker_open_requests(server: FakeClmServer, target: dict[str, Any]) -> None:
+    # A rejected key refuses the run (it would answer every group the same way); a breaker
+    # that is open, a timeout or a 422 are per-group unavailable records (D28).
     keyed = FakeClmServer(clm_api_key="right")
     calls: list[ClmCall] = []
-    [rec] = FakeProvider(client=_client(keyed, api_key="wrong"), on_call=calls.append).decide(
-        TERM, [target], [CANDS]
-    )
-    assert rec.reason == "decider_unavailable" and "401" in str(rec.diagnostics["error"])
+    refusing = FakeProvider(client=_client(keyed, api_key="wrong"), on_call=calls.append)
+    with pytest.raises(DeciderRefused, match="key was rejected") as refused:
+        refusing.decide(TERM, [target], [CANDS])
+    assert refused.value.status == 401 and "wrong" not in str(refused.value)
     assert calls[-1].status == "error"
     breaker = CircuitBreaker(failures=1, open_for=60.0)
     breaker.failure()

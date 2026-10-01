@@ -1,0 +1,267 @@
+{
+ "format": "mesa-clm/encoder-log-lines/1",
+ "source": "journalctl --user -u mesa-clm-encoder.service --since 2026-09-29 -o json, MESSAGE fields matching the vLLM start-up lines on model load, KV cache, memory utilisation, rendezvous and listen address; non-loopback addresses masked",
+ "recorded_at": "2026-10-01T18:35:04+00:00",
+ "starts": [
+  {
+   "first_line_utc": "2026-09-29T18:30:33+00:00",
+   "lines": [
+    {
+     "journal_utc": "2026-09-29T18:30:33+00:00",
+     "message": "(EngineCore pid=156) INFO 09-29 18:30:33 [parallel_state.py:1640] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://<container address>:46553 backend=nccl"
+    },
+    {
+     "journal_utc": "2026-09-29T18:31:41+00:00",
+     "message": "(EngineCore pid=156) INFO 09-29 18:31:41 [gpu_model_runner.py:5405] Model loading took 14.11 GiB memory and 66.028679 seconds"
+    },
+    {
+     "journal_utc": "2026-09-29T18:31:42+00:00",
+     "message": "(EngineCore pid=156) INFO 09-29 18:31:42 [gpu_worker.py:563] Available KV cache memory: 9.49 GiB"
+    },
+    {
+     "journal_utc": "2026-09-29T18:31:42+00:00",
+     "message": "(EngineCore pid=156) INFO 09-29 18:31:42 [kv_cache_utils.py:2235] GPU KV cache size: 69,072 tokens"
+    },
+    {
+     "journal_utc": "2026-09-29T18:31:42+00:00",
+     "message": "(EngineCore pid=156) INFO 09-29 18:31:42 [kv_cache_utils.py:2236] Maximum concurrency for 4,096 tokens per request: 16.86x"
+    },
+    {
+     "journal_utc": "2026-09-29T18:31:45+00:00",
+     "message": "(EngineCore pid=156) INFO 09-29 18:31:45 [gpu_worker.py:789] Free memory on device (105.2/121.69 GiB) on startup. Desired GPU memory utilization is (0.2, 24.34 GiB). Actual usage is 14.65 GiB for consumed memory (weights + non-torch), 0.2 GiB for peak activation, and 0.0 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=10028251546` (9.34 GiB) to fit into requested memory, or `--kv-cache-memory=96853274624` (90.2 GiB) to fully utilize gpu memory. Current kv cache memory in use is 9.49 GiB."
+    },
+    {
+     "journal_utc": "2026-09-29T18:31:48+00:00",
+     "message": "(APIServer pid=1) INFO 09-29 18:31:48 [api_server.py:682] Starting vLLM server on http://<container address>:8090"
+    }
+   ]
+  },
+  {
+   "first_line_utc": "2026-09-29T19:33:08+00:00",
+   "lines": [
+    {
+     "journal_utc": "2026-09-29T19:33:08+00:00",
+     "message": "(EngineCore pid=157) INFO 09-29 19:33:08 [parallel_state.py:1640] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://<container address>:54305 backend=nccl"
+    },
+    {
+     "journal_utc": "2026-09-29T19:34:27+00:00",
+     "message": "(EngineCore pid=157) INFO 09-29 19:34:27 [gpu_model_runner.py:5405] Model loading took 14.11 GiB memory and 78.300102 seconds"
+    },
+    {
+     "journal_utc": "2026-09-29T19:34:28+00:00",
+     "message": "(EngineCore pid=157) INFO 09-29 19:34:28 [gpu_worker.py:563] Available KV cache memory: 9.83 GiB"
+    },
+    {
+     "journal_utc": "2026-09-29T19:34:28+00:00",
+     "message": "(EngineCore pid=157) INFO 09-29 19:34:28 [kv_cache_utils.py:2235] GPU KV cache size: 71,584 tokens"
+    },
+    {
+     "journal_utc": "2026-09-29T19:34:28+00:00",
+     "message": "(EngineCore pid=157) INFO 09-29 19:34:28 [kv_cache_utils.py:2236] Maximum concurrency for 4,096 tokens per request: 17.48x"
+    },
+    {
+     "journal_utc": "2026-09-29T19:34:30+00:00",
+     "message": "(EngineCore pid=157) INFO 09-29 19:34:30 [gpu_worker.py:789] Free memory on device (105.41/121.69 GiB) on startup. Desired GPU memory utilization is (0.2, 24.34 GiB). Actual usage is 14.3 GiB for consumed memory (weights + non-torch), 0.2 GiB for peak activation, and 0.0 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=10399525274` (9.69 GiB) to fit into requested memory, or `--kv-cache-memory=97454010368` (90.76 GiB) to fully utilize gpu memory. Current kv cache memory in use is 9.83 GiB."
+    },
+    {
+     "journal_utc": "2026-09-29T19:34:32+00:00",
+     "message": "(APIServer pid=1) INFO 09-29 19:34:32 [api_server.py:682] Starting vLLM server on http://<container address>:8090"
+    }
+   ]
+  },
+  {
+   "first_line_utc": "2026-10-01T14:37:47+00:00",
+   "lines": [
+    {
+     "journal_utc": "2026-10-01T14:37:47+00:00",
+     "message": "(EngineCore pid=156) INFO 10-01 14:37:47 [parallel_state.py:1640] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://<container address>:60081 backend=nccl"
+    },
+    {
+     "journal_utc": "2026-10-01T14:38:56+00:00",
+     "message": "(EngineCore pid=156) INFO 10-01 14:38:56 [gpu_model_runner.py:5405] Model loading took 14.11 GiB memory and 67.925360 seconds"
+    },
+    {
+     "journal_utc": "2026-10-01T14:38:57+00:00",
+     "message": "(EngineCore pid=156) INFO 10-01 14:38:57 [gpu_worker.py:563] Available KV cache memory: 9.64 GiB"
+    },
+    {
+     "journal_utc": "2026-10-01T14:38:57+00:00",
+     "message": "(EngineCore pid=156) INFO 10-01 14:38:57 [kv_cache_utils.py:2235] GPU KV cache size: 70,160 tokens"
+    },
+    {
+     "journal_utc": "2026-10-01T14:38:57+00:00",
+     "message": "(EngineCore pid=156) INFO 10-01 14:38:57 [kv_cache_utils.py:2236] Maximum concurrency for 4,096 tokens per request: 17.13x"
+    },
+    {
+     "journal_utc": "2026-10-01T14:38:58+00:00",
+     "message": "(EngineCore pid=156) INFO 10-01 14:38:58 [gpu_worker.py:789] Free memory on device (105.2/121.69 GiB) on startup. Desired GPU memory utilization is (0.2, 24.34 GiB). Actual usage is 14.5 GiB for consumed memory (weights + non-torch), 0.2 GiB for peak activation, and 0.0 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=10190338458` (9.49 GiB) to fit into requested memory, or `--kv-cache-memory=97018728448` (90.36 GiB) to fully utilize gpu memory. Current kv cache memory in use is 9.64 GiB."
+    },
+    {
+     "journal_utc": "2026-10-01T14:39:00+00:00",
+     "message": "(APIServer pid=1) INFO 10-01 14:39:00 [api_server.py:682] Starting vLLM server on http://<container address>:8090"
+    }
+   ]
+  },
+  {
+   "first_line_utc": "2026-10-01T14:44:31+00:00",
+   "lines": [
+    {
+     "journal_utc": "2026-10-01T14:44:31+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 14:44:31 [parallel_state.py:1640] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://<container address>:35915 backend=nccl"
+    },
+    {
+     "journal_utc": "2026-10-01T14:45:44+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 14:45:44 [gpu_model_runner.py:5405] Model loading took 14.11 GiB memory and 71.834186 seconds"
+    },
+    {
+     "journal_utc": "2026-10-01T14:45:45+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 14:45:45 [gpu_worker.py:563] Available KV cache memory: 9.83 GiB"
+    },
+    {
+     "journal_utc": "2026-10-01T14:45:45+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 14:45:45 [kv_cache_utils.py:2235] GPU KV cache size: 71,552 tokens"
+    },
+    {
+     "journal_utc": "2026-10-01T14:45:45+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 14:45:45 [kv_cache_utils.py:2236] Maximum concurrency for 4,096 tokens per request: 17.47x"
+    },
+    {
+     "journal_utc": "2026-10-01T14:45:46+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 14:45:46 [gpu_worker.py:789] Free memory on device (105.19/121.69 GiB) on startup. Desired GPU memory utilization is (0.2, 24.34 GiB). Actual usage is 14.31 GiB for consumed memory (weights + non-torch), 0.2 GiB for peak activation, and 0.0 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=10394229146` (9.68 GiB) to fit into requested memory, or `--kv-cache-memory=97209008128` (90.53 GiB) to fully utilize gpu memory. Current kv cache memory in use is 9.83 GiB."
+    },
+    {
+     "journal_utc": "2026-10-01T14:45:48+00:00",
+     "message": "(APIServer pid=1) INFO 10-01 14:45:48 [api_server.py:682] Starting vLLM server on http://<container address>:8090"
+    }
+   ]
+  },
+  {
+   "first_line_utc": "2026-10-01T14:53:17+00:00",
+   "lines": [
+    {
+     "journal_utc": "2026-10-01T14:53:17+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 14:53:17 [parallel_state.py:1640] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://<container address>:39495 backend=nccl"
+    },
+    {
+     "journal_utc": "2026-10-01T14:54:27+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 14:54:27 [gpu_model_runner.py:5405] Model loading took 14.11 GiB memory and 68.302357 seconds"
+    },
+    {
+     "journal_utc": "2026-10-01T14:54:29+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 14:54:29 [gpu_worker.py:563] Available KV cache memory: 9.38 GiB"
+    },
+    {
+     "journal_utc": "2026-10-01T14:54:29+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 14:54:29 [kv_cache_utils.py:2235] GPU KV cache size: 68,256 tokens"
+    },
+    {
+     "journal_utc": "2026-10-01T14:54:29+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 14:54:29 [kv_cache_utils.py:2236] Maximum concurrency for 4,096 tokens per request: 16.66x"
+    },
+    {
+     "journal_utc": "2026-10-01T14:54:30+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 14:54:30 [gpu_worker.py:789] Free memory on device (104.52/121.69 GiB) on startup. Desired GPU memory utilization is (0.2, 24.34 GiB). Actual usage is 14.76 GiB for consumed memory (weights + non-torch), 0.2 GiB for peak activation, and 0.0 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=9909389722` (9.23 GiB) to fit into requested memory, or `--kv-cache-memory=96009170944` (89.42 GiB) to fully utilize gpu memory. Current kv cache memory in use is 9.38 GiB."
+    },
+    {
+     "journal_utc": "2026-10-01T14:54:32+00:00",
+     "message": "(APIServer pid=1) INFO 10-01 14:54:32 [api_server.py:682] Starting vLLM server on http://<container address>:8090"
+    }
+   ]
+  },
+  {
+   "first_line_utc": "2026-10-01T15:00:13+00:00",
+   "lines": [
+    {
+     "journal_utc": "2026-10-01T15:00:13+00:00",
+     "message": "(EngineCore pid=155) INFO 10-01 15:00:13 [parallel_state.py:1640] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://<container address>:44379 backend=nccl"
+    },
+    {
+     "journal_utc": "2026-10-01T15:01:26+00:00",
+     "message": "(EngineCore pid=155) INFO 10-01 15:01:26 [gpu_model_runner.py:5405] Model loading took 14.11 GiB memory and 71.495987 seconds"
+    },
+    {
+     "journal_utc": "2026-10-01T15:01:28+00:00",
+     "message": "(EngineCore pid=155) INFO 10-01 15:01:28 [gpu_worker.py:563] Available KV cache memory: 9.83 GiB"
+    },
+    {
+     "journal_utc": "2026-10-01T15:01:28+00:00",
+     "message": "(EngineCore pid=155) INFO 10-01 15:01:28 [kv_cache_utils.py:2235] GPU KV cache size: 71,600 tokens"
+    },
+    {
+     "journal_utc": "2026-10-01T15:01:28+00:00",
+     "message": "(EngineCore pid=155) INFO 10-01 15:01:28 [kv_cache_utils.py:2236] Maximum concurrency for 4,096 tokens per request: 17.48x"
+    },
+    {
+     "journal_utc": "2026-10-01T15:01:29+00:00",
+     "message": "(EngineCore pid=155) INFO 10-01 15:01:29 [gpu_worker.py:789] Free memory on device (104.8/121.69 GiB) on startup. Desired GPU memory utilization is (0.2, 24.34 GiB). Actual usage is 14.3 GiB for consumed memory (weights + non-torch), 0.2 GiB for peak activation, and 0.0 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=10401032602` (9.69 GiB) to fit into requested memory, or `--kv-cache-memory=96801894400` (90.15 GiB) to fully utilize gpu memory. Current kv cache memory in use is 9.83 GiB."
+    },
+    {
+     "journal_utc": "2026-10-01T15:01:31+00:00",
+     "message": "(APIServer pid=1) INFO 10-01 15:01:31 [api_server.py:682] Starting vLLM server on http://<container address>:8090"
+    }
+   ]
+  },
+  {
+   "first_line_utc": "2026-10-01T15:19:28+00:00",
+   "lines": [
+    {
+     "journal_utc": "2026-10-01T15:19:28+00:00",
+     "message": "(EngineCore pid=152) INFO 10-01 15:19:28 [parallel_state.py:1640] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://<container address>:53581 backend=nccl"
+    },
+    {
+     "journal_utc": "2026-10-01T15:20:52+00:00",
+     "message": "(EngineCore pid=152) INFO 10-01 15:20:52 [gpu_model_runner.py:5405] Model loading took 14.11 GiB memory and 82.074253 seconds"
+    },
+    {
+     "journal_utc": "2026-10-01T15:20:53+00:00",
+     "message": "(EngineCore pid=152) INFO 10-01 15:20:53 [gpu_worker.py:563] Available KV cache memory: 9.87 GiB"
+    },
+    {
+     "journal_utc": "2026-10-01T15:20:53+00:00",
+     "message": "(EngineCore pid=152) INFO 10-01 15:20:53 [kv_cache_utils.py:2235] GPU KV cache size: 71,872 tokens"
+    },
+    {
+     "journal_utc": "2026-10-01T15:20:53+00:00",
+     "message": "(EngineCore pid=152) INFO 10-01 15:20:53 [kv_cache_utils.py:2236] Maximum concurrency for 4,096 tokens per request: 17.55x"
+    },
+    {
+     "journal_utc": "2026-10-01T15:20:54+00:00",
+     "message": "(EngineCore pid=152) INFO 10-01 15:20:54 [gpu_worker.py:789] Free memory on device (104.87/121.69 GiB) on startup. Desired GPU memory utilization is (0.2, 24.34 GiB). Actual usage is 14.26 GiB for consumed memory (weights + non-torch), 0.2 GiB for peak activation, and 0.0 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=10443028890` (9.73 GiB) to fit into requested memory, or `--kv-cache-memory=96914202624` (90.26 GiB) to fully utilize gpu memory. Current kv cache memory in use is 9.87 GiB."
+    },
+    {
+     "journal_utc": "2026-10-01T15:20:57+00:00",
+     "message": "(APIServer pid=1) INFO 10-01 15:20:57 [api_server.py:682] Starting vLLM server on http://<container address>:8090"
+    }
+   ]
+  },
+  {
+   "first_line_utc": "2026-10-01T18:18:33+00:00",
+   "lines": [
+    {
+     "journal_utc": "2026-10-01T18:18:33+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 18:18:33 [parallel_state.py:1640] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://127.0.0.1:55793 backend=nccl"
+    },
+    {
+     "journal_utc": "2026-10-01T18:19:43+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 18:19:43 [gpu_model_runner.py:5405] Model loading took 14.11 GiB memory and 68.301050 seconds"
+    },
+    {
+     "journal_utc": "2026-10-01T18:19:44+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 18:19:44 [gpu_worker.py:491] Initial free memory 105.19 GiB, reserved 4.5 GiB memory for KV Cache as specified by kv_cache_memory_bytes config and skipped memory profiling. This does not respect the gpu_memory_utilization config. Only use kv_cache_memory_bytes config when you want manual control of KV cache memory size. If OOM'ed, check the difference of initial free memory between the current run and the previous run where kv_cache_memory_bytes is suggested and update it correspondingly."
+    },
+    {
+     "journal_utc": "2026-10-01T18:19:44+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 18:19:44 [kv_cache_utils.py:2235] GPU KV cache size: 32,768 tokens"
+    },
+    {
+     "journal_utc": "2026-10-01T18:19:44+00:00",
+     "message": "(EngineCore pid=157) INFO 10-01 18:19:44 [kv_cache_utils.py:2236] Maximum concurrency for 4,096 tokens per request: 8.00x"
+    },
+    {
+     "journal_utc": "2026-10-01T18:19:47+00:00",
+     "message": "(APIServer pid=1) INFO 10-01 18:19:47 [api_server.py:682] Starting vLLM server on unix:/run/mesa-clm/encoder.sock"
+    }
+   ]
+  }
+ ]
+}

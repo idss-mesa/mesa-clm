@@ -300,3 +300,124 @@ def test_neon_task_drops_teacher_and_bench_card_rows(tmp_path: Path) -> None:
     }  # agent_pick is below 0.5
     assert task.meta["label_sources"] == {"consensus_all": 1}
     assert "neon_annotate" not in tasks_from_store(st)  # empty tasks are dropped
+
+
+# -- a curator answer never changes a pre-registered item (D30) ----------------------------------
+
+
+def _curator_flip(store: LabelStore, *, tagged: bool, card: str, source: str = "curator") -> int:
+    """A curator answer at weight 1.0 on an existing ``consensus_negative`` identity of
+    ``card``, labelled Yes (a flip), tagged ``bench_card`` or not as the sidecar recorded it."""
+    negatives = [
+        r
+        for r in store.labels_for("term.fits", sources=["consensus_negative"])
+        if r["card"] == card
+    ]
+    row = negatives[0]
+    return store.insert_labels(
+        [
+            LabelRow(
+                task_id="term.fits",
+                task_key=row["task_key"],
+                target_sha256=row["target_sha256"],
+                option_key=row["option_key"],
+                label_source=source,  # type: ignore[arg-type]
+                label="Yes",
+                label_index=0,
+                weight=1.0,
+                state_sha256=row["state_sha256"],
+                state_json=row["state_json"],
+                card=card,
+                product_code=row["product_code"],
+                leak_group=row["leak_group"],
+                bench_card=tagged,
+                origin="override:test",
+                actor="curator",
+            )
+        ]
+    )
+
+
+def _items(task: Task) -> list[tuple[str, int]]:
+    return sorted(
+        (key, label) for key, (_, label) in zip(task.option_keys, task.items, strict=True)
+    )
+
+
+@pytest.mark.parametrize("tagged", [True, False])
+def test_a_curator_answer_on_a_bench_card_leaves_the_bench_items_unchanged(
+    tmp_path: Path, tagged: bool
+) -> None:
+    """The finding the fold filter answers: a tagged 1.0 curator row used to win its identity
+    in ``labelled_targets`` and then be dropped as ``bench_card``, removing the silver item
+    (285 -> 284 term.fits items); an untagged one (recorded while the sidecar held no silver
+    labels, so tagging failed open) replaced the silver label in the test fold. Both now leave
+    the pre-registered items and labels exactly as they were, and the row is reported."""
+    st = LabelStore(tmp_path / "labels.duckdb")
+    assert (
+        ingest_neon_eval(
+            st, NEON_EVAL_ROOT, TermResolver(RecordingOLS(None, OLS_DIR, "replay"))
+        ).inserted
+        == 934
+    )
+    before = neon_task(st, "neon_term_fits", "term.fits")
+    assert len(before.items) == 285 and before.class_counts() == {0: 86, 1: 199}
+    card = "DP1.10022.001.bet_expertTaxonomistIDProcessed"
+    assert _curator_flip(st, tagged=tagged, card=card) == 1
+    assert _curator_flip(st, tagged=tagged, card=card, source="curator_implicit") == 1
+    after = neon_task(st, "neon_term_fits", "term.fits")
+    assert _items(after) == _items(before)
+    assert after.class_counts() == {0: 86, 1: 199} and after.cards == before.cards
+    assert after.meta["excluded"] == {"bench_card": 2}
+    assert after.meta["label_sources"] == before.meta["label_sources"]
+    # Without the fold filter the curator rows still compete (a fitter excludes them itself).
+    competing = labelled_targets(st, "term.fits", min_weight=0.5)
+    assert {"curator", "curator_implicit"} & set(competing.sources)
+
+
+def test_curator_rows_on_other_cards_still_compete(tmp_path: Path) -> None:
+    """A curator answer on a card that is not a bench card is a fold-eligible label: the fold
+    filter drops bench-card and not-fold-eligible rows only."""
+    from mesa_clm.learn.labels import BENCH_CARDS, fold_exclusion, is_bench_card
+
+    assert len(BENCH_CARDS) == 7 and is_bench_card("") and is_bench_card("x", ["x"])
+    assert not is_bench_card("DP1.00004.001.BP_30min")
+    row = {"fold_eligible": True, "bench_card": False, "label_source": "curator"}
+    assert fold_exclusion({**row, "card": "DP1.00004.001.BP_30min"}) is None
+    assert fold_exclusion({**row, "card": "DP1.10003.001.brd_countdata"}) == "bench_card"
+    assert fold_exclusion({**row, "card": ""}) == "bench_card"
+    assert fold_exclusion({**row, "fold_eligible": False, "card": "c"}) == "not_fold_eligible"
+    silver = {**row, "label_source": "consensus_all", "card": "DP1.10003.001.brd_countdata"}
+    assert fold_exclusion(silver) is None
+
+
+def test_the_bench_cards_are_the_snapshots_and_the_fixtures() -> None:
+    """The fixed list equals the cards of the frozen snapshot and the committed eval copy."""
+    import duckdb
+
+    from mesa_clm.learn.labels import BENCH_CARDS
+
+    snapshot = Path(__file__).resolve().parents[2] / "bench" / "snapshots" / "2026-09-29.parquet"
+    con = duckdb.connect()
+    try:
+        cards = {
+            str(r[0])
+            for r in con.execute(
+                "SELECT DISTINCT card FROM read_parquet(?)", [str(snapshot)]
+            ).fetchall()
+        }
+    finally:
+        con.close()
+    assert cards == set(BENCH_CARDS)
+    assert {p.stem for p in (NEON_EVAL_ROOT / "cards").glob("*.md")} == set(BENCH_CARDS)
+
+
+def test_the_live_smoke_card_is_not_a_bench_card() -> None:
+    """Live runs before the M2 cells exist use non-bench cards only (DESIGN, "G1 freeze"); the
+    engine test's card must stay outside the fixed list."""
+    from mesa_clm.learn.labels import is_bench_card
+
+    srer = Path(__file__).resolve().parents[1] / "fixtures" / "cards-srer"
+    cards = sorted(p.stem for p in srer.glob("*.md"))
+    assert cards == ["DP1.00004.001.BP_30min"]
+    assert not any(is_bench_card(c) for c in cards)

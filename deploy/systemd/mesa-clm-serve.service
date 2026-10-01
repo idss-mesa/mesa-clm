@@ -16,7 +16,7 @@ Environment=PYTHONUNBUFFERED=1
 ExecStartPre=%h/.mesa/clm/bin/mesa-clm-wait-http http://127.0.0.1:8090/health 600
 ExecStart=%h/.mesa/clm/serve/.venv/bin/clm-serve --host 127.0.0.1 --port 8700 \
     --emb-url http://127.0.0.1:8090/v1/embeddings --emb-model qwen3-8b \
-    --max-tokens 4096 --ckpt %h/.mesa/clm/heads/CLM_v0.1-8B.pt --ckpt-dir %h/.mesa/clm/heads/served \
+    --max-tokens 4095 --ckpt %h/.mesa/clm/heads/CLM_v0.1-8B.pt --ckpt-dir %h/.mesa/clm/heads/served \
     --device cpu --action-cache 512MiB --no-download --no-ui
 Restart=on-failure
 RestartSec=10

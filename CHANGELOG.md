@@ -15,51 +15,99 @@ All notable changes to the mesa-clm package. The format follows
   DESIGN D1) and `render.py`, the typed facade over the vendored CLM `schema.py` (D4). The
   torch-free CLM clients: `clm/http.py` (`ClmHttpClient`: `/v1/systemone`, `/v1/rank`,
   `/v1/models`, `/health`; retries, circuit breaker, loopback rule, keys redacted from every
-  error), `clm/encoder.py` (`EncoderClient`: `/v1/embeddings` with `truncate_prompt_tokens` and
-  `truncation_side: left`, base64 float32, L2, the token guard over `/tokenize`, the `tokenize`
-  extra or chars/2), `clm/headproj.py` (CLM's head MLP in numpy over an exported `.npz`),
-  `clm/fingerprint.py` (`encoder_fp`, `clm_model_fp`, `Fingerprint`, the self-verifying
-  `serving.lock.json` model; D5) and `clm/fake.py` with `tests/fakes/clm_transport.py` (a
-  deterministic fake encoder and clm-serve behind `httpx.MockTransport`), wire parity against
-  the vendored CLM client and committed goldens.
+  error), `clm/encoder.py` (`EncoderClient`: `/v1/embeddings` with `truncate_prompt_tokens =
+  max_len - 1` and `truncation_side: left`, base64 float32, L2, the token guard over `/tokenize`,
+  the `tokenize` extra or chars/2, token-id inputs; the key on every route), `clm/headproj.py`
+  (CLM's head MLP in numpy over an exported `.npz`), `clm/fingerprint.py` (`encoder_fp` with
+  `batch_invariance`, `clm_model_fp`, `Fingerprint`, the self-verifying `serving.lock.json`
+  with its container `recipe`; D5, A3) and `clm/fake.py` with `tests/fakes/clm_transport.py` (a
+  deterministic fake encoder behind the A4 bearer guard and a fake clm-serve, one
+  `httpx.MockTransport`), wire parity against the vendored CLM client and committed goldens.
 - Providers (D2, D6, D7, D22, D28): `DecisionRecord` with the `_honest` invariants mirrored in
   the sidecar CHECKs, `TieredProvider` (zero_shot and calibrated tiers, `s_c` recovery against
-  the anchor, one request per shared context, the aspect mask, per-call `clm_calls`),
-  `FakeProvider`, the degraded `ols_rank` records and `OlsRankProvider`, the Claude
-  structured-output second opinion, and `providers/live.py` (the live provider over the
-  serving lock the host runs, and the `/health` pre-flight). `policy.py`: `outcome()` with the
-  explicit rule and `ols_rank` branches, masks, the keep rule and specificity helpers.
+  the anchor, one request per shared context, the aspect mask, per-call `clm_calls`; a 401, 403
+  or 404 refuses the run with `DeciderRefused`), `FakeProvider`, the degraded `ols_rank` records
+  and `OlsRankProvider`, the Claude structured-output second opinion, and `providers/live.py`
+  (the live provider over the serving lock the host runs, refusing a lock that contradicts the
+  vendored schema or the checkout's lock; `preflight`: `/health`, then the keys, the served
+  model and the encoder's model, window and route against the lock). `policy.py`: `outcome()`
+  with the explicit rule and `ols_rank` branches, masks, the keep rule and specificity helpers.
 - The `mesa_clm` sidecar (D11): row models, the DuckDB store opened per operation under the
   shared flock with a `RunBuffer` committed in one transaction, the optional Postgres store with
-  its migration rendered from the DuckDB DDL, and Parquet export, import and terminal-only prune.
+  its migration rendered from the DuckDB DDL, and Parquet export (stamped `exported_at` only
+  after the copy verifies), import and terminal-only prune.
 - `pipeline.py`, `Annotator.annotate` Q1–Q8 (rank-first with the anchor, rank-and-cap,
   specificity, value kinds, the keep rule, `ols_rank` per group, task or run; failed runs
-  committed as `failed`), and `service.py`, `DecisionService` (decider lock, owners,
-  `run_summary`, `candidates_for_group`, `explain`, `record_human_pick` with `via`; D21). Where
-  M1 refined the plan is recorded in DESIGN.md "Implementation notes (M1)".
-- Track A, the serving stack for sparky-1: CLM patches 0001–0006, `serving/serving.lock.json`,
-  the serve-venv requirements, `serving/{export_head,cuda_encoder,fallback_serve}.py` with their
-  tests, `deploy/bin/mesa-clm-{encoder-run,serve-bootstrap,wait-http,check-headroom}`, the
-  systemd user units (encoder, clm-serve, headroom service and timer), `serving.py` (keys,
-  rendered units, lock verification against the host) and the `serving.yml` CI job.
+  committed as `failed`; failed calls counted), and `service.py`, `DecisionService` (decider
+  lock, owners, `run_summary` with `pending` groups, `candidates_for_group`, `explain`,
+  `check_answer` and `record_human_pick` with `via`; one answer per group: a curator's is
+  final, an agent's can be replaced by a curator's; D21, A2). Where M1 refined the plan is
+  recorded in DESIGN.md "Implementation notes (M1)".
+- The feature cache (plan §5.2; `learn/features.py`): `FeatureStore` per `encoder_fp`
+  (`texts`, float16 `vectors` with their round-trip cosine, 512-d head projections with the
+  head they came from, `meta`), the X1/X2 text `manifest` built label-free from a frozen
+  snapshot in the builders' key order (`builder_ordered`; F1, F4, F7, F9 and the PR #13
+  replica specs `joint4096@S1`/`@S1ns`), `export_npz` (CLM's `TextCache` format for
+  `finetune.py --embed-cache`, refused below the 0.9999 fp16 gate). `learn/offline.py`:
+  `OfflineScorer` (rank_fit and noul scoring from cached vectors, equal to the fake's
+  `/v1/systemone` within 1e-9), `pairwise_s_c`, `sigmoid`.
+- `mesa_clm/perms.py`: owner-only directories (0700) and files (0600) whatever the umask, for
+  the sidecar and its lock, the label store, the feature store and its export, run exports,
+  `annotate --out` and the serving keys' parents.
+- Track A, the serving stack for sparky-1: CLM patches 0001–0006, `serving/serving.lock.json`
+  (with the container recipe: arguments, non-secret environment, the bearer guard's sha256 and
+  read-only mount, the 4,095-token cap), the serve-venv requirements,
+  `serving/{export_head,cuda_encoder,fallback_serve}.py` with their tests, the encoder's bearer
+  guard `serving/vllm_auth.py` (401 on every route but `/health`; DESIGN A4) and the route probe
+  `serving/vllm_routes.py`, `deploy/bin/mesa-clm-{encoder-run,serve-bootstrap,wait-http,
+  check-headroom}`, the systemd user units (encoder with `VLLM_BATCH_INVARIANT=1`, clm-serve with
+  `--max-tokens 4095`, headroom service and timer), `serving.py` (keys, rendered units, lock
+  verification against the host and the running container) and the `serving.yml` CI job.
 - CLI verbs (plan §7.2): `framings --check|--update-lock`; `annotate --card PATH [--provider
   clm|fake] [--planner static|gateway|claude] [--tier auto|zero_shot|calibrated|probe|head|ols_rank]
   [--owner] [--out FILE|-] [--eval-result] [--fake-seed N]`; `explain --run-id|--irods-path
   [--limit]`; `review --run-id` (interactive, or `--pick GROUP=OPTION_KEY|none` and `--decline
-  GROUP`, all-or-nothing); `feedback --group-id --action pick|reject|decline [--option-key]`;
-  `provenance migrate [--dsn]|export --run-id --out DIR|import PATH|prune [--ttl-days]
-  [--dry-run]`; `serve keys --init|--rotate` (paths only; `--rotate` prints the `systemctl
-  --user restart` to run), `serve units`, `serve lock --check [--require-live]`. Run and group
-  ids accept unique prefixes. `review` and `feedback` record `via='cli'` (DESIGN A2).
+  GROUP` on pending groups, once each, all-or-nothing); `feedback --group-id --action
+  pick|reject|decline [--option-key KEY|none]`; `provenance migrate [--dsn]|export --run-id --out
+  DIR|import PATH|prune [--ttl-days] [--dry-run]`; `serve keys --init|--rotate` (paths only;
+  `--rotate` prints the `systemctl --user restart` to run), `serve units`, `serve lock --check
+  [--require-live]`; `features build --snapshot PATH [--tasks] [--framings] [--batch]|export-npz
+  --out DIR|project [--model]|stats [--json]`. Run ids, and group ids within your runs, accept
+  unique prefixes.
 - Doctor checks (plan §6.8): `framings lock`, `schema sha256` (against `vendored.sha256` and the
-  serving pin), `sidecar schema` (read-only; Postgres through `current_version`), `serving
-  lock` (when `~/.mesa/clm` exists), `host` (MemAvailable, warn below 8 GiB), `gpu_budget`
-  (active `carc-vllm@*` units), a `serving` reachability line, and with `--serve` (or when both
-  units are active) the live probes: loopback binds from `ss -ltn`, 401 on unauthenticated
-  `/v1/models` on both ports, `/health` on both, the authenticated model lists and one golden
-  `/v1/systemone` call. An unreachable endpoint fails under `--serve` and warns otherwise.
+  serving pin), `sidecar schema`, `permissions` (group or other bits on mesa-clm's state, with
+  the `chmod` that fixes them), the default key files named as such, `serving lock` (when
+  `~/.mesa/clm` exists), `host`, `gpu_budget`, a `serving` reachability line, and in serve mode
+  (`--serve`, or both units active) loopback binds, `/health`, the 401 matrix (every encoder
+  route vLLM registers and an unknown path, clm-serve's three `/v1` routes), the model lists
+  with the encoder checked against the lock, one golden `/v1/systemone` call and, under
+  `--serve` or without `--quick`, the encoder goldens (bitwise one text per request, batch within
+  1 − 1e-6), the long-input probe, the systemone parity against the local route (≤ 1e-4) and the
+  warn-level upstream drift probes with unrounded differences. Every URL passes the loopback
+  rule before it is probed and is printed redacted.
+- M1-A records (bench/results; every number in the docs names one): `2026-09-29/serving_m1`,
+  `collapse_spike`, `fallback_parity`; `2026-10-01/serving_m1b`, `batch_invariance` (the
+  pre-registered batch-invariance experiment), `fallback_parity` (passes at batch 1),
+  `collapse_spike` and `collapse_spike_sorted_keys` (the pipeline's own rendering, and the first
+  run's), `features_build` (the feature store under c3b3d5e1a283) and `doctor_serve` (`doctor
+  --serve` green); `bench/baselines/anyjev_l2_2026-09-29.{json,md}`, mesa-anyjev's per-item L2
+  predictions, reproducing its committed cells exactly. Scripts: `serving_probes.py`,
+  `collapse_spike.py`, `fallback_parity.py`, `batch_invariance.py`, `doctor_record.py`,
+  `anyjev_l2_predictions.py`.
 - `tests/engine/test_doctor_live.py` (marker `engine`): `doctor --serve` and a zero-shot
-  annotate against the live stack.
+  annotate against the live stack, on the non-bench SRER card
+  `tests/fixtures/cards-srer/DP1.00004.001.BP_30min.md` with its recorded OLS responses
+  (`tests/fixtures/ols-srer/`); `tests/engine/test_offline_parity.py`: offline float32 scores
+  against `/v1/systemone` and `/v1/rank` within plan §5.6's 1e-4.
+- `scripts/x1_crosscheck.py` (X1's 200-group cross-check of the feature store against clm-serve,
+  `/v1/rank` and a float16 reference route; `bench/results/2026-10-01/x1_crosscheck.json`) and
+  `scripts/annotate_latency.py` (per-card annotate latency on non-bench cards, cold and warm;
+  `annotate_latency.json`).
+- The doctor checks the live `encoder_fp`'s feature store (format, vector recipe, the export's
+  float16 gate), and in serve mode the encoder container's network namespace
+  (`/proc/<pid>/net`: a non-loopback listener next to an interface besides `lo` fails) and the
+  headroom timer (a warning when stopped). `serving.read_netns`, `netns_problems`,
+  `container_pid` and `check_encoder_container`; `providers.live.container_check`.
 
 ### Changed
 
@@ -67,18 +115,101 @@ All notable changes to the mesa-clm package. The format follows
   `decider.ols_rank_fallback` (default false) lets `annotate --provider clm` at tier `auto` run
   `ols_rank` when clm-serve does not answer instead of refusing; `encoder.tokenizer_json`
   (`MESA_CLM_ENCODER__TOKENIZER_JSON`) feeds `EncoderClient.from_config`.
-- `provenance.export.prune` takes `dry_run`; its summary carries `dry_run`.
+- `clm.api_key_file` and `encoder.api_key_file` default to `~/.mesa/clm/secrets/clm.key` and
+  `encoder.key` when those exist (`auto` and `file` modes; explicit settings win, an explicit
+  empty value turns the default off; `config_sha256` unchanged). `serve keys --init` says so
+  instead of printing exports for the default directory.
+- The encoder recipe is batch-invariant (`VLLM_BATCH_INVARIANT=1`, DESIGN A3): `encoder_fp` of
+  the vLLM route 852efc921a8a → c3b3d5e1a283, of the fallback (batch 1, `serial`) 82f4ff33b628
+  → b171b1ba4536; `serving_lock_sha` `3c032477…` → `59625b8e…`. Clients truncate at 4,095 tokens
+  (A4).
+- `labels import-anyjev` imports mesa-anyjev's `curator`/`curator_implicit` rows as
+  `agent_pick` at weight 0 unless `--trust-curator` (at a terminal); trusted curator rows on a
+  bench card are tagged `bench_card`; the summary counts `demoted`.
+- `provenance.export.prune` takes `dry_run`; its summary carries `dry_run`. The run JSON of
+  `annotate` carries `n_failed_calls`.
+- `config.duckdb_path` is the one DSN parser (`duckdb:///<path>` or a bare `<path>.duckdb`);
+  `provenance.store.duckdb_file` delegates to it.
 - CI runs `mesa-clm framings --check`.
+- The feature store is format 2 (`mesa-clm-features/2`): vectors are stored as float32 (`vec32`)
+  and cast to float16 only for the `TextCache` export; the store records the serving lock's vector
+  recipe (`ServingLock.vector_recipe()`: image digest, encoder spec, `vllm serve` arguments,
+  environment, cap) and stamps `lock_sha` on each vector, and `FeatureStore.for_lock` refuses a
+  store of another vector recipe or format. A format-1 store is refused (rebuild it). Offline
+  scores from float16 vectors missed X1's pre-registered ≤ 1e-4 cross-check (1.31e-3 / 3.59e-3);
+  from float32 vectors it passes (5.2e-6 / 7.47e-5).
+- The encoder recipe of DESIGN A5: the container runs with `--network none` and serves on the
+  unix socket `~/.mesa/clm/run/encoder.sock` behind the new user units
+  `mesa-clm-encoder-proxy.socket` (127.0.0.1:8090) and `mesa-clm-encoder-proxy.service`
+  (`systemd-socket-proxyd`); the engine's rendezvous is on loopback; the KV cache is pinned to
+  `--kv-cache-memory-bytes 4831838208` (19,609 MiB by `nvidia-smi`, 21.45 GiB of `MemAvailable`;
+  was 25,153 MiB and 27.43 GiB). The encoder unit pulls in the socket and the headroom timer
+  (`Wants=`/`PartOf=`) and starts at most three times an hour; the run script refuses an
+  `encoder.env` without a usable key before docker runs. The lock's recipe carries `network`;
+  `serving_lock_sha` `59625b8e…` → `dd33f9fe…`, `encoder_fp` unchanged (vectors bitwise equal).
+- Bench-card membership is the fixed `learn.labels.BENCH_CARDS` (the seven neon-avu-eval tables),
+  failing closed on an unknown card; `labelled_targets(fold_only=True)` (used by the neon bench
+  tasks) drops non-fold-eligible rows and curator rows on bench cards before the per-target
+  selection and counts them in `excluded`.
+- X1's decision rule (6), the anchor variant, is withdrawn from the pre-registration before G1
+  (DESIGN, "G1 freeze").
+- `fallback_serve.py` refuses `--batch` other than 1 (its fingerprint says `serial`).
+- `docs.yml`: read-only permissions by default, Pages permissions and a non-cancelling `pages`
+  concurrency group on the deploy job only, the conformance check grouped per ref.
+  `serving.yml`: `systemd-analyze verify` is a gate again (system mode, `%h` replaced by a stub
+  home, the socket unit included) and the recipe check covers the network mode.
+
+### Security
+
+- Curator labels from the CLI need an interactive terminal (DESIGN A2): `review --pick/--decline`
+  and `feedback` without one are recorded like a plain tool call (`via=tool`, `agent_pick`,
+  weight 0, never fold-eligible) and say so on stderr; the interactive `review` requires one.
+  On a shared Postgres sidecar `explain`, `review` and `feedback` act only as the OS account.
+- The encoder answers nothing but `/health` without its key (DESIGN A4; M1-A found `/pooling`,
+  `/invocations`, `/score`, `/rerank`, `/detokenize`, `/tokenize`, `/metrics` and `/version`
+  open, `bench/results/2026-09-29/serving_m1.json`), its FastAPI docs are off and vLLM's usage
+  report to an outside server is disabled.
+- mesa-clm's state is owner-only whatever the umask (the sidecar and its lock were 0664/0775
+  under umask 002).
+- A YAML syntax error in `--config` names the file, line and column, never PyYAML's snippet of
+  the line (which could carry an `api_key:`); any other unexpected configuration error prints
+  only its type.
+- The doctor refuses to probe a URL the clients would refuse (non-loopback without
+  `allow_remote` and https, or with userinfo) and prints every URL redacted.
+- The encoder container's engine sockets (the rendezvous store and six Gloo collective sockets,
+  no authentication) were reachable on the docker-bridge address from every local account; the
+  container now has no network (DESIGN A5, `bench/results/2026-10-01/encoder_netns.json`).
+- `features build` and `annotate --provider clm` compare the running encoder container with the
+  lock's recipe before trusting `encoder_fp` (a container without `VLLM_BATCH_INVARIANT` answers
+  `/v1/models` identically); a departure is refused, an unreachable docker is reported as "not
+  verified".
 
 ### Fixed
 
+- `annotate --provider clm` with a missing or wrong key, or a model clm-serve does not serve,
+  refuses before the run (exit 2) instead of passing the unguarded `/health` pre-flight and
+  turning every group into an `ols_rank` proposal under an explicit `--tier zero_shot` (exit 0).
+- Answering a settled group no longer leaves two accepted links or contradicting curator labels:
+  a different second curator answer is refused, the same one is idempotent.
+- `provenance export` stamps the run `exported_at` only after the copy is written and verified;
+  a failed export (an unwritable or non-directory `--out`) leaves the store unchanged and exits
+  1, so `prune` cannot delete the only copy of a run.
+- `feedback --action pick` without `--option-key` no longer records a curator "none of these";
+  `--option-key none` works as in `review --pick`.
+- `annotate` expands `~` in `ols.fixtures_dir` like the other verbs.
+- A curator answer on a bench card can no longer delete a pre-registered bench item (a tagged
+  1.0 row used to win its identity and then be dropped: term.fits 285 → 284 items) or replace its
+  silver label (an untagged row, written while the sidecar held no silver labels).
+- CLI error paths end in `mesa-clm: <message>` instead of a traceback: `provenance prune
+  --ttl-days -1`, `provenance import` on an unsupported DSN, `provenance export --out` to a file,
+  `serve lock --check --lock <directory>`, a blank `--actor`, end of input or Ctrl-C at the review
+  prompt; a bare `*.duckdb` DSN is no longer created by the review verbs.
 - Sidecar commits no longer pay DuckDB 1.5.6's failed `import pandas` per bound value (pandas
   is not a dependency): `provenance.store.bulk_insert` binds one JSON value per chunk and
   unpacks it with `from_json_strict`, falling back to `executemany` for a chunk JSON cannot
   carry; `set_link_status` updates a chunk of ids per statement. Rows are identical to the old
-  path (compared table by table in `tests/unit/test_provenance_bulk_insert.py`, which also bounds
-  the commit of seven fake runs); export staging uses the same path.
-
+  path (compared table by table in `tests/unit/test_provenance_bulk_insert.py`); export staging
+  uses the same path.
 - Bench ranking metrics no longer depend on the order of tied confidences (DESIGN D33):
   `mesa_clm.bench.metrics` replaces the vendored `ece`, `coverage_at_risk` and `aurc` in every
   cell (tied items share their group's mean correctness; identical to the vendored values on

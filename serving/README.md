@@ -8,7 +8,9 @@ helpers are under `deploy/`; the core's view (keys, units, lock checks) is
 
 | Path | What |
 |---|---|
-| `serving.lock.json` | The pins (plan §6.7): CLM commit, patch series, `schema.py` sha256, head file, encoder recipe, image digest; `encoder_fp` and `lock_sha` from `mesa_clm.clm.fingerprint.sign_lock_body` |
+| `serving.lock.json` | The pins (plan §6.7): CLM commit, patch series, `schema.py` sha256, head file, encoder spec (incl. `batch_invariance`), image digest, and the container `recipe` (arguments, non-secret environment, the bearer guard's sha256 and mount, the clients' truncation cap, the network mode `none`; DESIGN A3, A4, A5); `encoder_fp` and `lock_sha` from `mesa_clm.clm.fingerprint.sign_lock_body` |
+| `vllm_auth.py` | The encoder container's bearer guard: `--middleware vllm_auth.require_api_key`, 401 on every route but `/health` without `Authorization: Bearer <VLLM_API_KEY>` (DESIGN A4) |
+| `vllm_routes.py` | Run inside a throwaway copy of the image: vLLM's real route table for the locked arguments and the guard's answer on each route (used by `scripts/serving_probes.py`) |
 | `patches/0001…0006-*.patch` | The CLM patch series, applied in order with `git apply` to Contrastive-LM/CLM `bb42c6c5` |
 | `requirements-serve.in` / `.txt` | The serve venv's requirements and their hash-pinned lock (no vllm) |
 | `export_head.py` | `.pt` head checkpoint → `heads/npz/<sha8>.npz` for the torch-free `HeadProjector` |
@@ -41,8 +43,12 @@ git -C /tmp/CLM checkout --detach bb42c6c5bf914fd449bed2f6ca65be80602cb1f7
 for p in serving/patches/000*.patch; do git -C /tmp/CLM apply --check "$PWD/$p" && git -C /tmp/CLM apply "$PWD/$p"; done
 ```
 
-After changing a patch (or any pin), re-sign the lock and commit both; the unit test
-`test_committed_lock_verifies_and_equals_the_build` fails until they agree:
+After changing a patch, `vllm_auth.py` or any pin (the container recipe lives in
+`mesa_clm.serving`: `ENCODER`, `ENCODER_ARGS`, `ENCODER_ENV`, `TRUNCATE_PROMPT_TOKENS`, and
+`deploy/bin/mesa-clm-encoder-run` must pass the same arguments and `-e` flags), re-sign the lock
+and commit both; `test_committed_lock_verifies_and_equals_the_build`,
+`test_committed_lock_pins_the_container_recipe` and `test_encoder_run_matches_the_lock` fail
+until they agree:
 
 ```bash
 uv run python -c "from mesa_clm import serving; open('serving/serving.lock.json', 'w').write(serving.render_lock('serving/patches'))"
@@ -90,22 +96,49 @@ The npz keys (`mesa_clm.clm.headproj`'s contract, format `mesa-clm-head-npz/1`):
 `norm.<j+1>`; `out` → `linear.<depth-1>`. For the released head (4096 → 1536 → 1536 → 512, GELU,
 LayerNorm) that is `linear.0..2` and `norm.1` per side.
 
+## The encoder's bearer guard (`vllm_auth.py`)
+
+vLLM 0.27.1's own key check covers only `/v1`, `/v2`, `/inference` and `/cohere`; the pooling
+server also answers `/pooling`, `/invocations`, `/score`, `/rerank`, `/tokenize`, `/detokenize`,
+`/metrics`, `/version`, `/load` and `/ping` (`bench/results/2026-09-29/serving_m1.json`). The
+guard is an async function middleware (stdlib and starlette only, the container's Python 3.12):
+the bootstrap installs it under `~/.mesa/clm/serve/vllm-auth/` (0700, the file 0600, sha256
+checked against the lock), `mesa-clm-encoder-run` mounts that directory read-only at
+`/opt/mesa-clm-auth`, puts it on `PYTHONPATH` and passes `--middleware
+vllm_auth.require_api_key --disable-fastapi-docs`. vLLM wraps the function with FastAPI's
+`app.middleware("http")` after its own middleware, so the guard is the outermost layer: every
+request but one to exactly `/health` needs `Authorization: Bearer <VLLM_API_KEY>` (scheme
+case-insensitive, token compared with `hmac.compare_digest`) and gets `401 {"error":
+"Unauthorized"}` otherwise. Resolving `require_api_key` without `VLLM_API_KEY` raises, so the
+container refuses to start rather than serve unguarded. `vllm_routes.py` checks it against
+vLLM's real route table (19 routes on this image, no WebSocket route;
+`bench/results/2026-10-01/serving_m1b.json`).
+
 ## Fallback encoder (`fallback_serve.py`, `cuda_encoder.py`)
 
-`CudaEncoder` loads `Qwen/Qwen3-8B` bf16 at `b968826d…` from the local HF cache only, pads right,
-truncates token ids from the left to the limit, reads `last_hidden_state` at the last non-pad
+`CudaEncoder` loads `Qwen/Qwen3-8B` bf16 at `b968826d…` from the local HF cache only, embeds one
+sequence per forward pass by default (`batch=1`: no padding, so a vector does not depend on what
+else is embedded; batch 8 failed the parity gate in M1-A), truncates token ids from the left to
+the limit (`embed`: `max_len - 1`, the vLLM route's cap), reads `last_hidden_state` at the last
 token and L2-normalises in float32; it deregisters torch's Triton eager overrides when
 `torch._native` exists (mesa-anyjev D19; `--native-triton` keeps them). `fallback_serve.py` runs
 the patched `create_app` over `Engine(embedder=CudaEncoder, device="cpu",
 action_cache="512MiB")` on `127.0.0.1:8700` and a vLLM-compatible `/v1/embeddings`,
 `/v1/models`, `/tokenize`, `/health` on `127.0.0.1:8090`, with `CLM_API_KEY` and the encoder key
-(`VLLM_API_KEY` or `CLM_EMB_API_KEY`) compared in constant time on every `/v1/*` route. It never
-runs next to the vLLM container, and its `route: transformers` is a different `encoder_fp`.
+(`VLLM_API_KEY` or `CLM_EMB_API_KEY`) compared in constant time on every :8090 route but
+`/health`, as the guard does in the container. It never runs next to the vLLM container; its
+`route: transformers`, `batch_invariance: serial` is a different `encoder_fp` (b171b1ba4536),
+and its parity with the vLLM route passed the two cosine gates at batch 1
+(`bench/results/2026-10-01/fallback_parity.md`; the probe-agreement gate waits for M4, so nothing is
+shared between the routes yet). `--batch` other than 1 is refused: the fingerprint names one
+sequence per forward pass.
 
 ## Tests
 
 `serving/tests/` runs in CI with fastapi, httpx, numpy, requests and pytest, and the patched
-clone in `MESA_CLM_CLM_SRC`:
+clone in `MESA_CLM_CLM_SRC` (`test_serve_side.py`: the patched clm-serve and the fallback;
+`test_vllm_auth.py`: the guard on a FastAPI app shaped like vLLM's, installed the way vLLM
+installs it; `test_vllm_routes.py`: the route-table walk and per-route probe):
 
 ```bash
 MESA_CLM_CLM_SRC=/tmp/CLM/src uvx --with fastapi --with httpx --with numpy --with requests \

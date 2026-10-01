@@ -29,9 +29,13 @@ honest :class:`~mesa_clm.providers.base.DecisionRecord`:
   :func:`~mesa_clm.providers.base.apply_mask`.
 * **Calls.** Every request is reported to ``on_call`` as a
   :class:`~mesa_clm.providers.base.ClmCall` (latency, ``input_tokens``, ``billing_units``,
-  status) for the sidecar's ``clm_calls``; a failed request yields ``method='unavailable'``
-  records (``reason='decider_unavailable'``) instead of an exception, so the pipeline can fall
-  back to ``ols_rank`` per group (D28).
+  status) for the sidecar's ``clm_calls``; a failed request (no response, a timeout, a 5xx, a
+  422) yields ``method='unavailable'`` records (``reason='decider_unavailable'``) instead of an
+  exception, so the pipeline can fall back to ``ols_rank`` per group (D28). A 401, 403 or 404
+  (:data:`REFUSED_STATUSES`: a rejected key or a wrong route, which would answer every group
+  the same way) raises :class:`~mesa_clm.providers.base.DeciderRefused` instead, so a
+  misconfigured run fails (and is recorded ``failed``) rather than quietly proposing
+  ``ols_rank`` under the requested tier.
 
 :class:`FakeProvider` is the same provider over :class:`~mesa_clm.clm.fake.FakeClm` with
 ``method='fake'``, in process or through the fake transport. :class:`OlsRankProvider` is the
@@ -85,6 +89,7 @@ from mesa_clm.providers.base import (
     ArtifactRef,
     CallStatus,
     ClmCall,
+    DeciderRefused,
     DecisionRecord,
     FramingOptions,
     Scalar,
@@ -104,6 +109,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = [
     "CLM_COMMIT",
+    "REFUSED_STATUSES",
     "ArtifactBundle",
     "ArtifactError",
     "Calibrator",
@@ -125,6 +131,8 @@ __all__ = [
 # The CLM commit mesa-clm pins (plan §6.2): the engine whose maths the fake reproduces.
 CLM_COMMIT: Final[str] = "bb42c6c5bf914fd449bed2f6ca65be80602cb1f7"
 SYSTEMONE: Final[str] = "/v1/systemone"
+# Statuses that refuse the run instead of one group (module docstring, "Calls").
+REFUSED_STATUSES: Final[frozenset[int]] = frozenset({401, 403, 404})
 DEFAULT_MAX_LEN: Final[int] = 4096
 # Contexts counted once per provider; cleared wholesale when full (a run touches far fewer).
 _TOKEN_CACHE_MAX: Final[int] = 4096
@@ -683,6 +691,14 @@ class TieredProvider:
                     error=message[:_ERROR_CHARS],
                 )
             )
+            if isinstance(exc, ClmError) and exc.status in REFUSED_STATUSES:
+                # A wrong key or route answers every group the same way: refuse the run rather
+                # than degrade it to ols_rank group by group (module docstring).
+                raise DeciderRefused(
+                    exc.status,
+                    f"clm-serve refused /v1/systemone ({exc.status}): "
+                    + ("the key was rejected" if exc.status in (401, 403) else "no such route"),
+                ) from None
             return [
                 (it.index, self._unavailable(it, reason="decider_unavailable", error=message))
                 for it in group

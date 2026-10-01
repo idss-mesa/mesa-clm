@@ -13,28 +13,43 @@ keys|units|lock`` verbs:
   ``encoder.env`` (``VLLM_API_KEY`` = the encoder key; ``docker run --env-file``). Every file is
   written atomically with mode 0600 in a 0700 directory. Nothing returned or logged carries a key
   or any hash of one; the result names paths and whether keys were created or rotated.
-* :func:`render_units` - the systemd ``--user`` units (plan §6.1, §6.2). ``%h`` is left for
-  systemd to expand; ``deploy/systemd/`` holds the default rendering and a unit test keeps the two
-  identical. Installing or enabling a unit is always a separate user action.
+* :func:`render_units` - the systemd ``--user`` units (plan §6.1, §6.2): the encoder, clm-serve,
+  the headroom check and its timer, and the encoder's loopback endpoint (DESIGN A5: the
+  container has no network and serves on a unix socket; ``mesa-clm-encoder-proxy.socket`` owns
+  127.0.0.1:8090 and ``systemd-socket-proxyd`` forwards to the socket). The encoder pulls in the
+  endpoint and the headroom timer (``Wants=``), which stop with it (``PartOf=``), and is started
+  at most three times an hour. ``%h`` is left for systemd to expand; ``deploy/systemd/`` holds the
+  default rendering and a unit test keeps the two identical. Installing or enabling a unit is
+  always a separate user action.
+* :func:`read_netns` / :func:`netns_problems` - the encoder container's network namespace read
+  from ``/proc/<pid>/net`` (interfaces and listening sockets), for the doctor and the probes:
+  a listener on a non-loopback address in a namespace with another interface than ``lo`` is a
+  problem (DESIGN A5).
 * :func:`build_lock_body` / :func:`render_lock` - ``serving/serving.lock.json`` (plan §6.7) from
-  the pins below and the sha256 of each carried patch, signed with
-  :func:`mesa_clm.clm.fingerprint.sign_lock_body`.
+  the pins below, the sha256 of each carried patch and of the encoder's bearer guard
+  (``serving/vllm_auth.py``), and the container recipe (:func:`encoder_recipe`: the ``vllm
+  serve`` arguments, the non-secret environment, the guard, the clients' truncation cap; DESIGN
+  A3, A4), signed with :func:`mesa_clm.clm.fingerprint.sign_lock_body`.
 * :func:`check_serving_lock` / :func:`verify_serving_lock` - the lock against this host (plan
   §6.8): the patch files, the copy the bootstrap installed, the serve clone (commit, applied
-  series, ``schema.py``), the serve venv's ``clm.schema``, the head file, and the pinned image and
-  running encoder container (through ``sg docker`` when the session lacks the docker group).
-  Anything *absent* (no clone yet, no docker, not the serving host) is a ``skip`` unless
-  ``require_live=True``; anything *present and different* is a ``fail``.
+  series, ``schema.py``), the serve venv's ``clm.schema``, the head file, the installed bearer
+  guard, and the pinned image and running encoder container (arguments, environment, the guard's
+  read-only mount; through ``sg docker`` when the session lacks the docker group). Anything
+  *absent* (no clone yet, no docker, not the serving host) is a ``skip`` unless
+  ``require_live=True``; anything *present and different* is a ``fail``. The container's
+  environment is read through a ``docker inspect`` template that prints the values of the
+  locked names only, so the bearer key in ``VLLM_API_KEY`` never reaches this process.
 """
 
 from __future__ import annotations
 
-import contextlib
 import grp
 import hashlib
+import ipaddress
 import json
 import logging
 import os
+import posixpath
 import pwd
 import re
 import secrets
@@ -42,19 +57,21 @@ import shlex
 import shutil
 import stat
 import subprocess
-import tempfile
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Final, Literal, NamedTuple
 
 from mesa_clm.clm.fingerprint import (
+    BatchInvariance,
     EncoderSpec,
     LockError,
+    LockRecipe,
     ServingLock,
     load_serving_lock,
     sign_lock_body,
 )
+from mesa_clm.perms import private_dir, write_private_text
 from mesa_clm.secrets import SecretError, read_secret_file
 
 logger = logging.getLogger(__name__)
@@ -70,6 +87,10 @@ HEAD_REVISION: Final[str] = "e939398d4556fcd9400c76fa8c5a513202f42b0a"
 HEAD_FILE: Final[str] = "CLM_v0.1-8B.pt"
 HEAD_SIZE: Final[int] = 75_557_149
 HEAD_SHA256: Final[str] = "b2b4a8c9c2d39263eff78a351eb909a342ce9b3bf21a3f07c1d1bf15f1c4eda5"
+# How the vLLM route keeps a text's vector independent of its batch (DESIGN A3): vLLM's
+# batch-invariant kernels (VLLM_BATCH_INVARIANT=1), adopted by the pre-registered experiment in
+# bench/results/2026-10-01/batch_invariance.json.
+BATCH_INVARIANCE: Final[BatchInvariance] = "kernels"
 ENCODER: Final[EncoderSpec] = EncoderSpec(
     model="Qwen/Qwen3-8B",
     revision="b968826d9c46dd6066d109eabc6255188de91218",
@@ -80,7 +101,17 @@ ENCODER: Final[EncoderSpec] = EncoderSpec(
     truncation_side="left",
     prefix_caching=False,
     route="vllm",
+    batch_invariance=BATCH_INVARIANCE,
 )
+# The in-process fallback (serving/cuda_encoder.py, fallback_serve.py): one text per forward pass,
+# so no padding and no batch dependence (DESIGN A3, D16).
+FALLBACK_ENCODER: Final[EncoderSpec] = ENCODER.model_copy(
+    update={"route": "transformers", "batch_invariance": "serial"}
+)
+# What every client sends as truncate_prompt_tokens (EncoderClient; clm-serve --max-tokens): one
+# below the window, because vLLM 0.27.1 never completes an input of exactly --max-model-len
+# tokens (bench/results/2026-09-29/serving_m1.json); CLM's training cap is max_len - 1 as well.
+TRUNCATE_PROMPT_TOKENS: Final[int] = ENCODER.max_len - 1
 IMAGE_REF: Final[str] = "vllm/vllm-openai"
 IMAGE_TAG: Final[str] = "v0.27.1"  # the image's VLLM_IMAGE_TAG is "vllm/vllm-openai:v0.27.1"
 IMAGE_DIGEST: Final[str] = "sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967"
@@ -90,6 +121,63 @@ CLM_PORT: Final[int] = 8700
 SERVED_MODEL: Final[str] = "qwen3-8b"
 # Host LRU of clm-serve's Embedder (patch 0005): 20,000 fp32 4096-d vectors, about 0.33 GB.
 EMB_CACHE_SIZE: Final[int] = 20_000
+
+# The encoder container's bearer guard (serving/vllm_auth.py; DESIGN A4): installed by the
+# bootstrap under <home>/serve/vllm-auth (0700, the module owner-only), bind-mounted read-only at
+# AUTH_MOUNT, on PYTHONPATH, loaded with --middleware. Only AUTH_OPEN_PATHS answer without a key.
+AUTH_MODULE: Final[str] = "vllm_auth.py"
+AUTH_MIDDLEWARE: Final[str] = "vllm_auth.require_api_key"
+AUTH_MOUNT: Final[str] = "/opt/mesa-clm-auth"
+AUTH_DIR: Final[str] = "serve/vllm-auth"
+AUTH_OPEN_PATHS: Final[tuple[str, ...]] = ("/health",)
+MAX_NUM_SEQS: Final[int] = 1 if BATCH_INVARIANCE == "serial" else 8
+GPU_MEMORY_UTILIZATION: Final[str] = "0.20"
+# The KV cache is pinned to what --max-num-seqs sequences of the whole window need (DESIGN A5;
+# plan §6.5's budget "KV 8 x 4096 x 144 KiB = 4.5 GiB"): Qwen3-8B keeps K and V for 36 layers x 8
+# KV heads x 128 dimensions in bf16, 147,456 bytes per token (RESEARCH.md, "Encoder model").
+# Without the pin vLLM sizes the cache to fill its 0.20 share (9.38-9.87 GiB, varying between
+# starts), which put the process above the plan's 24.3 GiB (bench/results/2026-10-01/serving_m1b.json).
+KV_BYTES_PER_TOKEN: Final[int] = 2 * 36 * 8 * 128 * 2
+KV_CACHE_MEMORY_BYTES: Final[int] = MAX_NUM_SEQS * ENCODER.max_len * KV_BYTES_PER_TOKEN
+
+# DESIGN A5: the container has no network (docker --network none), so nothing its processes bind
+# (the engine's TCPStore and Gloo listeners included) is reachable from the host. vLLM serves on a
+# unix socket in <home>/run (0700, bind-mounted at SOCKET_MOUNT); the socket unit
+# mesa-clm-encoder-proxy.socket owns 127.0.0.1:8090 and hands each connection to
+# systemd-socket-proxyd, which forwards it to that socket.
+ENCODER_NETWORK: Final[str] = "none"
+RUN_DIR: Final[str] = "run"
+SOCKET_MOUNT: Final[str] = "/run/mesa-clm"
+SOCKET_NAME: Final[str] = "encoder.sock"
+ENCODER_SOCKET: Final[str] = f"{SOCKET_MOUNT}/{SOCKET_NAME}"
+SOCKET_PROXYD: Final[str] = "/usr/lib/systemd/systemd-socket-proxyd"
+
+# The container's non-secret environment (deploy/bin/mesa-clm-encoder-run; VLLM_API_KEY arrives
+# through --env-file and is never named here). VLLM_NO_USAGE_STATS / DO_NOT_TRACK stop vLLM's
+# default usage report to stats.vllm.ai; VLLM_HOST_IP and GLOO_SOCKET_IFNAME put the engine's
+# single-process rendezvous on loopback (it would otherwise look for an outbound address).
+ENCODER_ENV: Final[dict[str, str]] = {
+    "HOME": "/tmp",  # noqa: S108 - the container's own /tmp, not the host's
+    "HF_HOME": "/hf",
+    "HF_HUB_OFFLINE": "1",
+    "VLLM_NO_USAGE_STATS": "1",
+    "DO_NOT_TRACK": "1",
+    "PYTHONPATH": AUTH_MOUNT,
+    **({"VLLM_BATCH_INVARIANT": "1"} if BATCH_INVARIANCE == "kernels" else {}),
+    "VLLM_HOST_IP": "127.0.0.1",
+    "GLOO_SOCKET_IFNAME": "lo",
+}
+# `vllm serve` arguments after the image, exactly as deploy/bin/mesa-clm-encoder-run passes them.
+ENCODER_ARGS: Final[tuple[str, ...]] = (
+    ENCODER.model,
+    *("--revision", ENCODER.revision, "--served-model-name", SERVED_MODEL),
+    *("--runner", "pooling", "--dtype", ENCODER.dtype, "--max-model-len", str(ENCODER.max_len)),
+    *("--max-num-seqs", str(MAX_NUM_SEQS), "--no-enable-prefix-caching"),
+    *("--gpu-memory-utilization", GPU_MEMORY_UTILIZATION),
+    *("--kv-cache-memory-bytes", str(KV_CACHE_MEMORY_BYTES), "--enforce-eager"),
+    *("--uds", ENCODER_SOCKET),
+    *("--middleware", AUTH_MIDDLEWARE, "--disable-fastapi-docs"),
+)
 
 
 class PatchPin(NamedTuple):
@@ -123,9 +211,9 @@ CLONE_DIR: Final[str] = "serve/CLM"
 VENV_PYTHON: Final[str] = "serve/.venv/bin/python"
 PATCH_STAMP: Final[str] = "serve/patches.applied.json"  # written by mesa-clm-serve-bootstrap
 HEADS_DIR: Final[str] = "heads"
+AUTH_INSTALLED: Final[str] = f"{AUTH_DIR}/{AUTH_MODULE}"  # written by mesa-clm-serve-bootstrap
 
 _PRIVATE_DIR_MODE: Final[int] = 0o700
-_PRIVATE_FILE_MODE: Final[int] = 0o600
 # Keys land in env files read by docker --env-file (no quoting) and systemd EnvironmentFile=
 # (quotes and backslashes are special), so only characters both read literally are accepted.
 _ENV_SAFE_KEY = re.compile(r"[A-Za-z0-9._~+/=-]{16,512}")
@@ -226,12 +314,12 @@ def _encoder_env(encoder_key: str) -> str:
 
 
 def _ensure_private_dir(directory: Path) -> None:
-    """``directory`` exists, is a real directory owned by this user, and has mode 0700."""
-    try:
-        st = os.lstat(directory)
-    except FileNotFoundError:
-        directory.mkdir(mode=_PRIVATE_DIR_MODE, parents=True)
-        st = os.lstat(directory)
+    """``directory`` exists, is a real directory owned by this user, and has mode 0700. Missing
+    components (``~/.mesa/clm`` itself on a fresh host) are created 0700 too, whatever the umask
+    (:func:`mesa_clm.perms.private_dir`)."""
+    if not os.path.lexists(directory):
+        private_dir(directory)
+    st = os.lstat(directory)
     if stat.S_ISLNK(st.st_mode) or not stat.S_ISDIR(st.st_mode):
         raise ServingError(f"{directory}: the secrets directory must be a real directory")
     if st.st_uid != os.getuid():
@@ -243,23 +331,7 @@ def _ensure_private_dir(directory: Path) -> None:
 
 def _write_private(path: Path, text: str) -> None:
     """Atomically replace ``path`` with ``text`` at mode 0600 (temp file, fsync, rename)."""
-    fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as fh:
-            os.fchmod(fh.fileno(), _PRIVATE_FILE_MODE)
-            fh.write(text)
-            fh.flush()
-            os.fsync(fh.fileno())
-        os.replace(tmp, path)
-    except BaseException:
-        with contextlib.suppress(FileNotFoundError):
-            os.unlink(tmp)
-        raise
-    dir_fd = os.open(path.parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
-    try:
-        os.fsync(dir_fd)
-    finally:
-        os.close(dir_fd)
+    write_private_text(path, text)
 
 
 # -- systemd --user units (plan §6.1, §6.2) -----------------------------------------------------
@@ -268,7 +340,16 @@ ENCODER_UNIT: Final[str] = "mesa-clm-encoder.service"
 SERVE_UNIT: Final[str] = "mesa-clm-serve.service"
 HEADROOM_SERVICE: Final[str] = "mesa-clm-headroom.service"
 HEADROOM_TIMER: Final[str] = "mesa-clm-headroom.timer"
-UNIT_NAMES: Final[tuple[str, ...]] = (ENCODER_UNIT, SERVE_UNIT, HEADROOM_SERVICE, HEADROOM_TIMER)
+PROXY_SOCKET: Final[str] = "mesa-clm-encoder-proxy.socket"
+PROXY_SERVICE: Final[str] = "mesa-clm-encoder-proxy.service"
+UNIT_NAMES: Final[tuple[str, ...]] = (
+    ENCODER_UNIT,
+    SERVE_UNIT,
+    HEADROOM_SERVICE,
+    HEADROOM_TIMER,
+    PROXY_SOCKET,
+    PROXY_SERVICE,
+)
 DOCS_URL: Final[str] = "https://idss-mesa.github.io/mesa-clm/deploy/serving/"
 # MemAvailable floors in GiB: before the encoder starts, and every 5 minutes while it runs.
 START_HEADROOM_GIB: Final[int] = 32
@@ -282,11 +363,19 @@ _UNIT_HEADER = (
 
 _TEMPLATES: Final[dict[str, str]] = {
     ENCODER_UNIT: """\
-# mesa-clm encoder: vLLM pooling Qwen/Qwen3-8B on 127.0.0.1:8090, pinned by digest (plan §6.1).
+# mesa-clm encoder: vLLM pooling Qwen/Qwen3-8B behind 127.0.0.1:8090, pinned by digest (plan §6.1).
 {header}
 [Unit]
-Description=mesa-clm encoder (vLLM pooling Qwen3-8B on 127.0.0.1:8090)
+Description=mesa-clm encoder (vLLM pooling Qwen3-8B behind 127.0.0.1:8090)
 Documentation={docs}
+# The container has no network and serves on a unix socket; {proxy_socket} owns
+# 127.0.0.1:8090 (DESIGN A5). The headroom timer runs while the encoder does (plan §6.5); both
+# stop with it (PartOf=).
+Wants={proxy_socket} {headroom_timer}
+# A recipe that fails after the model load (about 70-80 s and 14 GiB on the shared GPU each time) is
+# started at most three times an hour, then left failed (`systemctl --user reset-failed` clears it).
+StartLimitIntervalSec=1h
+StartLimitBurst=3
 
 [Service]
 Type=simple
@@ -322,7 +411,7 @@ Environment=PYTHONUNBUFFERED=1
 ExecStartPre={home}/bin/mesa-clm-wait-http http://127.0.0.1:{encoder_port}/health 600
 ExecStart={home}/serve/.venv/bin/clm-serve --host 127.0.0.1 --port {clm_port} \\
     --emb-url http://127.0.0.1:{encoder_port}/v1/embeddings --emb-model {served_model} \\
-    --max-tokens {max_len} --ckpt {home}/heads/{head_file} --ckpt-dir {home}/heads/served \\
+    --max-tokens {truncate} --ckpt {home}/heads/{head_file} --ckpt-dir {home}/heads/served \\
     --device cpu --action-cache 512MiB --no-download --no-ui
 Restart=on-failure
 RestartSec=10
@@ -344,11 +433,12 @@ Type=oneshot
 ExecStart={home}/bin/mesa-clm-check-headroom {run_gib}
 """,
     HEADROOM_TIMER: """\
-# mesa-clm headroom check every 5 minutes (plan §6.2).
+# mesa-clm headroom check every 5 minutes (plan §6.2); started and stopped with the encoder.
 {header}
 [Unit]
 Description=mesa-clm headroom check every 5 minutes
 Documentation={docs}
+PartOf={encoder_unit}
 
 [Timer]
 OnActiveSec=1min
@@ -358,6 +448,37 @@ Unit={headroom_service}
 
 [Install]
 WantedBy=timers.target
+""",
+    PROXY_SOCKET: """\
+# mesa-clm encoder endpoint: 127.0.0.1:{encoder_port}, forwarded to the container's unix socket (DESIGN A5).
+{header}
+# Started by {encoder_unit} (Wants=) and stopped with it (PartOf=); without an
+# install section it can never be enabled on its own.
+[Unit]
+Description=mesa-clm encoder endpoint (127.0.0.1:{encoder_port})
+Documentation={docs}
+PartOf={encoder_unit}
+
+[Socket]
+ListenStream=127.0.0.1:{encoder_port}
+NoDelay=true
+""",
+    PROXY_SERVICE: """\
+# mesa-clm encoder proxy: connections on 127.0.0.1:{encoder_port} to {home}/{run_dir}/{socket_name} (DESIGN A5).
+{header}
+# Socket-activated by {proxy_socket}. The encoder container creates the
+# socket in a 0700 directory, so only this account can reach it.
+[Unit]
+Description=mesa-clm encoder proxy (127.0.0.1:{encoder_port} to the encoder's unix socket)
+Documentation={docs}
+Requires={proxy_socket}
+After={proxy_socket}
+PartOf={encoder_unit}
+
+[Service]
+Type=notify
+ExecStart={proxyd} {home}/{run_dir}/{socket_name}
+SyslogIdentifier=mesa-clm-encoder-proxy
 """,
 }
 
@@ -384,7 +505,8 @@ def unit_home(home: str | Path = DEFAULT_HOME) -> str:
 
 
 def render_units(home: str | Path = DEFAULT_HOME) -> dict[str, str]:
-    """Unit file name -> text for the encoder, clm-serve and the headroom check and timer.
+    """Unit file name -> text for the encoder, clm-serve, the headroom check and timer, and the
+    encoder's loopback endpoint (the proxy socket and service, DESIGN A5).
 
     ``home`` is the serving home (default ``~/.mesa/clm``), spelled through :func:`unit_home` so
     the texts keep ``%h`` for systemd. The default rendering is committed as ``deploy/systemd/``.
@@ -396,10 +518,15 @@ def render_units(home: str | Path = DEFAULT_HOME) -> dict[str, str]:
         "container": ENCODER_CONTAINER,
         "encoder_unit": ENCODER_UNIT,
         "headroom_service": HEADROOM_SERVICE,
+        "headroom_timer": HEADROOM_TIMER,
+        "proxy_socket": PROXY_SOCKET,
+        "proxyd": SOCKET_PROXYD,
+        "run_dir": RUN_DIR,
+        "socket_name": SOCKET_NAME,
         "encoder_port": ENCODER_PORT,
         "clm_port": CLM_PORT,
         "served_model": SERVED_MODEL,
-        "max_len": ENCODER.max_len,
+        "truncate": TRUNCATE_PROMPT_TOKENS,
         "head_file": HEAD_FILE,
         "start_gib": START_HEADROOM_GIB,
         "run_gib": RUN_HEADROOM_GIB,
@@ -425,9 +552,37 @@ def sha256_file(path: str | Path) -> str:
     return h.hexdigest()
 
 
-def build_lock_body(patches_dir: str | Path) -> dict[str, Any]:
-    """The signed lock document: the pins above plus the sha256 of every patch file."""
+def encoder_recipe(auth_module: str | Path) -> dict[str, Any]:
+    """The lock's ``recipe`` block (:class:`mesa_clm.clm.fingerprint.LockRecipe`; DESIGN A3,
+    A5): the container arguments and non-secret environment above, the bearer guard with the
+    sha256 of ``auth_module`` (``serving/vllm_auth.py``), the clients' truncation cap and the
+    container's network mode."""
+    path = Path(auth_module)
+    if not path.is_file():
+        raise ServingError(f"{path}: the encoder's bearer guard is missing")
+    return {
+        "args": list(ENCODER_ARGS),
+        "env": dict(ENCODER_ENV),
+        "auth": {
+            "middleware": AUTH_MIDDLEWARE,
+            "file": AUTH_MODULE,
+            "sha256": sha256_file(path),
+            "mount": AUTH_MOUNT,
+            "open_paths": list(AUTH_OPEN_PATHS),
+        },
+        "truncate_prompt_tokens": TRUNCATE_PROMPT_TOKENS,
+        "network": ENCODER_NETWORK,
+    }
+
+
+def build_lock_body(
+    patches_dir: str | Path, auth_module: str | Path | None = None
+) -> dict[str, Any]:
+    """The signed lock document: the pins above, the sha256 of every patch file and the
+    container recipe. ``auth_module`` defaults to ``vllm_auth.py`` next to ``patches_dir``
+    (``serving/``)."""
     directory = Path(patches_dir)
+    guard = Path(auth_module) if auth_module is not None else directory.parent / AUTH_MODULE
     patches = []
     for pin in PATCHES:
         path = directory / f"{pin.id}.patch"
@@ -454,13 +609,15 @@ def build_lock_body(patches_dir: str | Path) -> dict[str, Any]:
         },
         "encoder": ENCODER.as_dict(),
         "image": {"ref": IMAGE_REF, "tag": IMAGE_TAG, "digest": IMAGE_DIGEST},
+        "recipe": encoder_recipe(guard),
     }
     return sign_lock_body(body)
 
 
-def render_lock(patches_dir: str | Path) -> str:
+def render_lock(patches_dir: str | Path, auth_module: str | Path | None = None) -> str:
     """``serving.lock.json`` as committed: two-space JSON, key order as built, final newline."""
-    return json.dumps(build_lock_body(patches_dir), indent=2, ensure_ascii=False) + "\n"
+    body = build_lock_body(patches_dir, auth_module)
+    return json.dumps(body, indent=2, ensure_ascii=False) + "\n"
 
 
 def repo_root() -> Path | None:
@@ -582,8 +739,21 @@ def check_serving_lock(
     checks.extend(_check_clone(lock, base, absent, run))
     checks.append(_check_venv_schema(lock, base, absent, run))
     checks.append(_check_head(lock, base, absent))
+    checks.append(_check_auth_module(lock, base, absent))
     checks.extend(_check_image(lock, absent, run, dock))
     return checks
+
+
+def check_encoder_container(
+    lock: ServingLock, *, runner: Runner | None = None, docker: DockerArgv | None = None
+) -> list[LockCheck]:
+    """Only the image and running-container checks of :func:`check_serving_lock`: the pinned
+    image present and the encoder container running it with the lock's arguments, environment,
+    mounts and network. Anything absent (docker unreachable, the image or the container
+    missing) is a ``skip``; a container that departs from the lock is a ``fail``. This is what
+    ``features build`` and the annotate pre-flight ask before trusting the lock's ``encoder_fp``
+    for what the encoder returns (``/v1/models`` cannot tell the recipes apart)."""
+    return _check_image(lock, "skip", runner or run_command, docker or docker_argv)
 
 
 def verify_serving_lock(
@@ -747,6 +917,30 @@ def _check_head(lock: ServingLock, base: Path, absent: CheckStatus) -> LockCheck
     return LockCheck("head", "ok", f"{path}: size and sha256 match")
 
 
+def _check_auth_module(lock: ServingLock, base: Path, absent: CheckStatus) -> LockCheck:
+    """The encoder's bearer guard as the bootstrap installed it: owner-only, the locked sha256."""
+    recipe = lock.recipe
+    if recipe is None:
+        return LockCheck("auth module", "skip", "the lock predates the encoder's bearer guard")
+    path = base / AUTH_DIR / recipe.auth.file
+    if not path.is_file():
+        return LockCheck("auth module", absent, f"{path}: not installed (run the bootstrap)")
+    loose = [
+        p for p in (path.parent, path) if stat.S_IMODE(p.stat().st_mode) & 0o077 or not _owned(p)
+    ]
+    if loose:
+        return LockCheck(
+            "auth module", "fail", f"{loose[0]}: must be owned by this user and private (0700/0600)"
+        )
+    if sha256_file(path) != recipe.auth.sha256:
+        return LockCheck("auth module", "fail", f"{path}: sha256 differs from the lock")
+    return LockCheck("auth module", "ok", f"{path}: private, sha256 matches")
+
+
+def _owned(path: Path) -> bool:
+    return path.stat().st_uid == os.getuid()
+
+
 def _check_image(
     lock: ServingLock, absent: CheckStatus, run: Runner, dock: DockerArgv
 ) -> list[LockCheck]:
@@ -782,30 +976,223 @@ def _image_tag_check(pinned: str, tag: str, env_json: str) -> LockCheck:
     return LockCheck("image", "ok", f"{pinned}: present" + (f" ({tags[0]})" if tags else ""))
 
 
-def _container_check(lock: ServingLock, image_id: str, run: Runner, dock: DockerArgv) -> LockCheck:
-    argv = dock(["inspect", ENCODER_CONTAINER, "--format", "{{.Image}}\t{{json .Config.Cmd}}"])
-    res = run(argv) if argv is not None else CommandResult(127, "")
-    if res.returncode != 0:
-        return LockCheck("encoder container", "skip", f"{ENCODER_CONTAINER}: not running")
-    running_image, _, cmd_json = res.stdout.strip().partition("\t")
-    if running_image != image_id:
-        return LockCheck(
-            "encoder container",
-            "fail",
-            f"{ENCODER_CONTAINER}: runs image {running_image[:19]}, not the pinned digest",
-        )
+# Environment names whose values the container check reads besides the locked ones: a stray
+# VLLM_BATCH_INVARIANT changes the vectors (DESIGN A3). VLLM_API_KEY is only ever seen by name.
+_WATCHED_ENV: Final[frozenset[str]] = frozenset({"VLLM_BATCH_INVARIANT"})
+_KEY_ENV: Final[str] = "VLLM_API_KEY"
+
+
+def inspect_format(names: Iterable[str]) -> str:
+    """The ``docker inspect --format`` template of the container check: image id, ``Cmd`` as
+    JSON, the environment as ``NAME=VALUE;`` for ``names`` and ``NAME;`` for every other entry
+    (so a key's value never leaves docker), the mounts as ``DESTINATION=RW;`` and the network
+    mode (``HostConfig.NetworkMode``)."""
+    wanted = " ".join(json.dumps(n) for n in sorted(names))
+    return (
+        "{{.Image}}\t{{json .Config.Cmd}}\t"
+        '{{range .Config.Env}}{{$k := index (split . "=") 0}}'
+        "{{if eq $k " + wanted + "}}{{.}}{{else}}{{$k}}{{end}};{{end}}\t"
+        "{{range .Mounts}}{{.Destination}}={{.RW}};{{end}}\t"
+        "{{.HostConfig.NetworkMode}}"
+    )
+
+
+class ContainerState(NamedTuple):
+    """What :func:`inspect_format` reports: values only for the watched names."""
+
+    image: str
+    cmd: list[str]
+    env: dict[str, str | None]  # name -> value (watched names) or None (name only)
+    mounts: dict[str, bool]  # destination -> read-write
+    network: str = ""  # docker's HostConfig.NetworkMode
+
+
+def parse_inspect(stdout: str) -> ContainerState | None:
+    """:func:`inspect_format` output, or ``None`` when it is not that shape."""
+    parts = stdout.strip("\n").split("\t")
+    if len(parts) != 5:
+        return None
+    image, cmd_json, env_text, mounts_text, network = parts
     try:
         cmd = [str(a) for a in json.loads(cmd_json)] if cmd_json else []
     except (ValueError, TypeError):
-        cmd = []
-    wrong = recipe_mismatches(lock.encoder, cmd)
+        return None
+    env: dict[str, str | None] = {}
+    for entry in filter(None, env_text.split(";")):
+        name, sep, value = entry.partition("=")
+        env[name] = value if sep else None
+    mounts: dict[str, bool] = {}
+    for entry in filter(None, mounts_text.split(";")):
+        dest, _, rw = entry.rpartition("=")
+        mounts[dest] = rw == "true"
+    return ContainerState(image, cmd, env, mounts, network.strip())
+
+
+def _container_check(lock: ServingLock, image_id: str, run: Runner, dock: DockerArgv) -> LockCheck:
+    recipe = lock.recipe
+    watched = _WATCHED_ENV | set(recipe.env if recipe is not None else ())
+    argv = dock(["inspect", ENCODER_CONTAINER, "--format", inspect_format(watched)])
+    res = run(argv) if argv is not None else CommandResult(127, "")
+    if res.returncode != 0:
+        return LockCheck("encoder container", "skip", f"{ENCODER_CONTAINER}: not running")
+    state = parse_inspect(res.stdout)
+    if state is None:
+        return LockCheck("encoder container", "fail", f"{ENCODER_CONTAINER}: unreadable inspect")
+    if state.image != image_id:
+        return LockCheck(
+            "encoder container",
+            "fail",
+            f"{ENCODER_CONTAINER}: runs image {state.image[:19]}, not the pinned digest",
+        )
+    wrong = recipe_mismatches(lock.encoder, state.cmd, recipe)
+    if recipe is not None:
+        wrong.extend(environment_mismatches(recipe, state))
     if wrong:
         return LockCheck("encoder container", "fail", f"{ENCODER_CONTAINER}: {'; '.join(wrong)}")
     return LockCheck("encoder container", "ok", f"{ENCODER_CONTAINER}: pinned image and recipe")
 
 
-def recipe_mismatches(spec: EncoderSpec, args: Iterable[str]) -> list[str]:
-    """Where a ``vllm serve`` argument list departs from the locked encoder recipe (D5)."""
+def environment_mismatches(recipe: LockRecipe, state: ContainerState) -> list[str]:
+    """The running container's environment, mounts and network against the lock's recipe: every
+    locked variable with its value, no stray ``VLLM_BATCH_INVARIANT``, a key present (by name),
+    the guard mounted read-only and, under DESIGN A5, the network mode and the socket directory
+    mounted read-write."""
+    wrong = []
+    for name, want in sorted(recipe.env.items()):
+        got = state.env.get(name)
+        if got != want:
+            wrong.append(f"env {name} {got!r}, lock {want!r}")
+    for name in sorted(_WATCHED_ENV - set(recipe.env)):
+        if name in state.env:
+            wrong.append(f"env {name} is set; the lock does not set it")
+    if _KEY_ENV not in state.env:
+        wrong.append(f"env {_KEY_ENV} is missing (the bearer guard cannot start without it)")
+    rw = state.mounts.get(recipe.auth.mount)
+    if rw is None:
+        wrong.append(f"{recipe.auth.mount} is not mounted")
+    elif rw:
+        wrong.append(f"{recipe.auth.mount} is mounted read-write")
+    if recipe.network is not None and state.network != recipe.network:
+        wrong.append(f"network {state.network or None!r}, lock {recipe.network!r}")
+    uds = recipe.flag("--uds")
+    if uds is not None:
+        socket_dir = posixpath.dirname(uds)
+        if not state.mounts.get(socket_dir):
+            wrong.append(f"{socket_dir} (the API socket's directory) is not mounted read-write")
+    return wrong
+
+
+# -- the encoder's network namespace (DESIGN A5) ---------------------------------------------------
+
+# /proc/net/tcp{,6} ``st`` column: 0A is TCP_LISTEN.
+_TCP_LISTEN: Final[str] = "0A"
+
+
+class NetnsState(NamedTuple):
+    """The encoder container's network namespace as ``/proc/<pid>/net`` shows it: its
+    interfaces and every listening TCP socket (``address:port``, IPv6 in brackets)."""
+
+    pid: int
+    interfaces: list[str]
+    listeners: list[str]
+
+
+def _proc_address(hex_addr: str) -> ipaddress.IPv4Address | ipaddress.IPv6Address:
+    """A ``/proc/net/tcp{,6}`` address: little-endian 32-bit words, as the kernel prints them."""
+    raw = bytes.fromhex(hex_addr)
+    if len(raw) == 4:
+        return ipaddress.IPv4Address(raw[::-1])
+    words = b"".join(raw[i : i + 4][::-1] for i in range(0, len(raw), 4))
+    return ipaddress.IPv6Address(words)
+
+
+def _loopback(addr: ipaddress.IPv4Address | ipaddress.IPv6Address) -> bool:
+    if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped is not None:
+        return addr.ipv4_mapped.is_loopback
+    return addr.is_loopback
+
+
+def parse_proc_listeners(
+    text: str,
+) -> list[tuple[ipaddress.IPv4Address | ipaddress.IPv6Address, int]]:
+    """The listening sockets of one ``/proc/<pid>/net/tcp`` or ``tcp6`` file."""
+    out: list[tuple[ipaddress.IPv4Address | ipaddress.IPv6Address, int]] = []
+    for line in text.splitlines()[1:]:
+        parts = line.split()
+        if len(parts) < 4 or parts[3] != _TCP_LISTEN:
+            continue
+        host, _, port = parts[1].partition(":")
+        try:
+            out.append((_proc_address(host), int(port, 16)))
+        except ValueError:
+            continue
+    return out
+
+
+def read_netns(pid: int, proc: Path = Path("/proc")) -> NetnsState | None:
+    """The interfaces (``net/dev``) and listening sockets (``net/tcp``, ``net/tcp6``) of
+    ``pid``'s network namespace, read-only; ``None`` when they cannot be read."""
+    base = proc / str(pid) / "net"
+    try:
+        dev = (base / "dev").read_text(encoding="ascii", errors="replace")
+    except OSError:
+        return None
+    interfaces = sorted(
+        line.split(":", 1)[0].strip() for line in dev.splitlines()[2:] if ":" in line
+    )
+    listeners: list[str] = []
+    for name in ("tcp", "tcp6"):
+        try:
+            text = (base / name).read_text(encoding="ascii", errors="replace")
+        except OSError:
+            continue
+        for addr, port in parse_proc_listeners(text):
+            shown = f"[{addr}]" if isinstance(addr, ipaddress.IPv6Address) else str(addr)
+            listeners.append(f"{shown}:{port}")
+    return NetnsState(pid, interfaces, sorted(set(listeners)))
+
+
+def netns_problems(state: NetnsState) -> list[str]:
+    """Listeners another account could reach: a socket bound to a non-loopback address (a
+    wildcard included) in a namespace that has an interface besides ``lo``. In a namespace whose
+    only interface is ``lo`` (docker ``--network none``) a wildcard bind reaches nothing."""
+    exposed = []
+    for entry in state.listeners:
+        host = entry.rsplit(":", 1)[0].strip("[]")
+        try:
+            addr = ipaddress.ip_address(host)
+        except ValueError:
+            exposed.append(entry)
+            continue
+        if not _loopback(addr):
+            exposed.append(entry)
+    others = [i for i in state.interfaces if i != "lo"]
+    if exposed and others:
+        return [
+            f"{len(exposed)} listener(s) on non-loopback addresses ({', '.join(exposed)}) in a "
+            f"namespace with {', '.join(others)}"
+        ]
+    return []
+
+
+def container_pid(run: Runner, dock: DockerArgv) -> int | None:
+    """The encoder container's main pid on the host (``docker inspect``), ``None`` when docker
+    is unreachable or the container is not running."""
+    argv = dock(["inspect", ENCODER_CONTAINER, "--format", "{{.State.Pid}}"])
+    if argv is None:
+        return None
+    res = run(argv)
+    text = res.stdout.strip()
+    if res.returncode != 0 or not text.isdigit() or int(text) <= 0:
+        return None
+    return int(text)
+
+
+def recipe_mismatches(
+    spec: EncoderSpec, args: Iterable[str], recipe: LockRecipe | None = None
+) -> list[str]:
+    """Where a ``vllm serve`` argument list departs from the locked encoder recipe (D5) and, with
+    ``recipe``, from the locked argument list itself (DESIGN A3)."""
     argv = list(args)
 
     def value(flag: str) -> str | None:
@@ -829,26 +1216,54 @@ def recipe_mismatches(spec: EncoderSpec, args: Iterable[str]) -> list[str]:
         wrong.append(
             f"prefix caching {'off' if caching_off else 'default'}, lock {spec.prefix_caching}"
         )
+    if recipe is not None and argv != recipe.args:
+        extra = sorted(set(argv) - set(recipe.args))
+        missing = sorted(set(recipe.args) - set(argv))
+        detail = "; ".join(
+            part
+            for part in (
+                f"not in the lock: {' '.join(extra)}" if extra else "",
+                f"missing: {' '.join(missing)}" if missing else "",
+            )
+            if part
+        )
+        wrong.append(f"arguments differ from the lock ({detail or 'order or repetition'})")
     return wrong
 
 
 __all__ = [
+    "AUTH_MIDDLEWARE",
     "CLM_COMMIT",
     "ENCODER",
+    "ENCODER_ARGS",
+    "ENCODER_ENV",
+    "FALLBACK_ENCODER",
     "PATCHES",
+    "TRUNCATE_PROMPT_TOKENS",
     "UNIT_NAMES",
     "CommandResult",
+    "ContainerState",
     "KeysResult",
     "LockCheck",
+    "NetnsState",
     "PatchPin",
     "SecretError",
     "ServingError",
     "build_lock_body",
+    "check_encoder_container",
     "check_serving_lock",
+    "container_pid",
     "default_lock_path",
     "docker_argv",
+    "encoder_recipe",
+    "environment_mismatches",
     "init_keys",
+    "inspect_format",
     "load_lock",
+    "netns_problems",
+    "parse_inspect",
+    "parse_proc_listeners",
+    "read_netns",
     "recipe_mismatches",
     "render_lock",
     "render_units",

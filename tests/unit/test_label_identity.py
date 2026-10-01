@@ -250,8 +250,8 @@ def test_import_anyjev_derives_identity_and_keeps_the_highest_weight(
     src = tmp_path / "anyjev.duckdb"
     _anyjev_sidecar(src, rows)
     store = LabelStore(tmp_path / "labels.duckdb")
-    report = import_anyjev(f"duckdb:///{src}", store)
-    assert report.inserted == 4 and report.skipped_existing == 0
+    report = import_anyjev(f"duckdb:///{src}", store, trust_curator=True)
+    assert report.inserted == 4 and report.skipped_existing == 0 and report.demoted == 0
     assert report.skipped == {
         "inactive_task": 1,
         "key_mismatch": 1,
@@ -275,7 +275,9 @@ def test_import_anyjev_derives_identity_and_keeps_the_highest_weight(
     assert picked["state_json"]["n_candidates"] == 3  # the later row of equal weight won
     assert picked["origin"].endswith("neon-avu-eval/results/validated.json@deadbeef0000")
     assert picked["actor"] == "import-anyjev" and picked["fold_eligible"] is True
-    assert import_anyjev(str(src), store).inserted == 0  # idempotent
+    # The file's consensus row makes this card a bench card (D30): its curator rows say so.
+    assert picked["bench_card"] is True
+    assert import_anyjev(str(src), store, trust_curator=True).inserted == 0  # idempotent
     vk_rows = labelled_targets(store, "avu.value_kind")
     assert vk_rows.labels == [2] and vk_rows.states == [vk]
     with pytest.raises(FileNotFoundError):
@@ -303,3 +305,36 @@ def test_import_anyjev_counts_conflicts(card: DatasetCard, tmp_path: Path) -> No
     report = import_anyjev(src, store)
     assert report.inserted == 1 and report.conflicts == 1
     assert labelled_targets(store, "term.fits").labels == [0]  # the later row won
+
+
+def test_import_anyjev_demotes_curator_rows_by_default(card: DatasetCard, tmp_path: Path) -> None:
+    """mesa-anyjev's defect (g) let a plain tool call mint curator labels (D21), so an import
+    takes them as agent_pick (weight 0, never fold-eligible) unless a curator vouches (A2)."""
+    col = card.column("observerDistance")
+    tk = TASKS["term.fits"].key
+    rows = [
+        {
+            "question_id": "term.fits",
+            "question_key": tk,
+            "state": candidate_state(card, "column", col, "measurement", option, 3),
+            "label_index": index,
+            "label_source": source,
+            "weight": weight,
+            "ts": "2026-01-01 00:00:00+00",
+        }
+        for option, index, source, weight in (
+            (CAND, 0, "curator", 1.0),
+            (OTHER, 1, "curator_implicit", 0.7),
+        )
+    ]
+    src = tmp_path / "anyjev.duckdb"
+    _anyjev_sidecar(src, rows)
+    store = LabelStore(tmp_path / "labels.duckdb")
+    report = import_anyjev(src, store)
+    assert report.demoted == 2 and report.summary()["demoted"] == 2
+    assert report.per_task == {"term.fits": {"agent_pick": 2}}
+    got = store.labels_for("term.fits")
+    assert {r["label_source"] for r in got} == {"agent_pick"}
+    assert all(r["weight"] == 0.0 and r["fold_eligible"] is False for r in got)
+    assert all(r["bench_card"] is False for r in got)
+    assert labelled_targets(store, "term.fits").weights == [0.0, 0.0]

@@ -7,6 +7,7 @@ from __future__ import annotations
 import base64
 import hmac
 import importlib
+import inspect
 import os
 import sys
 from collections.abc import Iterator, Sequence
@@ -195,12 +196,17 @@ def fallback() -> tuple[Any, StubEncoder]:
 AUTH = {"Authorization": f"Bearer {KEY}"}
 
 
-def test_fallback_guards_v1_only(fallback: tuple[Any, StubEncoder]) -> None:
+def test_fallback_guards_everything_but_health(fallback: tuple[Any, StubEncoder]) -> None:
+    """Every :8090 route needs the encoder key except ``/health``, as in the vLLM container with
+    ``serving/vllm_auth.py`` (DESIGN A4)."""
     client, _ = fallback
     assert client.get("/health").status_code == 200
     assert client.get("/v1/models").status_code == 401
     assert client.post("/v1/embeddings", json={"input": "x"}).status_code == 401
-    assert client.post("/tokenize", json={"prompt": "abc"}).json()["count"] == 3
+    assert client.post("/tokenize", json={"prompt": "abc"}).status_code == 401
+    assert client.get("/openapi.json").status_code == 401
+    assert client.get("/nonexistent").status_code == 401
+    assert client.post("/tokenize", json={"prompt": "abc"}, headers=AUTH).json()["count"] == 3
     models = client.get("/v1/models", headers=AUTH).json()
     assert models["data"][0]["id"] == "qwen3-8b"
     assert models["data"][0]["max_model_len"] == 16
@@ -273,9 +279,41 @@ def test_fallback_key_rules(monkeypatch: Any) -> None:
     assert fallback_serve.resolve_keys(False, ["0.0.0.0"]) == ("c" * 43, KEY)  # noqa: S104
 
 
+def test_cuda_encoder_defaults_to_one_sequence_and_the_capped_window(
+    monkeypatch: Any,
+) -> None:
+    """Batch 1 (no padding) and ``embed`` truncating to ``max_len - 1`` (DESIGN A3, A4), checked on
+    the signature and on ``embed`` with the model replaced (no torch here)."""
+    sig = inspect.signature(cuda_encoder.CudaEncoder.__init__)
+    assert sig.parameters["batch"].default == 1
+    assert sig.parameters["max_len"].default == cuda_encoder.MAX_LEN == 4096
+    seen: list[tuple[Any, ...]] = []
+
+    def encode(texts: Any, truncate: Any, side: Any) -> tuple[int, int]:
+        seen.append((texts, truncate, side))
+        return 0, 0
+
+    enc = object.__new__(cuda_encoder.CudaEncoder)
+    enc.max_len = 4096
+    monkeypatch.setattr(enc, "encode", encode)
+    enc.embed(["a"])
+    assert seen == [(["a"], 4095, "left")]
+
+
 def test_truncate_ids_keeps_the_requested_side() -> None:
     ids = list(range(10))
     assert cuda_encoder.truncate_ids(ids, 4, "left") == [6, 7, 8, 9]
     assert cuda_encoder.truncate_ids(ids, 4, "right") == [0, 1, 2, 3]
     assert cuda_encoder.truncate_ids(ids, None, "left") == ids
     assert cuda_encoder.truncate_ids(ids, 20, "left") == ids
+
+
+@pytest.mark.parametrize("batch", ["8", "0", "2"])
+def test_fallback_refuses_a_batched_encoder(batch: str, capsys: Any) -> None:
+    """The fallback's encoder_fp says ``serial`` (DESIGN A3): a server batching sequences would
+    stamp it on vectors it does not describe, so ``--batch`` other than 1 stops at the arguments,
+    before any key, model or port is touched."""
+    with pytest.raises(SystemExit) as err:
+        fallback_serve.main(["--batch", batch, "--no-clm"])
+    assert err.value.code == 2
+    assert "one sequence per forward pass only" in capsys.readouterr().err

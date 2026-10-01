@@ -1,7 +1,7 @@
-"""``EncoderClient`` over the fake transport: the PR #6 request body (``truncate_prompt_tokens`` +
-``truncation_side: left``), base64 float32 decoding, L2, batching, ``models``/``healthy``,
-``/tokenize`` with the 404 fallback, the token guard's three counters, auth and the loopback gate.
-No network, no tokenizer download."""
+"""``EncoderClient`` over the fake transport: the PR #6 request body (``truncate_prompt_tokens`` =
+``max_len - 1`` + ``truncation_side: left``; DESIGN A4), base64 float32 decoding, L2, batching,
+``models``/``healthy``, ``/tokenize`` with the 404 fallback, the token guard's three counters,
+the bearer key on every route, and the loopback gate. No network, no tokenizer download."""
 
 from __future__ import annotations
 
@@ -59,9 +59,10 @@ def test_embed_body_shape_and_vectors(server: FakeClmServer) -> None:
         "model": "qwen3-8b",
         "input": TEXTS,
         "encoding_format": "base64",
-        "truncate_prompt_tokens": 4096,
+        "truncate_prompt_tokens": 4095,  # max_len - 1: an input of exactly 4096 never completes
         "truncation_side": "left",
     }
+    assert c.max_len == 4096 and c.truncate_prompt_tokens == 4095
     assert list(body) == [
         "model",
         "input",
@@ -119,16 +120,17 @@ def test_embed_honours_shuffled_indices_and_float_format() -> None:
 
 def test_embed_left_truncation_reaches_the_fake(server: FakeClmServer) -> None:
     """The fake honours ``truncate_prompt_tokens`` on whitespace tokens from the left, so a long
-    text embeds like its tail: what PR #6 guarantees on the real server."""
+    text embeds like its last ``max_len - 1`` tokens: what PR #6 guarantees on the real server
+    with the cap one below the window (DESIGN A4)."""
     c = client(server, max_len=20)
     words = [f"w{i}" for i in range(50)]
     long_text = " ".join(words)
-    tail = " ".join(words[-20:])
+    tail = " ".join(words[-19:])
     v_long, _ = c.embed([long_text])
     v_tail, _ = c.embed([tail])
     np.testing.assert_array_equal(v_long, v_tail)
     assert server.embedded_texts[0] == tail
-    assert server.bodies[-1]["truncate_prompt_tokens"] == 20
+    assert server.bodies[-1]["truncate_prompt_tokens"] == 19
 
 
 def test_embed_response_validation() -> None:
@@ -206,6 +208,19 @@ def test_auth_and_unknown_model_errors(server: FakeClmServer) -> None:
     retrying = EncoderClient(ENCODER_URL, KEY, transport=server.transport(), sleep=slept.append)
     out, _ = retrying.embed(["x"])
     assert out.shape == (1, 4096) and slept == [0.5, 1.0]
+
+
+def test_every_route_carries_the_bearer_key(server: FakeClmServer) -> None:
+    """The encoder container answers 401 on every path but ``/health`` without the key (DESIGN
+    A4), so each route the client uses must send it: embeddings, models (``healthy``) and
+    ``/tokenize`` (the token guard)."""
+    c = client(server)
+    c.embed(["a b"])
+    c.models()
+    assert c.healthy()
+    assert c.tokenize("a b c") == 3
+    assert server.paths == ["/v1/embeddings", "/v1/models", "/v1/models", "/tokenize"]
+    assert [r.headers.get("Authorization") for r in server.requests] == [f"Bearer {KEY}"] * 4
 
 
 # -- models / healthy -----------------------------------------------------------------------------

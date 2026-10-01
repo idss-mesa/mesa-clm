@@ -209,7 +209,7 @@ class RecordingOLS:
 
     def __init__(self, inner: OLSLike | None, fixture_dir: str | Path, mode: FixtureMode) -> None:
         self.inner = inner
-        self.dir = Path(fixture_dir)
+        self.dir = Path(fixture_dir).expanduser()  # MESA_CLM_OLS__FIXTURES_DIR=~/ols works
         self.mode = mode
         self.hits = 0
         self.misses = 0

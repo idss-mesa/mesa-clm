@@ -1,0 +1,794 @@
+{
+ "format": "mesa-clm/annotate-smoke/1",
+ "date": "2026-10-01",
+ "host": "sparky-1",
+ "note": "Smoke runs through the live stack on the final recipe (DESIGN A3/A4); diagnostics, not evidence: tier zero_shot is uncalibrated and never auto (D6). <repo> stands for the checkout's absolute path (so each DSN has four slashes) and ~ for the home directory. The default sidecar (~/.mesa/clm/provenance.duckdb) was never used.",
+ "serving": {
+  "lock_sha": "59625b8efedb61ba48b22a74bd044893fe3fcc290807feadc32fe02bd88de3cb",
+  "encoder_fp": "c3b3d5e1a283",
+  "clm_model_fp": "78be8c462b2e",
+  "units": "both active (encoder since 09:18:56 MDT, clm-serve since 09:21:08 MDT, NRestarts 0), both disabled; not restarted"
+ },
+ "runs": [
+  {
+   "key": "clm",
+   "what": "bench card, live stack, OLS replayed from tests/fixtures/ols",
+   "env": "MESA_CLM_OLS__FIXTURES=replay MESA_CLM_OLS__FIXTURES_DIR=tests/fixtures/ols",
+   "command": "uv run mesa-clm --provenance duckdb:///<repo>/.local/smoke/prov.duckdb annotate --card tests/fixtures/cards/DP1.10003.001.brd_countdata.md --provider clm --tier zero_shot --out <repo>/.local/smoke/run-clm.json",
+   "sidecar": "duckdb:///<repo>/.local/smoke/prov.duckdb",
+   "started": "2026-10-01T16:57:36Z",
+   "finished": "2026-10-01T16:57:37Z",
+   "exit": 0,
+   "wall_seconds": 0.6,
+   "stdout": [
+    "run 277c09cb-ae94-4970-9b44-102594f0c0ad (owner tswetnam, card DP1.10003.001.brd_countdata, tier zero_shot)",
+    "  4 proposals, 0 abstained, 42 decisions, 18 CLM calls, 0 input tokens, 0.08 s",
+    "  outcomes: proposed=18, rejected=14, rule=10",
+    "  abstained: none",
+    "  fingerprint: encoder_fp c3b3d5e1a283 clm_model_fp 78be8c462b2e serving_lock_sha 59625b8efedb",
+    "  serving lock ~/.mesa/clm/serving.lock.json (lock_sha 59625b8efedb)",
+    "  clm-serve at http://127.0.0.1:8700 ok (models: clm-latest, clm-raw); encoder qwen3-8b at http://127.0.0.1:8090 matches the lock",
+    "  wrote .local/smoke/run-clm.json",
+    "next: mesa-clm review --run-id 277c09cb-ae94-4970-9b44-102594f0c0ad"
+   ],
+   "run_id": "277c09cb-ae94-4970-9b44-102594f0c0ad",
+   "card": "DP1.10003.001.brd_countdata",
+   "card_sha256": "994c03042e2a5eaf3e4185c783e013d9bdacce8361a86e552de7946b730e7bf1",
+   "status": "decided",
+   "provider": "clm",
+   "tier": "zero_shot",
+   "clm_model": "clm-latest",
+   "decisions": 42,
+   "proposals": 4,
+   "abstained": 0,
+   "abstained_by_reason": {},
+   "outcomes": {
+    "rule": 10,
+    "proposed": 18,
+    "rejected": 14
+   },
+   "auto": 0,
+   "clm_calls": 18,
+   "failed_calls": 0,
+   "encoder_input_tokens": 0,
+   "calls_detail": {
+    "requests": 18,
+    "questions": 32,
+    "candidates": 175,
+    "input_tokens": 0,
+    "latency_ms_median": 0.55,
+    "latency_ms_max": 0.9,
+    "status": "ok"
+   },
+   "distinct_contexts": 17,
+   "distinct_context_tokens": 6425,
+   "seconds": 0.08439363725483418,
+   "fingerprint": {
+    "encoder_fp": "c3b3d5e1a283",
+    "clm_model_fp": "78be8c462b2e",
+    "schema_sha256": "52cec58afbf49ad7b7aa6bdb7e7476ee42bf3fd7a2703d44319dc4b565987335",
+    "serving_lock_sha": "59625b8efedb61ba48b22a74bd044893fe3fcc290807feadc32fe02bd88de3cb",
+    "framings_lock_sha": "b432d32a7536c8f455098ae4a23139f6badbae7bc181a3a64853df3e80921eca"
+   },
+   "degraded": false,
+   "decisions_by_task": [
+    {
+     "task": "column.annotate",
+     "method": "clm",
+     "outcome": "proposed",
+     "reason": "",
+     "n": 14
+    },
+    {
+     "task": "column.annotate",
+     "method": "rule",
+     "outcome": "rule",
+     "reason": "is_identifier",
+     "n": 10
+    },
+    {
+     "task": "column.aspect",
+     "method": "clm",
+     "outcome": "rejected",
+     "reason": "column_not_annotated",
+     "n": 14
+    },
+    {
+     "task": "term.fits",
+     "method": "clm",
+     "outcome": "proposed",
+     "reason": "",
+     "n": 4
+    }
+   ],
+   "column_annotate_answers": {
+    "No": 14
+   },
+   "column_annotate_confidence": {
+    "min": 0.820958480520655,
+    "max": 0.9999245809240996
+   },
+   "proposals_all": [
+    {
+     "attribute": "envo.temperate_mixed_forest_biome",
+     "value": "HARV",
+     "unit": "ENVO:01000212",
+     "p_fit": 0.9999436789387909,
+     "outcome": "proposed",
+     "level": "zero_shot",
+     "method": "clm",
+     "aspect": "environment",
+     "ontology_id": "envo",
+     "column_name": "",
+     "site_code": "HARV",
+     "label": "temperate mixed forest biome"
+    },
+    {
+     "attribute": "envo.tropical_desert_biome",
+     "value": "SRER",
+     "unit": "ENVO:01000183",
+     "p_fit": 0.9987974857299176,
+     "outcome": "proposed",
+     "level": "zero_shot",
+     "method": "clm",
+     "aspect": "environment",
+     "ontology_id": "envo",
+     "column_name": "",
+     "site_code": "SRER",
+     "label": "tropical desert biome"
+    },
+    {
+     "attribute": "ncbitaxon.environmental_samples_birdsclass_aves",
+     "value": "environmental samples <birds,class Aves>",
+     "unit": "NCBITaxon:1126251",
+     "p_fit": 0.9916492694062299,
+     "outcome": "proposed",
+     "level": "zero_shot",
+     "method": "clm",
+     "aspect": "taxon",
+     "ontology_id": "ncbitaxon",
+     "column_name": "",
+     "site_code": "",
+     "label": "environmental samples <birds,class Aves>"
+    },
+    {
+     "attribute": "ncbitaxon.avena_atlantica_x_avena_hirtula",
+     "value": "Avena atlantica x Avena hirtula",
+     "unit": "NCBITaxon:1080144",
+     "p_fit": 0.5557177984825521,
+     "outcome": "proposed",
+     "level": "zero_shot",
+     "method": "clm",
+     "aspect": "taxon",
+     "ontology_id": "ncbitaxon",
+     "column_name": "",
+     "site_code": "",
+     "label": "Avena atlantica x Avena hirtula"
+    }
+   ],
+   "examples": [
+    {
+     "attribute": "envo.temperate_mixed_forest_biome",
+     "value": "HARV",
+     "unit": "ENVO:01000212",
+     "p_fit": 0.9999436789387909
+    },
+    {
+     "attribute": "envo.tropical_desert_biome",
+     "value": "SRER",
+     "unit": "ENVO:01000183",
+     "p_fit": 0.9987974857299176
+    },
+    {
+     "attribute": "ncbitaxon.environmental_samples_birdsclass_aves",
+     "value": "environmental samples <birds,class Aves>",
+     "unit": "NCBITaxon:1126251",
+     "p_fit": 0.9916492694062299
+    }
+   ],
+   "explain": {
+    "command": "uv run mesa-clm --provenance duckdb:///<repo>/.local/smoke/prov.duckdb explain --run-id 277c09cb-ae94-4970-9b44-102594f0c0ad",
+    "exit": 0,
+    "run_status": "decided",
+    "n_decisions": 42,
+    "groups": 4,
+    "links": 4,
+    "pending_groups": 3,
+    "groups_top3": [
+     {
+      "task": "term.fits",
+      "scope": "site",
+      "site_code": "HARV",
+      "aspect": "environment",
+      "ontology_id": "envo",
+      "outcome": "proposed",
+      "anchor_won": false,
+      "top": [
+       [
+        "ENVO:01000212",
+        0.9999436789387909
+       ],
+       [
+        "ENVO:01000202",
+        0.9996916913232086
+       ],
+       [
+        "__none__",
+        0.5
+       ]
+      ]
+     },
+     {
+      "task": "term.fits",
+      "scope": "site",
+      "site_code": "SRER",
+      "aspect": "environment",
+      "ontology_id": "envo",
+      "outcome": "proposed",
+      "anchor_won": false,
+      "top": [
+       [
+        "ENVO:01000183",
+        0.9987974857299176
+       ],
+       [
+        "ENVO:01000182",
+        0.9985300378631297
+       ],
+       [
+        "ENVO:01000218",
+        0.9983420603798798
+       ]
+      ]
+     },
+     {
+      "task": "term.fits",
+      "scope": "dataset",
+      "site_code": "",
+      "aspect": "taxon",
+      "ontology_id": "ncbitaxon",
+      "outcome": "proposed",
+      "anchor_won": false,
+      "top": [
+       [
+        "NCBITaxon:8782",
+        0.8672328756998883
+       ],
+       [
+        "NCBITaxon:1080144",
+        0.5557177984825521
+       ],
+       [
+        "__none__",
+        0.5
+       ]
+      ]
+     },
+     {
+      "task": "term.fits",
+      "scope": "dataset",
+      "site_code": "",
+      "aspect": "taxon",
+      "ontology_id": "ncbitaxon",
+      "outcome": "proposed",
+      "anchor_won": false,
+      "top": [
+       [
+        "NCBITaxon:1126251",
+        0.9916492694062299
+       ],
+       [
+        "NCBITaxon:1663348",
+        0.9723962161935937
+       ],
+       [
+        "NCBITaxon:8782",
+        0.8672332051177674
+       ]
+      ]
+     }
+    ],
+    "matches_run": true
+   }
+  },
+  {
+   "key": "fake",
+   "what": "bench card, deterministic fake provider (separate sidecar), OLS replayed",
+   "env": "MESA_CLM_OLS__FIXTURES=replay MESA_CLM_OLS__FIXTURES_DIR=tests/fixtures/ols",
+   "command": "uv run mesa-clm --provenance duckdb:///<repo>/.local/smoke/prov-fake.duckdb annotate --card tests/fixtures/cards/DP1.10003.001.brd_countdata.md --provider fake --tier zero_shot --out <repo>/.local/smoke/run-fake.json",
+   "sidecar": "duckdb:///<repo>/.local/smoke/prov-fake.duckdb",
+   "started": "2026-10-01T16:57:50Z",
+   "finished": "2026-10-01T16:57:51Z",
+   "exit": 0,
+   "wall_seconds": 0.5,
+   "stdout": [
+    "run 9f8d4f3b-1ef0-442e-a14a-2ffbb13cd851 (owner tswetnam, card DP1.10003.001.brd_countdata, tier zero_shot)",
+    "  3 proposals, 1 abstained, 42 decisions, 18 CLM calls, 2953 input tokens, 0.03 s",
+    "  outcomes: abstain=1, proposed=17, rejected=14, rule=10",
+    "  abstained: anchor_won=1",
+    "  fingerprint: encoder_fp f2521831a25e clm_model_fp c715fc0bb42f serving_lock_sha f7d62d552087",
+    "  provider fake (seed 0): deterministic, never evidence",
+    "  wrote .local/smoke/run-fake.json",
+    "next: mesa-clm review --run-id 9f8d4f3b-1ef0-442e-a14a-2ffbb13cd851"
+   ],
+   "run_id": "9f8d4f3b-1ef0-442e-a14a-2ffbb13cd851",
+   "card": "DP1.10003.001.brd_countdata",
+   "card_sha256": "994c03042e2a5eaf3e4185c783e013d9bdacce8361a86e552de7946b730e7bf1",
+   "status": "decided",
+   "provider": "fake",
+   "tier": "zero_shot",
+   "clm_model": "clm-latest",
+   "decisions": 42,
+   "proposals": 3,
+   "abstained": 1,
+   "abstained_by_reason": {
+    "anchor_won": 1
+   },
+   "outcomes": {
+    "rule": 10,
+    "proposed": 17,
+    "rejected": 14,
+    "abstain": 1
+   },
+   "auto": 0,
+   "clm_calls": 18,
+   "failed_calls": 0,
+   "encoder_input_tokens": 2953,
+   "calls_detail": {
+    "requests": 18,
+    "questions": 32,
+    "candidates": 175,
+    "input_tokens": 2953,
+    "latency_ms_median": 0.9093424305319786,
+    "latency_ms_max": 2.3465557023882866,
+    "status": "ok"
+   },
+   "distinct_contexts": 17,
+   "distinct_context_tokens": 10557,
+   "seconds": 0.026703171897679567,
+   "fingerprint": {
+    "encoder_fp": "f2521831a25e",
+    "clm_model_fp": "c715fc0bb42f",
+    "schema_sha256": "52cec58afbf49ad7b7aa6bdb7e7476ee42bf3fd7a2703d44319dc4b565987335",
+    "serving_lock_sha": "f7d62d552087fe80ee3c792dd7e2ff9ab4e2abd30161bd66af8f34fdc350de19",
+    "framings_lock_sha": "b432d32a7536c8f455098ae4a23139f6badbae7bc181a3a64853df3e80921eca"
+   },
+   "degraded": false,
+   "decisions_by_task": [
+    {
+     "task": "column.annotate",
+     "method": "fake",
+     "outcome": "proposed",
+     "reason": "",
+     "n": 14
+    },
+    {
+     "task": "column.annotate",
+     "method": "rule",
+     "outcome": "rule",
+     "reason": "is_identifier",
+     "n": 10
+    },
+    {
+     "task": "column.aspect",
+     "method": "fake",
+     "outcome": "rejected",
+     "reason": "column_not_annotated",
+     "n": 14
+    },
+    {
+     "task": "term.fits",
+     "method": "fake",
+     "outcome": "abstain",
+     "reason": "anchor_won",
+     "n": 1
+    },
+    {
+     "task": "term.fits",
+     "method": "fake",
+     "outcome": "proposed",
+     "reason": "",
+     "n": 3
+    }
+   ],
+   "column_annotate_answers": {
+    "No": 14
+   },
+   "column_annotate_confidence": {
+    "min": 0.513293485735617,
+    "max": 0.5149141346734373
+   },
+   "proposals_all": [
+    {
+     "attribute": "ncbitaxon.parastagonospora_avenae_f_sp_tritici",
+     "value": "Parastagonospora avenae f. sp. tritici",
+     "unit": "NCBITaxon:54790",
+     "p_fit": 0.5431365791044666,
+     "outcome": "proposed",
+     "level": "zero_shot",
+     "method": "fake",
+     "aspect": "taxon",
+     "ontology_id": "ncbitaxon",
+     "column_name": "",
+     "site_code": "",
+     "label": "Parastagonospora avenae f. sp. tritici"
+    },
+    {
+     "attribute": "envo.subtropical_desert_biome",
+     "value": "SRER",
+     "unit": "ENVO:01000184",
+     "p_fit": 0.5428530777633008,
+     "outcome": "proposed",
+     "level": "zero_shot",
+     "method": "fake",
+     "aspect": "environment",
+     "ontology_id": "envo",
+     "column_name": "",
+     "site_code": "SRER",
+     "label": "subtropical desert biome"
+    },
+    {
+     "attribute": "ncbitaxon.avena_strigosa_x_avena_wiestii",
+     "value": "Avena strigosa x Avena wiestii",
+     "unit": "NCBITaxon:1080143",
+     "p_fit": 0.5376587045955451,
+     "outcome": "proposed",
+     "level": "zero_shot",
+     "method": "fake",
+     "aspect": "taxon",
+     "ontology_id": "ncbitaxon",
+     "column_name": "",
+     "site_code": "",
+     "label": "Avena strigosa x Avena wiestii"
+    }
+   ],
+   "examples": [
+    {
+     "attribute": "ncbitaxon.parastagonospora_avenae_f_sp_tritici",
+     "value": "Parastagonospora avenae f. sp. tritici",
+     "unit": "NCBITaxon:54790",
+     "p_fit": 0.5431365791044666
+    },
+    {
+     "attribute": "envo.subtropical_desert_biome",
+     "value": "SRER",
+     "unit": "ENVO:01000184",
+     "p_fit": 0.5428530777633008
+    },
+    {
+     "attribute": "ncbitaxon.avena_strigosa_x_avena_wiestii",
+     "value": "Avena strigosa x Avena wiestii",
+     "unit": "NCBITaxon:1080143",
+     "p_fit": 0.5376587045955451
+    }
+   ],
+   "explain": {
+    "command": "uv run mesa-clm --provenance duckdb:///<repo>/.local/smoke/prov-fake.duckdb explain --run-id 9f8d4f3b-1ef0-442e-a14a-2ffbb13cd851",
+    "exit": 0,
+    "run_status": "decided",
+    "n_decisions": 42,
+    "groups": 4,
+    "links": 3,
+    "pending_groups": 3,
+    "groups_top3": [
+     {
+      "task": "term.fits",
+      "scope": "site",
+      "site_code": "HARV",
+      "aspect": "environment",
+      "ontology_id": "envo",
+      "outcome": "abstain",
+      "anchor_won": true,
+      "top": [
+       [
+        "__none__",
+        0.5
+       ],
+       [
+        "ENVO:01000202",
+        0.45907755231776737
+       ],
+       [
+        "ENVO:01000212",
+        0.42757103016182746
+       ]
+      ]
+     },
+     {
+      "task": "term.fits",
+      "scope": "site",
+      "site_code": "SRER",
+      "aspect": "environment",
+      "ontology_id": "envo",
+      "outcome": "proposed",
+      "anchor_won": false,
+      "top": [
+       [
+        "ENVO:01000184",
+        0.5428530777633008
+       ],
+       [
+        "ENVO:01000186",
+        0.5420974477272487
+       ],
+       [
+        "ENVO:01000183",
+        0.5372819423845638
+       ]
+      ]
+     },
+     {
+      "task": "term.fits",
+      "scope": "dataset",
+      "site_code": "",
+      "aspect": "taxon",
+      "ontology_id": "ncbitaxon",
+      "outcome": "proposed",
+      "anchor_won": false,
+      "top": [
+       [
+        "NCBITaxon:54790",
+        0.5431365791044666
+       ],
+       [
+        "NCBITaxon:1080143",
+        0.5376587045955451
+       ],
+       [
+        "NCBITaxon:80867",
+        0.5181859056207825
+       ]
+      ]
+     },
+     {
+      "task": "term.fits",
+      "scope": "dataset",
+      "site_code": "",
+      "aspect": "taxon",
+      "ontology_id": "ncbitaxon",
+      "outcome": "rejected",
+      "anchor_won": false,
+      "top": [
+       [
+        "NCBITaxon:1200774",
+        0.5873705715970164
+       ],
+       [
+        "NCBITaxon:54790",
+        0.5431365791044666
+       ],
+       [
+        "NCBITaxon:2974599",
+        0.5398658612675729
+       ]
+      ]
+     }
+    ],
+    "matches_run": true
+   }
+  },
+  {
+   "key": "srer",
+   "what": "non-bench SRER card, live stack, live EMBL-EBI OLS4 recorded to .local/smoke/ols-live",
+   "env": "MESA_CLM_OLS__FIXTURES=record MESA_CLM_OLS__FIXTURES_DIR=<repo>/.local/smoke/ols-live",
+   "command": "uv run mesa-clm --provenance duckdb:///<repo>/.local/smoke/prov.duckdb annotate --card ~/neon-ducklake/sites/SRER/cards/anyjev/DP1.00004.001.BP_30min.md --provider clm --tier zero_shot --out <repo>/.local/smoke/run-srer.json",
+   "sidecar": "duckdb:///<repo>/.local/smoke/prov.duckdb",
+   "started": "2026-10-01T16:57:59Z",
+   "finished": "2026-10-01T16:58:03Z",
+   "exit": 0,
+   "wall_seconds": 3.84,
+   "stdout": [
+    "run d0ce4560-c00e-4022-8323-b66eb818fd84 (owner tswetnam, card DP1.00004.001.BP_30min, tier zero_shot)",
+    "  1 proposals, 0 abstained, 39 decisions, 17 CLM calls, 7144 input tokens, 3.36 s",
+    "  outcomes: proposed=17, rejected=16, rule=6",
+    "  abstained: none",
+    "  fingerprint: encoder_fp c3b3d5e1a283 clm_model_fp 78be8c462b2e serving_lock_sha 59625b8efedb",
+    "  serving lock ~/.mesa/clm/serving.lock.json (lock_sha 59625b8efedb)",
+    "  clm-serve at http://127.0.0.1:8700 ok (models: clm-latest, clm-raw); encoder qwen3-8b at http://127.0.0.1:8090 matches the lock",
+    "  wrote .local/smoke/run-srer.json",
+    "next: mesa-clm review --run-id d0ce4560-c00e-4022-8323-b66eb818fd84"
+   ],
+   "run_id": "d0ce4560-c00e-4022-8323-b66eb818fd84",
+   "card": "DP1.00004.001.BP_30min",
+   "card_sha256": "3d3a320180674c12c03e09316b658a496d0721defc86de5d487ec6e1dbeeaa94",
+   "status": "decided",
+   "provider": "clm",
+   "tier": "zero_shot",
+   "clm_model": "clm-latest",
+   "decisions": 39,
+   "proposals": 1,
+   "abstained": 0,
+   "abstained_by_reason": {},
+   "outcomes": {
+    "rule": 6,
+    "proposed": 17,
+    "rejected": 16
+   },
+   "auto": 0,
+   "clm_calls": 17,
+   "failed_calls": 0,
+   "encoder_input_tokens": 7144,
+   "calls_detail": {
+    "requests": 17,
+    "questions": 33,
+    "candidates": 173,
+    "input_tokens": 7144,
+    "latency_ms_median": 131.0,
+    "latency_ms_max": 134.1,
+    "status": "ok"
+   },
+   "distinct_contexts": 17,
+   "distinct_context_tokens": 7144,
+   "seconds": 3.3587910989299417,
+   "fingerprint": {
+    "encoder_fp": "c3b3d5e1a283",
+    "clm_model_fp": "78be8c462b2e",
+    "schema_sha256": "52cec58afbf49ad7b7aa6bdb7e7476ee42bf3fd7a2703d44319dc4b565987335",
+    "serving_lock_sha": "59625b8efedb61ba48b22a74bd044893fe3fcc290807feadc32fe02bd88de3cb",
+    "framings_lock_sha": "b432d32a7536c8f455098ae4a23139f6badbae7bc181a3a64853df3e80921eca"
+   },
+   "degraded": false,
+   "decisions_by_task": [
+    {
+     "task": "column.annotate",
+     "method": "clm",
+     "outcome": "proposed",
+     "reason": "",
+     "n": 16
+    },
+    {
+     "task": "column.annotate",
+     "method": "rule",
+     "outcome": "rule",
+     "reason": "is_identifier",
+     "n": 6
+    },
+    {
+     "task": "column.aspect",
+     "method": "clm",
+     "outcome": "rejected",
+     "reason": "column_not_annotated",
+     "n": 16
+    },
+    {
+     "task": "term.fits",
+     "method": "clm",
+     "outcome": "proposed",
+     "reason": "",
+     "n": 1
+    }
+   ],
+   "column_annotate_answers": {
+    "No": 16
+   },
+   "column_annotate_confidence": {
+    "min": 0.998584098319091,
+    "max": 0.9999887873534793
+   },
+   "proposals_all": [
+    {
+     "attribute": "envo.desert_biome",
+     "value": "SRER",
+     "unit": "ENVO:01000179",
+     "p_fit": 0.999754994268297,
+     "outcome": "proposed",
+     "level": "zero_shot",
+     "method": "clm",
+     "aspect": "environment",
+     "ontology_id": "envo",
+     "column_name": "",
+     "site_code": "SRER",
+     "label": "desert biome"
+    }
+   ],
+   "examples": [
+    {
+     "attribute": "envo.desert_biome",
+     "value": "SRER",
+     "unit": "ENVO:01000179",
+     "p_fit": 0.999754994268297
+    }
+   ],
+   "explain": {
+    "command": "uv run mesa-clm --provenance duckdb:///<repo>/.local/smoke/prov.duckdb explain --run-id d0ce4560-c00e-4022-8323-b66eb818fd84",
+    "exit": 0,
+    "run_status": "decided",
+    "n_decisions": 39,
+    "groups": 1,
+    "links": 1,
+    "pending_groups": 1,
+    "groups_top3": [
+     {
+      "task": "term.fits",
+      "scope": "site",
+      "site_code": "SRER",
+      "aspect": "environment",
+      "ontology_id": "envo",
+      "outcome": "proposed",
+      "anchor_won": false,
+      "top": [
+       [
+        "ENVO:01000179",
+        0.999754994268297
+       ],
+       [
+        "ENVO:01000216",
+        0.9993547838093562
+       ],
+       [
+        "ENVO:01000176",
+        0.999080796268197
+       ]
+      ]
+     }
+    ],
+    "matches_run": true
+   }
+  }
+ ],
+ "ols_live": {
+  "base_url": "https://www.ebi.ac.uk/ols4/api/v2 (config default; public, read-only)",
+  "calls": [
+   {
+    "method": "search_term_descendants",
+    "args": {
+     "ontology_id": "envo",
+     "parent_iri": "http://purl.obolibrary.org/obo/ENVO_00000428",
+     "query": "xeric shrubland biome",
+     "size": 20
+    },
+    "hits": 1
+   },
+   {
+    "method": "search_term_descendants",
+    "args": {
+     "ontology_id": "envo",
+     "parent_iri": "http://purl.obolibrary.org/obo/ENVO_00000428",
+     "query": "shrubland biome",
+     "size": 20
+    },
+    "hits": 9
+   },
+   {
+    "method": "search_term_descendants",
+    "args": {
+     "ontology_id": "envo",
+     "parent_iri": "http://purl.obolibrary.org/obo/ENVO_00000428",
+     "query": "desert biome",
+     "size": 20
+    },
+    "hits": 6
+   }
+  ],
+  "rate": "3 sequential GET requests (one in flight at a time) within a 3.36 s run",
+  "fixtures_dir": ".local/smoke/ols-live"
+ },
+ "caveats": [
+  "encoder_input_tokens is clm-serve's usage.input_tokens, which counts encoder tokens on cache misses only (RESEARCH.md; clm/http.py Usage). Every text of the clm run was already in the embedding cache of the clm-serve process (up since 09:21:08 MDT): 0 tokens charged, median call 0.55 ms, 0.08 s for the run. That is consistent with tests/engine/test_doctor_live.py, which annotates this card at zero_shot and was run against the live stack earlier today; it is not a cold-run cost. The run's 17 distinct contexts are 6,425 tokens by the token guard.",
+  "The SRER run's 7,144 tokens equal the token guard sum of its 17 distinct contexts: every candidate, option and anchor text it sent was already cached, so 7,144 is a lower bound on a cold run's cost.",
+  "The fake run's tokens (2,953) and context token counts are the fake transport's own, not the encoder's.",
+  "OLS replay from tests/fixtures/ols missed no fixture in either bench-card run (a miss fails the run with exit 1)."
+ ],
+ "doctor_serve_after": {
+  "ran": "2026-10-01T17:00:41Z",
+  "command": "uv run mesa-clm doctor --serve --json",
+  "exit": 0,
+  "summary": {
+   "ok": 30,
+   "warn": 2,
+   "fail": 0
+  },
+  "not_ok": [
+   {
+    "name": "permissions",
+    "status": "warn",
+    "detail": "~/.mesa/clm/locks 0775, ~/.mesa/clm/locks/provenance.lock 0664 (owner-only state; fix: chmod 700 ~/.mesa/clm/locks; chmod 600 ~/.mesa/clm/locks/provenance.lock)"
+   },
+   {
+    "name": "clm drift",
+    "status": "warn",
+    "detail": "quickstart urgency 0.8466 (|Δ| 0.0100116), billing 0.9903 (|Δ| 0.0014636), frustration 2.0000 (|Δ| 0.0000210) against issue #15 ± 0.01; tides top \"The Moon's gravitational pull.\" 0.9932 against the model card 0.993 ± 0.005 (warn only; DESIGN A3)"
+   }
+  ]
+ }
+}

@@ -11,15 +11,15 @@ For the decisions and verified facts behind the design, read DESIGN.md and RESEA
 ## Getting started
 
 - [Configuration](https://idss-mesa.github.io/mesa-clm/getting-started/configuration/): Configure mesa-clm with a YAML file, MESA_CLM_ environment variables or flags; precedence, the sections, secrets, and the CLM fallbacks. (draft)
-- [Install](https://idss-mesa.github.io/mesa-clm/getting-started/install/): Install mesa-clm with uv, the command line that exists after milestone M1 (annotate, explain, review, feedback, framings, provenance, serve, doctor), the extras, and what a serving host needs. (draft)
+- [Install](https://idss-mesa.github.io/mesa-clm/getting-started/install/): Install mesa-clm with uv, the command line that exists after milestone M1 (annotate, explain, review, feedback, framings, provenance, serve, features, doctor), the extras, and what a serving host needs. (draft)
 - [Quickstart](https://idss-mesa.github.io/mesa-clm/getting-started/quickstart/): Annotate a dataset card, read the run back, review its pending groups and export it: offline with the fake provider and the recorded OLS fixtures, then on the serving host with the real CLM provider. (draft)
 
 ## Concepts
 
 - [Decision model](https://idss-mesa.github.io/mesa-clm/concepts/decision-model/): How mesa-clm asks CLM: one rank per candidate group with a fixed abstain anchor, set-independent scores, the Q1-Q8 pipeline, contexts that end with the target, framings and the two keys. (draft)
-- [Learning and bench](https://idss-mesa.github.io/mesa-clm/concepts/learning-and-bench/): Where mesa-clm's labels come from and how they are identified and frozen, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, and the pre-registered experiments X1-X4 with the AnyJev baseline numbers. (draft)
+- [Learning and bench](https://idss-mesa.github.io/mesa-clm/concepts/learning-and-bench/): Where mesa-clm's labels come from and how they are identified and frozen, the feature cache, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, and the pre-registered experiments X1-X4 with the AnyJev baseline numbers. (draft)
 - [Provenance](https://idss-mesa.github.io/mesa-clm/concepts/provenance/): The mesa_clm sidecar: a per-host DuckDB opened under a flock, its tables and fingerprints, the migrate, export, import and prune verbs, the direct/spool/none history backends and the lock set, source tags, and revert. (draft)
-- [Serving](https://idss-mesa.github.io/mesa-clm/concepts/serving/): The mesa-clm serving stack of milestone M1: a vLLM pooling container serving Qwen3-8B and a patched clm-serve on loopback with keys, the carried CLM patches, fingerprints and the serving lock, what the doctor probes, the GPU budget, and the in-process fallback encoder. (draft)
+- [Serving](https://idss-mesa.github.io/mesa-clm/concepts/serving/): The mesa-clm serving stack of milestone M1: a batch-invariant vLLM pooling container serving Qwen3-8B behind a bearer guard and a patched clm-serve on loopback with keys, the carried CLM patches, fingerprints and the serving lock, what the doctor probes, the GPU budget, and the in-process fallback encoder. (draft)
 - [Tiers and policy](https://idss-mesa.github.io/mesa-clm/concepts/tiers-and-policy/): What level and calibration promise on a mesa-clm decision, the record invariants, and the rules that turn a decision into auto, proposed or abstain with a cited bench cell. (draft)
 
 ## Develop

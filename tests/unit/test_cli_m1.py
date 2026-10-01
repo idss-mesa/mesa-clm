@@ -345,28 +345,40 @@ def test_explain_without_a_sidecar(env: Path, capsys: pytest.CaptureFixture[str]
     assert "no sidecar" in capsys.readouterr().err and not env.exists()
 
 
-def test_review_picks_and_declines_by_prefix(
-    run: dict[str, Any], env: Path, capsys: pytest.CaptureFixture[str]
-) -> None:
-    pending = _pending(env, run["run_id"])
-    assert len(pending) >= 3
-    g1, g2, g3 = (p["group_id"] for p in pending[:3])
+def _terminal(monkeypatch: pytest.MonkeyPatch, attached: bool) -> None:
+    """stdin is (or is not) an interactive terminal: the DESIGN A2 condition for via='cli'."""
+    monkeypatch.setattr("sys.stdin.isatty", lambda: attached)
+
+
+def _labels(env: Path, run_id: str) -> list[dict[str, Any]]:
+    from mesa_clm.provenance.labels import LabelStore
+
+    rows = []
+    for task in ("term.fits", "column.ontology_fits"):
+        rows.extend(LabelStore(env).labels_for(task))
+    return [r for r in rows if str(r["origin"]).startswith("override:")]
+
+
+def _offered(env: Path, group_id: str) -> list[str]:
     from mesa_clm.cli import _reader_service
     from mesa_clm.config import load_config
 
     svc = _reader_service(load_config(), _store(env))
-    cand = next(c for c in svc.candidates_for_group(UUID(g1)) if not c["is_anchor"])
+    return [c["option_key"] for c in svc.candidates_for_group(UUID(group_id)) if not c["is_anchor"]]
+
+
+def test_review_at_a_terminal_records_curator_labels(
+    run: dict[str, Any], env: Path, monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:  # fmt: skip
+    _terminal(monkeypatch, True)
+    pending = _pending(env, run["run_id"])
+    assert len(pending) >= 3
+    g1, g2, g3 = (p["group_id"] for p in pending[:3])
+    key = _offered(env, g1)[0]
     # A typo in a later answer records nothing at all.
     code = main(
-        [
-            "review",
-            "--run-id",
-            run["run_id"],
-            "--pick",
-            f"{g1[:8]}={cand['option_key']}",
-            "--pick",
-            f"{g2}=NOPE:1",
-        ]
+        ["review", "--run-id", run["run_id"], "--pick", f"{g1[:8]}={key}", "--pick", f"{g2}=NOPE:1"]
     )
     assert code == EXIT_FAIL and "is not offered" in capsys.readouterr().err
     assert not _store(env).overrides(UUID(run["run_id"]))
@@ -376,7 +388,7 @@ def test_review_picks_and_declines_by_prefix(
             "--run-id",
             run["run_id"][:8],
             "--pick",
-            f"{g1[:8]}={cand['option_key']}",
+            f"{g1[:8]}={key}",
             "--pick",
             f"{g2}=none",
             "--decline",
@@ -384,27 +396,136 @@ def test_review_picks_and_declines_by_prefix(
         ]
     )
     assert code == EXIT_OK
-    results = json.loads(_out(capsys))
+    captured = capsys.readouterr()
+    assert "via=tool" not in captured.err
+    results = json.loads(captured.out)
     assert [r["action"] for r in results] == ["pick", "none", "decline"]
     assert [r["outcome"] for r in results] == ["human", "rejected", "declined"]
     assert results[0]["label_source"] == "curator" and results[0]["labels_written"] >= 1
+    assert {r["via"] for r in results} == {"cli"}
     overrides = _store(env).overrides(UUID(run["run_id"]))
     assert {o["via"] for o in overrides} == {"cli"} and len(overrides) == 3
+    labels = _labels(env, run["run_id"])
+    assert {r["label_source"] for r in labels} == {"curator", "curator_implicit"}
+    assert all(r["fold_eligible"] and r["weight"] > 0 for r in labels)
     left = {p["group_id"] for p in _pending(env, run["run_id"])}
     assert g1 not in left and g2 not in left and g3 in left  # a decline leaves it pending
     assert main(["review", "--run-id", run["run_id"], "--pick", "nonsense"]) == EXIT_CONFIG
 
 
-def test_review_needs_a_terminal_or_answers(
-    run: dict[str, Any],
-    env: Path,
-    monkeypatch: pytest.MonkeyPatch,
+def test_review_without_a_terminal_records_an_agents_answers(
+    run: dict[str, Any], env: Path, monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
-) -> None:
-    monkeypatch.setattr("sys.stdin.isatty", lambda: False)
+) -> None:  # fmt: skip
+    _terminal(monkeypatch, False)
+    pending = _pending(env, run["run_id"])
+    g1, g2 = pending[0]["group_id"], pending[1]["group_id"]
+    key = _offered(env, g1)[0]
+    code = main(
+        ["review", "--run-id", run["run_id"], "--pick", f"{g1}={key}", "--pick", f"{g2}=none"]
+    )
+    assert code == EXIT_OK
+    captured = capsys.readouterr()
+    assert "stdin is not a terminal" in captured.err and "via=tool" in captured.err
+    assert "DESIGN A2" in captured.err
+    results = json.loads(captured.out)
+    assert [r["via"] for r in results] == ["tool", "tool"]
+    assert {r["label_source"] for r in results} == {"agent_pick"}
+    overrides = _store(env).overrides(UUID(run["run_id"]))
+    assert {o["via"] for o in overrides} == {"tool"}
+    labels = _labels(env, run["run_id"])
+    assert labels and {r["label_source"] for r in labels} == {"agent_pick"}
+    assert all(r["weight"] == 0.0 and not r["fold_eligible"] for r in labels)
+    accepted = [
+        link
+        for link in _store(env).links(UUID(run["run_id"]))
+        if link["write_status"] == "accepted"
+    ]
+    assert accepted and {link["accepted_by"] for link in accepted} == {"agent"}
+    # An agent's answer leaves both groups pending for a curator.
+    still = {p["group_id"]: p for p in _pending(env, run["run_id"])}
+    assert still[g1]["agent_answered"] and still[g2]["agent_answered"]
+
+
+def test_review_needs_a_terminal_for_the_interactive_walk(
+    run: dict[str, Any], env: Path, monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:  # fmt: skip
+    _terminal(monkeypatch, False)
     assert main(["review", "--run-id", run["run_id"]]) == EXIT_CONFIG
-    assert "needs a terminal" in capsys.readouterr().err
+    err = capsys.readouterr().err
+    assert "needs a terminal" in err and "via=tool" in err
     assert main(["--actor", "bob", "review", "--run-id", run["run_id"]]) == EXIT_FAIL
+
+
+def test_review_answers_pending_groups_once_each(
+    run: dict[str, Any], env: Path, monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:  # fmt: skip
+    _terminal(monkeypatch, True)
+    from mesa_clm.cli import _reader_service
+    from mesa_clm.config import load_config
+
+    summary = _reader_service(load_config(), _store(env)).run_summary(UUID(run["run_id"]))
+    onto = next(g for g in summary["groups"] if g["task_id"] == "column.ontology_fits")
+    gid = str(onto["group_id"])
+    key = _offered(env, gid)[0]
+    assert main(["review", "--run-id", run["run_id"], "--pick", f"{gid}={key}"]) == EXIT_FAIL
+    err = capsys.readouterr().err
+    assert "does not wait for a reviewer" in err and "feedback --group-id" in err
+    g = _pending(env, run["run_id"])[0]["group_id"]
+    a, *rest = _offered(env, g)
+    second = rest[0] if rest else "none"
+    code = main(
+        ["review", "--run-id", run["run_id"], "--pick", f"{g}={a}", "--pick", f"{g}={second}"]
+    )
+    assert code == EXIT_CONFIG and "more than once" in capsys.readouterr().err
+    code = main(["review", "--run-id", run["run_id"], "--pick", f"{g}={a}", "--decline", g])
+    assert code == EXIT_CONFIG
+    assert not _store(env).overrides(UUID(run["run_id"]))
+
+
+def test_a_curator_answer_supersedes_an_agents_and_is_final(
+    run: dict[str, Any], env: Path, monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:  # fmt: skip
+    g = next(
+        p["group_id"]
+        for p in _pending(env, run["run_id"])
+        if len(_offered(env, p["group_id"])) >= 2
+    )
+    a, b = _offered(env, g)[:2]
+    _terminal(monkeypatch, False)  # the agent picks a
+    assert main(["review", "--run-id", run["run_id"], "--pick", f"{g}={a}"]) == EXIT_OK
+    capsys.readouterr()
+    # A different agent answer is refused; the same one is idempotent.
+    assert main(["feedback", "--group-id", g, "--action", "pick", "--option-key", b]) == EXIT_FAIL
+    assert "already has an agent answer" in capsys.readouterr().err
+    assert main(["feedback", "--group-id", g, "--action", "pick", "--option-key", a]) == EXIT_OK
+    capsys.readouterr()
+    _terminal(monkeypatch, True)  # the curator picks b
+    assert main(["review", "--run-id", run["run_id"], "--pick", f"{g}={b}"]) == EXIT_OK
+    capsys.readouterr()
+    links = [
+        link
+        for link in _store(env).links(UUID(run["run_id"]))
+        if str(link["group_id"]) == g and link["write_status"] == "accepted"
+    ]
+    assert [(link["term_curie"], link["accepted_by"]) for link in links] == [(b, "human")]
+    curator = {
+        (r["option_key"], r["label"])
+        for r in _labels(env, run["run_id"])
+        if r["label_source"] == "curator"
+    }
+    assert (b, "Yes") in curator and (a, "Yes") not in curator
+    assert g not in {p["group_id"] for p in _pending(env, run["run_id"])}
+    # The curator's answer is final in M1: another answer is refused, the same one is a no-op.
+    assert main(["review", "--run-id", run["run_id"], "--pick", f"{g}={a}"]) == EXIT_FAIL
+    capsys.readouterr()
+    assert main(["feedback", "--group-id", g, "--action", "reject"]) == EXIT_FAIL
+    assert "already has a curator answer" in capsys.readouterr().err
+    assert main(["feedback", "--group-id", g, "--action", "pick", "--option-key", b]) == EXIT_OK
+    assert json.loads(capsys.readouterr().out)["labels_written"] == 0
 
 
 def test_review_interactive(
@@ -425,6 +546,27 @@ def test_review_interactive(
     assert actions == ["decline", "none", "pick"]
 
 
+def test_review_interactive_stops_at_end_of_input(
+    run: dict[str, Any], env: Path, monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:  # fmt: skip
+    _terminal(monkeypatch, True)
+
+    def eof(prompt: str = "") -> str:
+        raise EOFError
+
+    monkeypatch.setattr("builtins.input", eof)
+    assert main(["review", "--run-id", run["run_id"]]) == EXIT_OK
+    assert "picked 0, none 0, declined 0, skipped 0" in _out(capsys)
+
+    def interrupted(prompt: str = "") -> str:
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr("builtins.input", interrupted)
+    assert main(["review", "--run-id", run["run_id"]]) == EXIT_OK
+    assert not _store(env).overrides(UUID(run["run_id"]))
+
+
 def test_review_interactive_helper_directly(run: dict[str, Any], env: Path) -> None:
     from mesa_clm.cli import _reader_service
     from mesa_clm.config import load_config
@@ -439,19 +581,72 @@ def test_review_interactive_helper_directly(run: dict[str, Any], env: Path) -> N
     assert said[0].startswith("[1/1] term.fits") and any("recorded none" in s for s in said)
 
 
-def test_feedback(run: dict[str, Any], env: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    g = _pending(env, run["run_id"])[0]["group_id"]
+def test_feedback(
+    run: dict[str, Any], env: Path, monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:  # fmt: skip
+    pending = _pending(env, run["run_id"])
+    g, g2 = pending[0]["group_id"], pending[1]["group_id"]
+    _terminal(monkeypatch, True)
     assert main(["feedback", "--group-id", g, "--action", "reject"]) == EXIT_OK
     res = json.loads(_out(capsys))
     assert res["action"] == "reject" and res["outcome"] == "rejected"
-    assert res["label_source"] == "curator"
+    assert res["label_source"] == "curator" and res["via"] == "cli"
     override = _store(env).overrides(UUID(run["run_id"]))[0]
     assert override["via"] == "cli" and override["chosen_option_key"] == ANCHOR_KEY
-    assert main(["feedback", "--group-id", "x", "--action", "pick"]) == EXIT_CONFIG
+    # --action pick needs --option-key; 'none' is none of these; group ids take a prefix.
+    assert main(["feedback", "--group-id", g2, "--action", "pick"]) == EXIT_CONFIG
+    assert "needs --option-key" in capsys.readouterr().err
+    assert main(["feedback", "--group-id", g2[:8], "--action", "pick", "--option-key", "none"]) == 0
+    res = json.loads(_out(capsys))
+    assert res["action"] == "none" and res["group_id"] == g2
+    assert main(["feedback", "--group-id", "x", "--action", "pick", "--option-key", "a"]) == 2
+    assert main(["feedback", "--group-id", "ffffffff", "--action", "decline"]) == EXIT_FAIL
     assert main(["--actor", "bob", "feedback", "--group-id", g, "--action", "decline"]) == EXIT_FAIL
-    assert main(["feedback", "--group-id", g, "--action", "pick", "--option-key", "NOPE:1"]) == (
+    g3 = pending[2]["group_id"]
+    assert main(["feedback", "--group-id", g3, "--action", "pick", "--option-key", "NOPE:1"]) == (
         EXIT_FAIL
     )
+    # Without a terminal the same verb is an agent's answer.
+    _terminal(monkeypatch, False)
+    key = _offered(env, g3)[0]
+    assert main(["feedback", "--group-id", g3, "--action", "pick", "--option-key", key]) == 0
+    captured = capsys.readouterr()
+    res = json.loads(captured.out)
+    assert res["via"] == "tool" and res["label_source"] == "agent_pick"
+    assert "via=tool" in captured.err
+
+
+def test_review_verbs_on_a_shared_postgres_sidecar_act_as_the_os_account(
+    env: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from mesa_clm import cli
+
+    monkeypatch.setenv("MESA_CLM_PROVENANCE__DSN", "postgresql://u:pw@db.example/clm")
+    monkeypatch.setattr(cli, "_os_user", lambda: "alice")
+    for argv in (
+        ["--actor", "bob", "explain", "--run-id", "abcd1234"],
+        ["--actor", "bob", "review", "--run-id", "abcd1234"],
+        ["--actor", "bob", "feedback", "--group-id", "abcd1234", "--action", "decline"],
+    ):
+        assert main(argv) == EXIT_CONFIG
+        err = capsys.readouterr().err
+        assert "OS account (alice)" in err and "pw" not in err
+
+
+def test_blank_actor_and_negative_ttl_are_usage_errors(
+    env: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    for argv in (
+        ["--actor", " ", "annotate", "--card", str(CARD), "--provider", "fake"],
+        ["provenance", "prune", "--ttl-days", "-1"],
+        ["provenance", "prune", "--ttl-days", "soon"],
+    ):
+        with pytest.raises(SystemExit) as exc:
+            main(argv)
+        assert exc.value.code == EXIT_CONFIG
+    err = capsys.readouterr().err
+    assert "must not be blank" in err and "must be >= 0" in err
 
 
 # -- provenance ----------------------------------------------------------------------------------
@@ -483,6 +678,75 @@ def test_provenance_verbs(
     assert main(["provenance", "migrate", "--dsn", "sqlite:///x"]) == EXIT_CONFIG
 
 
+def test_provenance_error_paths_exit_cleanly(
+    run: dict[str, Any], env: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    run_id = UUID(run["run_id"])
+    # An export into a file path (or an unwritable directory) fails without marking the run.
+    assert main(["provenance", "export", "--run-id", run["run_id"], "--out", str(env)]) == 1
+    assert "cannot write the export (NotADirectoryError)" in capsys.readouterr().err
+    blocked = tmp_path / "blocked"
+    blocked.mkdir()
+    blocked.chmod(0o500)
+    try:
+        assert main(["provenance", "export", "--run-id", run["run_id"], "--out", str(blocked)]) == 1
+    finally:
+        blocked.chmod(0o700)
+    assert "was not marked exported" in capsys.readouterr().err
+    assert _store(env).run(run_id)["exported_at"] is None  # type: ignore[index]
+    assert not (blocked / run["run_id"]).exists()
+    # An unsupported sidecar DSN for import is a usage error, not a traceback.
+    argv = ["--provenance", "sqlite:///x.db", "provenance", "import", str(tmp_path)]
+    assert main(argv) == EXIT_CONFIG
+    assert "unsupported provenance DSN" in capsys.readouterr().err
+    # A bare *.duckdb path is a DuckDB DSN everywhere; review verbs never create one.
+    bare = tmp_path / "bare.duckdb"
+    assert main(["--provenance", str(bare), "explain", "--run-id", "abcd"]) == EXIT_FAIL
+    assert "no sidecar" in capsys.readouterr().err and not bare.exists()
+    # A directory given as the serving lock is a failed check, not a traceback.
+    assert main(["serve", "lock", "--check", "--lock", str(tmp_path)]) == EXIT_FAIL
+    assert "cannot read the serving lock" in _out(capsys)
+
+
+def test_annotate_expands_a_home_relative_fixture_dir(
+    env: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:  # fmt: skip
+    home = tmp_path / "home"
+    home.mkdir()
+    (home / "ols").symlink_to(OLS_DIR)
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("MESA_CLM_OLS__FIXTURES_DIR", "~/ols")
+    code = main(["annotate", "--card", str(CARD), "--provider", "fake", "--fake-seed", "5"])
+    assert code == EXIT_OK, capsys.readouterr().err
+    assert not (Path.cwd() / "~").exists()
+
+
+def test_a_reviewed_run_round_trips_through_export_and_import(
+    run: dict[str, Any], env: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:  # fmt: skip
+    from mesa_clm.provenance.export import run_rows
+
+    _terminal(monkeypatch, True)
+    picks: list[str] = []
+    for p in _pending(env, run["run_id"])[:4]:  # the last offered candidate: new links too
+        picks += ["--pick", f"{p['group_id']}={_offered(env, p['group_id'])[-1]}"]
+    assert main(["review", "--run-id", run["run_id"], *picks]) == EXIT_OK
+    out = tmp_path / "exp"
+    assert main(["provenance", "export", "--run-id", run["run_id"], "--out", str(out)]) == EXIT_OK
+    other = tmp_path / "other.duckdb"
+    monkeypatch.setenv("MESA_CLM_PROVENANCE__DSN", f"duckdb:///{other}")
+    assert main(["provenance", "import", str(out / run["run_id"])]) == EXIT_OK
+    capsys.readouterr()
+    mine = run_rows(_store(env), UUID(run["run_id"]))
+    theirs = run_rows(DuckDBStore(other), UUID(run["run_id"]))
+    assert mine.keys() == theirs.keys()
+    for table, rows in mine.items():
+        assert rows == theirs[table], table
+    assert mine["human_overrides"] and mine["runs"][0]["exported_at"] is not None
+
+
 # -- serve ---------------------------------------------------------------------------------------
 
 
@@ -508,9 +772,27 @@ def test_serve_keys_never_print_a_key(
     assert not any(k in capsys.readouterr().err for k in new)
 
 
-def test_serve_units_and_lock(
-    env: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+def test_serve_keys_in_the_default_home_are_read_by_default(
+    env: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
+    from mesa_clm.config import load_config
+
+    assert main(["serve", "keys", "--init"]) == EXIT_OK
+    out = _out(capsys)
+    assert "reads these key files by default" in out and "export MESA_CLM" not in out
+    secrets = Path(serving.DEFAULT_HOME) / serving.SECRETS_DIR
+    cfg = load_config()
+    key = (secrets / "clm.key").read_text(encoding="utf-8").strip()
+    assert cfg.clm.resolved_api_key() == key and key not in out
+    assert cfg.encoder.effective_api_key_file() == (str(secrets / "encoder.key"), True)
+
+
+def test_serve_units_and_lock(
+    env: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # Hermetic: no docker and no commands on this host, whatever runs here.
+    monkeypatch.setattr(serving, "docker_argv", lambda args: None)
+    monkeypatch.setattr(serving, "run_command", lambda argv, **kw: serving.CommandResult(127, ""))
     assert main(["serve", "units"]) == EXIT_OK
     out = _out(capsys)
     for name in serving.UNIT_NAMES:

@@ -1,0 +1,449 @@
+{
+ "format": "mesa-clm/annotate-latency/1",
+ "started_at": "2026-10-01T18:28:13+00:00",
+ "host": "sparky-1",
+ "command": "uv run python scripts/annotate_latency.py --out bench/results/2026-10-01/annotate_latency.json",
+ "note": "Diagnostics: zero_shot (uncalibrated, never auto), non-bench SRER cards only; outcomes are not recorded. cold = the first run of a card after the units' restart, OLS live from EMBL-EBI; warm = repeats with OLS replayed from that recording.",
+ "serving": {
+  "lock_sha": "dd33f9fedbaee0129b09a21311227118461bed9326c942c2af7d0bd9b31b5237",
+  "encoder_fp": "c3b3d5e1a283",
+  "preflight": "clm-serve at http://127.0.0.1:8700 ok (models: clm-latest, clm-raw); encoder qwen3-8b at http://127.0.0.1:8090 matches the lock",
+  "container": "encoder container: mesa-clm-encoder: pinned image and recipe"
+ },
+ "tier": "zero_shot",
+ "cards": [
+  "DP1.00004.001.BP_30min",
+  "DP1.10047.001.spc_particlesize",
+  "DP1.10107.001.mms_metagenomeSequencing",
+  "DP1.10109.001.mga_soilGroupAbundances",
+  "DP1.10038.001.mos_BOLDtaxonomy",
+  "DP1.00022.001.SRPP_1min",
+  "DP1.10043.001.mos_expertTaxonomistIDProcessed",
+  "DP1.10067.001.bbc_percore",
+  "DP1.00094.001.SWS_30_minute",
+  "DP1.00046.001.THRPRE_1min"
+ ],
+ "repeats": 10,
+ "per_card": {
+  "DP1.00004.001.BP_30min": {
+   "cold": {
+    "seconds": 4.3265,
+    "wall_seconds": 4.505,
+    "clm_calls": 17,
+    "failed_calls": 0,
+    "clm_latency_ms_sum": 2545.3,
+    "encoder_tokens": 7687,
+    "decisions": 39,
+    "degraded": false
+   },
+   "warm": {
+    "seconds": {
+     "n": 10,
+     "p50": 0.0163,
+     "p95": 0.0249,
+     "max": 0.0261
+    },
+    "wall_seconds": {
+     "n": 10,
+     "p50": 0.1328,
+     "p95": 0.1413,
+     "max": 0.1422
+    },
+    "clm_latency_ms_sum": {
+     "n": 10,
+     "p50": 2.35,
+     "p95": 5.04,
+     "max": 6.3
+    },
+    "clm_calls": [
+     17
+    ],
+    "encoder_tokens": [
+     0
+    ],
+    "failed_calls": 0,
+    "degraded": false
+   }
+  },
+  "DP1.10047.001.spc_particlesize": {
+   "cold": {
+    "seconds": 4.0105,
+    "wall_seconds": 4.1313,
+    "clm_calls": 26,
+    "failed_calls": 0,
+    "clm_latency_ms_sum": 3902.9,
+    "encoder_tokens": 13247,
+    "decisions": 63,
+    "degraded": false
+   },
+   "warm": {
+    "seconds": {
+     "n": 10,
+     "p50": 0.0323,
+     "p95": 0.0411,
+     "max": 0.0438
+    },
+    "wall_seconds": {
+     "n": 10,
+     "p50": 0.1697,
+     "p95": 0.1771,
+     "max": 0.1787
+    },
+    "clm_latency_ms_sum": {
+     "n": 10,
+     "p50": 5.05,
+     "p95": 9.185,
+     "max": 11.3
+    },
+    "clm_calls": [
+     26
+    ],
+    "encoder_tokens": [
+     0
+    ],
+    "failed_calls": 0,
+    "degraded": false
+   }
+  },
+  "DP1.10107.001.mms_metagenomeSequencing": {
+   "cold": {
+    "seconds": 2.4038,
+    "wall_seconds": 2.5451,
+    "clm_calls": 18,
+    "failed_calls": 0,
+    "clm_latency_ms_sum": 2310.1,
+    "encoder_tokens": 7089,
+    "decisions": 52,
+    "degraded": false
+   },
+   "warm": {
+    "seconds": {
+     "n": 10,
+     "p50": 0.0312,
+     "p95": 0.0364,
+     "max": 0.0367
+    },
+    "wall_seconds": {
+     "n": 10,
+     "p50": 0.1792,
+     "p95": 0.1868,
+     "max": 0.1873
+    },
+    "clm_latency_ms_sum": {
+     "n": 10,
+     "p50": 8.05,
+     "p95": 8.975,
+     "max": 9.2
+    },
+    "clm_calls": [
+     18
+    ],
+    "encoder_tokens": [
+     0
+    ],
+    "failed_calls": 0,
+    "degraded": false
+   }
+  },
+  "DP1.10109.001.mga_soilGroupAbundances": {
+   "cold": {
+    "seconds": 1.8994,
+    "wall_seconds": 2.0874,
+    "clm_calls": 15,
+    "failed_calls": 0,
+    "clm_latency_ms_sum": 1828.4,
+    "encoder_tokens": 5578,
+    "decisions": 42,
+    "degraded": false
+   },
+   "warm": {
+    "seconds": {
+     "n": 10,
+     "p50": 0.0176,
+     "p95": 0.0212,
+     "max": 0.0228
+    },
+    "wall_seconds": {
+     "n": 10,
+     "p50": 0.1628,
+     "p95": 0.1733,
+     "max": 0.178
+    },
+    "clm_latency_ms_sum": {
+     "n": 10,
+     "p50": 2.1,
+     "p95": 2.43,
+     "max": 2.7
+    },
+    "clm_calls": [
+     15
+    ],
+    "encoder_tokens": [
+     0
+    ],
+    "failed_calls": 0,
+    "degraded": false
+   }
+  },
+  "DP1.10038.001.mos_BOLDtaxonomy": {
+   "cold": {
+    "seconds": 3.5053,
+    "wall_seconds": 3.6823,
+    "clm_calls": 16,
+    "failed_calls": 0,
+    "clm_latency_ms_sum": 1984.3,
+    "encoder_tokens": 4231,
+    "decisions": 37,
+    "degraded": false
+   },
+   "warm": {
+    "seconds": {
+     "n": 10,
+     "p50": 0.0205,
+     "p95": 0.0221,
+     "max": 0.0226
+    },
+    "wall_seconds": {
+     "n": 10,
+     "p50": 0.1633,
+     "p95": 0.17,
+     "max": 0.1734
+    },
+    "clm_latency_ms_sum": {
+     "n": 10,
+     "p50": 2.5,
+     "p95": 4.445,
+     "max": 5.3
+    },
+    "clm_calls": [
+     16
+    ],
+    "encoder_tokens": [
+     0
+    ],
+    "failed_calls": 0,
+    "degraded": false
+   }
+  },
+  "DP1.00022.001.SRPP_1min": {
+   "cold": {
+    "seconds": 1.8282,
+    "wall_seconds": 1.9832,
+    "clm_calls": 14,
+    "failed_calls": 0,
+    "clm_latency_ms_sum": 1761.9,
+    "encoder_tokens": 4926,
+    "decisions": 33,
+    "degraded": false
+   },
+   "warm": {
+    "seconds": {
+     "n": 10,
+     "p50": 0.013,
+     "p95": 0.0176,
+     "max": 0.0186
+    },
+    "wall_seconds": {
+     "n": 10,
+     "p50": 0.1654,
+     "p95": 0.1755,
+     "max": 0.1809
+    },
+    "clm_latency_ms_sum": {
+     "n": 10,
+     "p50": 1.8,
+     "p95": 3.365,
+     "max": 3.5
+    },
+    "clm_calls": [
+     14
+    ],
+    "encoder_tokens": [
+     0
+    ],
+    "failed_calls": 0,
+    "degraded": false
+   }
+  },
+  "DP1.10043.001.mos_expertTaxonomistIDProcessed": {
+   "cold": {
+    "seconds": 3.4929,
+    "wall_seconds": 3.6624,
+    "clm_calls": 26,
+    "failed_calls": 0,
+    "clm_latency_ms_sum": 3377.2,
+    "encoder_tokens": 9992,
+    "decisions": 67,
+    "degraded": false
+   },
+   "warm": {
+    "seconds": {
+     "n": 10,
+     "p50": 0.033,
+     "p95": 0.0472,
+     "max": 0.0477
+    },
+    "wall_seconds": {
+     "n": 10,
+     "p50": 0.204,
+     "p95": 0.2148,
+     "max": 0.2178
+    },
+    "clm_latency_ms_sum": {
+     "n": 10,
+     "p50": 6.45,
+     "p95": 14.07,
+     "max": 14.7
+    },
+    "clm_calls": [
+     26
+    ],
+    "encoder_tokens": [
+     0
+    ],
+    "failed_calls": 0,
+    "degraded": false
+   }
+  },
+  "DP1.10067.001.bbc_percore": {
+   "cold": {
+    "seconds": 3.1929,
+    "wall_seconds": 3.3962,
+    "clm_calls": 23,
+    "failed_calls": 0,
+    "clm_latency_ms_sum": 3070.7,
+    "encoder_tokens": 10010,
+    "decisions": 62,
+    "degraded": false
+   },
+   "warm": {
+    "seconds": {
+     "n": 10,
+     "p50": 0.0415,
+     "p95": 0.0457,
+     "max": 0.0463
+    },
+    "wall_seconds": {
+     "n": 10,
+     "p50": 0.2167,
+     "p95": 0.2281,
+     "max": 0.2284
+    },
+    "clm_latency_ms_sum": {
+     "n": 10,
+     "p50": 10.95,
+     "p95": 11.985,
+     "max": 12.3
+    },
+    "clm_calls": [
+     23
+    ],
+    "encoder_tokens": [
+     0
+    ],
+    "failed_calls": 0,
+    "degraded": false
+   }
+  },
+  "DP1.00094.001.SWS_30_minute": {
+   "cold": {
+    "seconds": 3.6402,
+    "wall_seconds": 3.8259,
+    "clm_calls": 22,
+    "failed_calls": 0,
+    "clm_latency_ms_sum": 3534.0,
+    "encoder_tokens": 11910,
+    "decisions": 49,
+    "degraded": false
+   },
+   "warm": {
+    "seconds": {
+     "n": 10,
+     "p50": 0.0282,
+     "p95": 0.0408,
+     "max": 0.0431
+    },
+    "wall_seconds": {
+     "n": 10,
+     "p50": 0.206,
+     "p95": 0.2194,
+     "max": 0.2196
+    },
+    "clm_latency_ms_sum": {
+     "n": 10,
+     "p50": 5.05,
+     "p95": 8.38,
+     "max": 9.1
+    },
+    "clm_calls": [
+     22
+    ],
+    "encoder_tokens": [
+     0
+    ],
+    "failed_calls": 0,
+    "degraded": false
+   }
+  },
+  "DP1.00046.001.THRPRE_1min": {
+   "cold": {
+    "seconds": 1.0954,
+    "wall_seconds": 1.273,
+    "clm_calls": 9,
+    "failed_calls": 0,
+    "clm_latency_ms_sum": 1061.6,
+    "encoder_tokens": 2780,
+    "decisions": 23,
+    "degraded": false
+   },
+   "warm": {
+    "seconds": {
+     "n": 10,
+     "p50": 0.0126,
+     "p95": 0.015,
+     "max": 0.015
+    },
+    "wall_seconds": {
+     "n": 10,
+     "p50": 0.1797,
+     "p95": 0.1845,
+     "max": 0.1848
+    },
+    "clm_latency_ms_sum": {
+     "n": 10,
+     "p50": 3.4,
+     "p95": 3.865,
+     "max": 4.0
+    },
+    "clm_calls": [
+     9
+    ],
+    "encoder_tokens": [
+     0
+    ],
+    "failed_calls": 0,
+    "degraded": false
+   }
+  }
+ },
+ "across_cards": {
+  "cold_seconds": {
+   "n": 10,
+   "p50": 3.3429,
+   "p95": 4.1843,
+   "max": 4.3265
+  },
+  "warm_p50_seconds": {
+   "n": 10,
+   "p50": 0.0244,
+   "p95": 0.0377,
+   "max": 0.0415
+  },
+  "warm_p95_seconds": {
+   "n": 10,
+   "p50": 0.0307,
+   "p95": 0.0465,
+   "max": 0.0472
+  }
+ }
+}

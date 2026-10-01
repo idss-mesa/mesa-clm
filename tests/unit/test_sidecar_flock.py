@@ -117,7 +117,7 @@ def test_reads_are_read_only_shared_locked_and_writes_exclusive(
         real_flock(fd, op)
 
     monkeypatch.setattr(store_module.duckdb, "connect", spy_connect)
-    monkeypatch.setattr(store_module.fcntl, "flock", spy_flock)
+    monkeypatch.setattr(fcntl, "flock", spy_flock)  # provenance.labels.sidecar_lock takes it
     assert store.run(run.run_id) is not None
     assert store.decisions(run.run_id) == [] and store.runs() and store.columns("runs")
     assert opens == [True, True, True, True]

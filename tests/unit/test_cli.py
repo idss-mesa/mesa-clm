@@ -434,7 +434,12 @@ def _anyjev_sidecar(path: Path, rows: list[dict[str, Any]]) -> None:
 
 
 def test_import_anyjev(
-    clean_env: None, dsn: str, tmp_path: Path, card: DatasetCard, capsys: pytest.CaptureFixture[str]
+    clean_env: None,
+    dsn: str,
+    tmp_path: Path,
+    card: DatasetCard,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
 ) -> None:
     col = card.column("observerDistance")
     src = tmp_path / "anyjev.duckdb"
@@ -462,12 +467,22 @@ def test_import_anyjev(
         == EXIT_OK
     )
     summary = json.loads(_out(capsys))
-    assert summary["inserted"] == 1 and summary["per_task"] == {"term.fits": {"curator": 1}}
+    # Curator rows arrive as agent_pick unless a curator vouches at a terminal (DESIGN A2).
+    assert summary["inserted"] == 1 and summary["per_task"] == {"term.fits": {"agent_pick": 1}}
+    assert summary["demoted"] == 2
     assert summary["skipped"] == {"collapsed_identity": 1} and summary["conflicts"] == 0
     assert summary["source_ref"].startswith("anyjev-import:anyjev.duckdb@")
     # A plain path works too; a second import is idempotent.
     assert main(["labels", "import-anyjev", "--dsn", str(src), "--provenance", dsn]) == EXIT_OK
     assert json.loads(_out(capsys))["inserted"] == 0
+    trusted = ["labels", "import-anyjev", "--dsn", str(src), "--trust-curator", "--provenance", dsn]
+    monkeypatch.setattr("sys.stdin.isatty", lambda: False)
+    assert main(trusted) == EXIT_CONFIG
+    assert "needs an interactive terminal" in capsys.readouterr().err
+    monkeypatch.setattr("sys.stdin.isatty", lambda: True)
+    assert main(trusted) == EXIT_OK
+    summary = json.loads(_out(capsys))
+    assert summary["per_task"] == {"term.fits": {"curator": 1}} and summary["demoted"] == 0
 
     assert main(["labels", "import-anyjev", "--provenance", dsn]) == EXIT_CONFIG
     assert "--dsn" in capsys.readouterr().err

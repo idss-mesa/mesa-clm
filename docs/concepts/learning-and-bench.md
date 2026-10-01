@@ -1,6 +1,6 @@
 ---
 title: "Learning and bench"
-description: "Where mesa-clm's labels come from and how they are identified and frozen, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, and the pre-registered experiments X1-X4 with the AnyJev baseline numbers."
+description: "Where mesa-clm's labels come from and how they are identified and frozen, the feature cache, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, and the pre-registered experiments X1-X4 with the AnyJev baseline numbers."
 type: Guide
 tags:
   - concepts
@@ -10,7 +10,7 @@ tags:
   - calibration
 generated:
   by: "claude/fable-5.1"
-  at: "2026-09-29T00:00:00Z"
+  at: "2026-10-01T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -32,6 +32,14 @@ sources:
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/bench/results/2026-09-29/mde.json"
     title: "mesa-clm M0 minimum detectable effect under rule R, 2026-09-29"
     author: "team:idss-mesa"
+  - id: anyjev-l2-items
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/bench/baselines/anyjev_l2_2026-09-29.json"
+    title: "mesa-anyjev per-item held-out L2 predictions (X2 baseline), 2026-09-29"
+    author: "team:idss-mesa"
+  - id: features-build
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/bench/results/2026-10-01/features_build.json"
+    title: "mesa-clm feature store build under encoder_fp c3b3d5e1a283, 2026-10-01"
+    author: "team:idss-mesa"
 status: draft
 stale_after: "2027-03-31T00:00:00Z"
 ---
@@ -46,8 +54,8 @@ weight and the flags `fold_eligible`, `bench_card`, `product_code` and `leak_gro
 
 | Source | Weight | Fold-eligible | Producer |
 |---|---|---|---|
-| `curator` / `curator_implicit` | 1.0 / 0.7 | yes, except on bench cards | a pick in the MRTR elicitation or the interactive CLI (`review`), or a ticked neon `review.md` (DESIGN D21) |
-| `agent_pick` | 0 | no | a plain `mesa_clm_feedback` tool call; recorded, never learned from |
+| `curator` / `curator_implicit` | 1.0 / 0.7 | yes, except on bench cards | a pick in the MRTR elicitation or the CLI at an interactive terminal (`review`, `review --pick`, `feedback`), or a ticked neon `review.md` (DESIGN D21, A2) |
+| `agent_pick` | 0 | no | a plain `mesa_clm_feedback` tool call, the same CLI verbs run without a terminal, and mesa-anyjev curator rows imported without `--trust-curator`; recorded, never learned from |
 | `consensus_all` / `_majority` / `_negative` | 0.8 / 0.6 / 0.5 | yes | `labels ingest-neon-eval`: a term proposed by every, by at least two, or by a single one of the four agentic models in neon-avu-eval |
 | `teacher` / `teacher_implicit` | 0.5 / 0.3 | **no** | `labels ingest-teacher`: accepted items of neon-ducklake's Opus-validated generic curation, in-registry only, leak group = product (DESIGN D19) |
 | `gold` | 1.0 | yes | reserved; no hand-verified rows exist yet |
@@ -57,10 +65,47 @@ teacher, which is why teacher labels never reach a test fold and X4 ablates them
 `sample_weight` in every fitter, including LDA and ridge (DESIGN D20). The bench never reads
 the live label table: `labels snapshot` writes a frozen Parquet whose `labels_sha256` every
 cell and manifest records, and curator labels on bench cards are excluded from pre-registered
-cells (DESIGN D30). M0 ships `labels ingest-neon-eval|import-anyjev|snapshot|stats`; the
+cells (DESIGN D30). The bench cards are a fixed list (the seven neon-avu-eval tables), and the
+bench drops such rows *before* it picks the highest-weight label of each target, so a curator
+answer can neither change a pre-registered item's label nor remove the item. M0 ships `labels ingest-neon-eval|import-anyjev|snapshot|stats`; the
 fixture ingestion yields 934 rows (term.fits 285: 86 Yes / 199 No), and the 303 valid (card,
 CURIE) pairs of `validated.json` become 285 rows because five GAZ CURIEs come back from EBI OLS
 as root terms (18 pairs, listed in `terms_missing`; RESEARCH.md).
+
+## The feature cache (milestone M1)
+
+Every text X1 and X2 embed is cached once per encoder fingerprint, at
+`~/.mesa/clm/features/<encoder_fp>/features.duckdb` (owner-only; `learn/features.py`, DESIGN
+D5): the text with its exact token count, the L2-normalised vector as **float32** with the
+cosine of its float16 copy (the export's gate is 0.9999), the serving lock it was embedded under,
+and the 512-d projections of the pinned head with the head they came from. The store records the
+serving lock's vector recipe (image digest, `vllm serve` arguments, environment, truncation cap)
+when it is created and refuses another `encoder_fp`, dimension, head, format or vector recipe.
+`features build --snapshot` checks the running encoder container against the lock and renders
+the texts from a frozen snapshot without reading a label: the F1
+control (the mesa-anyjev per-candidate state with the task question), the F4, F7 and F9 rank_fit
+requests (one per target, over its labelled candidates and the anchor) and the PR #13 replica
+specs `joint4096@S1` (the per-candidate state with the question appended) and `@S1ns` (without
+it), each state put back in the builders' key order first, since the snapshot's sorted-key JSON is
+identity only. `features export-npz` writes CLM's `TextCache` file for `finetune.py
+--embed-cache` (M7; the only place vectors are float16), and `learn/offline.py` scores rank_fit
+and noul questions from the cached float32 vectors with clm-serve's maths (X1 scores offline).
+The scores reproduce clm-serve only as closely as the vectors do: from float16 vectors the
+pre-registered cross-check (≤ 1e-4 in probability against `/v1/systemone`, 200 groups) failed at
+1.31e-3 and 3.59e-3 (`bench/results/2026-10-01/features_build.json#/rerun/crosscheck`), from
+float32 vectors it passes at 5.2e-6 (`clm-latest`) and 7.47e-5 (`clm-raw`), and `/v1/rank`
+agrees exactly (`bench/results/2026-10-01/x1_crosscheck.json`; `scripts/x1_crosscheck.py`).
+
+The live build of the 2026-09-29 snapshot under `encoder_fp` c3b3d5e1a283 holds 1,563 distinct
+texts from 5,018 manifest rows (1,400 state side, 163 action side), none over the window,
+620,336 encoder tokens, built in 195.2 s one text per request, with a float16 round-trip minimum
+cosine of 0.9999999 (`bench/results/2026-10-01/features_build.json`); rebuilt with float32
+vectors it took 223.7 s, and every float16 cast of a new vector equals the first build's bit for
+bit (`bench/results/2026-10-01/features_build_m1c.json`). On the same texts
+rendered the pipeline's way, the label-free collapse diagnostic gives a mean pairwise cosine
+between different term.fits contexts of 0.831 raw and 0.677 after the head with the state alone
+(F7), and 0.993 and 0.965 with the question appended
+(`bench/results/2026-10-01/collapse_spike.json`; report-only, RESEARCH.md).
 
 ## Tiers and fitters (milestones M2, M4, M7)
 
@@ -110,9 +155,13 @@ every `auto` threshold (DESIGN D8).
 
 * **X1 framing A/B**: {F1, F4, F7, F9} × {`clm-latest`, `clm-raw`} × {term.fits,
   ontology_fits}, scored offline from the feature cache with shuffle and candidate-only
-  controls; a fixed decision rule picks the production framing A1 (M2).
+  controls; a fixed decision rule picks the production framing A1 (M2). The rule's sixth step,
+  an anchor variant chosen by NLL, was withdrawn before the freeze: no variant text was written
+  down before the live stack had been looked at on a bench card, so X1 runs with the registry
+  anchors only (DESIGN, "G1 freeze" and the implementation note "The X1 anchor variant").
 * **X2 baselines**: majority, `lookup_prob`, novel-key, leave-one-product-out, the PR #13
-  logistic-regression replica, and per-item AnyJev L2 predictions if the dump is feasible.
+  logistic-regression replica, and per-item AnyJev L2 predictions (dumped in M1, below), which
+  make the K2(a) comparison paired.
 * **X3 tier sweep**: zero-shot and calibrated on A1; probe specs and fitters; the head (M7).
 * **X4 teacher ablation**: off vs (0.5/0.3) vs (0.3/0.1), scored on silver and
   silver-minus-Opus; the expected effect with 13 usable items is stated in advance as about
@@ -127,7 +176,12 @@ lookup on novel keys and matching AnyJev L2 in a paired test with ECE at most 0.
 From mesa-anyjev's `bench/results/2026-09-25/Qwen__Qwen3-8B.hf.json` (Qwen/Qwen3-8B bf16,
 leave-one-card-out over 7 cards): `neon_term_fits.L2` accuracy 0.765, ECE 0.058, coverage at 5%
 risk 0.088 (n 285, 199 negatives); `neon_ontology_fits.L2` accuracy 0.837, ECE 0.078, coverage
-at 5% risk 0.547 (n 190, 114 negatives).
+at 5% risk 0.547 (n 190, 114 negatives). The per-item dump of those predictions,
+`bench/baselines/anyjev_l2_2026-09-29.json` (run under mesa-anyjev's interpreter in the M1-A GPU
+window; summary `bench/baselines/anyjev_l2_2026-09-29.md`), reproduces both cells and all 14
+per-fold cells exactly, and each of its 285 and 190 items pairs with one row of
+`bench/snapshots/2026-09-29.parquet` on the D1 identity with the same label and card, so
+mesa-clm's cells can be compared item by item, card by card (K2(a), M4).
 
 mesa-clm reports ECE, coverage at risk and AURC with tie-invariant versions of those metrics
 (DESIGN D33): tied confidences share their group's mean correctness, so a cell no longer depends

@@ -13,6 +13,7 @@ from uuid import UUID, uuid4
 import duckdb
 import pytest
 
+from mesa_clm.provenance import export
 from mesa_clm.provenance.export import (
     MANIFEST_FORMAT,
     PENDING_LINK_STATUSES,
@@ -442,3 +443,30 @@ def test_prune_deletes_only_terminal_or_expired_runs(store: DuckDBStore, tmp_pat
     assert store.run(applied_pending) is not None and store.run(abandoned_young) is not None
     with pytest.raises(ValueError):
         prune(store, ttl_days=-1)
+
+
+def test_a_failed_export_leaves_the_store_unstamped(
+    store: DuckDBStore, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The store says ``exported`` only once a verified copy exists (prune trusts the stamp)."""
+    run_id = _populate(store)
+    a_file = tmp_path / "file"
+    a_file.write_text("x", encoding="utf-8")
+    with pytest.raises(NotADirectoryError):
+        export.export_run(store, run_id, a_file)
+    assert store.run(run_id)["exported_at"] is None  # type: ignore[index]
+
+    def corrupt(path: str | Path) -> Any:
+        raise ValueError("sha256 differs from the manifest")
+
+    monkeypatch.setattr(export, "read_export", corrupt)
+    with pytest.raises(ValueError, match="differs"):
+        export.export_run(store, run_id, tmp_path / "out")
+    assert store.run(run_id)["exported_at"] is None  # type: ignore[index]
+    report = export.prune(store, ttl_days=0, terminal_only=True)
+    assert run_id not in report.deleted
+    monkeypatch.undo()
+    stamp = datetime(2026, 10, 1, 12, 0, tzinfo=UTC)
+    export.export_run(store, run_id, tmp_path / "out", now=stamp)
+    assert store.run(run_id)["exported_at"] == stamp  # type: ignore[index]
+    assert not list((tmp_path / "out" / str(run_id)).glob(".*"))  # no temp file left behind

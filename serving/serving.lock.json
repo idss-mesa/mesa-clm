@@ -55,13 +55,64 @@
     "max_len": 4096,
     "truncation_side": "left",
     "prefix_caching": false,
-    "route": "vllm"
+    "route": "vllm",
+    "batch_invariance": "kernels"
   },
   "image": {
     "ref": "vllm/vllm-openai",
     "tag": "v0.27.1",
     "digest": "sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967"
   },
-  "encoder_fp": "852efc921a8a",
-  "lock_sha": "3c032477ff05e20bba4f9bcb59cbcde9d77ed18c4706d651eada2352c66780a3"
+  "recipe": {
+    "args": [
+      "Qwen/Qwen3-8B",
+      "--revision",
+      "b968826d9c46dd6066d109eabc6255188de91218",
+      "--served-model-name",
+      "qwen3-8b",
+      "--runner",
+      "pooling",
+      "--dtype",
+      "bfloat16",
+      "--max-model-len",
+      "4096",
+      "--max-num-seqs",
+      "8",
+      "--no-enable-prefix-caching",
+      "--gpu-memory-utilization",
+      "0.20",
+      "--kv-cache-memory-bytes",
+      "4831838208",
+      "--enforce-eager",
+      "--uds",
+      "/run/mesa-clm/encoder.sock",
+      "--middleware",
+      "vllm_auth.require_api_key",
+      "--disable-fastapi-docs"
+    ],
+    "env": {
+      "HOME": "/tmp",
+      "HF_HOME": "/hf",
+      "HF_HUB_OFFLINE": "1",
+      "VLLM_NO_USAGE_STATS": "1",
+      "DO_NOT_TRACK": "1",
+      "PYTHONPATH": "/opt/mesa-clm-auth",
+      "VLLM_BATCH_INVARIANT": "1",
+      "VLLM_HOST_IP": "127.0.0.1",
+      "GLOO_SOCKET_IFNAME": "lo"
+    },
+    "auth": {
+      "middleware": "vllm_auth.require_api_key",
+      "file": "vllm_auth.py",
+      "sha256": "8b71d3aba6d695babea38a606f984312fc30e4c3eb8730518f5e3c5aa96215a4",
+      "mount": "/opt/mesa-clm-auth",
+      "open_paths": [
+        "/health"
+      ]
+    },
+    "truncate_prompt_tokens": 4095,
+    "network": "none"
+  },
+  "encoder_fp": "c3b3d5e1a283",
+  "lock_sha": "dd33f9fedbaee0129b09a21311227118461bed9326c942c2af7d0bd9b31b5237"
 }

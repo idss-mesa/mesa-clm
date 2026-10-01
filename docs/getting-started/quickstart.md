@@ -9,7 +9,7 @@ tags:
   - review
 generated:
   by: "claude/fable-5.1"
-  at: "2026-09-29T20:00:00Z"
+  at: "2026-10-01T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -91,27 +91,34 @@ another owner's run (DESIGN D21).
 uv run mesa-clm review --run-id <prefix>
 ```
 
-Interactive (it needs a terminal). For each group that waits for a reviewer (term groups that
-are proposed, escalated to a human, or whose anchor won) it shows the target, aspect and
-ontology, then the offered candidates best `p_fit` first, numbered, and `0. none of these (the
-anchor)`. Answer with a number to accept that candidate, `0` or `n` for none of these, `d` to
-decline (you saw it but answer nothing), `s` or Enter to skip, `q` to quit. Each answer is
-recorded with `via=cli`: a pick writes curator labels (the pick, and implicit negatives for the
-other offered candidates), none of these an anchor-positive row plus a negative per candidate,
-and a decline only an override row (DESIGN D21). The pick's link becomes `accepted`, ready for
-`apply` in M3.
+Interactive, and it needs a terminal. For each group that waits for a reviewer (term groups
+that are proposed, escalated to a human, or whose anchor won, and groups only an agent has
+answered so far) it shows the target, aspect and ontology, then the offered candidates best
+`p_fit` first, numbered, and `0. none of these (the anchor)`. Answer with a number to accept
+that candidate, `0` or `n` for none of these, `d` to decline (you saw it but answer nothing),
+`s` or Enter to skip, `q` (or end of input) to quit. Each answer is recorded with `via=cli`: a
+pick writes curator labels (the pick, and implicit negatives for the other offered candidates),
+none of these an anchor-positive row plus a negative per candidate, and a decline only an
+override row (DESIGN D21, A2). The pick's link becomes `accepted`, ready for `apply` in M3. A
+curator's answer settles the group: a different second answer is refused (the same one again
+changes nothing).
 
-From a script, give the answers instead; every answer is checked against the offered
-candidates before any is recorded:
+The answers can also be given as arguments; every one is checked (a pending group, an offered
+candidate, one answer per group) before any is recorded:
 
 ```bash
 uv run mesa-clm review --run-id <prefix> --pick <group>=PATO:0000040 --pick <group2>=none --decline <group3>
-uv run mesa-clm feedback --group-id <full group id> --action pick --option-key PATO:0000040
-uv run mesa-clm feedback --group-id <full group id> --action reject      # none of these
+uv run mesa-clm feedback --group-id <group> --action pick --option-key PATO:0000040
+uv run mesa-clm feedback --group-id <group> --action reject      # none of these
 ```
 
-Group ids come from `explain` (`pending_groups`, and `group_id` per group); `review --pick`
-accepts a unique prefix within the run, `feedback` the full id.
+Typed at a terminal these are curator answers too. **Run without a terminal** (from a script, a
+pipe or an agent's shell) they are recorded exactly like a plain tool call: `via=tool`,
+`agent_pick` labels at weight 0 that never enter a fit, links accepted by `agent`; the verb says
+so on stderr, and the groups stay pending so a curator's answer can replace the agent's (DESIGN
+A2). Group ids come from `explain` (`pending_groups`, and `group_id` per group); `review` takes
+a unique prefix within the run, `feedback` a unique prefix among your runs' groups, and
+`--action pick` needs `--option-key` (`none` for none of these).
 
 ### Export and prune
 
@@ -121,37 +128,52 @@ uv run mesa-clm provenance prune --dry-run
 ```
 
 The export is one Parquet file per run table plus a `manifest.json` with each file's sha256
-and row count; `provenance import <dir>` commits it into another sidecar. `prune` deletes only
+and row count, owner-only like the sidecar (0700, files 0600); the run is marked exported only
+after the copy is written and verified. `provenance import <dir>` commits it into another
+sidecar. `prune` deletes only
 terminal runs (applied, exported, every written link recorded in the history) and abandoned
 runs past the TTL, so a freshly decided run stays.
 
 ## On the serving host, with CLM
 
 The same commands with `--provider clm` (the default) talk to the encoder on `127.0.0.1:8090`
-and clm-serve on `127.0.0.1:8700` ([Serving](../deploy/serving.md)). Point mesa-clm at the key
-files and check the stack first:
+and clm-serve on `127.0.0.1:8700` ([Serving](../deploy/serving.md)). The keys `serve keys
+--init` wrote (`~/.mesa/clm/secrets/clm.key`, `encoder.key`) are read by default; check the
+stack first:
 
 ```bash
-export MESA_CLM_CLM__API_KEY_FILE=~/.mesa/clm/secrets/clm.key
-export MESA_CLM_ENCODER__API_KEY_FILE=~/.mesa/clm/secrets/encoder.key
-uv run mesa-clm doctor --serve        # loopback binds, 401 without a key, health, models, one golden call
+uv run mesa-clm doctor --serve        # binds, the 401 matrix, models, goldens, long input, parity, drift
 
-uv run mesa-clm annotate --card tests/fixtures/cards/DP1.10003.001.brd_countdata.md \
+MESA_CLM_OLS__FIXTURES=replay MESA_CLM_OLS__FIXTURES_DIR=tests/fixtures/ols-srer \
+  uv run mesa-clm annotate --card tests/fixtures/cards-srer/DP1.00004.001.BP_30min.md \
   --tier zero_shot --out run.json
 ```
+
+The live example uses a **non-bench** card (plan §9's smoke card, with its recorded OLS
+responses): until the pre-registered M2 cells exist, no live run looks at the seven bench cards
+(DESIGN, "G1 freeze"). For other cards, live OLS is used with `ols.fixtures` `auto` or
+`record`.
 
 `--tier zero_shot` asks CLM's released head (`clm.model`, default `clm-latest`) and records
 level `zero_shot`, calibration `uncalibrated`: `p_fit = σ(s_c)` with `s_c` the log-odds of a
 candidate against the fixed anchor (DESIGN D2). The summary adds the serving lock the
 fingerprint came from (`~/.mesa/clm/serving.lock.json`, or the checkout's
-`serving/serving.lock.json`) and clm-serve's `/health` answer. The fingerprint lines now
-describe the real stack: `encoder_fp` hashes the encoder recipe in that lock (model, revision,
-dtype, last-token pooling, normalisation, `max_len`, left truncation, prefix caching, route),
-`clm_model_fp` the served head and the CLM commit, and `serving_lock_sha` the lock itself; a
-later artifact or bench cell is only ever used with a run whose four hashes match exactly
-(DESIGN D5, K4).
+`serving/serving.lock.json`) and the pre-flight's answer. The fingerprint lines now describe
+the real stack: `encoder_fp` hashes the encoder recipe in that lock (model, revision, dtype,
+last-token pooling, normalisation, `max_len`, left truncation, prefix caching, route and batch
+invariance; c3b3d5e1a283 on sparky-1, DESIGN A3), `clm_model_fp` the served head and the CLM
+commit, and `serving_lock_sha` the lock itself. A calibration artifact is applied only under
+the `encoder_fp` and `clm_model_fp` it was fitted with and only to its own `question_key`, and
+a bench cell is cited only when its whole fingerprint and `question_key` equal the live ones
+(DESIGN D5, D8, K4).
 
-When clm-serve does not answer `/health`, `annotate` refuses with exit 1 and says why. Run
+Before the first question `annotate` runs a pre-flight: clm-serve's `/health`, then, with the
+keys, its model list and the encoder's (model, window and route against the lock), then the
+running encoder container against the lock's recipe (a check docker cannot answer is noted as
+"not verified"). A missing or rejected key, a model clm-serve does not serve or an encoder that
+is not the lock's stops it with exit 2 at any CLM tier (`--tier ols_rank` skips the
+pre-flight). When clm-serve does not answer,
+`annotate` refuses with exit 1 and says why. Run
 `--tier ols_rank` (the OLS top-1 of every candidate group, proposed-only, never auto; DESIGN
 D28) to decide the candidate groups without it (the column questions Q1, Q2 and Q7 still try
 CLM and are recorded as unavailable, so the run says `degraded` and columns without a planner

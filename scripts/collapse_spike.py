@@ -6,10 +6,12 @@ mean cosine between *different* states 0.958 with the question suffix, 0.452 for
 (raw 4096-d), 0.947 after the head. This script measures the same thing on mesa-clm's own
 contexts, without looking at a single label::
 
-    uv run python scripts/collapse_spike.py      # -> bench/results/2026-09-29/collapse_spike.json
+    uv run python scripts/collapse_spike.py      # -> bench/results/2026-10-01/collapse_spike.json
 
 For every ``term.fits`` (285) and ``column.ontology_fits`` (190) row of the committed label
-snapshot the stored ``state_json`` is projected onto its ``target_state`` view
+snapshot the stored ``state_json`` is put back in the builders' key order
+(``learn.features.builder_ordered``: the snapshot stores canonical JSON with sorted keys at every
+depth, which is identity only, plan §4.3), projected onto its ``target_state`` view
 (``states.target_state_from``; an ``ontology_state`` has no ``scope`` and gets the task's
 ``column``) and rendered four ways:
 
@@ -25,7 +27,14 @@ Rows sharing a target share its context, so every statistic is over the *distinc
 released state head (512-d), the within-card and across-card means, and the fraction of the
 (centred) variance on the top principal component. Only ``labels_sha256`` of the snapshot file
 and row counts are recorded from the label side. The distinct state-only contexts are written to
-``.local/serving/collapse_contexts.json`` for the fallback parity run.
+``.local/serving/collapse_contexts_<date>.json``.
+
+The first run (``bench/results/2026-09-29/collapse_spike.json``, ``encoder_fp`` 852efc921a8a)
+rendered the sorted-key ``state_json`` directly, so its nested objects (the card header first of
+all, which then began with ``columns:``) were in an order the pipeline never sends; its state-only
+contexts (``.local/serving/collapse_contexts.json``) stay the fixed inputs of the fallback parity
+and batch-invariance runs, which compare encoder routes on the same texts and do not depend on
+the rendering. ``--sorted-keys`` reproduces that first rendering.
 """
 
 from __future__ import annotations
@@ -45,11 +54,12 @@ import numpy as np
 from mesa_clm import framings, render
 from mesa_clm.clm.encoder import EncoderClient
 from mesa_clm.clm.headproj import HeadProjector
+from mesa_clm.learn.features import builder_ordered
 from mesa_clm.states import target_state_from
 from mesa_clm.tasks import TASKS
 
 ROOT = Path(__file__).resolve().parents[1]
-DATE = "2026-09-29"
+DATE = "2026-10-01"
 SNAPSHOT = ROOT / "bench/snapshots/2026-09-29.parquet"
 LOCK = ROOT / "serving/serving.lock.json"
 ENC_URL = "http://127.0.0.1:8090"
@@ -64,8 +74,11 @@ def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def contexts(task_id: str, state: dict[str, Any]) -> dict[str, str]:
-    """The four context texts of one snapshot row (module docstring)."""
+def contexts(task_id: str, state: dict[str, Any], *, sorted_keys: bool = False) -> dict[str, str]:
+    """The four context texts of one snapshot row (module docstring), builder-ordered unless
+    ``sorted_keys`` (the 2026-09-29 rendering)."""
+    if not sorted_keys:
+        state = builder_ordered(state)
     scoped = {**state, "scope": state.get("scope") or TASKS[task_id].scope}
     view = target_state_from(scoped)
     question = TASKS[task_id].text
@@ -109,9 +122,15 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--out", type=Path, default=ROOT / f"bench/results/{DATE}/collapse_spike.json")
     ap.add_argument(
-        "--contexts-out", type=Path, default=ROOT / ".local/serving/collapse_contexts.json"
+        "--contexts-out", type=Path, default=ROOT / f".local/serving/collapse_contexts_{DATE}.json"
+    )
+    ap.add_argument(
+        "--sorted-keys",
+        action="store_true",
+        help="render the snapshot's sorted-key state_json as the 2026-09-29 run did",
     )
     args = ap.parse_args(argv)
+    args.out, args.contexts_out = args.out.resolve(), args.contexts_out.resolve()
 
     t0 = time.perf_counter()
     labels_sha256 = hashlib.sha256(SNAPSHOT.read_bytes()).hexdigest()
@@ -133,7 +152,7 @@ def main(argv: list[str] | None = None) -> int:
         state = json.loads(state_json)
         counts[task_id] += 1
         scope_added[task_id] += "scope" not in state
-        for variant, text in contexts(task_id, state).items():
+        for variant, text in contexts(task_id, state, sorted_keys=args.sorted_keys).items():
             distinct[(task_id, variant)].setdefault(text, card)
 
     texts = sorted({t for d in distinct.values() for t in d})
@@ -196,7 +215,11 @@ def main(argv: list[str] | None = None) -> int:
     payload = {
         "format": "mesa-clm/collapse-spike/1",
         "created_at": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
-        "command": "uv run python scripts/collapse_spike.py",
+        "command": "uv run python scripts/collapse_spike.py"
+        + (" --sorted-keys" if args.sorted_keys else ""),
+        "rendering": "sorted-key state_json"
+        if args.sorted_keys
+        else "builder-ordered (learn.features.builder_ordered), as the pipeline renders",
         "label_free": True,
         "snapshot": str(SNAPSHOT.relative_to(ROOT)),
         "labels_sha256": labels_sha256,
@@ -208,6 +231,7 @@ def main(argv: list[str] | None = None) -> int:
             "max_len": enc.max_len,
             "encoder_fp": lock["encoder_fp"],
             "route": lock["encoder"]["route"],
+            "batch_invariance": lock["encoder"].get("batch_invariance", "none"),
         },
         "head": {
             "npz": str(HEAD_NPZ.name),

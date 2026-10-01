@@ -16,9 +16,14 @@ One process holds Qwen3-8B (:class:`cuda_encoder.CudaEncoder`) and serves two lo
 
 Keys: ``CLM_API_KEY`` guards :8700 (``create_app``'s own check, constant-time after patch 0006)
 and the encoder key (``VLLM_API_KEY``, else ``CLM_EMB_API_KEY``; ``clm.env`` carries the latter)
-guards every ``/v1/*`` route on :8090 with ``hmac.compare_digest``; ``/health`` and
-``/tokenize`` stay open as in vLLM. The server refuses to start without both keys unless
-``--allow-anonymous`` is given, and refuses a non-loopback bind without a key in any case.
+guards every route on :8090 but ``/health`` with ``hmac.compare_digest``, as
+``serving/vllm_auth.py`` does in the vLLM container (DESIGN A4). The server refuses to start
+without both keys unless ``--allow-anonymous`` is given, and refuses a non-loopback bind without
+a key in any case.
+
+The encoder embeds one text per forward pass (``--batch 1``, no padding; DESIGN A3), and any
+other ``--batch`` is refused: the fallback's fingerprint names that recipe, and batch 8 failed the
+pre-registered parity gate (``bench/results/2026-09-29/fallback_parity.json``).
 
 The fallback never runs next to the vLLM container (stop both units first; they hold the same
 ports). ``route: transformers`` enters ``encoder_fp`` (DESIGN D5), so nothing it produces is
@@ -54,6 +59,8 @@ EMB_PORT: Final[int] = 8090
 CLM_PORT: Final[int] = 8700
 SERVED_MODEL: Final[str] = "qwen3-8b"
 HEADS: Final[str] = "~/.mesa/clm/heads"
+# The only :8090 paths answered without the encoder key (as serving/vllm_auth.py; DESIGN A4).
+OPEN_PATHS: Final[frozenset[str]] = frozenset({"/health"})
 F32 = npt.NDArray[np.float32]
 
 
@@ -153,8 +160,8 @@ def build_embeddings_app(
         return JSONResponse({"error": {"message": message, "type": kind, "code": status}}, status)
 
     @app.middleware("http")
-    async def guard_v1(request: Request, call_next: Any) -> Any:
-        if request.url.path.startswith("/v1") and not bearer_ok(
+    async def guard(request: Request, call_next: Any) -> Any:
+        if request.url.path not in OPEN_PATHS and not bearer_ok(
             request.headers.get("authorization"), api_key
         ):
             return JSONResponse({"error": "Unauthorized"}, status_code=401)
@@ -303,7 +310,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--revision", default=None, help="HF revision (default: the pinned commit)")
     ap.add_argument("--served-model-name", default=SERVED_MODEL)
     ap.add_argument("--max-len", type=int, default=4096)
-    ap.add_argument("--batch", type=int, default=8)
+    ap.add_argument(
+        "--batch",
+        type=int,
+        default=1,
+        help="sequences per forward pass; only 1 is served (the 'serial' recipe, DESIGN A3)",
+    )
     ap.add_argument("--device", default="cuda", help="cuda, or cpu for the K0 3b throughput run")
     ap.add_argument("--dtype", default="bfloat16")
     ap.add_argument("--native-triton", action="store_true", help="keep torch's Triton overrides")
@@ -316,6 +328,16 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--no-clm", action="store_true", help="serve only the :8090 encoder API")
     ap.add_argument("--allow-anonymous", action="store_true")
     args = ap.parse_args(argv)
+    if args.batch != 1:
+        # The fallback's encoder_fp (mesa_clm.serving.FALLBACK_ENCODER: route transformers,
+        # batch_invariance serial) names one sequence per forward pass; at batch 8 right padding
+        # moved vectors to min cosine 0.998663 (bench/results/2026-10-01/fallback_parity.json), so
+        # a batched server would stamp that fingerprint on vectors it does not describe.
+        # scripts/fallback_parity.py drives CudaEncoder directly for batched diagnostics.
+        ap.error(
+            f"--batch {args.batch}: the fallback serves one sequence per forward pass only "
+            "(encoder_fp route transformers, batch_invariance serial; DESIGN A3)"
+        )
 
     clm_key, emb_key = resolve_keys(args.allow_anonymous, [args.host])
     os.environ.setdefault("HF_HUB_OFFLINE", "1")

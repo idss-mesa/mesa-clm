@@ -358,13 +358,33 @@ def test_transport_routes_and_codes() -> None:
         _post(server, f"{ENCODER_URL}/v1/embeddings", b"nope", Authorization="Bearer e").status_code
         == 400
     )
+    # The bearer guard (DESIGN A4): every route but /health needs the key, unknown ones too.
+    assert _post(server, f"{ENCODER_URL}/tokenize", {}).status_code == 401
+    assert _post(server, f"{ENCODER_URL}/pooling", {}).status_code == 401
+    assert _get(server, f"{ENCODER_URL}/metrics").status_code == 401
     tok = _post(
-        server, f"{ENCODER_URL}/tokenize", {"model": "qwen3-8b", "prompt": "a b c"}
-    )  # unguarded, like vLLM
-    assert tok.json() == {"count": 3, "max_model_len": 4096, "tokens": [0, 1, 2]}
-    assert _post(server, f"{ENCODER_URL}/tokenize", {"model": "qwen3-8b"}).status_code == 400
+        server,
+        f"{ENCODER_URL}/tokenize",
+        {"model": "qwen3-8b", "prompt": "a b c a"},
+        Authorization="Bearer e",
+    )
+    assert tok.json() == {"count": 4, "max_model_len": 4096, "tokens": [1, 2, 3, 1]}
+    by_ids = _post(
+        server,
+        f"{ENCODER_URL}/v1/embeddings",
+        {"model": "qwen3-8b", "input": [[2, 3]], "encoding_format": "base64"},
+        Authorization="Bearer e",
+    )
+    assert by_ids.status_code == 200 and server.embedded_texts[-1] == "b c"
+    assert (
+        _post(
+            server, f"{ENCODER_URL}/tokenize", {"model": "qwen3-8b"}, Authorization="Bearer e"
+        ).status_code
+        == 400
+    )
     assert _get(server, f"{ENCODER_URL}/v1/other", Authorization="Bearer e").status_code == 404
-    assert _get(server, f"{ENCODER_URL}/other").status_code == 404
+    assert _get(server, f"{ENCODER_URL}/other", Authorization="Bearer e").status_code == 404
+    assert _get(server, f"{ENCODER_URL}/other").status_code == 401
     right = _post(
         server,
         f"{ENCODER_URL}/v1/embeddings",
@@ -375,7 +395,12 @@ def test_transport_routes_and_codes() -> None:
         right.status_code == 200 and server.embedded_texts[-1] == "a b"
     )  # right truncation without the PR #6 field
     server.tokenize_supported = False
-    assert _post(server, f"{ENCODER_URL}/tokenize", {"prompt": "x"}).status_code == 404
+    assert (
+        _post(
+            server, f"{ENCODER_URL}/tokenize", {"prompt": "x"}, Authorization="Bearer e"
+        ).status_code
+        == 404
+    )
     assert len(server.requests) == len(server.paths)
     open_server = FakeClmServer()  # no keys configured: everything is open
     assert _get(open_server, f"{CLM_URL}/v1/models").status_code == 200

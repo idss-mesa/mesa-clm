@@ -48,6 +48,8 @@ M0_CHECKS = [
     "provenance path",
     "labels store",
     "sidecar schema",
+    "feature store",
+    "permissions",
     "serving lock",
     "host",
     "gpu_budget",
@@ -106,6 +108,7 @@ def test_doctor_is_green_on_this_checkout(tmp_path: Path) -> None:
     assert by["framings lock"].status == "ok" and "in sync" in by["framings lock"].detail
     assert by["schema sha256"].detail.startswith("52cec58afbf4 = vendored.sha256 entry")
     assert by["sidecar schema"].detail.startswith("none yet")
+    assert by["feature store"].status == "ok" and by["feature store"].detail.startswith("none yet")
     assert by["serving lock"].detail.startswith("skipped: no serving home")
     assert by["host"].detail.startswith("skipped") and by["gpu_budget"].status == "ok"
     assert by["serving"].status == "warn" and "unreachable" in by["serving"].detail

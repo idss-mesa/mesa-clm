@@ -25,7 +25,7 @@ from mesa_clm.learn.labels import product_code_of
 from mesa_clm.pipeline import AnnotationRun
 from mesa_clm.provenance.labels import LabelRow
 from mesa_clm.registry import ANCHOR_KEY
-from mesa_clm.service import DecisionService
+from mesa_clm.service import AlreadyAnswered, DecisionService
 from mesa_clm.states import state_sha256
 from mesa_clm.tasks import TASKS
 from tests.fakes.pipeline import SERVICE_CARD, annotated_template, copy_store, service
@@ -221,10 +221,14 @@ def test_a_pick_labels_the_groups_own_task(svc: DecisionService, run_id: UUID) -
 
 
 def test_curator_rows_on_a_bench_card_are_tagged(store_file: Any, run_id: UUID) -> None:
-    svc = service(store_file)  # bench cards from the store's silver labels (D30)
+    """D30, failing closed: a fixture card is a bench card from the start, whether or not the
+    sidecar holds its silver labels (the serving host's holds none), so a curator answer on it
+    is tagged the moment it is recorded."""
+    svc = service(store_file)  # the default membership: the fixed bench cards (D30)
     gid = _group(svc, run_id)
     d = _decision(svc, run_id, gid)
-    assert not svc.is_bench_card(SERVICE_CARD)
+    assert svc.is_bench_card(SERVICE_CARD) and svc.is_bench_card("") and svc.is_bench_card("  ")
+    assert not svc.is_bench_card("DP1.00004.001.BP_30min")  # a non-bench SRER card
     svc.store.insert_labels(
         [
             LabelRow(
@@ -269,3 +273,79 @@ def test_a_repeated_pick_writes_no_new_labels(svc: DecisionService, run_id: UUID
     assert first["labels_written"] > 0 and again["labels_written"] == 0
     assert first["accepted_link_id"] == again["accepted_link_id"]
     assert len(svc.store.overrides(run_id)) == 2
+
+
+# -- one answer per group (DESIGN A2) ------------------------------------------------------------
+
+
+def _accepted(svc: DecisionService, run_id: UUID, gid: UUID) -> list[tuple[str, str]]:
+    return [
+        (str(k["term_curie"]), str(k["accepted_by"]))
+        for k in svc.store.links(run_id)
+        if str(k["group_id"]) == str(gid) and k["write_status"] == "accepted"
+    ]
+
+
+def test_a_curator_answer_is_final(svc: DecisionService, run_id: UUID) -> None:
+    gid = _group(svc, run_id)
+    a, b = [c["option_key"] for c in svc.candidates_for_group(gid) if not c["is_anchor"]][:2]
+    svc.record_human_pick(gid, "carol", via="cli", owner="alice", option_key=a)
+    before = _labels(svc)
+    for kwargs in (
+        {"option_key": b},
+        {"option_key": ANCHOR_KEY},
+        {"action": "reject"},
+        {"action": "decline"},
+    ):
+        with pytest.raises(AlreadyAnswered, match="curator answer"):
+            svc.record_human_pick(gid, "carol", via="cli", owner="alice", **kwargs)  # type: ignore[arg-type]
+        with pytest.raises(AlreadyAnswered):
+            svc.check_answer(gid, via="tool", owner="alice", **kwargs)  # type: ignore[arg-type]
+    assert _labels(svc) == before and len(svc.store.overrides(run_id)) == 1
+    assert _accepted(svc, run_id, gid) == [(a, "human")]
+    assert str(gid) not in svc.run_summary(run_id)["pending_groups"]
+
+
+def test_a_curator_answer_supersedes_an_agents(svc: DecisionService, run_id: UUID) -> None:
+    gid = _group(svc, run_id)
+    a, b = [c["option_key"] for c in svc.candidates_for_group(gid) if not c["is_anchor"]][:2]
+    svc.record_human_pick(gid, "bot", via="tool", owner="alice", option_key=a)
+    assert _accepted(svc, run_id, gid) == [(a, "agent")]
+    [pending] = [p for p in svc.run_summary(run_id)["pending"] if p["group_id"] == str(gid)]
+    assert pending["agent_answered"] is True
+    # Another agent answer is refused, the same one is idempotent, a decline is fine.
+    with pytest.raises(AlreadyAnswered, match="agent answer"):
+        svc.record_human_pick(gid, "bot", via="tool", owner="alice", option_key=b)
+    again = svc.record_human_pick(gid, "bot", via="tool", owner="alice", option_key=a)
+    assert again["labels_written"] == 0
+    svc.record_human_pick(gid, "bot", via="tool", owner="alice", action="decline")
+    # The curator picks b: one accepted link, the curator's, and the agent's rows stay weight 0.
+    svc.check_answer(gid, via="cli", owner="alice", option_key=b)
+    out = svc.record_human_pick(gid, "carol", via="cli", owner="alice", option_key=b)
+    assert out["outcome"] == "human" and out["label_source"] == "curator"
+    assert _accepted(svc, run_id, gid) == [(b, "human")]
+    rows = _labels(svc)
+    assert {(r["option_key"], r["label"]) for r in rows if r["label_source"] == "curator"} == {
+        (b, "Yes")
+    }
+    assert all(r["weight"] == 0.0 for r in rows if r["label_source"] == "agent_pick")
+    assert str(gid) not in svc.run_summary(run_id)["pending_groups"]
+
+
+def test_a_curator_none_over_an_agent_pick_unaccepts_its_link(
+    svc: DecisionService, run_id: UUID
+) -> None:
+    gid = _group(svc, run_id)
+    a = next(c["option_key"] for c in svc.candidates_for_group(gid) if not c["is_anchor"])
+    svc.record_human_pick(gid, "bot", via="tool", owner="alice", option_key=a)
+    out = svc.record_human_pick(gid, "carol", via="elicitation", owner="alice", action="reject")
+    assert out["outcome"] == "rejected" and _accepted(svc, run_id, gid) == []
+
+
+def test_check_answer_writes_nothing(svc: DecisionService, run_id: UUID) -> None:
+    gid = _group(svc, run_id)
+    key = svc.candidates_for_group(gid)[0]["option_key"]
+    svc.check_answer(gid, via="cli", owner="alice", option_key=key)
+    with pytest.raises(ValueError, match="not among the offered"):
+        svc.check_answer(gid, via="cli", owner="alice", option_key="PATO:0000001x")
+    assert svc.store.overrides(run_id) == [] and _labels(svc) == []

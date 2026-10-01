@@ -13,10 +13,15 @@ the same weights (RESEARCH.md, encoder model; PR #7's ``MpsEncoder`` recipe plus
   non-pad token, then L2 normalisation in float32.
 
 ``embed(texts)`` is the CLM ``Engine`` embedder contract (``(float32 [n, 4096], tokens)`` plus
-``healthy()``; DESIGN D16) with truncation to ``max_len`` from the left. ``encode`` is the general
-form the fallback's ``/v1/embeddings`` uses (strings or token-id lists, optional truncation,
-either side). One forward pass runs at a time (a lock), in batches of ``batch`` sequences sorted
-by length.
+``healthy()``; DESIGN D16) with truncation to ``max_len - 1`` tokens from the left, the cap every
+vLLM-route client sends (``truncate_prompt_tokens``; DESIGN A4). ``encode`` is the general form
+the fallback's ``/v1/embeddings`` uses (strings or token-id lists, optional truncation, either
+side). One forward pass runs at a time (a lock), in batches of ``batch`` sequences sorted by
+length. ``batch`` defaults to **1**: right padding inside bf16 batches moved vectors by up to
+about 1e-3 in cosine and failed the pre-registered parity gate at batch 8
+(``bench/results/2026-09-29/fallback_parity.json``), while one sequence per forward pass needs no
+padding and makes a vector independent of what else is embedded (``batch_invariance: serial``,
+DESIGN A3).
 
 torch 2.14 compiles some eager Triton kernels against ``Python.h`` at first use;
 :func:`prepare_torch` deregisters those overrides (the aten fallbacks are numerically the same;
@@ -75,12 +80,12 @@ class CudaEncoder:
         max_len: int = MAX_LEN,
         device: str = "cuda",
         dtype: str = "bfloat16",
-        batch: int = 8,
+        batch: int = 1,
         native_triton: bool = False,
         local_files_only: bool = True,
     ) -> None:
-        if max_len < 1 or batch < 1:
-            raise ValueError("max_len and batch must be positive")
+        if max_len < 2 or batch < 1:
+            raise ValueError("max_len must be at least 2 and batch positive")
         self.model_id = model
         self.revision = revision
         self.max_len = max_len
@@ -115,8 +120,9 @@ class CudaEncoder:
     # -- the Engine embedder contract ---------------------------------------------------------
 
     def embed(self, texts: list[str]) -> tuple[F32, int]:
-        """``(float32 [n, 4096] L2-normalised, tokens encoded)``, left-truncated to ``max_len``."""
-        return self.encode(texts, truncate=self.max_len, side="left")
+        """``(float32 [n, 4096] L2-normalised, tokens encoded)``, left-truncated to
+        ``max_len - 1`` tokens (the vLLM route's cap, DESIGN A4)."""
+        return self.encode(texts, truncate=self.max_len - 1, side="left")
 
     def healthy(self) -> bool:
         return self.model is not None

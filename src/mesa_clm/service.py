@@ -18,16 +18,27 @@ Ported from mesa-anyjev ``service.py`` (``6159281``; DESIGN U1). Changes against
 * **Label identity (D1).** Rows are keyed ``(task_key, target_sha256, option_key,
   label_source)`` from the group decision's *own* task and state (mesa-anyjev hard-coded
   ``question_id='term.fits'``): a pick on a ``column.ontology_fits`` group labels that task.
-  Curator rows on a bench card carry ``bench_card=true`` (D30).
+  Curator rows on a bench card carry ``bench_card=true`` (D30). Bench-card membership is fixed
+  and fails closed: by default the seven neon-avu-eval cards
+  (:data:`mesa_clm.learn.labels.BENCH_CARDS`) plus any card with silver consensus labels in the
+  store, and a run whose card name is unknown; it never depends on the sidecar already holding
+  the silver labels.
 * **Links.** The chosen candidate's link becomes ``accepted`` (``accepted_by`` ``human`` for
   elicitation/cli, ``agent`` for a tool); a candidate without a link (a non-winner, or any
   candidate of an anchor-won group) gets a new accepted link built like the group's winner
   (value kind, target), with defect (c) fixed through ``avu.VALUE_KIND_TOP``. The sidecar has no
   ``rejected`` write status: a rejected group keeps its links ``proposed`` (an accepted one goes
   back to ``proposed``) and the group's outcome ``rejected`` plus the override row say that it
-  was rejected. After a pick the group is ``human`` and its other links stay ``proposed``:
-  **apply must write, from a group whose outcome is ``human`` or ``rejected``, only its accepted
-  links.**
+  was rejected. After a pick the group is ``human`` and its other links go back to (or stay)
+  ``proposed``, so a group has at most one accepted link: **apply must write, from a group whose
+  outcome is ``human`` or ``rejected``, only its accepted links.**
+* **One answer per group (DESIGN A2).** A curator's answer (``via`` ``elicitation`` or ``cli``)
+  settles a group: a different second answer is refused with :class:`AlreadyAnswered` (M1 has no
+  amend flow, and the D1 ``INSERT OR IGNORE`` would silently keep the first answer's rows), the
+  same answer again is idempotent (no new label, the same link). An agent's answer
+  (``via='tool'``) does not settle a group for a curator: the group stays pending, a curator's
+  answer supersedes it (the agent's accepted link goes back to ``proposed``; its ``agent_pick``
+  rows stay, weight 0), and a different second *agent* answer is refused.
 * **Reads from the sidecar only (D26).** :meth:`candidates_for_group` rebuilds the offered set
   (every in-play option of the group's deciding record, the anchor included, best ``p_fit``
   first) from ``decision_options``; a resumed elicitation never trusts client state.
@@ -49,9 +60,16 @@ from uuid import UUID
 
 from mesa_clm.avu import VALUE_KIND_LABEL, VALUE_KIND_TOP, build_avu, pre_rule_value_kind, value_for
 from mesa_clm.cards import DatasetCard
-from mesa_clm.config import Config, PlannerKind
+from mesa_clm.config import Config, PlannerKind, expand_path
 from mesa_clm.identity import identity
-from mesa_clm.learn.labels import INGESTED_TASKS, NOT_FOLD_ELIGIBLE, WEIGHTS, product_code_of
+from mesa_clm.learn.labels import (
+    CONSENSUS_SOURCES,
+    INGESTED_TASKS,
+    NOT_FOLD_ELIGIBLE,
+    WEIGHTS,
+    is_bench_card,
+    product_code_of,
+)
 from mesa_clm.ols import Candidate, OLSLayer, RecordingOLS
 from mesa_clm.pipeline import AnnotationRun, Annotator
 from mesa_clm.planner import Planner, make_planner
@@ -68,6 +86,8 @@ logger = logging.getLogger(__name__)
 __all__ = [
     "ACTIONS",
     "CONSENSUS_SOURCES",
+    "HUMAN_VIAS",
+    "AlreadyAnswered",
     "Collaborators",
     "DeciderBusy",
     "DecisionService",
@@ -78,14 +98,11 @@ __all__ = [
 
 PickAction = Literal["pick", "reject", "decline"]
 ACTIONS: Final[tuple[str, ...]] = ("pick", "reject", "decline")
-# The silver sources whose cards are the bench cards (D30): curator labels on them are tagged.
-CONSENSUS_SOURCES: Final[tuple[str, ...]] = (
-    "consensus_all",
-    "consensus_majority",
-    "consensus_negative",
-)
-# Group outcomes a reviewer has settled; such a group is no longer pending.
+# Group outcomes a reviewer has settled; such a group is no longer pending (unless only an
+# agent answered it, see _RunView.answered_by).
 _RESOLVED: Final[frozenset[str]] = frozenset({"human", "rejected"})
+# Where a curator's answer comes from (D21, DESIGN A2); ``tool`` is an agent's.
+HUMAN_VIAS: Final[frozenset[str]] = frozenset({"elicitation", "cli"})
 # Group outcomes that wait for a reviewer (plus any anchor-won group).
 _WAITING: Final[frozenset[str]] = frozenset({"proposed", "escalated"})
 # Outcomes of a specificity group whose child replaced its parent (D24): the parent's group is
@@ -100,6 +117,10 @@ class DeciderBusy(RuntimeError):
 
 class NotOwner(PermissionError):
     """The run belongs to another owner (D21); the message never names that owner."""
+
+
+class AlreadyAnswered(ValueError):
+    """The group already carries an answer this one may not replace (module docstring)."""
 
 
 # -- collaborators ----------------------------------------------------------------------------
@@ -138,7 +159,7 @@ def build_collaborators(
 
             inner = OLSClient(cfg.ols.base_url)
         client: Any = (
-            RecordingOLS(inner, cfg.ols.fixtures_dir, cfg.ols.fixtures)
+            RecordingOLS(inner, expand_path(cfg.ols.fixtures_dir), cfg.ols.fixtures)
             if cfg.ols.fixtures != "off"
             else inner
         )
@@ -167,6 +188,29 @@ class _RunView:
             self.options.setdefault(str(o["decision_id"]), []).append(o)
         self.groups = store.groups(run_id)
         self.links = store.links(run_id)
+        self.overrides = store.overrides(run_id)
+
+    def answers(self, group_id: UUID | str) -> list[dict[str, Any]]:
+        """The group's override rows that answered it (every action but ``decline``), oldest
+        first."""
+        return [
+            o
+            for o in self.overrides
+            if str(o.get("group_id")) == str(group_id) and o.get("action") != "decline"
+        ]
+
+    def answered_by(self, group_id: UUID | str) -> Literal["human", "agent"] | None:
+        """``human`` when a curator answered the group (``via`` elicitation or cli), ``agent``
+        when only plain tool calls did, else ``None``. A group settled (``human``/``rejected``)
+        without any override row (an imported run) counts as a curator's."""
+        vias = {str(o.get("via")) for o in self.answers(group_id)}
+        if vias & HUMAN_VIAS:
+            return "human"
+        if vias:
+            return "agent"
+        if self.group(group_id).get("outcome") in _RESOLVED:
+            return "human"
+        return None
 
     def group(self, group_id: UUID | str) -> dict[str, Any]:
         for g in self.groups:
@@ -239,8 +283,9 @@ class _RunView:
 
     def pending(self) -> list[dict[str, Any]]:
         """Groups waiting for a reviewer: ``term.fits`` groups that are proposed, escalated or
-        anchor-won and not yet settled, minus a group a specificity rank refined (its
-        refinement group, which offers the parent too, is asked instead)."""
+        anchor-won, or that only an agent answered, and that no curator settled, minus a group
+        a specificity rank refined (its refinement group, which offers the parent too, is asked
+        instead). Each carries ``agent_answered``."""
         superseded = {
             str(g["escalated_from"])
             for g in self.groups
@@ -248,12 +293,13 @@ class _RunView:
         }
         out: list[dict[str, Any]] = []
         for g in self.groups:
-            if g["task_id"] != "term.fits" or g["outcome"] in _RESOLVED:
+            if g["task_id"] != "term.fits" or str(g["group_id"]) in superseded:
                 continue
-            if str(g["group_id"]) in superseded:
+            by = self.answered_by(g["group_id"])
+            if by == "human":
                 continue
-            if g["outcome"] in _WAITING or g.get("anchor_won"):
-                out.append(_slim_group(g))
+            if by == "agent" or g["outcome"] in _WAITING or g.get("anchor_won"):
+                out.append({**_slim_group(g), "agent_answered": by == "agent"})
         return out
 
 
@@ -334,15 +380,46 @@ def _json_run(run: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _answer_key(action: str, chosen: str | None) -> tuple[str, str] | None:
+    """What an override answered, comparable across ``pick``/``none``/``reject``: ``("pick",
+    key)`` or ``("none", "")`` (``reject`` and an explicit none are one answer); ``None`` for a
+    ``decline``."""
+    if action == "decline":
+        return None
+    if action in ("none", "reject") or chosen in (None, ANCHOR_KEY):
+        return ("none", "")
+    return ("pick", str(chosen))
+
+
+@dataclass
+class _Answer:
+    """A checked answer, ready to record (:meth:`DecisionService._prepare_answer`)."""
+
+    run_id: UUID
+    run: dict[str, Any]
+    view: _RunView
+    group: dict[str, Any]
+    decision: dict[str, Any]
+    cands: list[dict[str, Any]]
+    by_key: dict[str, dict[str, Any]]
+    chosen: str | None
+    explicit_none: bool
+    override_action: OverrideAction
+    human: bool
+
+
 # -- the service ------------------------------------------------------------------------------
 
 
 class DecisionService:
     """The collaborators behind a lock (module docstring). Build it with
     :meth:`from_config` or pass the collaborators; ``bench_cards`` names the cards whose curator
-    labels are tagged ``bench_card`` (default: the cards with silver consensus labels in the
-    store, D30); ``ols_rank_tasks`` sends those rank_fit tasks to the degraded method (D28);
-    ``claude_client`` is handed to the second-opinion provider (a fake in tests)."""
+    labels are tagged ``bench_card`` (default ``None``: the fixed
+    :data:`~mesa_clm.learn.labels.BENCH_CARDS` plus the cards with silver consensus labels in
+    the store, D30; a caller that passes a list owns it, which only tests do, and the bench drops
+    curator rows on the fixed bench cards whatever their tag); ``ols_rank_tasks`` sends those
+    rank_fit tasks to the degraded method (D28); ``claude_client`` is handed to the
+    second-opinion provider (a fake in tests)."""
 
     def __init__(
         self,
@@ -548,36 +625,32 @@ class DecisionService:
     # -- human (and agent) feedback ------------------------------------------------------------
 
     def is_bench_card(self, card_name: str) -> bool:
-        """Whether ``card_name`` is a bench card (D30): named in ``bench_cards`` or, by default,
-        carrying silver consensus labels in the store."""
+        """Whether ``card_name`` is a bench card (D30), failing closed: a blank (unknown) name
+        always is; otherwise one named in ``bench_cards`` when the caller gave them, else one
+        of the fixed :data:`~mesa_clm.learn.labels.BENCH_CARDS` or a card carrying silver
+        consensus labels in the store."""
+        if not (card_name or "").strip():
+            return True
         if self.bench_cards is not None:
             return card_name in self.bench_cards
+        if is_bench_card(card_name):
+            return True
         for task_id in INGESTED_TASKS:
             rows = self.store.labels_for(task_id, sources=CONSENSUS_SOURCES)
             if any(r.get("card") == card_name for r in rows):
                 return True
         return False
 
-    def record_human_pick(
+    def _prepare_answer(
         self,
         group_id: UUID,
-        actor: str,
         *,
         via: Via,
         owner: str,
-        option_key: str | None = None,
-        action: PickAction = "pick",
-        elicitation_key: str | None = None,
-    ) -> dict[str, Any]:
-        """Record what a reviewer (or an agent) did with a group (module docstring, D21).
-
-        ``action='pick'`` with ``option_key`` one of the offered candidates accepts it; a pick
-        of ``None`` or of the anchor is an explicit "none of these", as is ``'reject'``;
-        ``'decline'`` answers nothing. ``via`` says where the answer came from: ``elicitation``
-        (MRTR) and ``cli`` mint curator labels, ``tool`` only ``agent_pick``. ``owner`` must own
-        the run (:class:`NotOwner`). Returns ``override_id``, ``labels_written``,
-        ``label_source``, ``accepted_link_id``, ``outcome`` (``human``, ``rejected`` or
-        ``declined``), ``action``, ``group_id`` and ``run_id``."""
+        option_key: str | None,
+        action: PickAction,
+    ) -> _Answer:
+        """Every check :meth:`record_human_pick` makes before it writes (module docstring)."""
         if via not in VIAS:
             raise ValueError(f"unknown via {via!r}; expected one of {VIAS}")
         if action not in ACTIONS:
@@ -606,13 +679,83 @@ class DecisionService:
             if action == "reject"
             else ("none" if explicit_none else "pick")
         )
-        human = via in ("elicitation", "cli")
-        pick_source: LabelSource = "curator" if human else "agent_pick"
-        implicit_source: LabelSource = "curator_implicit" if human else "agent_pick"
+        human = via in HUMAN_VIAS
+        answer = _answer_key(override_action, chosen)
+        by = view.answered_by(group_id)
+        prior = {
+            _answer_key(str(o["action"]), o.get("chosen_option_key"))
+            for o in view.answers(group_id)
+            if (str(o.get("via")) in HUMAN_VIAS) == (by == "human")
+        }
+        if by == "human" and (answer is None or answer not in prior):
+            raise AlreadyAnswered(
+                f"group {group_id} already has a curator answer (outcome {group['outcome']}); "
+                "a curator answer is final in M1 (DESIGN A2)"
+            )
+        if by == "agent" and not human and answer is not None and answer not in prior:
+            raise AlreadyAnswered(
+                f"group {group_id} already has an agent answer; only a curator answer (at an "
+                "interactive terminal or through MRTR elicitation) replaces it (DESIGN A2)"
+            )
+        return _Answer(
+            run_id=run_id,
+            run=run,
+            view=view,
+            group=group,
+            decision=decision,
+            cands=cands,
+            by_key=by_key,
+            chosen=chosen,
+            explicit_none=explicit_none,
+            override_action=override_action,
+            human=human,
+        )
+
+    def check_answer(
+        self,
+        group_id: UUID,
+        *,
+        via: Via,
+        owner: str,
+        option_key: str | None = None,
+        action: PickAction = "pick",
+    ) -> None:
+        """Raise what :meth:`record_human_pick` would raise for this answer, writing nothing
+        (the CLI checks a whole batch of answers before it records any)."""
+        self._prepare_answer(group_id, via=via, owner=owner, option_key=option_key, action=action)
+
+    def record_human_pick(
+        self,
+        group_id: UUID,
+        actor: str,
+        *,
+        via: Via,
+        owner: str,
+        option_key: str | None = None,
+        action: PickAction = "pick",
+        elicitation_key: str | None = None,
+    ) -> dict[str, Any]:
+        """Record what a reviewer (or an agent) did with a group (module docstring, D21).
+
+        ``action='pick'`` with ``option_key`` one of the offered candidates accepts it; a pick
+        of ``None`` or of the anchor is an explicit "none of these", as is ``'reject'``;
+        ``'decline'`` answers nothing. ``via`` says where the answer came from: ``elicitation``
+        (MRTR) and ``cli`` (an interactive terminal, DESIGN A2) mint curator labels, ``tool``
+        only ``agent_pick``. ``owner`` must own the run (:class:`NotOwner`); a group a curator
+        already answered differently, or an agent answered differently when this is an agent
+        too, is :class:`AlreadyAnswered`. Returns ``override_id``, ``labels_written``,
+        ``label_source``, ``accepted_link_id``, ``outcome`` (``human``, ``rejected`` or
+        ``declined``), ``action``, ``group_id`` and ``run_id``."""
+        a = self._prepare_answer(
+            group_id, via=via, owner=owner, option_key=option_key, action=action
+        )
+        view, decision, cands, chosen = a.view, a.decision, a.cands, a.chosen
+        pick_source: LabelSource = "curator" if a.human else "agent_pick"
+        implicit_source: LabelSource = "curator_implicit" if a.human else "agent_pick"
         labels: list[LabelRow] = []
         if action != "decline":
             labels = self._labels(
-                run,
+                a.run,
                 group_id,
                 decision,
                 cands,
@@ -624,35 +767,40 @@ class DecisionService:
         n_labels = self.store.insert_labels(labels) if labels else 0
         accepted_link: str | None = None
         outcome: str
-        by: AcceptedBy = "human" if human else "agent"
+        by: AcceptedBy = "human" if a.human else "agent"
+        accepted_before = [
+            str(link["link_id"])
+            for link in view.links_of(group_id)
+            if link["write_status"] == "accepted"
+        ]
         if action == "decline":
             outcome = "declined"
         elif chosen is None:
             outcome = "rejected"
-            back = [
-                UUID(str(link["link_id"]))
-                for link in view.links_of(group_id)
-                if link["write_status"] == "accepted"
-            ]
-            if back:
-                self.store.set_link_status(back, "proposed")
+            if accepted_before:
+                self.store.set_link_status([UUID(i) for i in accepted_before], "proposed")
             self.store.update_group(group_id, outcome="rejected")
         else:
             outcome = "human"
-            accepted_link = self._accept(view, group, decision, by_key[chosen], by, via)
+            accepted_link = self._accept(view, a.group, decision, a.by_key[chosen], by, via)
+            # One accepted link per group: an earlier agent (or policy) acceptance of another
+            # candidate goes back to proposed.
+            stale = [i for i in accepted_before if i != accepted_link]
+            if stale:
+                self.store.set_link_status([UUID(i) for i in stale], "proposed")
             self.store.update_group(group_id, outcome="human")
         override = HumanOverrideRow(
-            run_id=run_id,
+            run_id=a.run_id,
             group_id=group_id,
             decision_id=UUID(str(decision["decision_id"])),
             link_id=UUID(accepted_link) if accepted_link else None,
             actor=actor,
             via=via,
-            action=override_action,
+            action=a.override_action,
             chosen_decision_id=UUID(str(decision["decision_id"])) if chosen else None,
             chosen_option_key=chosen
             if chosen is not None
-            else (ANCHOR_KEY if explicit_none else None),
+            else (ANCHOR_KEY if a.explicit_none else None),
             elicitation_key=elicitation_key,
             label_source=pick_source if action != "decline" else None,
             labels_written=n_labels,
@@ -672,12 +820,13 @@ class DecisionService:
         return {
             "override_id": str(override.override_id),
             "group_id": str(group_id),
-            "run_id": str(run_id),
-            "action": override_action,
+            "run_id": str(a.run_id),
+            "action": a.override_action,
             "labels_written": n_labels,
             "label_source": override.label_source,
             "accepted_link_id": accepted_link,
             "outcome": outcome,
+            "via": via,
         }
 
     def _labels(

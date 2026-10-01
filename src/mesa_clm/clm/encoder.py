@@ -2,12 +2,19 @@
 §6.1; DESIGN D16, D23).
 
 :class:`EncoderClient` is the mesa-clm counterpart of CLM's ``Embedder`` (``embedder.py``) with
-PR #6 applied: every request carries ``truncate_prompt_tokens = max_len`` **and**
+PR #6 applied: every request carries ``truncate_prompt_tokens = max_len - 1`` **and**
 ``truncation_side = "left"``, so a state longer than the window loses its head, never the target
-and question at its tail (last-token pooling reads the tail; RESEARCH.md). Vectors come back
-``encoding_format: base64`` (little-endian float32), are L2-normalised exactly as ``embedder.py``
-``l2`` does, and are returned as one ``float32 [n, dim]`` array together with the prompt tokens
-the server charged. Inputs are sent in chunks of ``batch``.
+and question at its tail (last-token pooling reads the tail; RESEARCH.md). ``max_len`` is the
+server's window (vLLM ``--max-model-len``, :attr:`mesa_clm.clm.fingerprint.EncoderSpec.max_len`);
+the cap sits one token below it because vLLM 0.27.1 never completes an input of exactly
+``--max-model-len`` tokens (``bench/results/2026-09-29/serving_m1.json``), and ``max_len - 1``
+is also CLM's training cap (``train/embed_utils.py`` ``Recipe``). No vector ever produced
+changes: such inputs never completed (DESIGN A4). Vectors come back ``encoding_format: base64``
+(little-endian float32), are L2-normalised exactly as ``embedder.py`` ``l2`` does, and are
+returned as one ``float32 [n, dim]`` array together with the prompt tokens the server charged.
+Inputs are sent in chunks of ``batch``. Every route the client uses (``/v1/embeddings``,
+``/v1/models``, ``/tokenize``) carries the bearer key: the encoder container answers 401 on
+every path but ``/health`` without it (DESIGN A4).
 
 The token guard (plan §4.3) counts a context's tokens before it is embedded so a truncated
 context becomes ``truncated=true`` and an abstain instead of a silently clipped decision. It
@@ -133,6 +140,8 @@ class EncoderClient:
             raise ValueError("batch must be at least 1")
         self.model = model
         self.max_len = int(max_len)
+        # The truncation cap every request sends: one below the server's window (module docstring).
+        self.truncate_prompt_tokens = self.max_len - 1
         self.batch = int(batch)
         self.expect_dim = expect_dim
         self.tokenizer_json = Path(tokenizer_json).expanduser() if tokenizer_json else None
@@ -200,12 +209,13 @@ class EncoderClient:
     # -- embeddings -------------------------------------------------------------------------------
 
     def request_body(self, texts: Sequence[str]) -> dict[str, Any]:
-        """The wire body for one chunk (PR #6 shape; key order as ``embedder.py`` builds it)."""
+        """The wire body for one chunk (PR #6 shape; key order as ``embedder.py`` builds it),
+        truncating to ``max_len - 1`` tokens from the left."""
         return {
             "model": self.model,
             "input": list(texts),
             "encoding_format": "base64",
-            "truncate_prompt_tokens": self.max_len,
+            "truncate_prompt_tokens": self.truncate_prompt_tokens,
             "truncation_side": TRUNCATION_SIDE,
         }
 
@@ -260,6 +270,32 @@ class EncoderClient:
             raise ClmError(status, f"malformed /v1/embeddings response: {exc}") from None
         return [by_index[i] for i in range(len(texts))], tokens
 
+    def embed_ids(self, ids: Sequence[int]) -> tuple[F32, int]:
+        """``(float32 [dim] L2-normalised vector, prompt tokens charged)`` for one sequence
+        given as token ids (vLLM accepts a list of ids as one input), truncated like a text:
+        the doctor's long-input probe compares a text's vector with its tail ids' (DESIGN A4)."""
+        body = {
+            "model": self.model,
+            "input": [[int(i) for i in ids]],
+            "encoding_format": "base64",
+            "truncate_prompt_tokens": self.truncate_prompt_tokens,
+            "truncation_side": TRUNCATION_SIDE,
+        }
+        j, response = self.endpoint.post_json("/v1/embeddings", body)
+        try:
+            emb = j["data"][0]["embedding"]
+            vec = (
+                decode_base64_f32(emb, dim=self.expect_dim)
+                if isinstance(emb, str)
+                else np.asarray(emb, dtype=np.float32)
+            )
+            tokens = int((j.get("usage") or {}).get("prompt_tokens") or 0)
+        except (KeyError, IndexError, TypeError, ValueError) as exc:
+            raise ClmError(
+                response.status_code, f"malformed /v1/embeddings response: {exc}"
+            ) from None
+        return l2(vec[None, :])[0], tokens
+
     # -- discovery --------------------------------------------------------------------------------
 
     def models(self) -> list[dict[str, Any]]:
@@ -306,6 +342,26 @@ class EncoderClient:
             raise ClmError(200, f"malformed /tokenize response: {exc}") from None
         self._tokenize_supported = True
         return count
+
+    def token_ids(self, text: str) -> list[int] | None:
+        """The token ids vLLM's ``POST /tokenize`` gives ``text``, or ``None`` when the server has
+        no such route (as :meth:`tokenize`)."""
+        if self._tokenize_supported is False:
+            return None
+        body = {"model": self.model, "prompt": text, "add_special_tokens": True}
+        try:
+            j, _ = self.endpoint.post_json("/tokenize", body)
+        except ClmError as exc:
+            if exc.status in _UNSUPPORTED:
+                self._tokenize_supported = False
+                return None
+            raise
+        try:
+            ids = [int(t) for t in j["tokens"]]
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ClmError(200, f"malformed /tokenize response: {exc}") from None
+        self._tokenize_supported = True
+        return ids
 
     def count_tokens(self, text: str) -> tuple[int, TokenSource]:
         """The best available count: server, then the ``tokenize`` extra, then ``chars / 2``."""

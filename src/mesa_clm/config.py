@@ -19,9 +19,16 @@ from the environment (plan §6.4; mesa-anyjev's mesa-mcp compatibility rule):
 
 API keys are :class:`pydantic.SecretStr`, so a printed or logged config shows ``**********``;
 code reads them through ``resolved_api_key()``, which applies the ``MESA_CLM_SECRETS`` source
-mode (:mod:`mesa_clm.secrets`). :func:`config_sha256` hashes the configuration with every secret
-removed and every DSN password redacted. Shape is validated here; whether a host answers is the
-doctor's job and whether a URL may be called at all is :func:`mesa_clm.net.assert_loopback`'s.
+mode (:mod:`mesa_clm.secrets`). The serving pair's keys default to the files ``mesa-clm serve
+keys --init`` writes, ``~/.mesa/clm/secrets/clm.key`` and ``encoder.key`` (the serving home's
+``secrets/``), when those exist: only in the ``auto`` and ``file`` modes, only when neither
+``api_key`` nor ``api_key_file`` was configured (an explicit empty value counts and switches the
+default off), after the keyring in ``auto`` mode, and with the key file's 0600 and owner rules
+(a loose default file fails loudly). The default is resolved when a key is read, never stored
+in the configuration, so :func:`config_sha256` is unchanged by it and stays secret-free.
+:func:`config_sha256` hashes the configuration with every secret removed and every DSN password
+redacted. Shape is validated here; whether a host answers is the doctor's job and whether a URL
+may be called at all is :func:`mesa_clm.net.assert_loopback`'s.
 """
 
 from __future__ import annotations
@@ -49,7 +56,7 @@ from pydantic import (
     model_validator,
 )
 
-from mesa_clm.secrets import SecretsMode, resolve_secret
+from mesa_clm.secrets import SecretsMode, read_secret_file, resolve_secret
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +82,15 @@ class _Section(BaseModel):
     model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
 
 
+def default_key_file(name: str) -> Path:
+    """``<serving home>/secrets/<name>.key``: where ``mesa-clm serve keys --init`` writes the
+    serving pair's keys (plan §6.4). The serving home is read at call time
+    (``mesa_clm.serving.DEFAULT_HOME``), so the hermetic tests can move it."""
+    from mesa_clm import serving  # lazy: serving imports the fingerprint and secrets modules
+
+    return serving.serving_home() / serving.SECRETS_DIR / f"{name}.key"
+
+
 class _KeyedSection(_Section):
     """A section that carries an API key. :class:`Config` stamps its secrets mode after
     validation so ``resolved_api_key()`` needs no argument; a section built on its own resolves
@@ -93,6 +109,28 @@ class _KeyedSection(_Section):
             mode=mode or self._secrets_mode,
         )
 
+    def _default_key_file(self, user: str, mode: SecretsMode | None) -> Path | None:
+        """The serving home's key file for ``user`` (module docstring) when it applies: ``auto``
+        or ``file`` mode, neither ``api_key`` nor ``api_key_file`` configured (an explicit null
+        or empty value counts as configured), and something at that path."""
+        if (mode or self._secrets_mode) not in ("auto", "file"):
+            return None
+        if self.model_fields_set & {"api_key", "api_key_file"}:
+            return None
+        path = default_key_file(user)
+        return path if os.path.lexists(path) else None
+
+    def _resolve_with_default(
+        self, value: SecretStr | None, file: str | None, user: str, mode: SecretsMode | None
+    ) -> str | None:
+        """:meth:`_resolve`, then the default key file; the file is read with the 0600 and owner
+        rules of :func:`mesa_clm.secrets.read_secret_file`, so a loose one raises."""
+        secret = self._resolve(value, file, user, mode)
+        if secret is not None:
+            return secret
+        default = self._default_key_file(user, mode)
+        return read_secret_file(default) if default is not None else None
+
 
 class ClmConfig(_KeyedSection):
     """The clm-serve endpoint that scores candidate texts against a state (plan §4.1, §6.2)."""
@@ -100,7 +138,8 @@ class ClmConfig(_KeyedSection):
     # Loopback only; a remote host needs allow_remote *and* https (net.assert_loopback, D16).
     base_url: str = "http://127.0.0.1:8700"
     api_key: SecretStr | None = None
-    # A 0600 file holding the raw key (`mesa-clm serve keys --init` writes it; plan §6.4).
+    # A 0600 file holding the raw key (`mesa-clm serve keys --init` writes it; plan §6.4). Unset:
+    # ~/.mesa/clm/secrets/clm.key when it exists (module docstring).
     api_key_file: str | None = None
     # The served head: clm-latest | clm-raw | a promoted head's unique name (D15).
     model: str = "clm-latest"
@@ -109,8 +148,17 @@ class ClmConfig(_KeyedSection):
     allow_remote: bool = False
 
     def resolved_api_key(self, mode: SecretsMode | None = None) -> str | None:
-        """The bearer key for clm-serve from value, key file or keyring (``mesa-clm``/``clm``)."""
-        return self._resolve(self.api_key, self.api_key_file, "clm", mode)
+        """The bearer key for clm-serve from value, key file or keyring (``mesa-clm``/``clm``),
+        else the default ``~/.mesa/clm/secrets/clm.key`` (module docstring)."""
+        return self._resolve_with_default(self.api_key, self.api_key_file, "clm", mode)
+
+    def effective_api_key_file(self, mode: SecretsMode | None = None) -> tuple[str | None, bool]:
+        """``(key file, is_default)``: the configured ``api_key_file``, else the default one when
+        it applies (module docstring), else ``(None, False)``. Never reads the file."""
+        if self.api_key_file:
+            return self.api_key_file, False
+        default = self._default_key_file("clm", mode)
+        return (str(default), True) if default is not None else (None, False)
 
 
 class EncoderConfig(_KeyedSection):
@@ -118,6 +166,7 @@ class EncoderConfig(_KeyedSection):
 
     url: str = "http://127.0.0.1:8090"
     api_key: SecretStr | None = None
+    # Unset: ~/.mesa/clm/secrets/encoder.key when it exists (module docstring).
     api_key_file: str | None = None
     # --served-model-name of the encoder unit.
     model: str = "qwen3-8b"
@@ -129,8 +178,16 @@ class EncoderConfig(_KeyedSection):
     tokenizer_json: str | None = None
 
     def resolved_api_key(self, mode: SecretsMode | None = None) -> str | None:
-        """The bearer key for the encoder (keyring entry ``mesa-clm``/``encoder``)."""
-        return self._resolve(self.api_key, self.api_key_file, "encoder", mode)
+        """The bearer key for the encoder (keyring entry ``mesa-clm``/``encoder``), else the
+        default ``~/.mesa/clm/secrets/encoder.key`` (module docstring)."""
+        return self._resolve_with_default(self.api_key, self.api_key_file, "encoder", mode)
+
+    def effective_api_key_file(self, mode: SecretsMode | None = None) -> tuple[str | None, bool]:
+        """``(key file, is_default)`` as :meth:`ClmConfig.effective_api_key_file`."""
+        if self.api_key_file:
+            return self.api_key_file, False
+        default = self._default_key_file("encoder", mode)
+        return (str(default), True) if default is not None else (None, False)
 
 
 class DeciderConfig(_Section):
@@ -444,19 +501,47 @@ def _deep_merge(base: Mapping[str, Any], over: Mapping[str, Any]) -> dict[str, A
     return merged
 
 
+class ConfigError(ValueError):
+    """A configuration file that cannot be read or parsed. The message names the file and,
+    for a YAML syntax error, the line and column, never the content: PyYAML's own messages
+    quote the offending line, which may be an ``api_key:`` line."""
+
+
+def _read_yaml(path: str | Path) -> Any:
+    """The parsed YAML of a configuration file, or :class:`ConfigError` (module docstring)."""
+    p = Path(path).expanduser()
+    try:
+        text = p.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        raise ConfigError(f"{p}: no such file") from None
+    except UnicodeDecodeError:
+        raise ConfigError(f"{p}: not UTF-8 text") from None
+    except OSError as exc:
+        raise ConfigError(f"{p}: cannot read ({type(exc).__name__})") from None
+    try:
+        return yaml.safe_load(text)
+    except yaml.YAMLError as exc:
+        mark = getattr(exc, "problem_mark", None)
+        where = f" at line {mark.line + 1}, column {mark.column + 1}" if mark is not None else ""
+        # Line and column only: PyYAML's problem text and context quote the file.
+        raise ConfigError(f"{p}: invalid YAML{where} (the content is not shown)") from None
+
+
 def load_config(
     path: str | Path | None = None,
     *,
     flag_overrides: Mapping[str, Any] | None = None,
     env: Mapping[str, str] | None = None,
 ) -> Config:
-    """Build a :class:`Config` from YAML, environment and flags (flags win)."""
+    """Build a :class:`Config` from YAML, environment and flags (flags win). An unreadable or
+    unparsable file is :class:`ConfigError`; an invalid value is pydantic's
+    ``ValidationError`` (inputs hidden)."""
     environ = os.environ if env is None else env
     data: dict[str, Any] = _env_defaults(environ)
     if path is not None:
-        loaded = yaml.safe_load(Path(path).expanduser().read_text(encoding="utf-8")) or {}
+        loaded = _read_yaml(path) or {}
         if not isinstance(loaded, dict):
-            raise ValueError(f"{path}: the configuration file must be a mapping")
+            raise ConfigError(f"{path}: the configuration file must be a mapping")
         known = set(Config.model_fields)
         for section in list(loaded):
             if section not in known:
@@ -545,12 +630,17 @@ def expand_dsn(dsn: str) -> str:
 
 
 def duckdb_path(dsn: str) -> Path | None:
-    """The file behind a ``duckdb:///<path>`` DSN, home expanded; ``None`` for any other dialect
-    (a Postgres DSN), so callers can tell the two apart without parsing the DSN themselves."""
+    """The file behind a DuckDB DSN, home expanded: ``duckdb:///<path>`` (four slashes for an
+    absolute path) or a bare ``<path>.duckdb``; ``None`` for any other dialect (a Postgres DSN)
+    or an empty path. The one DSN parser of the package (``provenance.store.duckdb_file``
+    delegates here), so every verb reads a DSN the same way."""
     prefix = "duckdb:///"
-    if not dsn.startswith(prefix):
-        return None
-    return Path(dsn[len(prefix) :]).expanduser()
+    if dsn.startswith(prefix):
+        rest = dsn[len(prefix) :]
+        return Path(rest).expanduser() if rest else None
+    if dsn.endswith(".duckdb") and "://" not in dsn:
+        return Path(dsn).expanduser()
+    return None
 
 
 # -- the process-wide configuration --------------------------------------------------------------

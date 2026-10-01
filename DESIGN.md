@@ -45,7 +45,7 @@ history, is the design record `design/plan-2026-09-28.md` (cited below as "plan 
 | D2 | Rank-first with a fixed abstain anchor: one `/v1/systemone` Choice per candidate group keyed by CURIE/registry id plus `__none__`; `s_c = ln p_c − ln p_anchor` | accepted |
 | D3 | No Score questions; noul only as control arm F1, and F1 winning reopens D3 by amendment, never automatically | accepted |
 | D4 | Vendor CLM `schema.py` + `LICENSE` byte-identical under `src/mesa_clm/_vendor/clm/`, reached only through the typed facade `render.py`; `client.py` only as a test wire oracle | accepted |
-| D5 | Fingerprints (`encoder_fp`, `clm_model_fp`, `schema_sha256`, `serving_lock_sha`) on every decision, feature row, artifact and bench cell; exact match required | accepted |
+| D5 | Fingerprints (`encoder_fp`, `clm_model_fp`, `schema_sha256`, `serving_lock_sha`) on every decision, feature row, artifact and bench cell; exact match required | accepted; amended by [A3](#a3-2026-10-01--amends-d5), [A4](#a4-2026-10-01--amends-d16-d23) |
 | D6 | `level ∈ {none, zero_shot, calibrated, probe, head}`, `calibration ∈ {none, uncalibrated, platt, temperature}`; `zero_shot` never `auto` | accepted |
 | D7 | `confidence = max(probs)` computed locally; `p_fit = σ(a·s_c+b)`; CLM's own `confidence` stored only as `clm_confidence` | accepted |
 | D8 | Citation rule: a numeric `auto` cites a pre-registered, nested-selection, fingerprint-matched LOCO cell with `beats_lookup_novel`, and sits at or above the CP-bounded risk threshold | accepted |
@@ -56,14 +56,14 @@ history, is the design record `design/plan-2026-09-28.md` (cited below as "plan 
 | D13 | Direct mode writes one snapshot per (run, project) with a note listing paths; never an empty `record_changes` | accepted |
 | D14 | Lazy `_register()` with explicit `meta=`; a name collision is logged and re-raised | accepted |
 | D15 | Serving never fits; heads reach clm-serve only through promotion under unique names plus a restart | accepted |
-| D16 | Topology = encoder URL (:8090) + clm-serve URL (:8700); the fallback is an in-process `Engine(embedder=CudaEncoder)` that also serves :8090; `route` enters `encoder_fp` | accepted |
+| D16 | Topology = encoder URL (:8090) + clm-serve URL (:8700); the fallback is an in-process `Engine(embedder=CudaEncoder)` that also serves :8090; `route` enters `encoder_fp` | accepted; amended by [A4](#a4-2026-10-01--amends-d16-d23), [A5](#a5-2026-10-01--amends-d16-a4) |
 | D17 | clm-serve heads run on CPU (`--device cpu --action-cache 512MiB`); the encoder gets the whole 0.20 GPU share | accepted |
 | D18 | Probe before head; a head is promoted only if it beats the probe under rule R | accepted |
 | D19 | Teacher labels from `accepted` items of neon `curation/generic/<DP>.validated.json`, in-registry only, weight 0.5 / implicit 0.3, never fold-eligible, leak group = product; refuse files whose replicate model starts with `mesa-clm`; corpus frozen by sha256 before M6 | accepted |
 | D20 | Label weights are `sample_weight` in Platt, logreg, LDA and ridge; heads exclude teacher rows; a test shows the teacher weight changes the fit | accepted |
 | D21 | Curator labels only from MRTR elicitation or the interactive CLI; a plain tool pick is `agent_pick` (weight 0, not fold-eligible); runs store `owner` and every follow-up checks it | accepted; amended by [A2](#a2-2026-09-29--amends-d21) |
 | D22 | The planner plans, never decides; Claude is a second opinion only, never `auto` | accepted |
-| D23 | Builders and `state_sha256` byte-identical to mesa-anyjev; contexts come from additive views that end with the target; `--max-model-len 4096` plus a client token guard | accepted |
+| D23 | Builders and `state_sha256` byte-identical to mesa-anyjev; contexts come from additive views that end with the target; `--max-model-len 4096` plus a client token guard | accepted; amended by [A4](#a4-2026-10-01--amends-d16-d23) |
 | D24 | Specificity: one rank over {parent, ≤10 children, anchor}; a child wins at `p_fit(child) ≥ p_fit(parent)+0.10`; unbenched, so proposed-only | accepted |
 | D25 | `avu.keep` is a rule: exact-triple dedup, then a cap of 25 by `p_fit` | accepted |
 | D26 | MRTR state carries ids only (≤16 KiB) with a tamper guard; OLS and HTTP in `asyncio.to_thread`; `card_path` is CLI-only; iRODS card paths go through `assert_allowed`; parse errors carry line numbers, never content | accepted |
@@ -363,8 +363,9 @@ Brier and NLL do not sort and still come from the vendored module.
 ## Implementation notes (M1)
 
 How M1 realised the decisions above where the plan left room. Each note refines a decision or
-the plan's wording; none changes a decision (the one that widened D21's wording is amendment
-[A2](#a2-2026-09-29--amends-d21)).
+the plan's wording; none changes a decision (what D21's "interactive CLI" means is amendment
+[A2](#a2-2026-09-29--amends-d21); the encoder recipe and auth changes are
+[A3](#a3-2026-10-01--amends-d5), [A4](#a4-2026-10-01--amends-d16-d23) and [A5](#a5-2026-10-01--amends-d16-a4)).
 
 - **One `decisions` row per CLM question (D2, plan §4.2 Q4).** A rank_fit group is one
   `/v1/systemone` Choice, so it is one `decisions` row (the answered candidate's `s_c`/`p_fit`
@@ -386,18 +387,28 @@ the plan's wording; none changes a decision (the one that widened D21's wording 
   `unavailable` or `truncated`. The closed choices (Q1, Q2, Q7) still go to CLM. Rationale: the
   K1/K2(c) pivots are per task; a whole-run switch is what an outage needs.
 - **clm-serve down at the start (D28, plan §7.1).** `annotate --provider clm` asks clm-serve's
-  `/health` first; tier `auto` with `decider.ols_rank_fallback: true` then runs `ols_rank`,
-  anything else refuses (exit 1, the plugin's `decider_unavailable`); an explicit CLM tier
-  always refuses. Rationale: an operator may prefer proposed-only OLS ranks to nothing, but only
-  by saying so; the default never silently degrades.
+  `/health` first (inside the pre-flight below); when it does not answer, tier `auto` with
+  `decider.ols_rank_fallback: true` runs `ols_rank`, anything else refuses (exit 1, the plugin's
+  `decider_unavailable`); an explicit CLM tier always refuses. Rationale: an operator may prefer
+  proposed-only OLS ranks to nothing, but only by saying so; the default never silently
+  degrades.
 - **`pending_groups` (plan §7.1 MRTR).** Only `term.fits` groups wait for a reviewer: proposed,
-  escalated or anchor-won, not yet settled (`human`, `rejected`), minus a parent whose D24
-  refinement group (which offers the parent too) is asked instead. Rationale: ontology groups
-  build no AVU; asking the parent twice would split one answer across two groups.
-- **`record_human_pick` (D21).** It requires `owner`; `reject` is an explicit "none of these"
+  escalated or anchor-won, or answered so far only by an agent (`via='tool'`, flagged
+  `agent_answered`), and not settled by a curator, minus a parent whose D24 refinement group
+  (which offers the parent too) is asked instead; a group settled (`human`, `rejected`) with no
+  override row at all (an imported run) counts as a curator's. `review --pick/--decline` answer
+  these groups only; `feedback` answers any group of the owner's runs. Rationale: ontology groups
+  build no AVU; asking the parent twice would split one answer across two groups; an agent's
+  answer must not hide a group from the curator (A2).
+- **`record_human_pick` (D21, A2).** It requires `owner`; `reject` is an explicit "none of these"
   (anchor-positive row plus a negative per offered candidate); `decline` keeps its override row
-  and writes no labels, links or group outcome. Rationale: a declined question was seen, not
-  answered.
+  and writes no labels, links or group outcome. A curator's answer is final: a different answer
+  or a decline afterwards raises `AlreadyAnswered`, the same answer again changes nothing (D1's
+  `INSERT OR IGNORE`); an agent's answer is replaced by a curator's, whose accepted link displaces
+  the agent's (one accepted link per group), and a different second agent answer is refused.
+  `check_answer` runs every check without writing. Rationale: a declined question was seen, not
+  answered; without the guard a second answer left two accepted links and contradicting curator
+  rows (M1 integration review).
 - **Keep-rule drops (D25).** What the dedup and the cap drop gets no link row and is listed in
   `abstained` with the reason `duplicate`, `over_cap` or `avu_unbuildable`. Rationale: a link row
   means "could be applied"; the reason keeps the drop explainable.
@@ -407,20 +418,240 @@ the plan's wording; none changes a decision (the one that widened D21's wording 
 - **Failed runs (D11).** A run that raises is committed with status `failed` (what it decided
   so far, its calls) and the error is re-raised. Rationale: the post-mortem needs the rows; the
   caller still sees the failure.
-- **Bulk sidecar inserts (D11).** DuckDB 1.5.6 tries `import pandas` for every Python value it
-  binds when pandas is absent, which made a per-row `executemany` commit cost about a second per
-  card. `provenance.store.bulk_insert` binds one JSON value per chunk and unpacks it with
-  `from_json_strict` (a failed cast is an error, never a NULL); a chunk JSON cannot carry falls
-  back to `executemany`. The rows are identical (`tests/unit/test_provenance_bulk_insert.py`
-  compares both paths table by table) and the data never enters the SQL text.
-- **The live fingerprint (D5).** The live provider takes the serving lock the host runs,
+- **Bulk sidecar inserts (D11).** DuckDB 1.5.6 attempts `import pandas` twice for every Python
+  value it binds when pandas is absent (RESEARCH.md, "mesa-ducklake"), so a per-row
+  `executemany` commit paid that for every cell of every row. `provenance.store.bulk_insert`
+  binds one JSON value per chunk and unpacks it with `from_json_strict` (a failed cast is an
+  error, never a NULL); a chunk JSON cannot carry falls back to `executemany`. The rows are
+  identical (`tests/unit/test_provenance_bulk_insert.py` compares both paths table by table) and
+  the data never enters the SQL text.
+- **The live fingerprint (D5, K4).** The live provider takes the serving lock the host runs,
   `~/.mesa/clm/serving.lock.json` (the bootstrap's copy), else the checkout's
-  `serving/serving.lock.json`, and refuses a lock that does not verify and a served head other
-  than `clm-latest`/`clm-raw` until M7.
+  `serving/serving.lock.json`, and refuses (`providers.live.ProviderSetupError`) a lock that does
+  not verify, a lock whose `schema_sha256` is not the vendored `schema.py` the client renders
+  with, an installed lock that differs from the checkout's (the checkout moved and the bootstrap
+  was not re-run), and a served head other than `clm-latest`/`clm-raw` until M7. Rationale: every
+  record is stamped with the lock's fingerprint, so the lock must be the recipe the host runs and
+  the code renders.
+- **The annotate pre-flight (D28, plan §7.1).** Before any question `annotate --provider clm`
+  runs `providers.live.preflight`: clm-serve's `/health` (unreachable, or `embedder: false`, is
+  the only state the `decider.ols_rank_fallback` rule may degrade), then with the keys clm-serve's
+  `/v1/models` (the configured `clm.model` served) and the encoder's `/v1/models` against the
+  lock (served name, `root`, `max_model_len`, and `owned_by` against the lock's `route`: `vllm`
+  for the image, `mesa-clm-fallback` for the in-process fallback). A missing or rejected key, an
+  unserved model or another encoder is never degraded (exit 2). Mid-run, a 401, 403 or 404 from
+  `/v1/systemone` raises `DeciderRefused` and fails the run (recorded `failed`, exit 1) instead of
+  turning every group into an `ols_rank` proposal under the requested tier; transport errors,
+  timeouts, 5xx and 422 still fall back per group, and the summary counts the failed calls.
+  Rationale: before this, a missing key passed the unguarded `/health` check and an explicit
+  `--tier zero_shot` run exited 0 with `ols_rank` proposals only (M1 integration review).
 - **Doctor serve mode (plan §6.8).** The live serving probes run under `--serve` or when both
   `mesa-clm-*` user units are active; an unreachable endpoint fails under `--serve` (or
   auto-detected serve mode without `--quick`) and warns otherwise, so `doctor --quick` (the
-  future `mesa_clm_health`) stays green during a planned GPU window.
+  future `mesa_clm_health`) stays green during a planned GPU window. Every configured URL passes
+  the clients' loopback rule before it is called and is printed redacted. The light probes
+  (binds, `/health`, the 401 matrix, model lists, the golden `/v1/systemone` shape) run in any
+  serve mode; the slow ones (encoder goldens, the long-input probe, the systemone parity, the
+  drift probes) under `--serve` or in serve mode without `--quick`. The 401 matrix asks, without
+  a key, every route vLLM's own `build_app` registers for the locked arguments (17 besides
+  `/health`: `GET /v1/models`, `/metrics`, `/version`, `/load`, `/ping`; `POST /v1/embeddings`,
+  `/pooling`, `/invocations`, `/score`, `/v1/score`, `/rerank`, `/v1/rerank`, `/v2/rerank`,
+  `/v2/embed`, `/tokenize`, `/detokenize`, `/ping`; `bench/results/2026-10-01/serving_m1b.json`)
+  plus a path no route has, and clm-serve's `GET /v1/models`, `POST /v1/systemone` and `POST
+  /v1/rank` (it checks the key per handler, so each route is asked); any answer but 401 fails.
+  Rationale: a 401 on one route proves nothing about another (M1-A found five open encoder
+  routes behind a green `GET /v1/models` check). Serve mode also reads the **encoder container's
+  network namespace** (`/proc/<pid>/net/{dev,tcp,tcp6}` of the container's main process, the pid
+  from `docker inspect`): a listening socket on a non-loopback address in a namespace with an
+  interface besides `lo` fails, a container it cannot inspect is a warning (A5: `ss` on the host
+  never sees the engine's own rendezvous and collective sockets, which have no key); and it warns
+  when the **headroom timer** is not active while serving (plan §6.5; the encoder unit pulls it
+  in since A5). Every doctor run also checks the **feature store** of the live `encoder_fp`
+  (format, the vector recipe it was built under against the live lock's, the export's float16
+  gate; a format-1 store or another recipe fails), as plan §6.8's "Stores" asks. The doctor stays
+  read-only: it reports permissions and keys, never repairs them.
+- **Encoder goldens, long input, systemone parity (plan §6.8).** The plan's "golden cosine
+  >= 0.9999" is checked as the A3 recipe allows: the texts of
+  `encoder_golden_<encoder_fp>.npz` (the serving home's `goldens/`, else the checkout's
+  `.local/serving/`, written by `scripts/serving_probes.py`) embedded one per request must equal
+  the reference bitwise (equal within 0.9999 is a warning, below it a failure), and as one batch
+  agree with one by one within `1 - 1e-6` when the recipe is batch-invariant. The "5,000-token
+  tail probe" embeds a deterministic text of more than the window (8,741 tokens on the live
+  encoder) and requires its vector to equal, within 0.9999, the vector of its last
+  `max_len - 1` token ids, with `max_len - 1` tokens charged (A4's cap). The "golden
+  `/v1/systemone` <= 1e-4" recomputes the golden question on the local route (encoder vectors,
+  the pinned head's numpy export for `clm-latest`, raw cosines at scale 100 for `clm-raw`) and
+  compares clm-serve's probabilities; without the head export only `clm-raw` is checked. The
+  records of the live runs are `bench/results/2026-10-01/doctor_serve.json` (A3/A4) and
+  `doctor_serve_m1c.json` (A5: 34 ok, the A3 drift warning, 0 failures). Rationale: under
+  A3's kernels these hold exactly (M1-A's batch dependence made the plan's cosine tolerance
+  necessary; it is kept as the warning band).
+- **Upstream drift stays a warning (plan §6.8; the question A3 left to the doctor's owner).**
+  The quickstart and tides references stay issue #15's and the model card's, with their
+  tolerances; the doctor prints the unrounded values and differences. A deliberate kernel change
+  rotates `encoder_fp` (A3) and records these probes under the new fingerprint (for
+  c3b3d5e1a283, `bench/results/2026-10-01/serving_m1b.json#/drift`), so a warning whose values
+  equal the current fingerprint's record is that recipe, and one that departs from it is drift.
+  The doctor does not encode the record: a reference that moved with each recipe would stop
+  detecting upstream drift.
+- **Plan deviations kept for M1.** `serve keys --rotate` replaces both keys and prints the
+  `systemctl --user restart` of both units instead of restarting them (plan §6.4): starting and
+  stopping the units is the operator's, never a side effect of a key verb. The doctor has no
+  `--only` (plan §6.8) and the headroom timer runs `deploy/bin/mesa-clm-check-headroom` (a shell
+  check of `MemAvailable` that also names active CARC backends) rather than `doctor --quick
+  --only host,gpu_budget` (plan §6.2): the same script is the encoder unit's start check (32 GiB)
+  and the timer's (8 GiB), and the units reference only the serving home (`~/.mesa/clm/bin`, the
+  serve venv), never a mesa-clm checkout or its venv. Both are revisited with the
+  `mesa_clm_health` tool in M3. Since A5 the timer starts and stops with the encoder unit
+  (`Wants=` there, `PartOf=` on the timer), because a timer the operator had to start separately
+  was found stopped while both units served; none of the units is enabled at boot.
+- **Owner-only state (D11, D29; A2).** Everything mesa-clm creates for its state is owner-only
+  whatever the process umask (`mesa_clm.perms`): missing directories are created `0700` component
+  by component (`chmod` after `mkdir`), files `0600`; every write also tightens the sidecar's
+  existing `locks/` directory, lock file, DuckDB file and `.wal` (DuckDB creates the last two
+  with the umask's mode, so until the chmod only the `0700` directory protects them), while a
+  read changes no existing mode;
+  the same for the label store, the feature store and its npz export, run exports
+  (`provenance export`: the run directory `0700`, Parquet and manifest `0600`), `annotate
+  --out`, and the missing parents of `secrets/`. Existing directories the user made (a sidecar
+  under `/tmp`, `~/.mesa`) are never chmod-ed. The doctor's `permissions` check warns on group or
+  other bits anywhere in the data home's `locks/` and `secrets/`, the sidecar and the feature
+  stores and prints the `chmod` that fixes them. Rationale: the sidecar holds owners, curator
+  labels and card-derived states, and A2's trust boundary is the account that owns it.
+- **Default key files (plan §6.4).** `clm.api_key_file` and `encoder.api_key_file` default to
+  `~/.mesa/clm/secrets/clm.key` and `encoder.key` (the serving home's `secrets/`, what `serve
+  keys --init` writes) when those files exist, in the `auto` and `file` secrets modes only, after
+  an inline value, a configured file and (in `auto`) the keyring; an explicit empty value turns the
+  default off. The default is resolved when the key is read, not stored in the configuration, so
+  `config_sha256` is unchanged by it, and the file is read with the 0600 and owner rules (a loose
+  default fails loudly). The doctor names it as "(default)". Rationale: on the serving host the
+  default provider is `clm`, and a missing key used to surface only as 401s.
+- **Exports are stamped last (D29, plan §7.3 step 9).** `provenance export` writes the copy with
+  the new `exported_at` on its run row, verifies it as an importer would (`read_export`), and only
+  then stamps the store's run row; a failed export (an unwritable `--out`, a full disk, a
+  read-back mismatch) leaves the store unchanged and exits 1 naming the path. Rationale: `prune`
+  trusts `exported_at` to mean "a copy exists".
+- **One DSN parser.** `config.duckdb_path` reads `duckdb:///<path>` and a bare `<path>.duckdb`
+  for every verb (`provenance.store.duckdb_file` delegates to it), so the review verbs never
+  create a database a bare path names, and `serve lock --check` reports an unreadable lock as a
+  failed check. CLI usage errors (a blank `--actor`, a negative `--ttl-days`, an unsupported DSN
+  for `provenance import`, end of input at the review prompt) end in `mesa-clm: <message>` with
+  exit 1 or 2, never a traceback.
+
+- **The feature store (plan §5.2; D5, D11, D23, D30).** One store per `encoder_fp` at
+  `<features.dir>/<encoder_fp>/features.duckdb` (`learn/features.py`), opened per operation under
+  its own flock like the sidecar. Beyond the plan's `texts` and `vectors` it keeps `meta` (the
+  recorded `encoder_fp`, dimension and encoder spec, so a store under another fingerprint or
+  width is refused), `vectors.fp16_cos` (the float32-to-float16 round-trip cosine per vector,
+  the export's gate), `proj_heads` (which head a `clm_model_fp`'s projections came from, the
+  head id a sha256 over all its weights; a second head under the same fingerprint is refused,
+  K4), and truncated texts with their exact token count, never embedded (a truncated context is
+  an abstain, D23). **Plan deviation (format 2):** `vectors` holds the **float32** vector
+  (`vec32`), not the plan's float16 blob; float16 appears only in the `TextCache` export. Scores
+  from float16 vectors missed X1's pre-registered "cross-check vs clm-serve ≤ 1e-4 in probs" by
+  more than ten times (1.31e-3 `clm-latest`, 3.59e-3 `clm-raw` over 200 groups,
+  `bench/results/2026-10-01/features_build.json#/rerun/crosscheck`): Qwen3-8B's last-token vectors
+  carry three large dimensions where the float16 spacing is 2.4e-4, and CLM's scale of 100
+  amplifies it; the plan's round-trip gate (cosine ≥ 0.9999, met at 0.9999999) bounds angles,
+  not scores. From float32 vectors the same cross-check passes at 5.2e-6 and 7.47e-5
+  (`bench/results/2026-10-01/x1_crosscheck.json`; `clm-raw`'s narrower margin is clm-serve's
+  float32 cosine accumulation against the scorer's float64, the vectors being bitwise equal), so
+  the pre-registered gate is kept. The store also records, when it is created, the serving lock's
+  **vector recipe** (`ServingLock.vector_recipe()`: image digest, encoder spec, `vllm serve`
+  arguments, non-secret environment, truncation cap) with its sha256, and stamps each vector with
+  the `lock_sha` it was embedded under; every read and write through `FeatureStore.for_lock` (all
+  CLI paths, `scripts/x1_crosscheck.py`, M2's X1) refuses a store recorded under another vector
+  recipe, and a format-1 store is refused outright (it cannot be converted, only rebuilt). The
+  first write of a vector still wins, which the recipe check makes safe. Rationale: the store is
+  the input of every X1/X2 cell, so it must refuse what would mix recipes, and `encoder_fp` alone
+  does not name everything a vector depends on: a new image with the same flags, `--enforce-eager`
+  dropped, or K0 step 1's NGC image all keep it, and a kernel-level change moves vectors to min
+  cosine 0.99937 (`bench/results/2026-10-01/batch_invariance.json#/secondary`), a few hundredths
+  in probability at scale 100. The rebuilt store is
+  `bench/results/2026-10-01/features_build_m1c.json`.
+- **What the manifest embeds (plan §5.6 X1, X2).** `features.manifest` reads a frozen snapshot
+  label-free (no `label` or `weight` column) and renders every text through `framings` and
+  `render` only. `state_json` is canonical JSON (sorted keys, identity only, plan §4.3), so the
+  builders' key order is restored first (`builder_ordered`, templates taken from the `states`
+  builders themselves): rendering the sorted state would send text the pipeline never sends (a
+  card header starting with "columns:"); a test rebuilds every context from the fixture cards and
+  gets identical text. F4, F7 and F9 ask one request per target over its labelled candidates
+  (`framings.build_request`, then `render.build_pairs`; `column.ontology_fits` states take the
+  task scope `column`, as Q3 does). F1 and the X2 specs use the stored labelled mesa-anyjev state
+  with its `n_candidates` (0 for the neon-avu-eval silver), the state the label was recorded on.
+  PR #13's logistic regression embedded the state text with the question appended and never a
+  candidate text, so for mesa-clm's pair questions **S1** is `render.state_text(anyjev state,
+  task question)` (the same text as F1's context, stored once) and **S1ns** the same state with
+  no question; both embed the candidate inside the state, because a probe on the target context
+  alone cannot answer a pair question. Rationale: plan §5.3 named the specs without fixing which
+  state "joint" meant.
+- **Building, exporting, projecting (plan §5.2).** `features build` does not go through the live
+  provider (that would also need a servable `clm.model`): it takes `EncoderClient.from_config`
+  and the live lock, refuses an `encoder.max_len` other than the lock's (exit 2), an encoder that
+  is not the lock's (the pre-flight's encoder check, then the container check below), a store
+  recorded under another `encoder_fp`, format or vector recipe and approximate token counts (exit
+  1), embeds one text per request by default (bitwise
+  reproducible on every recipe) and commits every 64 texts and before reporting a failure, so a
+  re-run embeds only what is missing. `features project` projects every stored vector on both
+  sides (a text is stored once whatever its role) and refuses a head export whose
+  `source_sha256` is not the lock's head; `--model clm-raw` has nothing to project. `features
+  export-npz --out DIR` writes CLM's `TextCache` file (`finetune.py:422-446, 467-468` at
+  `bb42c6c5`: `sha1(text)` keys as `<U40`, float16 `[N, 4096]` cast from the stored float32
+  vectors, plain `np.savez`), refused below the 0.9999 round-trip gate. The live builds under
+  c3b3d5e1a283 are `bench/results/2026-10-01/features_build.json` (format 1) and
+  `features_build_m1c.json` (format 2, on the A5 recipe: every float16 cast bitwise equal to the
+  format-1 vectors, the export byte-identical).
+- **The X1 anchor variant: rule (6) withdrawn before G1 (plan §4.3, §5.6; D27).** X1's decision
+  rule (6) chose "the anchor variant by NLL" and plan §4.3 says X1 "also tests a longer variant"
+  of the registry anchors, but no variant text was ever written into `registry.ANCHORS` or the
+  framings, so rule (6) had nothing to compare. Writing one now would not be a pre-registered
+  choice: the live zero-shot stack has already been run on a bench card and its outputs read
+  against that card's silver labels and its anchor (the annotate smoke, disclosed under "G1
+  freeze"), so any text chosen after that could be steered by what was seen. Rule (6) is
+  therefore withdrawn from the pre-registration before G1 (its words stay, struck through), X1
+  runs with the two registry anchors only, and the 16-cell grid, rules (1)-(5) and the MDE are
+  unchanged. A longer anchor can still be tested later as a new framing (a new `question_key`),
+  by amendment, with its cells `exploratory:true` (D27). Rationale: a pre-registered rule with
+  nothing to compare cannot be run, and the only way to give it something now is a post-hoc
+  choice.
+- **Bench-card membership and the fold filter (D30).** The bench cards are a fixed list, the
+  seven neon-avu-eval tables of U2 (`learn.labels.BENCH_CARDS`, equal to the cards of the frozen
+  snapshot `bench/snapshots/2026-09-29.parquet` and of the committed eval copy; a test pins
+  both), not inferred from the silver labels a sidecar happens to hold: the serving host's
+  sidecar holds none, so a curator answer on a bench card was tagged `bench_card=false` there.
+  `DecisionService` tags curator rows on those cards (plus any card with silver labels in the
+  store) and, failing closed, on a run whose card name is unknown; a caller may pass its own
+  list (only tests do). The bench drops rows that may not enter a pre-registered fold **before**
+  the per-identity highest-weight selection (`labelled_targets(fold_only=True)`):
+  `fold_eligible=false` rows and curator rows on a bench card, whatever their tag, are counted in
+  `meta["excluded"]`. Rationale: selecting first let a tagged curator row at 1.0 win its identity
+  and then be dropped, deleting the silver item (term.fits 285 → 284 items in a reproduction),
+  and an untagged one replace the silver label in a test fold; a curator answer must never change
+  a pre-registered item's label or presence (`tests/unit/test_bench_tasks.py`).
+- **The encoder container check (D5, K4).** `/v1/models` answers the same for every container of
+  the pinned image, whatever its kernels or flags: a container like the batch-invariance
+  experiment's B0 arm (the same image without `VLLM_BATCH_INVARIANT`) would pass it while its
+  vectors differ (min cosine 0.99937, `batch_invariance.json#/secondary`). Before `features build` writes a vector and before an
+  annotate run asks a question, `providers.live.container_check` compares the running encoder
+  container with the lock (`serving.check_encoder_container`: image, arguments, environment,
+  mounts, network); a container that departs from it is refused (`features build` exit 1,
+  annotate exit 2, never degraded), and when docker cannot be asked from the session the
+  result says "not verified" in the command's output (annotate's `--out` JSON carries it under
+  `preflight`). The fallback server refuses `--batch` other than 1, since its fingerprint says
+  `serial` (A3). Rationale: a fingerprint is only as good as the check that the running recipe
+  is the fingerprinted one. The run row itself does not record the check (that needs a sidecar
+  migration, left for M3).
+- **K0 (plan §8, the M1-A gate).** K0 stops at step 1: the pinned `vllm/vllm-openai` v0.27.1
+  serves Qwen3-8B pooling on the GB10 (sm_121) within the 0.20 share
+  (`bench/results/2026-09-29/serving_m1.json`, `bench/results/2026-10-01/serving_m1c.json`), so
+  neither the NGC image (step 1's alternative) nor the in-process fallback (step 2) is needed,
+  step 3 (pause and escalate) does not arise, and step 3b's CPU throughput was not needed for the
+  bench. The fallback still passes its two cosine parity gates at batch 1
+  (`bench/results/2026-10-01/fallback_parity.json`).
+- **The CARC allocation request (plan §6.5; a plan §1 user go-ahead).** The written request for
+  the 0.20 share is drafted in the serving runbook (`docs/deploy/serving.md`, section 6) with the
+  measured totals of the A5 recipe; it has **not** been sent, because sending it needs the user's
+  go-ahead (plan §1). Until it is accepted the units stay not enabled at boot.
 
 ## Pre-registration (G1)
 
@@ -433,8 +664,49 @@ From that commit on it changes only by amendment, and an amendment made after an
 run marks every affected cell `exploratory:true`.
 
 **Registered in M0, frozen at G1.** The text below is copied from plan §5.4, §5.6 and §8 and is
-committed verbatim at gate G1, before any M2 run. After G1 it changes only by amendment, and an
-amendment made after an experiment has run marks every affected cell `exploratory:true`.
+committed verbatim at gate G1, before any M2 run, with one edit made before G1 and shown in
+place: X1's decision rule (6) is struck through and withdrawn (implementation note "The X1 anchor
+variant"). After G1 it changes only by amendment, and an amendment made after an experiment has
+run marks every affected cell `exploratory:true`.
+
+**Disclosure: every look at labelled bench data before G1.** No pre-registered cell has been
+computed. What M0 and M1 did with the seven bench cards' silver labels, or with model outputs on
+those cards, and what was seen:
+
+1. *The M0 controls* (`bench/results/2026-09-29/baselines.json`, plan §5.4's verified controls):
+   lookup LOCO accuracy 0.772 / 0.800, leave-one-product-out 0.723 / 0.721, the novel-key
+   subsets 159 and 99 items, `lookup_prob`'s novel-key AUROC 0.424 / 0.396 (term.fits /
+   column.ontology_fits). These are the baselines the rules compare against, computed as planned.
+2. *The MDE simulation* (`bench/results/2026-09-29/mde.json`): the realised class counts per task
+   and card, and simulated power; no model output.
+3. *AnyJev L2's held-out predictions* (`bench/baselines/anyjev_l2_2026-09-29.json`, X2's paired
+   baseline): another model's per-item predictions against the silver labels, reproducing
+   mesa-anyjev's committed cells exactly (term.fits accuracy 0.765, column.ontology_fits 0.837,
+   and the per-card accuracies).
+4. *Label-free runs over the labelled rows' texts*: the collapse spikes
+   (`bench/results/2026-09-29/collapse_spike.json`, `2026-10-01/collapse_spike.json`), the
+   feature-store builds (`features_build.json`, `features_build_m1c.json`), the X1 cross-checks
+   (`features_build.json#/rerun/crosscheck`, `x1_crosscheck.json`) and the serving and
+   batch-invariance probes' 50 systemone pairs (`serving_m1.json`, `serving_m1b.json`,
+   `serving_m1c.json`, `batch_invariance.json`): they compare encoders, routes and stores on the
+   snapshot's texts; no label was read and no score was set against one.
+5. *The annotate smoke* (`bench/results/2026-10-01/annotate_smoke.md`, run 1): the live zero-shot
+   stack on the bench card DP1.10003.001.brd_countdata, its outputs read against that card's
+   silver labels and the anchor. Seen: zero-shot `column.annotate` answered No to all 14 of the
+   card's non-identifier columns, where the silver labels mark 8 labelled columns Yes and 4 No;
+   in the SRER biome group the top three candidates were near-ties (0.99880, 0.99853, 0.99834);
+   the second taxon scored 0.5557, just above the anchor's 0.5; the D24 refinement replaced Aves
+   by an NCBI bookkeeping child. This is zero-shot behaviour on one bench card, of the tasks
+   column.annotate and term.fits, relative to the registry anchor: it is why X1's anchor variant
+   was withdrawn rather than written now (the text could not be chosen blind).
+6. *The live engine test* (`tests/engine/test_doctor_live.py`) annotated the same bench card at
+   zero shot on 2026-10-01, asserting only the run's structure (no comparison with labels); it
+   now annotates the non-bench SRER card `DP1.00004.001.BP_30min` (plan §9's smoke card), and
+   live smokes and latency runs use non-bench cards only until the M2 cells exist
+   (`annotate_latency.json`).
+
+The hermetic test suite runs the deterministic fake provider (hashed n-grams, never evidence) on
+the fixture cards; it says nothing about the model.
 
 ### LOCO folds, leakage controls and cells (plan §5.4)
 
@@ -534,7 +806,9 @@ exist; ontology_fits on novel keys needs a large effect (AUROC 0.75) with four c
   cluster-LB > 0.5, AUROC ≥0.60 and ΔAUROC(real − shuffle) ≻ 0; (2) winner = lowest LOCO-Platt
   NLL; if not ≻ a more cacheable arm, take the more cacheable (F7, F9 > F4); F7/F9 tie → fewer
   encoder tokens/target, then F7; (3) model `clm-latest` unless `clm-raw` ≻ it on NLL; (4) F1 ≻
-  all eligible → amendment reopening D3; (5) nothing qualifies → K1; (6) anchor variant by NLL.
+  all eligible → amendment reopening D3; (5) nothing qualifies → K1; ~~(6) anchor variant by
+  NLL~~ *(withdrawn before G1: no variant text was registered before bench outputs were seen;
+  implementation note "The X1 anchor variant")*.
 - Nesting: run on all 7 cards to pick the production A1 framing (`exploratory:true`) and again
   inside each outer fold for citable `selection:"nested"` cells.
 
@@ -590,25 +864,247 @@ made before it take the numbers after it.
 ### A2 (2026-09-29) — amends D21
 
 **Decision.** "The interactive CLI" in D21 means the `mesa-clm` command line run under the
-account that holds the sidecar: `review` (interactive), its non-interactive form
-`review --pick GROUP=OPTION_KEY|none --decline GROUP`, and `feedback --action
-pick|reject|decline` all record `via='cli'` and therefore curator labels (the pick at 1.0,
-implicit negatives at 0.7, an explicit none as an anchor-positive row plus a negative per
-offered candidate). Every one of them acts as `--actor` (default `$USER`) and refuses a run
-whose `owner` differs; the non-interactive `review` resolves and checks every answer against
-the offered candidates before it records any.
+account that holds the sidecar **with an interactive terminal on stdin** (`sys.stdin.isatty()`).
+Only then does it record `via='cli'` and therefore curator labels (the pick at 1.0, implicit
+negatives at 0.7, an explicit none as an anchor-positive row plus a negative per offered
+candidate):
 
-**Why.** A curator's scripted batch of picks and the hermetic tests need a non-interactive
-form. The threat D21 closes, defect (g), is an MCP tool call made by an agent on someone's
-behalf; that stays `via='tool'`, `agent_pick`, weight 0. The CLI's trust boundary is the OS
-account: the sidecar is a per-user file under `~/.mesa/clm/` (D11).
+- the interactive `review` walk requires a terminal and refuses to start without one;
+- `review --pick GROUP=OPTION_KEY|none --decline GROUP` and `feedback --action
+  pick|reject|decline` record `via='cli'` at a terminal. Run without one (a script, a pipe, an
+  agent's shell) they are recorded exactly like a plain tool call: `via='tool'`, label source
+  `agent_pick`, weight 0, `fold_eligible=false`, links `accepted_by='agent'` (a link built for
+  the answer carries the source `mesa-clm:feedback:tool`), and the verb says so on stderr before
+  it records anything;
+- `labels import-anyjev` takes the source file's `curator` and `curator_implicit` rows (which
+  mesa-anyjev's defect (g) let an agent mint) as `agent_pick` at weight 0 unless
+  `--trust-curator` is given, which needs a terminal too; trusted curator rows on a bench card
+  are tagged `bench_card` (D30).
 
-**Residual risk.** An agent with a shell under the curator's account can run these verbs and
-mint curator labels. Until that is closed (for example by requiring a terminal for `via='cli'`
-or by tagging answers given without one), a shell-capable agent is trusted like the curator.
+Every one of them acts as `--actor` (default `$USER`) and refuses a run whose `owner` differs;
+on a shared Postgres sidecar `explain`, `review` and `feedback` act only as the OS account
+(`--actor` must equal it), because there any database user could pass another owner's name.
+`review --pick/--decline` answer the run's pending groups only, each at most once per call, and
+check every answer before recording any. A curator's answer settles a group: a different
+second answer, or a decline, is then refused (M1 has no amend flow, and the D1 `INSERT OR IGNORE`
+would silently keep the first answer's rows), the same answer again is idempotent. An agent's answer does not settle
+it: the group stays pending (`agent_answered`), a curator's answer replaces it (the agent's
+accepted link goes back to `proposed`, so a group never has two accepted links; its weight-0
+rows stay as the audit trail), and a different second agent answer is refused.
 
-**Evidence and rotations.** `tests/unit/test_cli_m1.py` (owner refusals, all-or-nothing
-`--pick`, `via='cli'` override rows). No framing, lock, cell or artifact rotates.
+**Why.** Defect (g), which D21 closes, is an answer given by an agent on someone's behalf. A
+first version of this amendment (unshipped) let `review --pick` and `feedback` record
+`via='cli'` from any process of the account, which let a script or an agent with a shell mint
+curator-grade labels, fold-eligible, at 1.0 (found in the M1 integration review). Requiring a
+terminal keeps the curator's own tool (the interactive walk) and turns every unattended use into
+what it is, an agent's answer. The CLI's trust boundary is still the OS account: the sidecar is
+a per-user file under `~/.mesa/clm/`, owner-only whatever the umask (D11; DESIGN implementation
+notes, "Owner-only state").
+
+**Residual risk.** `isatty()` is a speed bump, not a boundary: a process under the curator's
+account that deliberately allocates a pseudo-terminal (`script -qc`, `expect`, a pty library)
+passes it, and any process under that account can also write the sidecar file directly. A
+shell-capable agent running as the curator is therefore still trusted like the curator if it
+goes out of its way; the protection is against the ordinary, unattended path. Environment
+markers (an agent's `CLAUDECODE`, say) are not consulted: they are set by the agent and unset as
+easily. Closing the hole needs a separate identity for the curator (an MRTR elicitation answered
+in the client, M3, or a sidecar the agent's account cannot write). On a shared Postgres sidecar
+curator labels are only as trustworthy as its database roles: mesa-clm does not check that the
+connecting role belongs to the OS account.
+
+**Evidence and rotations.** `tests/unit/test_cli_m1.py` (curator labels at a terminal, agent
+labels without one with the stderr notice, the terminal requirement of the interactive walk,
+pending-only and once-per-call answers, a curator answer superseding an agent's and then final,
+`feedback` without a terminal, the Postgres actor rule), `tests/unit/test_feedback_agent_pick.py`
+(the service rules), `tests/unit/test_label_identity.py` and `tests/unit/test_cli.py` (the import
+demotion and `--trust-curator`). No framing, lock, cell or artifact rotates; no label existed to
+re-tag (the hermetic fixtures carry no curator rows, and mesa-anyjev's `.local/labels.duckdb`
+on the serving host holds none either: RESEARCH.md, "Labels and evaluation assets").
+
+**History.** The first version of this amendment was pushed on the feature branch
+`feat/m1-pipeline` in commit `8962c58` (2026-09-29) and never reached `main`. Its decision read:
+"'The interactive CLI' in D21 means the `mesa-clm` command line run under the account that holds
+the sidecar: `review` (interactive), its non-interactive form `review --pick GROUP=OPTION_KEY|none
+--decline GROUP`, and `feedback --action pick|reject|decline` all record `via='cli'` and
+therefore curator labels", with the residual risk that "an agent with a shell under the
+curator's account can run these verbs and mint curator labels". The text above **supersedes it
+before the M1 merge** (the change the "Why" paragraph describes: `via='cli'` only with a terminal
+on stdin), so the register on `main` never carries the first version; it is recorded here because
+the register is append-only and that commit was published.
+
+### A3 (2026-10-01) — amends D5
+
+**Decision.** `encoder_fp` also names whether a vector depends on what it was batched with.
+`EncoderSpec` gains `batch_invariance ∈ {none, kernels, serial}`, hashed only when it is not
+`none`, so every fingerprint of a recipe that never set it (the fake stack's included) is
+unchanged: `none` is the M1-A recipe, whose vectors do depend on their batch; `kernels` is vLLM's
+batch-invariant mode (`VLLM_BATCH_INVARIANT=1`: a persistent Triton matmul without split-k,
+batch-invariant RMSNorm, softmax and `bmm`, FlashAttention with one split); `serial` is one
+sequence per forward pass (the fallback at batch 1, or vLLM at `--max-num-seqs 1`). The vLLM route
+runs `kernels`; the in-process fallback runs at batch 1 and is `serial`
+(`mesa_clm.serving.FALLBACK_ENCODER`). The serving lock gains a `recipe` block that
+`serving_lock_sha` covers: the whole `vllm serve` argument list, the container's non-secret
+environment, the bearer guard of A4 with its sha256 and read-only mount, and the clients'
+truncation cap. `verify_serving_lock` compares it with the running container (arguments; the
+environment through a `docker inspect` template that prints the values of the locked names only,
+never the key; the guard's mount), and a lock whose recipe contradicts its encoder spec (window,
+cap, prefix caching, batch-invariance mechanism, middleware) is refused when it is parsed.
+
+**Why.** In M1-A a text's vector moved by up to 1.3e-4 in cosine with its batch, so clm-serve's
+`/v1/systemone` and the local route disagreed by 0.0434 in probability at CLM's scale 100 while
+the head projection matched to 6.3e-7 (`bench/results/2026-09-29/serving_m1.json`), and the
+fallback failed its parity gate at batch 8 (min cosine 0.998975,
+`bench/results/2026-09-29/fallback_parity.json`). A fingerprint must name everything a vector
+depends on, and batching did not appear in it.
+
+**Evidence.** The experiment `bench/results/2026-10-01/batch_invariance.json`, with its adoption
+rule set before the first arm ran but **not tamper-evidently**: the rule was written into
+`scripts/batch_invariance.py`, which was neither committed nor hashed into the arm records before
+the arms ran (the file is dated 08:51:48 MDT, after both arms, 08:39-08:50; the arm files carry
+no pre-registration block, the verdict step copied it from the script). The margins make the
+verdict insensitive to where its new thresholds were set: B0 misses the cosine criterion by a
+factor of about 100 and the ≤ 1e-4 systemone gate (fixed in plan §5.6 and §8 since 2026-09-28) by
+377-591 times; B1 meets the cosine criterion by more than eight orders of magnitude, that gate at
+3.9e-6 and 6.6e-5, and the slowdown criterion at 1.16× of 4×. The script enters the repository
+with the M1 merge; a future pre-registered experiment commits its rule, or writes the rule's
+sha256 into every arm record as it is measured, before the first arm runs. With the old
+kernels (B0) the four request patterns agree only to 1 − 1.05e-4 and clm-serve differs from the
+local route by 0.0377 / 0.0591 (clm-latest / clm-raw); with `VLLM_BATCH_INVARIANT=1` (B1) they
+agree to 1 − 3.3e-15 and differ by 3.9e-6 / 6.6e-5, at 1.16× M1-A's latency, so B1 is adopted and
+B2 (serial) was not needed. On the A3/A4 recipe `bench/results/2026-10-01/serving_m1b.json` repeats
+it (systemone 3.9e-6 / 6.6e-5; goldens 20/20 bitwise one text per request; batch against one by
+one cosine 1.0), and `bench/results/2026-10-01/fallback_parity.json` passes plan §6.6's two cosine
+gates at batch 1 (min cosine 0.999260, mean 0.999919; batch 8 would give 0.998663; the third gate,
+probe agreement, waits for M4).
+
+**Known consequence.** The batch-invariant kernels move every vector (min cosine 0.99937 against
+the old recipe, `batch_invariance.json#/secondary`), and at scale 100 that moves the CLM README
+quickstart's urgency to 0.8466, 0.0100116 from issue #15's 0.8366 against a tolerance of 0.01
+(billing, frustration and the tides rank stay within; `serving_m1b.json#/drift`). That probe is
+the doctor's warn-level upstream-drift check (plan §6.8), whose references were measured on
+another stack. A3 re-tunes neither its references nor its tolerance: the warning stands until the
+doctor's owner records how a deliberate kernel change is told apart from upstream drift.
+
+**Rotations.** `encoder_fp` of the vLLM route 852efc921a8a → **c3b3d5e1a283**, of the fallback
+82f4ff33b628 → **b171b1ba4536**; `serving_lock_sha` `3c032477…` → `59625b8e…`. Nothing durable was
+keyed by 852efc921a8a: the serving home held no feature store or sidecar, and no artifact or
+pre-registered cell existed; the label-free collapse spike
+(`bench/results/2026-09-29/collapse_spike.json`, report-only) and the M1-A probes keep it as
+history. The golden reference is now one text per request under c3b3d5e1a283
+(`.local/serving/encoder_golden_c3b3d5e1a283.npz`, written by `scripts/serving_probes.py`). No
+framing, task key, question key or pre-registered rule changes. The ≤ 1e-4 systemone gate of plan
+§5.6 and §8 now holds end to end between clm-serve and the local route **for float32 vectors
+only**: X1's offline scores from the float16 vectors the feature store first kept missed it
+(1.31e-3 `clm-latest`, 3.59e-3 `clm-raw`, `features_build.json#/rerun/crosscheck`), and the
+store therefore keeps float32 vectors (implementation note "The feature store"), from which the
+200-group cross-check passes at 5.2e-6 and 7.47e-5 (`x1_crosscheck.json`). `clm-raw`'s margin is
+the narrower one because clm-serve accumulates its 4096-d cosines in float32 and the offline
+scorer in float64; the gate's scope is unchanged and it is not loosened.
+
+### A4 (2026-10-01) — amends D16, D23
+
+**Decision.** The encoder endpoint (:8090) answers nothing but `/health` without the key,
+whichever route serves it. In the vLLM container the bearer guard `serving/vllm_auth.py` is
+loaded with `--middleware vllm_auth.require_api_key`: the bootstrap installs it under
+`~/.mesa/clm/serve/vllm-auth` (directory 0700, file 0600, sha256 checked against the lock), the
+container mounts it read-only on `PYTHONPATH`, and it compares `Authorization: Bearer <key>` in
+constant time on every path except exactly `/health`, refusing to start without
+`VLLM_API_KEY`. `--disable-fastapi-docs` removes `/docs`, `/redoc` and `/openapi.json`, and
+`VLLM_NO_USAGE_STATS=1` / `DO_NOT_TRACK=1` stop vLLM's default usage report to an outside
+server. The fallback's :8090 applies the same rule. This withdraws plan §6.4 and §6.8's "open by
+design on loopback" for `/tokenize` and `/metrics`. Every client also sends
+`truncate_prompt_tokens = max_len − 1` (`EncoderClient`; clm-serve `--max-tokens 4095`; the
+fallback's `embed`), which is CLM's training cap (`train/embed_utils.py` `Recipe`).
+`EncoderSpec.max_len` stays 4096, the server's window; the cap lives in the lock's recipe and not
+in `encoder_fp`, because no vector was ever produced at 4,096 tokens (such inputs never
+completed), and D23's token guard (abstain above `max_len − 16`) is unchanged. A4 therefore
+amends D23's "client token guard" (every client now also truncates at `max_len − 1`) and fixes
+what D5's `max_len` names (the server's window, not the longest input a vector was made from); the
+register rows of D5 and D23 point here.
+
+**Why.** M1-A found that vLLM's API-key check covers only `/v1`, `/v2`, `/inference` and
+`/cohere`: `POST /pooling`, `/invocations`, `/score`, `/rerank`, `/detokenize` (and `/tokenize`,
+`/metrics`, `/version`) answered 200 without a key (`bench/results/2026-09-29/serving_m1.json`).
+sparky-1 is a multi-user host, and the container's port is also reachable on its docker-bridge
+address from any local account (`bench/results/2026-10-01/serving_m1b.json#/auth/docker_bridge_address`),
+so binding the published port to loopback keeps no local account out. An input of exactly
+4,096 tokens never completed on the pinned image.
+
+**Evidence.** `bench/results/2026-10-01/serving_m1b.json`: vLLM's own `build_app`, run for the
+locked arguments in a throwaway, network-less copy of the image, has 19 routes and no WebSocket
+route, with the guard outermost; on the live encoder all 17 routes other than `/health` answer 401
+to no key, a wrong key and clm-serve's key, and unknown paths do too; a 5,005-token text
+completes through `EncoderClient` in 0.98 s (4,095 tokens charged; cosine 1.0000000 with the
+embedding of its last 4,095 token ids) and as a clm-serve state in 1.08 s; a request of exactly
+4,096 token ids still times out at 30 s and is aborted on disconnect. `serving/tests/` covers the
+guard (`test_vllm_auth.py`) and the route probe (`test_vllm_routes.py`) in the serving CI.
+
+**Rotations.** `serving_lock_sha` (shared with A3); `encoder_fp` rotates for neither the guard nor
+the cap. Callers of `/tokenize`, `/metrics` or `/version` on :8090 need the key; `EncoderClient`
+sends it on every route.
+
+### A5 (2026-10-01) — amends D16, A4
+
+**Decision.** The encoder container has **no network** (`docker run --network none`): vLLM serves
+on the unix socket `/run/mesa-clm/encoder.sock` (`--uds`; the host directory
+`~/.mesa/clm/run`, 0700, bind-mounted read-write), and the topology's encoder URL
+`http://127.0.0.1:8090` (D16) is a systemd socket unit, `mesa-clm-encoder-proxy.socket`
+(`ListenStream=127.0.0.1:8090`), whose service hands each connection to
+`/usr/lib/systemd/systemd-socket-proxyd ~/.mesa/clm/run/encoder.sock`. Nothing is published with
+`-p`. The engine's single-process rendezvous is put on loopback (`VLLM_HOST_IP=127.0.0.1`,
+`GLOO_SOCKET_IFNAME=lo`). In the same recipe the KV cache is pinned to what `--max-num-seqs 8`
+at `--max-model-len 4096` needs, `--kv-cache-memory-bytes 4831838208` (8 × 4,096 tokens ×
+147,456 bytes, the 4.5 GiB plan §6.5's budget assumed), while `--gpu-memory-utilization 0.20`
+stays as vLLM's start-up check; the encoder unit pulls in the socket unit and the headroom timer
+(`Wants=`; both stop with it, `PartOf=`) and is started at most three times an hour
+(`StartLimitIntervalSec=1h`, `StartLimitBurst=3`), and its run script refuses an `encoder.env`
+without a usable `VLLM_API_KEY` line before docker runs. The lock's recipe gains `network: "none"`,
+which `serving_lock_sha` covers and the container check compares (`HostConfig.NetworkMode`, the
+socket directory's mount); a recipe with `network: "none"` must serve on `--uds` and name no
+`--host` or `--port`. The bearer guard of A4 is unchanged and still answers 401 on every route
+but `/health`. This withdraws A4's statement that "the container's port is also reachable on its
+docker-bridge address from any local account": the container has no bridge address.
+
+**Why.** Under A4 the container's network namespace held seven listeners besides the API, all in
+the engine process and none behind the key: PyTorch's TCPStore of the rendezvous and six Gloo
+collective sockets, on the docker-bridge address and the IPv6 wildcard
+(`bench/results/2026-10-01/encoder_netns.json#/before`: interfaces eth0 and lo; `0.0.0.0:8090`,
+six sockets on the bridge address, `[::]:53581`). PyTorch treats both as trusted-network-only (no
+authentication; open key and value reads, writes and deletes; memory that grows in the engine), and
+the bridge address is reachable from every local account on this multi-user host, so the key no
+longer kept local accounts away from the container as a whole. `ss` on the host cannot see them,
+which is why neither the doctor nor the runbook did. Binding each listener to loopback is not
+enough (TCPStore binds the wildcard whatever the rendezvous host says); removing the namespace's
+network is. Separately, vLLM sized its KV cache at every start to fill its 0.20 share (9.38-9.87
+GiB over the seven recorded starts, `bench/results/2026-10-01/encoder_logs.json`), which put the
+process at 25,153 MiB by `nvidia-smi` and 27.43 GiB by the plan's own measure (the
+`MemAvailable` difference), above plan §8's "footprint ≤ 24.3 GiB vLLM"
+(`serving_m1b.json#/footprint`). The start limit and the key check stop a recipe that dies after
+the model load (14.11 GiB in 66-82 s, `encoder_logs.json`) from reloading it on the shared GPU
+every two minutes (`Restart=on-failure` with `RestartSec=30` never reaches systemd's default start
+limit of five starts in ten seconds), and a headroom timer the operator had to start by hand was
+found stopped while both units served.
+
+**Evidence.** `bench/results/2026-10-01/serving_m1c.json` on the restarted units: the container's
+namespace has `lo` only, six Gloo sockets on 127.0.0.1 and the rendezvous store on `[::]` inside
+it, no bridge address (`encoder_netns.json#/after`); the 401 matrix, the clm-serve routes and
+`verify_serving_lock(require_live=True)` all pass; the start log shows
+`distributed_init_method=tcp://127.0.0.1:…`, "reserved 4.5 GiB memory for KV Cache", a KV cache of
+32,768 tokens (8.00× concurrency at 4,096 tokens) and "Starting vLLM server on
+unix:/run/mesa-clm/encoder.sock"; the encoder measures **19,609 MiB** by `nvidia-smi` and
+**21.45 GiB** by the `MemAvailable` difference (107.46 → 86.01 GiB), under the 24.3 GiB gate by
+either measure; the 20 encoder goldens are **bitwise equal** to the c3b3d5e1a283 reference and
+the 1,563 feature-store vectors bitwise equal (as float16 casts) to the A4 recipe's
+(`features_build_m1c.json`); systemone parity 3.9e-6 / 6.6e-5. `mesa-clm doctor --serve`: 34 ok,
+the A3 drift warning, 0 failures (`doctor_serve_m1c.json`).
+
+**Rotations.** `serving_lock_sha` `59625b8e…` → **`dd33f9fe…`**; `encoder_fp` stays
+c3b3d5e1a283 (no vector moved: the goldens and the store are bitwise equal, D5). The feature
+store's vector recipe (`ServingLock.vector_recipe()`) changes with the arguments and environment,
+so the store was rebuilt under it (it was rebuilt in format 2 anyway). Clients are unchanged:
+they still call `http://127.0.0.1:8090` with the key. Units to install: the six of
+`deploy/systemd/` (the two proxy units are new and cannot be enabled: they have no install
+section); none is enabled at boot.
 
 ## Plan (summary; the full plan is `design/plan-2026-09-28.md`)
 
