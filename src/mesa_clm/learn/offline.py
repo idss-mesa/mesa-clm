@@ -30,10 +30,11 @@ batch, so clm-serve and an offline replay differed by a few hundredths in probab
 6.6e-5 (``clm-raw``) in probability (``bench/results/2026-10-01/batch_invariance.json``,
 ``serving_m1b.json``). Offline scores are exact for the vectors they are given and reproduce
 clm-serve only as closely as the vectors do: from float16 copies (round-trip cosine 0.9999999)
-X1's 200-group cross-check missed clm-serve by up to 1.31e-3 / 3.59e-3, because Qwen3-8B's
-vectors carry a few large dimensions where float16 is coarse and the scale of 100 amplifies it
-(``bench/results/2026-10-01/features_build.json#/rerun/crosscheck``), so the feature store keeps
-float32 vectors, from which the same groups match ``/v1/systemone`` and ``/v1/rank`` to 5.2e-6
+X1's 200-group cross-check missed clm-serve by up to 1.31e-3 / 3.59e-3, because float16 rounding
+spread over the vector moves scores at the scale of 100 (restoring the three largest dimensions
+from float32 recovers most of ``clm-raw``'s gap and none of ``clm-latest``'s;
+``bench/results/2026-10-01/features_build.json#/rerun/crosscheck/cause``), so the feature store
+keeps float32 vectors, from which the same groups match ``/v1/systemone`` and ``/v1/rank`` to 5.2e-6
 (``clm-latest``) and 7.47e-5 (``clm-raw``; clm-serve sums its 4096-d cosines in float32, this
 module in float64) within plan §5.6's 1e-4 (``bench/results/2026-10-01/x1_crosscheck.json``).
 Read a store through :meth:`~mesa_clm.learn.features.FeatureStore.for_lock`, which refuses

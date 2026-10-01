@@ -31,10 +31,11 @@ Tables (DuckDB, schema ``main``):
   (:func:`fp16_roundtrip_min_cosine` ``>= 0.9999``); ``lock_sha`` the serving lock it was embedded
   under. Format 1 kept only the float16 copy, and scores from it missed clm-serve by up to
   1.31e-3 (``clm-latest``) and 3.59e-3 (``clm-raw``) in probability against X1's pre-registered
-  1e-4: Qwen3-8B's vectors carry a few large dimensions where the float16 spacing is 2.4e-4, and
-  CLM's scale of 100 amplifies that (``bench/results/2026-10-01/features_build.json#/rerun/crosscheck``);
-  float32 vectors meet it (``bench/results/2026-10-01/x1_crosscheck.json``). A format-1 store is
-  refused: it cannot be converted, only rebuilt;
+  1e-4: float16 rounding spread over the vector moves scores beyond 1e-4 at CLM's scale of 100
+  (putting the three largest dimensions back from float32 recovers most of ``clm-raw``'s gap and
+  none of ``clm-latest``'s, ``bench/results/2026-10-01/features_build.json#/rerun/crosscheck/cause``),
+  and only float32 vectors meet it (``bench/results/2026-10-01/x1_crosscheck.json``). A format-1
+  store is refused: it cannot be converted, only rebuilt;
 * ``proj(clm_model_fp, side, text_sha256, vec)`` - the 512-d float32 head projections
   (``side`` ``state`` | ``action``), computed by :meth:`FeatureStore.project` from the float32
   vectors through :class:`~mesa_clm.clm.headproj.HeadProjector`;

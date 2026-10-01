@@ -98,8 +98,10 @@ __all__ = [
 
 PickAction = Literal["pick", "reject", "decline"]
 ACTIONS: Final[tuple[str, ...]] = ("pick", "reject", "decline")
-# Group outcomes a reviewer has settled; such a group is no longer pending (unless only an
-# agent answered it, see _RunView.answered_by).
+# Settled group outcomes; such a group is no longer pending (unless only an agent answered it).
+# The pipeline sets "rejected" itself (the Q8 keep rule's drops, a D24 refinement that did not
+# replace its parent), so the outcome never says *who* settled a group: only the override rows do
+# (_RunView.answered_by).
 _RESOLVED: Final[frozenset[str]] = frozenset({"human", "rejected"})
 # Where a curator's answer comes from (D21, DESIGN A2); ``tool`` is an agent's.
 HUMAN_VIAS: Final[frozenset[str]] = frozenset({"elicitation", "cli"})
@@ -200,15 +202,18 @@ class _RunView:
         ]
 
     def answered_by(self, group_id: UUID | str) -> Literal["human", "agent"] | None:
-        """``human`` when a curator answered the group (``via`` elicitation or cli), ``agent``
-        when only plain tool calls did, else ``None``. A group settled (``human``/``rejected``)
-        without any override row (an imported run) counts as a curator's."""
+        """``human`` when a curator answered the group (an override row ``via`` elicitation or
+        cli), ``agent`` when only plain tool calls did, else ``None``. The override rows decide
+        (run exports and imports carry them): a ``rejected`` outcome without one is the
+        pipeline's own (the Q8 keep rule, a refinement that did not replace its parent), which
+        nobody answered, so ``feedback`` can still answer it. Only a ``human`` outcome without a
+        row counts as a curator's (only :meth:`DecisionService.record_human_pick` sets it)."""
         vias = {str(o.get("via")) for o in self.answers(group_id)}
         if vias & HUMAN_VIAS:
             return "human"
         if vias:
             return "agent"
-        if self.group(group_id).get("outcome") in _RESOLVED:
+        if self.group(group_id).get("outcome") == "human":
             return "human"
         return None
 
@@ -283,9 +288,11 @@ class _RunView:
 
     def pending(self) -> list[dict[str, Any]]:
         """Groups waiting for a reviewer: ``term.fits`` groups that are proposed, escalated or
-        anchor-won, or that only an agent answered, and that no curator settled, minus a group
-        a specificity rank refined (its refinement group, which offers the parent too, is asked
-        instead). Each carries ``agent_answered``."""
+        anchor-won, or that only an agent answered, and that neither a curator nor the pipeline
+        settled (a ``rejected`` outcome without an override row is the keep rule's or a
+        refinement's), minus a group a specificity rank refined (its refinement group, which
+        offers the parent too, is asked instead). Each carries ``agent_answered``. ``feedback``
+        may still answer any group of the run, pending or not."""
         superseded = {
             str(g["escalated_from"])
             for g in self.groups
@@ -296,8 +303,8 @@ class _RunView:
             if g["task_id"] != "term.fits" or str(g["group_id"]) in superseded:
                 continue
             by = self.answered_by(g["group_id"])
-            if by == "human":
-                continue
+            if by == "human" or (by is None and g["outcome"] in _RESOLVED):
+                continue  # a curator's answer, or settled by the pipeline itself
             if by == "agent" or g["outcome"] in _WAITING or g.get("anchor_won"):
                 out.append({**_slim_group(g), "agent_answered": by == "agent"})
         return out

@@ -349,3 +349,58 @@ def test_check_answer_writes_nothing(svc: DecisionService, run_id: UUID) -> None
     with pytest.raises(ValueError, match="not among the offered"):
         svc.check_answer(gid, via="cli", owner="alice", option_key="PATO:0000001x")
     assert svc.store.overrides(run_id) == [] and _labels(svc) == []
+
+
+def _pipeline_rejected(svc: DecisionService, run_id: UUID) -> dict[str, UUID]:
+    """The run's ``term.fits`` groups the pipeline itself set to ``rejected``, with no override
+    row: the keep rule's duplicate (Q8, D25) and a D24 refinement that did not replace its
+    parent (``escalated_from``)."""
+    out: dict[str, UUID] = {}
+    answered = {str(o["group_id"]) for o in svc.store.overrides(run_id)}
+    for g in svc.store.groups(run_id):
+        if g["task_id"] != "term.fits" or g["outcome"] != "rejected":
+            continue
+        assert str(g["group_id"]) not in answered
+        out["refinement" if g.get("escalated_from") else "keep_rule"] = UUID(str(g["group_id"]))
+    return out
+
+
+def test_a_group_the_pipeline_rejected_is_not_a_curator_answer(
+    svc: DecisionService, run_id: UUID
+) -> None:
+    """The pipeline's own ``rejected`` (no override row) used to count as a curator's answer, so
+    ``feedback`` refused these groups with "already has a curator answer" (a regression against
+    8962c58). They stay out of the pending list, a curator can answer them, and that answer is
+    then final."""
+    groups = _pipeline_rejected(svc, run_id)
+    assert set(groups) == {"keep_rule", "refinement"}
+    pending = set(svc.run_summary(run_id)["pending_groups"])
+    assert not {str(g) for g in groups.values()} & pending
+    gid = groups["keep_rule"]
+    key = next(c["option_key"] for c in svc.candidates_for_group(gid) if not c["is_anchor"])
+    svc.check_answer(gid, via="cli", owner="alice", option_key=key)
+    out = svc.record_human_pick(gid, "carol", via="cli", owner="alice", option_key=key)
+    assert out["outcome"] == "human" and out["label_source"] == "curator"
+    assert _accepted(svc, run_id, gid) == [(key, "human")]
+    with pytest.raises(AlreadyAnswered, match="curator answer"):
+        svc.record_human_pick(gid, "carol", via="cli", owner="alice", action="reject")
+    ref = groups["refinement"]
+    out = svc.record_human_pick(ref, "carol", via="cli", owner="alice", action="reject")
+    assert out["outcome"] == "rejected" and out["labels_written"] > 0
+    offered = next(c["option_key"] for c in svc.candidates_for_group(ref) if not c["is_anchor"])
+    with pytest.raises(AlreadyAnswered, match="curator answer"):
+        svc.record_human_pick(ref, "carol", via="cli", owner="alice", option_key=offered)
+
+
+def test_an_agent_answer_on_a_pipeline_rejected_group_leaves_it_to_the_curator(
+    svc: DecisionService, run_id: UUID
+) -> None:
+    gid = _pipeline_rejected(svc, run_id)["refinement"]
+    keys = [c["option_key"] for c in svc.candidates_for_group(gid) if not c["is_anchor"]]
+    svc.record_human_pick(gid, "bot", via="tool", owner="alice", option_key=keys[0])
+    [pending] = [p for p in svc.run_summary(run_id)["pending"] if p["group_id"] == str(gid)]
+    assert pending["agent_answered"] is True
+    out = svc.record_human_pick(gid, "carol", via="cli", owner="alice", action="reject")
+    assert (
+        out["outcome"] == "rejected" and str(gid) not in svc.run_summary(run_id)["pending_groups"]
+    )

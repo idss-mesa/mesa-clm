@@ -10,11 +10,14 @@
 # container recipe, DESIGN A3, A5): changing any of them needs a new lock.
 #
 # The container has no network (--network none, DESIGN A5): vLLM serves on the unix socket
-# ~/.mesa/clm/run/encoder.sock (a 0700 directory, bind-mounted at /run/mesa-clm), and
-# mesa-clm-encoder-proxy.socket owns 127.0.0.1:8090 and forwards each connection to it through
-# systemd-socket-proxyd. Nothing else the container listens on (the engine's rendezvous and
-# collective sockets, put on loopback by VLLM_HOST_IP and GLOO_SOCKET_IFNAME) is reachable from
-# the host, and the container cannot reach out either.
+# ~/.mesa/clm/run/encoder.sock (a 0700 directory, bind-mounted read-write at /run/mesa-clm), and
+# mesa-clm-encoder-proxy.socket owns 127.0.0.1:8090 and hands each connection to
+# mesa-clm-encoder-proxy, which relays it to that socket only when the entry is a socket of this
+# account (never through a symlink: the container can write the directory). Nothing else the
+# container listens on (the engine's rendezvous and collective sockets, put on loopback by
+# VLLM_HOST_IP and GLOO_SOCKET_IFNAME) is reachable from the host, and the container has no
+# network to reach out on; it still shares with the host that directory, the read-only mounts,
+# the GPU and, through --ipc=host, the host's IPC namespace (DESIGN A5, residual risks).
 #
 # Every route but /health requires the key (DESIGN A4): vLLM's own check covers only /v1, /v2,
 # /inference and /cohere, so the bearer guard serving/vllm_auth.py (installed by the bootstrap

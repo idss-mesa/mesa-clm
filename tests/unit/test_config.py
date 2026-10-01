@@ -367,18 +367,35 @@ def test_env_example_documents_every_name() -> None:
     assert not unknown, sorted(unknown)
 
 
+# Fields the example documents as comments: vm_id is host-specific, and the serving pair's key
+# settings must stay unset for the default key files to apply (any explicit value, a null
+# included, switches them off).
+COMMENTED_OUT: frozenset[tuple[str, str]] = frozenset(
+    {
+        ("clm", "api_key"),
+        ("clm", "api_key_file"),
+        ("encoder", "api_key"),
+        ("encoder", "api_key_file"),
+    }
+)
+
+
 def test_config_yaml_example_is_the_defaults() -> None:
     example = REPO / "config.yaml.example"
-    loaded = yaml.safe_load(example.read_text(encoding="utf-8"))
+    text = example.read_text(encoding="utf-8")
+    loaded = yaml.safe_load(text)
     assert isinstance(loaded, dict)
-    # Every section and field is present (vm_id is host-specific and documented as a comment).
+    # Every section and field is present, or documented as a comment.
     for section, info in Config.model_fields.items():
         model = info.annotation
         if isinstance(model, type) and issubclass(model, BaseModel):
-            assert set(loaded[section]) == set(model.model_fields), section
+            commented = {f for s, f in COMMENTED_OUT if s == section}
+            assert set(loaded[section]) == set(model.model_fields) - commented, section
+            for field in commented:
+                assert re.search(rf"^  # {field}: ", text, flags=re.M), (section, field)
         elif section != "vm_id":
             assert section in loaded, section
-    assert "vm_id" in example.read_text(encoding="utf-8")
+    assert "vm_id" in text
     cfg = load_config(example, env={})
     defaults = load_config(env={})
     assert cfg.model_dump() == defaults.model_dump()
@@ -489,6 +506,12 @@ def test_the_serving_key_files_are_the_default(
     yaml_file = tmp_path / "c.yaml"
     yaml_file.write_text("encoder:\n  api_key_file: null\n", encoding="utf-8")
     assert load_config(yaml_file, env={}).encoder.resolved_api_key() is None
+    # config.yaml.example leaves the key settings commented out, so a configuration started from
+    # it keeps the default key files (its explicit nulls used to switch them off).
+    example = load_config(REPO / "config.yaml.example", env={})
+    assert example.clm.resolved_api_key() == "clm-default-key-0123456789"
+    assert example.encoder.resolved_api_key() == "encoder-default-key-0123456789"
+    assert example.clm.effective_api_key_file() == (str(secrets / "clm.key"), True)
     # Only the auto and file modes read it.
     assert load_config(env={"MESA_CLM_SECRETS": "file"}).clm.resolved_api_key() is not None
     assert load_config(env={"MESA_CLM_SECRETS": "env"}).clm.resolved_api_key() is None

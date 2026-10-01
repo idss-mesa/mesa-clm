@@ -51,7 +51,9 @@ run (recorded ``failed``, exit 1) instead of turning every group into ``ols_rank
 errors, timeouts and 5xx still fall back per group, and the summary counts the failed calls.
 After the pre-flight the running encoder container is compared with the lock's recipe
 (``providers.live.container_check``): a departure is refused (exit 2), and a check docker could
-not answer is noted as "not verified" in the summary and the ``--out`` JSON (``preflight``).
+not answer is noted as "not verified" in the summary and the ``--out`` JSON (``preflight``, in
+the run shape and the ``--eval-result`` shape alike). A loopback port held by another account's
+socket is refused before the key is sent (exit 2; ``net.assert_listener_owner``, DESIGN A5).
 ``--tier ols_rank`` skips the pre-flight and never needs clm-serve for the candidate groups.
 ``--provider fake`` is the deterministic offline fake; it exercises the pipeline and is never
 evidence.
@@ -573,9 +575,11 @@ def _cmd_annotate(args: argparse.Namespace, cfg: Config) -> int:
     finally:
         close()
     out = run.to_eval_result() if args.eval_result else run.to_dict()
+    # Whether the encoder recipe was verified travels with either shape (the run row does not
+    # record it until M3); an extra key leaves neon-avu-eval's scoring unchanged.
+    out["preflight"] = notes
     if not args.eval_result:
         out["tier"] = tier
-        out["preflight"] = notes
         out["next_step"] = f"mesa-clm review --run-id {run.run_id}"
     if args.out == "-":
         print(_json_out(out))
@@ -1033,7 +1037,9 @@ def _cmd_serve(args: argparse.Namespace, cfg: Config) -> int:
             print(f"  export MESA_CLM_ENCODER__API_KEY_FILE={res.encoder_key}")
         if res.rotated:
             units = " ".join(serving.UNIT_NAMES[:2])
+            # Every start of the encoder counts against its limit of three an hour (DESIGN A5).
             print("the running units keep the old keys until restarted; run:")
+            print(f"  systemctl --user reset-failed {serving.ENCODER_UNIT}")
             print(f"  systemctl --user restart {units}")
         return EXIT_OK
     if args.verb == "units":

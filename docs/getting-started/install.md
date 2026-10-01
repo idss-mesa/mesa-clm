@@ -154,7 +154,9 @@ redacted; a URL that does not is a failure and is never called.
 
 **Serve mode** (`--serve`, or automatically when both `mesa-clm-encoder.service` and
 `mesa-clm-serve.service` are active) replaces the `serving` line with live probes:
-`serving binds` (both ports listen on loopback only, from `ss -ltn`), `encoder health` and
+`serving binds` (both ports listen on loopback only, in sockets of this account, from
+`ss -ltne`; while the socket unit is active the encoder's port is the user manager's),
+`encoder socket` (`~/.mesa/clm/run` holds only the encoder's socket), `encoder health` and
 `clm-serve health` (`/health` 200 without a key), `encoder auth` and `clm-serve auth` (the 401
 matrix: without a key, every route vLLM registers on the encoder and an unknown path, and
 clm-serve's `GET /v1/models`, `POST /v1/systemone` and `POST /v1/rank`, must answer 401; any

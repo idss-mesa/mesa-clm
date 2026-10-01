@@ -391,6 +391,19 @@ Read-only commands on 2026-09-28 (`nvidia-smi`, `nvcc --version`, `free -h`, `un
   kernels and packaging are the risk (K0).
 - Ports 8090 and 8700 were free at exploration time; mesa-clm binds only those two, on
   loopback. Other loopback ports on this host belong to other services and are never reused.
+- *Checked 2026-10-01 (pre-merge review).* A free loopback port can be bound by any local
+  account, and the units are not enabled at boot, so 8090 and 8700 are usually free. `ss -ltne`
+  shows each listener's owner (`uid:`, omitted for root) and cgroup: the socket unit's
+  127.0.0.1:8090 is `uid:1000` in `user@1000.service/init.scope` (the user manager),
+  clm-serve's :8700 `uid:1000` in `app.slice/mesa-clm-serve.service`; `/proc/net/tcp` carries
+  the same owner. `/proc`
+  is mounted without `hidepid` (`rw,nosuid,nodev,noexec,relatime`), so any account can read
+  another's command lines: a key passed on argv is exposed. The user manager gives its services a
+  soft `RLIMIT_NOFILE` of 1,024 (hard 500,000); `systemd-socket-proxyd` (systemd 255.4) takes six
+  descriptors per connection (two sockets, two splice pipes) and connects to its target by path,
+  following symlinks. `kernel.apparmor_restrict_unprivileged_userns=1`, so `--user` units cannot
+  sandbox with `TemporaryFileSystem=`/`BindPaths=`. Hence `serving/encoder_proxy.py` (DESIGN A5,
+  revision before the merge).
 - CARC co-tenancy: `/opt/carc/carc-agents/models/*.yaml` (2026-09-09) pins four vLLM backends
   to this host at `gpu_memory_utilization` 0.05 + 0.12 + 0.30 + 0.36 = **0.83**; all four
   stopped 2026-09-23 15:28 MDT and `carc-vllm@.service` is disabled, but the specs still name
@@ -465,13 +478,18 @@ Read-only commands on 2026-09-28 (`nvidia-smi`, `nvcc --version`, `free -h`, `un
 - *Measured 2026-10-01 (`bench/results/2026-10-01/features_build.json#/rerun/crosscheck`,
   `x1_crosscheck.json`).* Offline scores from **float16** vectors miss clm-serve by up to 1.31e-3
   (`clm-latest`) and 3.59e-3 (`clm-raw`) in probability over X1's 200 groups, though every float16
-  copy keeps cosine ≥ 0.9999999 with its float32 vector: Qwen3-8B's last-token vectors carry three
-  large dimensions (2202, 2284, 3169; median |value| 0.27-0.47 against a median component of
-  0.0038) where the float16 spacing is 2.4e-4, and CLM's scale of 100 amplifies the rounding.
-  From **float32** vectors the same 200 groups match `/v1/systemone` to 5.2e-6 and 7.47e-5 and
-  `/v1/rank` identically (rank and systemone return the same probabilities); `clm-raw`'s larger
-  residual is clm-serve's float32 accumulation of 4096-d cosines (`engine.py` `za @ zq` on CPU
-  float32) against the offline scorer's float64.
+  copy keeps cosine ≥ 0.9999999 with its float32 vector: float16 rounding spread over the vector
+  moves scores beyond 1e-4 at CLM's scale of 100, and a round-trip cosine bounds angles, not
+  scores. The few large dimensions are not the whole cause: Qwen3-8B's last-token vectors hold
+  their largest component in one of three dimensions (2202, 2284, 3169; median |value| 0.27-0.47
+  against a median component of 0.0038; float16 spacing 2.4e-4 there), but putting those three
+  back from float32 brings `clm-raw` to 8.0e-4 (still eight times the 1e-4 gate) and leaves
+  `clm-latest` at 1.37e-3, and renormalising the float16 vectors before the head leaves it at
+  1.26e-3 (`features_build.json#/rerun/crosscheck/cause`); only float32 vectors reproduce
+  clm-serve. From **float32** vectors the same 200 groups match `/v1/systemone` to 5.2e-6 and
+  7.47e-5 and `/v1/rank` identically (rank and systemone return the same probabilities);
+  `clm-raw`'s larger residual is clm-serve's float32 accumulation of 4096-d cosines (`engine.py`
+  `za @ zq` on CPU float32) against the offline scorer's float64.
 - *Measured 2026-10-01 (`bench/results/2026-10-01/features_build_m1c.json`).* The feature store in
   format 2 (float32 vectors) on the A5 recipe: 1,563 texts embedded one per request in 223.7 s;
   every float16 cast of a new vector is bitwise equal to the format-1 store's (1,563/1,563), the

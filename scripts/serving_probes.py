@@ -87,6 +87,11 @@ SNAPSHOT = ROOT / "bench/snapshots/2026-09-29.parquet"
 LOCK = ROOT / "serving/serving.lock.json"
 CARDS = ROOT / "tests/fixtures/cards"
 OLS = ROOT / "tests/fixtures/ols"
+# Plan §9's non-bench live-smoke card: the probes that ask a question or record an answer use it,
+# never a bench card (DESIGN, "G1 freeze"); until 2026-10-01 the long-input and latency probes
+# used the bench card brd_countdata (serving_m1.json, serving_m1b.json, serving_m1c.json,
+# batch_invariance.json).
+SMOKE_CARD = ROOT / "tests/fixtures/cards-srer/DP1.00004.001.BP_30min.md"
 MODEL = "qwen3-8b"
 MAX_LEN = 4096
 CAP = MAX_LEN - 1  # truncate_prompt_tokens every client sends (DESIGN A4)
@@ -575,15 +580,16 @@ def _bounded(enc_key: str, body: dict[str, Any], timeout: float) -> dict[str, An
 
 
 def long_text(http: Http, enc_key: str) -> tuple[str, list[int]]:
-    """~5,000 tokens: the fixture cards concatenated, cut at 4,990 tokens, plus a target line."""
+    """~5,000 tokens: the non-bench smoke card repeated, cut at 4,990 tokens, plus a target
+    line."""
     import tokenizers
 
     tok = tokenizers.Tokenizer.from_file(str(TOKENIZER_JSON))
-    corpus = "\n\n".join(p.read_text(encoding="utf-8") for p in sorted(CARDS.glob("*.md")))
+    corpus = "\n\n".join([SMOKE_CARD.read_text(encoding="utf-8")] * 6)
     head_ids = _tokenize(http, corpus, enc_key)[:4990]
     text = (
         tok.decode(head_ids)
-        + "\n\nTarget column: observerDistance (meter), the radial distance to the bird."
+        + "\n\nTarget column: staPresMean (kilopascal), the mean station pressure."
     )
     return text, _tokenize(http, text, enc_key)
 
@@ -604,8 +610,8 @@ def probe_truncation(
     c_tail = cos(v_client[0], v_tail)
     choice = Choice(
         criteria={
-            "distance": "distance: A spatial quality inhering in a bearer by virtue of the "
-            "bearer's distance from another entity.",
+            "pressure": "pressure: A physical quality that inheres in a bearer by virtue of the "
+            "bearer's amount of force per unit area it exerts.",
             "temperature": "temperature: A physical quality of the thermal energy of a system.",
             ANCHOR_KEY: ANCHORS["term"],
         }
@@ -621,7 +627,8 @@ def probe_truncation(
     return {
         "text_sha256": sha256_text(text),
         "text_tokens": len(ids),
-        "corpus": "tests/fixtures/cards/*.md concatenated, first 4990 tokens, plus a target line",
+        "corpus": "tests/fixtures/cards-srer/DP1.00004.001.BP_30min.md (non-bench) repeated, "
+        "first 4990 tokens, plus a target line",
         "encoder_client": {
             "request": f"EncoderClient(max_len={MAX_LEN}).embed: truncate_prompt_tokens="
             f"{enc.truncate_prompt_tokens}, truncation_side=left",
@@ -1056,10 +1063,11 @@ def pato_distance_criteria() -> dict[str, str]:
 
 
 def rank_fit_request(nonce: int | None) -> tuple[dict[str, Any], Choice]:
-    """observerDistance (brd_countdata fixture card) as a target_state and the PATO candidates.
-    ``nonce`` changes the card's ``rows`` so the state text (and every cache key) is new."""
-    card = load_card(CARDS / "DP1.10003.001.brd_countdata.md")
-    col = next(c for c in card.columns if c.name == "observerDistance")
+    """staPresMean of the non-bench smoke card as a target_state and the 12 PATO candidates (no
+    labelled pair: the latency probe never answers a bench item). ``nonce`` changes the card's
+    ``rows`` so the state text (and every cache key) is new."""
+    card = load_card(SMOKE_CARD)
+    col = next(c for c in card.columns if c.name == "staPresMean")
     state = target_state(card, "column", "measurement", column=col)
     if nonce is not None:
         state["card"] = {**state["card"], "rows": int(state["card"]["rows"]) + nonce}
@@ -1103,7 +1111,7 @@ def probe_latency(enc: EncoderClient, clm: ClmHttpClient, repeats: int) -> dict[
         batch.append(ms)
     return {
         "rank_fit_request": {
-            "state": "target_state of DP1.10003.001.brd_countdata observerDistance (fixture card)",
+            "state": "target_state of DP1.00004.001.BP_30min staPresMean (non-bench smoke card)",
             "state_tokens": cold_tokens[0] if cold_tokens else None,
             "candidates": "12 PATO 'distance' OLS fixture terms '<label>: <definition>' + __none__",
             "model": "clm-latest",

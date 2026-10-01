@@ -111,7 +111,7 @@ jobs:
       - name: mypy --strict (torch, transformers and clm are not installed)
         run: uvx --with numpy --with fastapi --with uvicorn --with httpx --with pytest "$MYPY" --config-file serving/mypy.ini serving
 
-      - name: pytest (patched create_app, fallback_serve, the vLLM bearer guard and route probe)
+      - name: pytest (patched create_app, fallback_serve, the vLLM bearer guard and route probe, the endpoint proxy)
         env:
           MESA_CLM_CLM_SRC: ${{ runner.temp }}/CLM/src
         run: >-
@@ -132,8 +132,10 @@ jobs:
           for f in mesa-clm-check-headroom mesa-clm-wait-http mesa-clm-encoder-run; do
             printf '#!/bin/sh\n' > "$stub/.mesa/clm/bin/$f"
           done
-          printf '#!/bin/sh\n' > "$stub/.mesa/clm/serve/.venv/bin/clm-serve"
-          chmod +x "$stub"/.mesa/clm/bin/* "$stub/.mesa/clm/serve/.venv/bin/clm-serve"
+          for f in clm-serve python; do
+            printf '#!/bin/sh\n' > "$stub/.mesa/clm/serve/.venv/bin/$f"
+          done
+          chmod +x "$stub"/.mesa/clm/bin/* "$stub"/.mesa/clm/serve/.venv/bin/*
           for f in deploy/systemd/*; do
             sed "s|%h|$stub|g" "$f" > "$units/$(basename "$f")"
           done

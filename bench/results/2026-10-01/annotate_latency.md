@@ -8,8 +8,8 @@ image and recipe), at tier `zero_shot` (uncalibrated, never `auto`), into a scra
 (`.local/latency/`). Diagnostics for plan §8 M1-A's "p50/p95 per card" and the M3 latency budget;
 outcomes are not recorded.
 
-Cards: **non-bench only** (DESIGN, "G1 freeze": no live run looks at a bench card before the M2
-cells exist): plan §9's smoke card `DP1.00004.001.BP_30min`, then the first nine other cards of
+Cards: **non-bench only** (DESIGN, "G1 freeze": no live annotate run looks at a bench card
+before the M2 cells exist; the label-free serving probes did use bench texts, disclosed there): plan §9's smoke card `DP1.00004.001.BP_30min`, then the first nine other cards of
 `~/neon-ducklake/sites/SRER/cards/anyjev/` in `sha256(name)` order, the bench products
 DP1.10003.001 and DP1.10022.001 skipped. Per card:
 

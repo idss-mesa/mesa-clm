@@ -270,6 +270,17 @@ def test_container_check_verified_departed_and_unverified() -> None:
     unreachable = live.container_check(lock, docker=lambda args: None)
     assert unreachable.ok and not unreachable.verified
     assert "not verified (docker is not reachable" in unreachable.note()
+    # Docker answers but the pinned image is gone: a container of another image is refused
+    # (it used to pass as "not verified"), no container is still "not verified".
+    other = _host(_locked_args())
+    other.image_present = False
+    other.created_from = "vllm/vllm-openai:v0.28.0"
+    refused = live.container_check(lock, runner=other.run, docker=_docker)
+    assert not refused.ok and "not the pinned" in refused.note()
+    gone = _host(None)
+    gone.image_present = False
+    absent = live.container_check(lock, runner=gone.run, docker=_docker)
+    assert absent.ok and not absent.verified and "not present" in absent.note()
 
 
 def test_annotate_refuses_an_encoder_container_with_another_recipe(
@@ -290,8 +301,9 @@ def test_annotate_refuses_an_encoder_container_with_another_recipe(
 
 
 def test_annotate_records_whether_the_container_was_verified(
-    env: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
-) -> None:
+    env: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:  # fmt: skip
     server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
     _serve(monkeypatch, server)
     for name, value in KEYS.items():
@@ -307,3 +319,12 @@ def test_annotate_records_whether_the_container_was_verified(
     assert main(["annotate", "--card", str(CARD), "--tier", "zero_shot", "--out", "-"]) == EXIT_OK
     notes = json.loads(capsys.readouterr().out)["preflight"]
     assert "encoder container: mesa-clm-encoder: pinned image and recipe" in notes
+    # The --eval-result shape carries it too (it used to drop the notes).
+    monkeypatch.setattr(live, "docker_argv", lambda args: None)
+    out = tmp_path / "eval.json"
+    argv = ["annotate", "--card", str(CARD), "--tier", "zero_shot", "--eval-result"]
+    assert main([*argv, "--out", str(out)]) == EXIT_OK
+    capsys.readouterr()
+    evaluated = json.loads(out.read_text(encoding="utf-8"))
+    assert evaluated["family"] == "mesa-clm" and evaluated["fingerprint"]
+    assert any(n.startswith("encoder container: not verified") for n in evaluated["preflight"])

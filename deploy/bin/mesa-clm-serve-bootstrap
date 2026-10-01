@@ -16,9 +16,11 @@
 #   6. download the head at the pinned revision into ~/.mesa/clm/heads, verify size and sha256
 #   7. mkdir ~/.mesa/clm/heads/served (promoted heads only reach clm-serve here, DESIGN D15)
 #   8. export the head to ~/.mesa/clm/heads/npz/<sha8>.npz (serving/export_head.py)
-#   9. install deploy/bin/* into ~/.mesa/clm/bin, the encoder's bearer guard serving/vllm_auth.py
-#      into ~/.mesa/clm/serve/vllm-auth (0700 directory, 0600 file, sha256 checked against the
-#      lock's recipe; DESIGN A4) and the lock into ~/.mesa/clm/serving.lock.json
+#   9. install deploy/bin/* and the encoder's endpoint proxy serving/encoder_proxy.py (as
+#      mesa-clm-encoder-proxy; DESIGN A5) into ~/.mesa/clm/bin, the encoder's bearer guard
+#      serving/vllm_auth.py into ~/.mesa/clm/serve/vllm-auth (0700 directory, 0600 file, sha256
+#      checked against the lock's recipe; DESIGN A4) and the lock into
+#      ~/.mesa/clm/serving.lock.json
 # It never creates keys, installs or enables units, or starts anything; the runbook
 # (docs/deploy/serving.md) covers those steps. A running encoder reads the guard only at start:
 # restart the units after a bootstrap that changed it.
@@ -303,6 +305,9 @@ mkdir -p "$clm_home/bin"
 for f in mesa-clm-encoder-run mesa-clm-serve-bootstrap mesa-clm-wait-http mesa-clm-check-headroom; do
   install -m 0700 "$repo/deploy/bin/$f" "$clm_home/bin/$f"
 done
+# The encoder's loopback endpoint (mesa-clm-encoder-proxy.service runs it with the serve venv's
+# Python): it relays 127.0.0.1:8090 to run/encoder.sock without following a symlink (DESIGN A5).
+install -m 0700 "$repo/serving/encoder_proxy.py" "$clm_home/bin/mesa-clm-encoder-proxy"
 if [[ -n "$AUTH_FILE" ]]; then
   auth_dir="$serve/vllm-auth"
   install -d -m 0700 "$auth_dir"
@@ -315,7 +320,7 @@ else
   log "warning: the lock has no container recipe; the encoder's bearer guard is not installed"
 fi
 install -m 0600 "$lock" "$clm_home/serving.lock.json"
-log "installed deploy/bin into $clm_home/bin and the lock into $clm_home/serving.lock.json"
+log "installed deploy/bin and mesa-clm-encoder-proxy into $clm_home/bin and the lock into $clm_home/serving.lock.json"
 
 if [[ ! -f "$HOME/.cache/huggingface/$ENCODER_SNAPSHOT/config.json" ]]; then
   log "warning: the encoder snapshot ~/.cache/huggingface/$ENCODER_SNAPSHOT is missing; the offline encoder cannot start"

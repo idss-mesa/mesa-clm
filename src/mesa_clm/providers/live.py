@@ -24,7 +24,9 @@ encoder is down (``embedder: false``), from a reachable one (the caller may degr
 server does not list, and an encoder that is not the lock's (served name, ``root`` model,
 ``max_model_len`` window, and ``owned_by`` against the lock's ``route``: the vLLM image says
 ``vllm``, the in-process fallback ``mesa-clm-fallback``, so a fallback serving :8090 under the
-vLLM lock is refused instead of stamping the vLLM ``encoder_fp`` on its answers).
+vLLM lock is refused instead of stamping the vLLM ``encoder_fp`` on its answers), and a loopback
+port held by another account's socket (:class:`mesa_clm.net.ListenerOwnerError`: the keyed
+clients refuse to send the key there, DESIGN A5).
 :func:`encoder_problems` is that last check on its own (``features build`` uses it too).
 :func:`clm_status` is the ``/health`` half alone.
 
@@ -53,7 +55,7 @@ from mesa_clm.clm.encoder import EncoderClient
 from mesa_clm.clm.fingerprint import LockError, ServingLock, load_serving_lock
 from mesa_clm.clm.http import HEALTH_TIMEOUT_S, ClmError, ClmHttpClient
 from mesa_clm.config import Config
-from mesa_clm.net import EndpointError
+from mesa_clm.net import EndpointError, ListenerOwnerError
 from mesa_clm.providers.tiered import TieredProvider
 from mesa_clm.serving import (
     INSTALLED_LOCK,
@@ -193,9 +195,12 @@ def clm_provider(
 
 def clm_status(client: ClmHttpClient) -> tuple[bool, str]:
     """``(answering, detail)`` from clm-serve's ``GET /health``: answering means ``ok`` and an
-    encoder behind it (``embedder`` not false). The detail names models, never a key."""
+    encoder behind it (``embedder`` not false). The detail names models, never a key. A port
+    another account holds is :class:`PreflightError` (the key is not sent; DESIGN A5)."""
     try:
         j: Any = client.endpoint.get_json("/health", timeout=HEALTH_TIMEOUT_S, retry=False)
+    except ListenerOwnerError as exc:  # another account holds the port: never degraded
+        raise PreflightError(str(exc)) from None
     except Exception as exc:  # a probe: every failure is "not answering", with its reason
         return False, f"clm-serve at {client.endpoint.shown} unreachable ({type(exc).__name__})"
     if not isinstance(j, dict) or not j.get("ok"):
@@ -295,6 +300,8 @@ def _models(what: str, call: Any, shown: str) -> list[dict[str, Any]] | None:
         if exc.status == 0:
             return None
         raise PreflightError(f"{what} at {shown}: GET /v1/models -> {exc.status}") from None
+    except ListenerOwnerError as exc:
+        raise PreflightError(str(exc)) from None
     except EndpointError:
         return None
     return models

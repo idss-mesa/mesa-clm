@@ -42,8 +42,11 @@ M1 adds:
   and is printed redacted; one that does not is a failure and is never called. Without serve
   mode one ``serving`` line says whether both ``/health`` routes answer (``warn`` when not:
   annotate falls back to ``--provider fake`` or fails). **Serve mode** (``--serve``, or
-  automatically when both ``mesa-clm-*`` user units are active) runs the live probes: loopback
-  binds (``ss -ltn``); the **encoder network**: the container's own namespace read from
+  automatically when both ``mesa-clm-*`` user units are active) runs the live probes: the
+  **binds** (``ss -ltne``: loopback only, sockets of this account, the encoder's port held by the
+  user manager's ``mesa-clm-encoder-proxy.socket`` while that unit is active; DESIGN A5); the
+  **encoder socket** (``<serving home>/run`` holds nothing but ``encoder.sock``, a socket of this
+  account, never a symlink); the **encoder network**: the container's own namespace read from
   ``/proc/<pid>/net``, where a listener on a non-loopback address next to an interface besides
   ``lo`` fails (DESIGN A5; ``ss`` on the host cannot see it); the **headroom timer** active
   (warn); ``/health`` 200 on both ports without a key; **the 401 matrix**: without a
@@ -78,11 +81,12 @@ import importlib.util
 import inspect
 import json
 import os
+import stat
 import sys
 from collections.abc import Callable, Sequence
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Final, Literal
+from typing import Any, Final, Literal, NamedTuple
 from urllib.parse import urlsplit
 
 import duckdb
@@ -95,9 +99,12 @@ from mesa_clm.config import Config, config_sha256, duckdb_path, expand_path, red
 from mesa_clm.net import EndpointError, assert_loopback, redact_url
 from mesa_clm.secrets import SecretError, check_secret_file_stat
 from mesa_clm.serving import (
+    ENCODER_UNIT,
     HEADROOM_TIMER,
+    PROXY_SOCKET,
     RUN_DIR,
     RUN_HEADROOM_GIB,
+    SOCKET_NAME,
     START_HEADROOM_GIB,
     UNIT_NAMES,
     CommandResult,
@@ -879,26 +886,30 @@ CLM_GUARDED_ROUTES: Final[tuple[tuple[str, str], ...]] = (
 # One fixed /v1/systemone question the doctor asks (plan §6.8 "golden /v1/systemone"): a NEON
 # column as a target state and two candidate terms plus the term anchor. The light probe checks
 # the answer's shape; the full one recomputes it on the local route (encoder vectors, the pinned
-# head's numpy projection) and requires clm-serve to agree within GOLDEN_SYSTEMONE_GATE.
+# head's numpy projection) and requires clm-serve to agree within GOLDEN_SYSTEMONE_GATE. The
+# column is the non-bench SRER card's (plan §9's live-smoke card, tests/fixtures/cards-srer), so
+# a routine doctor run never answers a pre-registered bench item; until 2026-10-01 it asked
+# brd_countdata's observerDistance, a labelled term.fits target (DESIGN, "G1 freeze"). Terms and
+# definitions as EMBL-EBI OLS gives them.
 GOLDEN_STATE: Final[dict[str, Any]] = {
     "card": {
-        "dataset": "DP1.10003.001.brd_countdata",
-        "product_title": "Breeding landbird point counts",
+        "dataset": "DP1.00004.001.BP_30min",
+        "product_title": "Barometric pressure",
     },
     "scope": "column",
     "aspect": "measurement",
     "column": {
-        "name": "observerDistance",
-        "description": "Radial distance between the observer and the individual(s) being observed",
+        "name": "staPresMean",
+        "description": "Arithmetic mean of station pressure",
         "dtype": "real",
-        "unit": "meter",
+        "unit": "kilopascal",
     },
 }
 GOLDEN_CRITERIA: Final[dict[str, str]] = {
-    "PATO:0000040": "distance: A 1-D extent quality which is equal to the distance between two "
-    "points.",
-    "UO:0000008": "meter: A length unit which is equal to the length of the path travelled by "
-    "light in vacuum during a time interval of 1/299 792 458 of a second.",
+    "PATO:0001025": "pressure: A physical quality that inheres in a bearer by virtue of the "
+    "bearer's amount of force per unit area it exerts.",
+    "UO:0000110": "pascal: A pressure unit which is equal to the pressure or stress on a surface "
+    "caused by a force of 1 newton spread over a surface of 1 m^[2].",
     "__none__": "None of these terms is the right concept for this target.",
 }
 # Plan §5.6/§8: clm-serve against the local route, in probability.
@@ -998,47 +1009,164 @@ def _port(url: str, default: int) -> int:
         return default
 
 
-def parse_listeners(ss_output: str, port: int) -> list[str]:
-    """The local addresses listening on ``port`` in ``ss -ltn`` output (``127.0.0.1``,
-    ``[::1]``, ``0.0.0.0``, ``*`` ...)."""
-    out: list[str] = []
+class Listener(NamedTuple):
+    """One listening socket of ``ss -ltne`` output: its local address, the owning uid (``ss``
+    omits ``uid:0``, so a missing field is root) and its cgroup when the kernel reports one."""
+
+    host: str
+    uid: int
+    cgroup: str | None
+
+
+def parse_listener_details(ss_output: str, port: int) -> list[Listener]:
+    """The sockets listening on ``port`` in ``ss -ltne`` output, with owner and cgroup."""
+    out: list[Listener] = []
     for line in ss_output.splitlines():
         parts = line.split()
         if len(parts) < 4 or parts[0] != "LISTEN":
             continue
         host, _, p = parts[3].rpartition(":")
-        if p == str(port):
-            out.append(host.split("%", 1)[0])
+        if p != str(port):
+            continue
+        uid, cgroup = 0, None
+        for token in parts[4:]:
+            if token.startswith("uid:") and token[4:].isdigit():
+                uid = int(token[4:])
+            elif token.startswith("cgroup:"):
+                cgroup = token[len("cgroup:") :]
+        out.append(Listener(host.split("%", 1)[0], uid, cgroup))
     return out
+
+
+def parse_listeners(ss_output: str, port: int) -> list[str]:
+    """The local addresses listening on ``port`` in ``ss -ltn`` output (``127.0.0.1``,
+    ``[::1]``, ``0.0.0.0``, ``*`` ...)."""
+    return [listener.host for listener in parse_listener_details(ss_output, port)]
 
 
 def _is_loopback(host: str) -> bool:
     return host in _LOOPBACK_HOSTS or host.startswith("127.")
 
 
+def _unit_states(probes: ServeProbes, units: Sequence[str]) -> dict[str, str] | None:
+    """``systemctl --user is-active`` of ``units`` (one state per line), ``None`` when
+    systemctl is missing or does not answer one line per unit."""
+    res = probes.runner(["systemctl", "--user", "is-active", *units])
+    states = res.stdout.split()
+    if res.returncode == 127 or len(states) != len(units):
+        return None
+    return dict(zip(units, states, strict=True))
+
+
 def _binds_check(
     rep: HealthReport, probes: ServeProbes, ports: dict[str, int], bad: Status
 ) -> None:
-    res = probes.runner(["ss", "-ltn"])
+    """``serving binds`` (DESIGN A5): each port listens on loopback only, in sockets of this
+    account (another account's socket on a free port would get the key: the units are not
+    enabled at boot), and while ``mesa-clm-encoder-proxy.socket`` is active the encoder's port
+    belongs to it (the user manager's ``init.scope`` cgroup, when ``ss`` reports cgroups); the
+    encoder unit active without that socket unit is a failure too."""
+    res = probes.runner(["ss", "-ltne"])
     if res.returncode != 0:
-        rep.add("serving binds", "warn", "`ss -ltn` not available; binds not checked")
+        rep.add("serving binds", "warn", "`ss -ltne` not available; binds not checked")
         return
-    problems, seen = [], []
+    me = os.getuid()
+    manager = f"/user@{me}.service/init.scope"
+    units = _unit_states(probes, (PROXY_SOCKET, ENCODER_UNIT))
+    failed: list[str] = []
+    missing: list[str] = []
+    seen: list[str] = []
     for name, port in ports.items():
-        hosts = parse_listeners(res.stdout, port)
-        exposed = [h for h in hosts if not _is_loopback(h)]
-        if not hosts:
-            problems.append(f"nothing listens on :{port} ({name})")
-        elif exposed:
-            problems.append(f"{name} :{port} listens on {', '.join(exposed)} (not loopback)")
-        else:
-            seen.append(f"{name} {', '.join(sorted(set(hosts)))}:{port}")
-    if any("not loopback" in p for p in problems):
-        rep.add("serving binds", "fail", "; ".join(problems))
-    elif problems:
-        rep.add("serving binds", bad, "; ".join(problems))
+        found = parse_listener_details(res.stdout, port)
+        if not found:
+            missing.append(f"nothing listens on :{port} ({name})")
+            continue
+        wrong: list[str] = []
+        exposed = [x.host for x in found if not _is_loopback(x.host)]
+        if exposed:
+            wrong.append(f"{name} :{port} listens on {', '.join(exposed)} (not loopback)")
+        foreign = sorted({x.uid for x in found if x.uid != me})
+        if foreign:
+            wrong.append(
+                f"{name} :{port} is held by a socket of uid {', '.join(map(str, foreign))}, "
+                f"not of this account (uid {me}): a client's key would go to it (DESIGN A5)"
+            )
+        via = ""
+        if name == "encoder" and units is not None:
+            if units[PROXY_SOCKET] == "active":
+                others = sorted({x.cgroup for x in found if x.cgroup and manager not in x.cgroup})
+                if others:
+                    wrong.append(
+                        f"encoder :{port} is held from {others[0]}, not by the user manager's "
+                        f"{PROXY_SOCKET}"
+                    )
+                via = f" ({PROXY_SOCKET})"
+            elif units[ENCODER_UNIT] == "active":
+                wrong.append(
+                    f"{ENCODER_UNIT} is active but {PROXY_SOCKET} is {units[PROXY_SOCKET]}: "
+                    f":{port} is not the socket unit's (install the units of deploy/systemd/)"
+                )
+        failed.extend(wrong)
+        if not wrong:
+            hosts = ", ".join(sorted({x.host for x in found}))
+            seen.append(f"{name} {hosts}:{port}{via}")
+    if failed:
+        rep.add("serving binds", "fail", "; ".join(failed + missing))
+    elif missing:
+        rep.add("serving binds", bad, "; ".join(missing))
     else:
-        rep.add("serving binds", "ok", "loopback only: " + "; ".join(seen))
+        rep.add("serving binds", "ok", f"loopback only, sockets of uid {me}: " + "; ".join(seen))
+
+
+def _encoder_socket_check(rep: HealthReport, probes: ServeProbes) -> None:
+    """``encoder socket`` (DESIGN A5): the container writes ``<serving home>/run``, the
+    directory of its API socket, so the doctor checks what the endpoint proxy will connect to:
+    a real owner-only directory holding nothing but ``encoder.sock``, and that entry a socket of
+    this account (never a symlink, which would redirect the host's :8090 to another socket).
+    No socket yet is a warning (the model is loading, or the fallback serves :8090)."""
+    run = serving_home(probes.home) / RUN_DIR
+    me = os.getuid()
+    try:
+        st = os.lstat(run)
+    except FileNotFoundError:
+        rep.add(
+            "encoder socket",
+            "warn",
+            f"{run}: missing (the units have not started, or the in-process fallback serves :8090)",
+        )
+        return
+    except OSError as exc:
+        rep.add("encoder socket", "fail", f"{run}: cannot be read ({type(exc).__name__})")
+        return
+    if not stat.S_ISDIR(st.st_mode) or st.st_uid != me or stat.S_IMODE(st.st_mode) & 0o077:
+        rep.add(
+            "encoder socket",
+            "fail",
+            f"{run}: must be a directory of this account with mode 0700 (the run script makes it)",
+        )
+        return
+    entries = sorted(os.listdir(run))
+    others = [e for e in entries if e != SOCKET_NAME]
+    sock = run / SOCKET_NAME
+    problems: list[str] = []
+    if others:
+        problems.append(f"unexpected entries in {run}: {', '.join(others[:5])}")
+    if SOCKET_NAME in entries:
+        sst = os.lstat(sock)
+        if not stat.S_ISSOCK(sst.st_mode) or sst.st_uid != me:
+            kind = "a symlink" if stat.S_ISLNK(sst.st_mode) else "not a socket of this account"
+            problems.append(f"{sock} is {kind}: the endpoint proxy must reach the encoder only")
+    if problems:
+        rep.add(
+            "encoder socket",
+            "fail",
+            "; ".join(problems) + " (the container can write this directory; restart the "
+            "encoder unit, which recreates it, and look for what changed it)",
+        )
+    elif SOCKET_NAME not in entries:
+        rep.add("encoder socket", "warn", f"{sock}: no socket yet (the model may still be loading)")
+    else:
+        rep.add("encoder socket", "ok", f"{sock}: a socket of uid {me}, alone in a 0700 directory")
 
 
 def _encoder_network_check(rep: HealthReport, probes: ServeProbes) -> None:
@@ -1450,6 +1578,7 @@ def _live_checks(
         {"encoder": _port(cfg.encoder.url, 8090), "clm-serve": _port(cfg.clm.base_url, 8700)},
         bad,
     )
+    _encoder_socket_check(rep, probes)
     _encoder_network_check(rep, probes)
     _headroom_timer_check(rep, probes)
     up: dict[str, bool] = {}

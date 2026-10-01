@@ -182,7 +182,22 @@ All notable changes to the mesa-clm package. The format follows
 - `features build` and `annotate --provider clm` compare the running encoder container with the
   lock's recipe before trusting `encoder_fp` (a container without `VLLM_BATCH_INVARIANT` answers
   `/v1/models` identically); a departure is refused, an unreachable docker is reported as "not
-  verified".
+  verified". Since the pre-merge review a container is also compared when docker answers but the
+  pinned image is absent (one started from another image used to pass as "not verified").
+- The encoder endpoint fails closed (DESIGN A5, revision before the merge): the encoder unit
+  requires its socket unit and starts after it, so a port another local account holds stops the
+  encoder and clm-serve from starting instead of letting clm-serve send the encoder key to that
+  account's socket; every keyed client (`EncoderClient`, `ClmHttpClient`) refuses to send its key
+  to a loopback port held by another account's socket (`net.assert_listener_owner`; the
+  pre-flight exits 2, a refusal mid-run fails the run), also while the units are down; the
+  doctor's `serving binds` reads `ss -ltne` and requires sockets of this account (and the
+  encoder's port in the user manager's socket unit).
+- The endpoint proxy `systemd-socket-proxyd` (which followed a symlink the container could plant
+  in the run directory, and blocked at about 170 idle connections under the user manager's
+  descriptor limit) is replaced by `serving/encoder_proxy.py` (`mesa-clm-encoder-proxy`): a socket
+  of this account only, opened without following symlinks, at most 4,096 connections under
+  `LimitNOFILE=16384`, idle ones closed after 900 s; the doctor's new `encoder socket` check fails
+  anything else in `~/.mesa/clm/run`.
 
 ### Fixed
 
@@ -199,7 +214,18 @@ All notable changes to the mesa-clm package. The format follows
 - `annotate` expands `~` in `ols.fixtures_dir` like the other verbs.
 - A curator answer on a bench card can no longer delete a pre-registered bench item (a tagged
   1.0 row used to win its identity and then be dropped: term.fits 285 → 284 items) or replace its
-  silver label (an untagged row, written while the sidecar held no silver labels).
+  silver label (an untagged row, written while the sidecar held no silver labels). Neither can a
+  row of the reserved `gold` source: `labels import-anyjev` skips it (nothing produces it), and
+  the fold filter drops every non-consensus row on a bench card.
+- `feedback` answers a group the pipeline itself rejected (the keep rule's duplicate, a
+  refinement that did not replace its parent) again; it was refused as "already has a curator
+  answer" because a `rejected` outcome without an override row counted as a curator's.
+- `annotate --eval-result --out` keeps the pre-flight notes (`preflight`, including whether the
+  encoder container was verified), as the run shape does.
+- `config.yaml.example` leaves the four key settings commented out: its explicit nulls switched
+  the default key files off, so a configuration started from it resolved no key.
+- The doctor's golden `/v1/systemone` question and the serving probes' latency and long-input
+  requests use the non-bench SRER card instead of a labelled bench item (DESIGN, "G1 freeze").
 - CLI error paths end in `mesa-clm: <message>` instead of a traceback: `provenance prune
   --ttl-days -1`, `provenance import` on an unsupported DSN, `provenance export --out` to a file,
   `serve lock --check --lock <directory>`, a blank `--actor`, end of input or Ctrl-C at the review

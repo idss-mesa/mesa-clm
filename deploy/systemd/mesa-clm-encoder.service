@@ -6,11 +6,17 @@
 Description=mesa-clm encoder (vLLM pooling Qwen3-8B behind 127.0.0.1:8090)
 Documentation=https://idss-mesa.github.io/mesa-clm/deploy/serving/
 # The container has no network and serves on a unix socket; mesa-clm-encoder-proxy.socket owns
-# 127.0.0.1:8090 (DESIGN A5). The headroom timer runs while the encoder does (plan §6.5); both
-# stop with it (PartOf=).
-Wants=mesa-clm-encoder-proxy.socket mesa-clm-headroom.timer
-# A recipe that fails after the model load (about 70-80 s and 14 GiB on the shared GPU each time) is
-# started at most three times an hour, then left failed (`systemctl --user reset-failed` clears it).
+# 127.0.0.1:8090 (DESIGN A5). The encoder requires it and starts after it, so a port that cannot
+# be bound (another account holds it) fails the encoder, and clm-serve with it, instead of
+# leaving clm-serve to send the encoder key to that account. The headroom timer runs while the
+# encoder does (plan §6.5); both stop with it (PartOf=).
+Requires=mesa-clm-encoder-proxy.socket
+After=mesa-clm-encoder-proxy.socket
+Wants=mesa-clm-headroom.timer
+# Every start counts, manual ones included: a fourth start within an hour is refused
+# (start-limit-hit), which keeps a recipe that fails after the model load (about 70-80 s and
+# 14 GiB on the shared GPU each time) from reloading every few minutes. Run
+# `systemctl --user reset-failed mesa-clm-encoder.service` before restarting it by hand.
 StartLimitIntervalSec=1h
 StartLimitBurst=3
 

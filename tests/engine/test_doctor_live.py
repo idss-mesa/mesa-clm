@@ -3,8 +3,9 @@
 included) and a zero-shot annotate passes the keyed pre-flight and the container check and goes
 through the real encoder :8090 and clm-serve :8700 with the fingerprint of the serving lock the
 host runs. The annotated card is a **non-bench** SRER card (``tests/fixtures/cards-srer``, plan
-§9's live-smoke card): until the M2 cells exist no live run looks at a bench card (DESIGN, "G1
-freeze"). Keys come from the configuration or the default files
+§9's live-smoke card): until the M2 cells exist no live annotate run looks at a bench card, and
+the doctor's golden question is that card's too (DESIGN, "G1 freeze"). Keys come from the
+configuration or the default files
 ``~/.mesa/clm/secrets/{clm,encoder}.key`` (the autouse fixture keeps the real serving home and
 docker for this marker); OLS replays the card's recorded responses (``tests/fixtures/ols-srer``),
 so nothing but loopback and the local docker daemon is contacted."""

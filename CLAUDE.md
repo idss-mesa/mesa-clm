@@ -106,9 +106,11 @@ mesa-clm writes under `~/.mesa/clm` is owner-only (0700/0600) whatever the umask
   promotion plus a restart; encoder :8090 and clm-serve :8700 on loopback with keys, the
   encoder answering nothing but `/health` without its key (A4); the vLLM encoder runs its
   batch-invariant kernels (`encoder_fp` c3b3d5e1a283, A3) in a container with no network, on a
-  unix socket that a loopback socket unit proxies, with its KV cache pinned to 4.5 GiB (A5), and
-  clients truncate at 4,095 tokens; `features build` and annotate check the running container
-  against the lock first;
+  unix socket that a loopback socket unit proxies (`serving/encoder_proxy.py`: a socket of this
+  account only, never through a symlink; the encoder requires the socket unit, so a taken port
+  fails closed), with its KV cache pinned to 4.5 GiB (A5), and clients truncate at 4,095 tokens
+  and never send a key to another account's loopback socket (`net.assert_listener_owner`);
+  `features build` and annotate check the running container against the lock first;
   remote URLs only with `MESA_CLM_CLM__ALLOW_REMOTE=1` **and** https. Never start, stop or
   enable the units as a side effect: that is the operator's.
 - MIT, Copyright (c) 2026 The Regents of the University of New Mexico. "anyjev" appears only
@@ -172,9 +174,10 @@ scripts, units) and never import `mesa_clm`.
   `gpu`, `serve`, `requires_postgres`, `e2e`, `neon` are opt-in through the environment
   variables above and excluded by default (`addopts` in `pyproject.toml`). An autouse fixture
   in `tests/conftest.py` makes the doctor offline (`health.ServeProbes.offline`: no serving
-  home, refused connections, missing commands) and points `serving.DEFAULT_HOME` at an empty
-  per-test path (no installed lock, no default key files); tests that exercise serving checks
-  inject their own `ServeProbes` or home. The live checks are `tests/engine/`
+  home, refused connections, missing commands) and points `serving.DEFAULT_HOME` and
+  `net.PROC_NET` at empty per-test paths (no installed lock, no default key files, no host
+  listeners); tests that exercise serving checks inject their own `ServeProbes`, home or
+  `/proc/net` files. The live checks are `tests/engine/`
   (`MESA_CLM_ENGINE=1`; keys from the configuration or the default key files).
 - Vendored files (`vendored.sha256`) are byte-identical to upstream and never edited; CI checks
   the hashes.

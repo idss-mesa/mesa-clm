@@ -201,12 +201,19 @@ def test_encoder_unit_matches_the_plan() -> None:
     ]
     assert _directive(text, "Restart") == ["on-failure"]
     assert _directive(text, "TimeoutStartSec") == ["900"]
-    # DESIGN A5: the loopback endpoint and the headroom timer come up with the encoder.
-    assert _directive(text, "Wants") == ["mesa-clm-encoder-proxy.socket mesa-clm-headroom.timer"]
-    # A recipe that dies after the model load is not reloaded on the shared GPU forever.
+    # DESIGN A5: the encoder requires its loopback endpoint and starts after it, so a port it
+    # cannot bind (another account holds it) fails the encoder and clm-serve (fail-closed; a
+    # Wants= alone let them start and talk to whatever held :8090); the headroom timer comes up
+    # with it.
     unit_section = text.split("[Service]", 1)[0]
+    assert _directive(unit_section, "Requires") == ["mesa-clm-encoder-proxy.socket"]
+    assert _directive(unit_section, "After") == ["mesa-clm-encoder-proxy.socket"]
+    assert _directive(unit_section, "Wants") == ["mesa-clm-headroom.timer"]
+    # A recipe that dies after the model load is not reloaded on the shared GPU forever; every
+    # start counts, and the unit says so.
     assert _directive(unit_section, "StartLimitIntervalSec") == ["1h"]
     assert _directive(unit_section, "StartLimitBurst") == ["3"]
+    assert "manual ones included" in unit_section and "reset-failed" in unit_section
 
 
 def test_serve_unit_matches_the_plan() -> None:
@@ -241,22 +248,37 @@ def test_headroom_timer_runs_every_five_minutes() -> None:
 
 def test_the_encoder_endpoint_is_a_loopback_socket_and_a_proxy() -> None:
     """DESIGN A5: 127.0.0.1:8090 belongs to a socket unit that hands connections to
-    systemd-socket-proxyd, which forwards them to the container's unix socket; neither unit can be
-    enabled on its own, and both stop with the encoder."""
+    mesa-clm-encoder-proxy (serving/encoder_proxy.py), which relays them to the container's unix
+    socket without following a symlink; neither unit can be enabled on its own, both stop with
+    the encoder, and the proxy's descriptor limit covers its connection limit (two each; the
+    user manager's default soft limit of 1,024 let ~170 idle connections block
+    systemd-socket-proxyd)."""
     units = serving.render_units()
     sock = units["mesa-clm-encoder-proxy.socket"]
     assert _directive(sock, "ListenStream") == ["127.0.0.1:8090"]
     assert _directive(sock, "PartOf") == ["mesa-clm-encoder.service"]
     proxy = units["mesa-clm-encoder-proxy.service"]
-    assert _directive(proxy, "Type") == ["notify"]
+    assert _directive(proxy, "Type") == ["simple"]
     assert _directive(proxy, "Requires") == ["mesa-clm-encoder-proxy.socket"]
     assert _directive(proxy, "PartOf") == ["mesa-clm-encoder.service"]
-    assert _directive(proxy, "ExecStart") == [
-        "/usr/lib/systemd/systemd-socket-proxyd %h/.mesa/clm/run/encoder.sock"
+    (start,) = _directive(proxy, "ExecStart")
+    assert shlex.split(start) == [
+        "%h/.mesa/clm/serve/.venv/bin/python",
+        "-I",
+        "%h/.mesa/clm/bin/mesa-clm-encoder-proxy",
+        *("--connections-max", str(serving.PROXY_CONNECTIONS_MAX)),
+        "%h/.mesa/clm/run/encoder.sock",
     ]
+    (nofile,) = _directive(proxy, "LimitNOFILE")
+    assert int(nofile) == serving.PROXY_NOFILE >= 2 * serving.PROXY_CONNECTIONS_MAX + 64
+    assert "systemd-socket-proxyd" not in proxy
     for text in (sock, proxy):
         assert "[Install]" not in text
     assert serving.ENCODER_SOCKET == "/run/mesa-clm/encoder.sock"
+    # The bootstrap installs the proxy where the unit runs it from.
+    bootstrap = (ROOT / "deploy" / "bin" / "mesa-clm-serve-bootstrap").read_text(encoding="utf-8")
+    assert '"$repo/serving/encoder_proxy.py" "$clm_home/bin/mesa-clm-encoder-proxy"' in bootstrap
+    assert (ROOT / "serving" / "encoder_proxy.py").is_file()
 
 
 def test_install_sections_only_name_targets() -> None:
@@ -463,6 +485,8 @@ class FakeHost:
         self.container_env: dict[str, str | None] | None = None
         self.container_mounts: dict[str, bool] | None = None
         self.container_network = "none"
+        # What `docker run` was given (Config.Image); the run script passes the pinned digest.
+        self.created_from = f"vllm/vllm-openai@{serving.IMAGE_DIGEST}"
         self.schema = schema
         self.commit = COMMIT
         self.diff_rc = 0
@@ -487,6 +511,8 @@ class FakeHost:
         if argv[1] == "inspect":
             if self.container is None:
                 return serving.CommandResult(1, "")
+            if argv[-1] == "{{.Config.Image}}":
+                return serving.CommandResult(0, self.created_from + "\n")
             image, cmd = self.container
             line = inspect_line(
                 image, cmd, self.container_env, self.container_mounts, self.container_network
@@ -619,6 +645,55 @@ def test_mismatches_are_problems(tmp_path: Path) -> None:
     assert "head: " in joined and "bytes" in joined
     assert "VLLM_IMAGE_TAG vllm/vllm-openai:v0.30.0" in joined
     assert "encoder container: " in joined and "not the pinned digest" in joined
+
+
+def test_a_container_is_compared_when_the_pinned_image_is_absent(tmp_path: Path) -> None:
+    """Docker answers but the pinned digest is not present (``docker rmi -f``): a container
+    started from another image used to pass the annotate and ``features build`` check as "not
+    verified"; it is now refused, and one created from the pinned digest is still compared with
+    the recipe."""
+    lock_path, _, host = _install(tmp_path)
+    lock = load_serving_lock(lock_path)
+    _, args = _encoder_run_args()
+    host.image_present = False
+    host.container = ("sha256:" + "cd" * 32, args)
+    host.created_from = "vllm/vllm-openai:v0.28.0"
+
+    def statuses() -> dict[str, list[str]]:
+        return _statuses(serving.check_encoder_container(lock, runner=host.run, docker=_docker))
+
+    checks = serving.check_encoder_container(lock, runner=host.run, docker=_docker)
+    assert _statuses(checks) == {"image": ["skip"], "encoder container": ["fail"]}
+    (bad,) = [c for c in checks if c.status == "fail"]
+    assert "runs vllm/vllm-openai:v0.28.0, not the pinned" in bad.detail
+    host.created_from = f"docker.io/vllm/vllm-openai:v0.27.1@{lock.image.digest}"
+    assert statuses() == {"image": ["skip"], "encoder container": ["ok"]}
+    host.container = ("sha256:" + "cd" * 32, [a for a in args if a != "--enforce-eager"])
+    assert statuses()["encoder container"] == ["fail"]
+    host.container = None
+    assert statuses() == {"image": ["skip"], "encoder container": ["skip"]}
+    # require_live: the absent image fails the lock check.
+    problems = serving.verify_serving_lock(
+        lock_path, home=tmp_path / "home", repo=ROOT, require_live=True, runner=host.run,
+        docker=_docker,
+    )  # fmt: skip
+    assert any(p.startswith("image: ") and "not present" in p for p in problems)
+
+
+@pytest.mark.parametrize(
+    ("created_from", "ok"),
+    [
+        (f"vllm/vllm-openai@{serving.IMAGE_DIGEST}", True),
+        (f"vllm/vllm-openai:v0.27.1@{serving.IMAGE_DIGEST}", True),
+        (f"docker.io/vllm/vllm-openai@{serving.IMAGE_DIGEST}", True),
+        ("vllm/vllm-openai:v0.27.1", False),
+        (f"other/vllm-openai@{serving.IMAGE_DIGEST}", False),
+        ("vllm/vllm-openai@sha256:" + "0" * 64, False),
+        ("", False),
+    ],
+)
+def test_created_from_pinned(created_from: str, ok: bool) -> None:
+    assert serving.created_from_pinned(created_from, serving.IMAGE_REF, serving.IMAGE_DIGEST) is ok
 
 
 def test_a_clone_edited_after_bootstrap_is_a_problem(tmp_path: Path) -> None:

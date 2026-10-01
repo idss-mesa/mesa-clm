@@ -617,6 +617,34 @@ def test_feedback(
     assert "via=tool" in captured.err
 
 
+def test_feedback_answers_a_group_the_pipeline_rejected(
+    run: dict[str, Any], env: Path, monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:  # fmt: skip
+    """The keep rule's duplicate and a refinement that did not replace its parent are
+    ``rejected`` by the pipeline with no override row; ``feedback`` at a terminal used to refuse
+    them as "already has a curator answer" (exit 1). It records the answer, as at 8962c58."""
+    rejected = [
+        g
+        for g in _store(env).groups(UUID(run["run_id"]))
+        if g["task_id"] == "term.fits" and g["outcome"] == "rejected"
+    ]
+    assert len(rejected) == 2 and not _store(env).overrides(UUID(run["run_id"]))
+    _terminal(monkeypatch, True)
+    keep, refinement = sorted(rejected, key=lambda g: bool(g.get("escalated_from")))
+    gid = str(keep["group_id"])
+    key = _offered(env, gid)[0]
+    assert main(["feedback", "--group-id", gid, "--action", "pick", "--option-key", key]) == 0
+    res = json.loads(capsys.readouterr().out)
+    assert res["via"] == "cli" and res["outcome"] == "human" and res["label_source"] == "curator"
+    gid = str(refinement["group_id"])
+    assert main(["feedback", "--group-id", gid, "--action", "reject"]) == EXIT_OK
+    assert json.loads(capsys.readouterr().out)["outcome"] == "rejected"
+    # Now a curator has answered both: a different answer is refused.
+    assert main(["feedback", "--group-id", gid, "--action", "decline"]) == EXIT_FAIL
+    assert "already has a curator answer" in capsys.readouterr().err
+
+
 def test_review_verbs_on_a_shared_postgres_sidecar_act_as_the_os_account(
     env: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
@@ -767,6 +795,10 @@ def test_serve_keys_never_print_a_key(
     new = [(secrets / n).read_text(encoding="utf-8").strip() for n in ("clm.key", "encoder.key")]
     assert new != keys and not any(k in out for k in keys + new)
     assert "systemctl --user restart mesa-clm-encoder.service mesa-clm-serve.service" in out
+    # Manual starts count against the encoder's start limit: the counter is cleared first.
+    assert out.index("systemctl --user reset-failed mesa-clm-encoder.service") < out.index(
+        "systemctl --user restart"
+    )
     (secrets / "clm.key").chmod(0o644)
     assert main(["serve", "keys", "--init", "--secrets-dir", str(secrets)]) == EXIT_FAIL
     assert not any(k in capsys.readouterr().err for k in new)

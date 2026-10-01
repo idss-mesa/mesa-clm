@@ -9,7 +9,8 @@ one row. Sources and weights, the highest winning when one target has several: `
 candidates of a pick), ``agent_pick`` 0.0 (a plain tool call; recorded, never fitted),
 ``consensus_all`` 0.8 and ``consensus_majority`` 0.6 (neon-avu-eval agreement),
 ``consensus_negative`` 0.5, ``teacher`` 0.5 / ``teacher_implicit`` 0.3 (Opus-validated neon
-curation, never fold-eligible), ``gold`` 1.0.
+curation, never fold-eligible), ``gold`` 1.0 (reserved: nothing produces it, an import skips it,
+and on a bench card it never enters a fold).
 
 The neon-avu-eval silver is *agreement between four agentic models*, not truth, and it is
 circular with the agentic baselines the bench compares against; the docs say so wherever a
@@ -81,6 +82,11 @@ INGESTED_TASKS: Final[tuple[str, ...]] = (
     "avu.value_kind",
 )
 
+# Sources the table reserves but nothing produces, in mesa-clm or in mesa-anyjev (plan §5.1:
+# ``gold``, at weight 1.0 and fold-eligible). ``import_anyjev`` skips their rows
+# (``skipped["reserved_source"]``): a row of one in a mesa-anyjev file came from no reviewed
+# process, and at 1.0 it would win a bench item's identity over the silver label (D30).
+RESERVED_SOURCES: Final[frozenset[str]] = frozenset({"gold"})
 # mesa-anyjev label sources with no mesa-clm counterpart: ``accepted_avu`` was never produced
 # and ``hosted_jev`` answers were a different model's. ``import_anyjev`` skips them by name.
 _ANYJEV_SOURCE_MAP: Final[dict[str, str]] = {s: s for s in WEIGHTS}
@@ -491,7 +497,8 @@ def import_anyjev(
 
     Identity is derived from each row's ``state_json`` (D1). Rows of inactive tasks, of a
     ``question_key`` that is not the task's current key, of a source mesa-clm has no counterpart
-    for (``accepted_avu``, ``hosted_jev``) or whose state carries no target identity are counted
+    for (``accepted_avu``, ``hosted_jev``), of a reserved source nothing produces
+    (:data:`RESERVED_SOURCES`: ``gold``) or whose state carries no target identity are counted
     in ``skipped``. When several anyjev rows collapse onto one identity (the same pair with
     different ``n_candidates``), the highest weight wins, then the latest ``ts``; a collapse
     with a different label is counted in ``conflicts``. The recorded weight is kept as is.
@@ -546,6 +553,9 @@ def import_anyjev(
         source = _ANYJEV_SOURCE_MAP.get(str(r["label_source"]))
         if source is None:
             report.skipped["unknown_source"] += 1
+            continue
+        if source in RESERVED_SOURCES:
+            report.skipped["reserved_source"] += 1
             continue
         state = r["state_json"]
         if isinstance(state, str):
@@ -630,13 +640,15 @@ class LabelledSet:
 
 def fold_exclusion(row: dict[str, Any]) -> str | None:
     """Why a label row may not enter a pre-registered fold (D19, D21, D30), or ``None``:
-    ``not_fold_eligible`` (teacher and agent rows), ``bench_card`` (a curator row on a bench
-    card, whether or not it was tagged when it was written: the fixed :data:`BENCH_CARDS` decide,
-    failing closed on a blank card)."""
+    ``not_fold_eligible`` (teacher and agent rows), ``bench_card`` (a row tagged so, or any row
+    on a bench card that is not the silver consensus: curator rows whether or not they were
+    tagged when they were written, and the reserved ``gold`` whatever wrote it; the fixed
+    :data:`BENCH_CARDS` decide, failing closed on a blank card). Only the silver labels are the
+    pre-registered items' labels, so nothing else may change one or add one."""
     if not bool(row.get("fold_eligible", True)):
         return "not_fold_eligible"
     if bool(row.get("bench_card")) or (
-        str(row.get("label_source")) in CURATOR_SOURCES
+        str(row.get("label_source")) not in CONSENSUS_SOURCES
         and is_bench_card(str(row.get("card") or ""))
     ):
         return "bench_card"

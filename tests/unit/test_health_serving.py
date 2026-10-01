@@ -7,6 +7,7 @@ The live path is ``tests/engine/test_doctor_live.py`` (marker ``engine``)."""
 from __future__ import annotations
 
 import json
+import os
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
@@ -31,10 +32,15 @@ from tests.fakes.clm_transport import FakeClmServer
 
 CLM_KEY = "clm-key-0123456789abcdef"
 ENC_KEY = "enc-key-0123456789abcdef"
+ME = os.getuid()
+# `ss -ltne` as the serving host prints it: the owner (ss omits uid:0) and the cgroup.
+MANAGER = f"/user.slice/user-{ME}.slice/user@{ME}.service"
 SS_LOOPBACK = (
-    "LISTEN 0 2048 127.0.0.1:8700 0.0.0.0:*\n"
-    "LISTEN 0 4096 127.0.0.1:8090 0.0.0.0:*\n"
-    "LISTEN 0 128 0.0.0.0:22 0.0.0.0:*\n"
+    "State Recv-Q Send-Q Local Address:Port Peer Address:PortProcess\n"
+    f"LISTEN 0 2048 127.0.0.1:8700 0.0.0.0:* uid:{ME} ino:1 sk:1 "
+    f"cgroup:{MANAGER}/app.slice/mesa-clm-serve.service <->\n"
+    f"LISTEN 0 4096 127.0.0.1:8090 0.0.0.0:* uid:{ME} ino:2 sk:2 cgroup:{MANAGER}/init.scope <->\n"
+    "LISTEN 0 128 0.0.0.0:22 0.0.0.0:* ino:3 sk:3 cgroup:/system.slice/ssh.socket <->\n"
 )
 CARC = "carc-vllm@qwen.service loaded active running CARC vLLM backend\n"
 
@@ -419,6 +425,117 @@ def test_ss_missing_is_a_warning(tmp_path: Path) -> None:
     server = FakeClmServer(clm_api_key=CLM_KEY, encoder_api_key=ENC_KEY)
     rep = doctor(_keyed(tmp_path), quick=True, serve=True, probes=_probes(tmp_path, server))
     assert _by(rep)["serving binds"].status == "warn" and rep.ok
+
+
+def _binds(ss: str, units: tuple[int, str] = (3, "inactive\ninactive\n")) -> Check:
+    """The ``serving binds`` check alone, ``systemctl --user is-active`` answering ``units``."""
+    rep = HealthReport()
+    probes = ServeProbes(runner=Runner(ss=(0, ss), units=units))
+    health._binds_check(rep, probes, {"encoder": 8090, "clm-serve": 8700}, "fail")
+    (check,) = rep.checks
+    return check
+
+
+def test_binds_need_sockets_of_this_account() -> None:
+    """DESIGN A5 (pre-merge review): a free loopback port can be taken by any local account,
+    and ``ss -ltn`` only showed that the address was loopback. The owner is checked now: a
+    socket of another account (or root's, which ``ss`` prints without ``uid:``) fails."""
+    ok = _binds(SS_LOOPBACK)
+    assert ok.status == "ok" and ok.detail.startswith(f"loopback only, sockets of uid {ME}")
+    squatted = SS_LOOPBACK.replace(
+        f"127.0.0.1:8090 0.0.0.0:* uid:{ME}", "127.0.0.1:8090 0.0.0.0:* uid:4242"
+    )
+    c = _binds(squatted)
+    assert c.status == "fail" and "encoder :8090 is held by a socket of uid 4242" in c.detail
+    rooted = SS_LOOPBACK.replace(f"127.0.0.1:8700 0.0.0.0:* uid:{ME} ", "127.0.0.1:8700 0.0.0.0:* ")
+    c = _binds(rooted)
+    assert c.status == "fail" and "clm-serve :8700 is held by a socket of uid 0" in c.detail
+
+
+def test_the_encoder_port_belongs_to_its_socket_unit() -> None:
+    both = (0, "active\nactive\n")
+    c = _binds(SS_LOOPBACK, both)
+    assert c.status == "ok" and "127.0.0.1:8090 (mesa-clm-encoder-proxy.socket)" in c.detail
+    # Another process of this account holds :8090 while the socket unit is active.
+    other = SS_LOOPBACK.replace(
+        f"cgroup:{MANAGER}/init.scope", f"cgroup:{MANAGER}/app.slice/x.service"
+    )
+    c = _binds(other, both)
+    assert (
+        c.status == "fail" and "not by the user manager's mesa-clm-encoder-proxy.socket" in c.detail
+    )
+    # ss without cgroup ids (cgroup v1, an old kernel): the owner check still applies.
+    bare = "".join(
+        " ".join(t for t in line.split() if not t.startswith("cgroup:")) + "\n"
+        for line in SS_LOOPBACK.splitlines()
+    )
+    assert _binds(bare, both).status == "ok"
+    # The encoder unit up without its socket unit (a unit file from before the fix).
+    c = _binds(SS_LOOPBACK, (3, "inactive\nactive\n"))
+    assert c.status == "fail" and "mesa-clm-encoder.service is active but" in c.detail
+    # Neither active (the in-process fallback serves both ports): the owner check only.
+    assert _binds(SS_LOOPBACK).status == "ok"
+    assert _binds(SS_LOOPBACK, (127, "")).status == "ok"  # no systemctl
+
+
+def test_parse_listener_details() -> None:
+    from mesa_clm.health import Listener, parse_listener_details
+
+    assert parse_listener_details(SS_LOOPBACK, 8090) == [
+        Listener("127.0.0.1", ME, f"{MANAGER}/init.scope")
+    ]
+    assert parse_listener_details(SS_LOOPBACK, 22) == [
+        Listener("0.0.0.0", 0, "/system.slice/ssh.socket")  # noqa: S104
+    ]
+    assert parse_listener_details("LISTEN 0 5 [::1]:8700 [::]:*\n", 8700) == [
+        Listener("[::1]", 0, None)
+    ]
+
+
+def _socket_probes(tmp_path: Path) -> tuple[ServeProbes, Path]:
+    home = tmp_path / "home"
+    run = home / "run"
+    run.mkdir(parents=True, mode=0o700)
+    run.chmod(0o700)
+    return ServeProbes(home=home), run
+
+
+def _socket_check(probes: ServeProbes) -> Check:
+    rep = HealthReport()
+    health._encoder_socket_check(rep, probes)
+    (check,) = rep.checks
+    return check
+
+
+def test_the_encoder_socket_check(tmp_path: Path) -> None:
+    """DESIGN A5: the container writes ``run/``; the doctor fails a symlink or a stranger
+    there, which would redirect the host's :8090 (the proxy itself refuses both)."""
+    import socket as socket_mod
+
+    probes, run = _socket_probes(tmp_path)
+    assert _socket_check(probes).status == "warn"  # no socket yet: the model is loading
+    sock = socket_mod.socket(socket_mod.AF_UNIX, socket_mod.SOCK_STREAM)
+    try:
+        sock.bind(str(run / "encoder.sock"))
+        c = _socket_check(probes)
+        assert c.status == "ok" and "alone in a 0700 directory" in c.detail
+        (run / "notes.txt").write_text("x", encoding="utf-8")
+        c = _socket_check(probes)
+        assert c.status == "fail" and "unexpected entries" in c.detail and "notes.txt" in c.detail
+        (run / "notes.txt").unlink()
+        (run / "encoder.sock").unlink()
+        (run / "encoder.sock").symlink_to(tmp_path / "elsewhere.sock")
+        c = _socket_check(probes)
+        assert c.status == "fail" and "encoder.sock is a symlink" in c.detail
+        (run / "encoder.sock").unlink()
+        (run / "encoder.sock").write_text("", encoding="utf-8")
+        assert "not a socket of this account" in _socket_check(probes).detail
+        run.chmod(0o755)
+        assert _socket_check(probes).status == "fail"
+    finally:
+        run.chmod(0o700)
+        sock.close()
+    assert _socket_check(ServeProbes(home=tmp_path / "missing")).status == "warn"
 
 
 # -- the full serve-mode probes -----------------------------------------------------------------

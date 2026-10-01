@@ -16,11 +16,15 @@ keys|units|lock`` verbs:
 * :func:`render_units` - the systemd ``--user`` units (plan §6.1, §6.2): the encoder, clm-serve,
   the headroom check and its timer, and the encoder's loopback endpoint (DESIGN A5: the
   container has no network and serves on a unix socket; ``mesa-clm-encoder-proxy.socket`` owns
-  127.0.0.1:8090 and ``systemd-socket-proxyd`` forwards to the socket). The encoder pulls in the
-  endpoint and the headroom timer (``Wants=``), which stop with it (``PartOf=``), and is started
-  at most three times an hour. ``%h`` is left for systemd to expand; ``deploy/systemd/`` holds the
-  default rendering and a unit test keeps the two identical. Installing or enabling a unit is
-  always a separate user action.
+  127.0.0.1:8090 and the bootstrap-installed ``mesa-clm-encoder-proxy``,
+  ``serving/encoder_proxy.py``, relays each connection to that socket, never through a symlink).
+  The encoder requires the endpoint socket and starts after it (``Requires=``, ``After=``: a port
+  another account holds fails the encoder and clm-serve instead of leaving them to talk to that
+  account's socket) and pulls in the headroom timer (``Wants=``); both stop with it
+  (``PartOf=``). The encoder is started at most three times an hour, manual starts included.
+  ``%h`` is left for systemd to expand; ``deploy/systemd/`` holds the default rendering and a
+  unit test keeps the two identical. Installing or enabling a unit is always a separate user
+  action.
 * :func:`read_netns` / :func:`netns_problems` - the encoder container's network namespace read
   from ``/proc/<pid>/net`` (interfaces and listening sockets), for the doctor and the probes:
   a listener on a non-loopback address in a namespace with another interface than ``lo`` is a
@@ -71,6 +75,7 @@ from mesa_clm.clm.fingerprint import (
     load_serving_lock,
     sign_lock_body,
 )
+from mesa_clm.net import proc_address as _proc_address
 from mesa_clm.perms import private_dir, write_private_text
 from mesa_clm.secrets import SecretError, read_secret_file
 
@@ -143,14 +148,19 @@ KV_CACHE_MEMORY_BYTES: Final[int] = MAX_NUM_SEQS * ENCODER.max_len * KV_BYTES_PE
 # DESIGN A5: the container has no network (docker --network none), so nothing its processes bind
 # (the engine's TCPStore and Gloo listeners included) is reachable from the host. vLLM serves on a
 # unix socket in <home>/run (0700, bind-mounted at SOCKET_MOUNT); the socket unit
-# mesa-clm-encoder-proxy.socket owns 127.0.0.1:8090 and hands each connection to
-# systemd-socket-proxyd, which forwards it to that socket.
+# mesa-clm-encoder-proxy.socket owns 127.0.0.1:8090 and hands its connections to
+# mesa-clm-encoder-proxy (serving/encoder_proxy.py, installed by the bootstrap into <home>/bin),
+# which relays each one to that socket after checking, without following a symlink, that the
+# entry is a socket of this account (the container writes the directory). It holds at most
+# PROXY_CONNECTIONS_MAX connections, two descriptors each, under LimitNOFILE=PROXY_NOFILE.
 ENCODER_NETWORK: Final[str] = "none"
 RUN_DIR: Final[str] = "run"
 SOCKET_MOUNT: Final[str] = "/run/mesa-clm"
 SOCKET_NAME: Final[str] = "encoder.sock"
 ENCODER_SOCKET: Final[str] = f"{SOCKET_MOUNT}/{SOCKET_NAME}"
-SOCKET_PROXYD: Final[str] = "/usr/lib/systemd/systemd-socket-proxyd"
+PROXY_SCRIPT: Final[str] = "mesa-clm-encoder-proxy"
+PROXY_CONNECTIONS_MAX: Final[int] = 4096
+PROXY_NOFILE: Final[int] = 16384
 
 # The container's non-secret environment (deploy/bin/mesa-clm-encoder-run; VLLM_API_KEY arrives
 # through --env-file and is never named here). VLLM_NO_USAGE_STATS / DO_NOT_TRACK stop vLLM's
@@ -369,11 +379,17 @@ _TEMPLATES: Final[dict[str, str]] = {
 Description=mesa-clm encoder (vLLM pooling Qwen3-8B behind 127.0.0.1:8090)
 Documentation={docs}
 # The container has no network and serves on a unix socket; {proxy_socket} owns
-# 127.0.0.1:8090 (DESIGN A5). The headroom timer runs while the encoder does (plan §6.5); both
-# stop with it (PartOf=).
-Wants={proxy_socket} {headroom_timer}
-# A recipe that fails after the model load (about 70-80 s and 14 GiB on the shared GPU each time) is
-# started at most three times an hour, then left failed (`systemctl --user reset-failed` clears it).
+# 127.0.0.1:8090 (DESIGN A5). The encoder requires it and starts after it, so a port that cannot
+# be bound (another account holds it) fails the encoder, and clm-serve with it, instead of
+# leaving clm-serve to send the encoder key to that account. The headroom timer runs while the
+# encoder does (plan §6.5); both stop with it (PartOf=).
+Requires={proxy_socket}
+After={proxy_socket}
+Wants={headroom_timer}
+# Every start counts, manual ones included: a fourth start within an hour is refused
+# (start-limit-hit), which keeps a recipe that fails after the model load (about 70-80 s and
+# 14 GiB on the shared GPU each time) from reloading every few minutes. Run
+# `systemctl --user reset-failed {encoder_unit}` before restarting it by hand.
 StartLimitIntervalSec=1h
 StartLimitBurst=3
 
@@ -452,8 +468,9 @@ WantedBy=timers.target
     PROXY_SOCKET: """\
 # mesa-clm encoder endpoint: 127.0.0.1:{encoder_port}, forwarded to the container's unix socket (DESIGN A5).
 {header}
-# Started by {encoder_unit} (Wants=) and stopped with it (PartOf=); without an
-# install section it can never be enabled on its own.
+# Started before {encoder_unit}, which requires it (Requires=, After=), and stopped with
+# it (PartOf=); a port it cannot bind fails the encoder. Without an install section it can never
+# be enabled on its own.
 [Unit]
 Description=mesa-clm encoder endpoint (127.0.0.1:{encoder_port})
 Documentation={docs}
@@ -466,8 +483,11 @@ NoDelay=true
     PROXY_SERVICE: """\
 # mesa-clm encoder proxy: connections on 127.0.0.1:{encoder_port} to {home}/{run_dir}/{socket_name} (DESIGN A5).
 {header}
-# Socket-activated by {proxy_socket}. The encoder container creates the
-# socket in a 0700 directory, so only this account can reach it.
+# Socket-activated by {proxy_socket}. The encoder container creates
+# its socket in a 0700 directory it can write; {proxy_script}
+# (serving/encoder_proxy.py, installed by the bootstrap) connects only to a socket of this
+# account there, never through a symlink, and holds at most {proxy_max} connections (two
+# descriptors each, hence LimitNOFILE).
 [Unit]
 Description=mesa-clm encoder proxy (127.0.0.1:{encoder_port} to the encoder's unix socket)
 Documentation={docs}
@@ -476,8 +496,10 @@ After={proxy_socket}
 PartOf={encoder_unit}
 
 [Service]
-Type=notify
-ExecStart={proxyd} {home}/{run_dir}/{socket_name}
+Type=simple
+ExecStart={home}/serve/.venv/bin/python -I {home}/bin/{proxy_script} \\
+    --connections-max {proxy_max} {home}/{run_dir}/{socket_name}
+LimitNOFILE={proxy_nofile}
 SyslogIdentifier=mesa-clm-encoder-proxy
 """,
 }
@@ -520,7 +542,9 @@ def render_units(home: str | Path = DEFAULT_HOME) -> dict[str, str]:
         "headroom_service": HEADROOM_SERVICE,
         "headroom_timer": HEADROOM_TIMER,
         "proxy_socket": PROXY_SOCKET,
-        "proxyd": SOCKET_PROXYD,
+        "proxy_script": PROXY_SCRIPT,
+        "proxy_max": PROXY_CONNECTIONS_MAX,
+        "proxy_nofile": PROXY_NOFILE,
         "run_dir": RUN_DIR,
         "socket_name": SOCKET_NAME,
         "encoder_port": ENCODER_PORT,
@@ -749,8 +773,9 @@ def check_encoder_container(
 ) -> list[LockCheck]:
     """Only the image and running-container checks of :func:`check_serving_lock`: the pinned
     image present and the encoder container running it with the lock's arguments, environment,
-    mounts and network. Anything absent (docker unreachable, the image or the container
-    missing) is a ``skip``; a container that departs from the lock is a ``fail``. This is what
+    mounts and network. Docker unreachable, the pinned image absent or no container is a
+    ``skip``; a container that departs from the lock is a ``fail``, also when the pinned image is
+    absent (a container not created from the pinned digest, or with another recipe). This is what
     ``features build`` and the annotate pre-flight ask before trusting the lock's ``encoder_fp``
     for what the encoder returns (``/v1/models`` cannot tell the recipes apart)."""
     return _check_image(lock, "skip", runner or run_command, docker or docker_argv)
@@ -954,11 +979,52 @@ def _check_image(
     inspect = dock(["image", "inspect", pinned, "--format", "{{.Id}}\t{{json .Config.Env}}"])
     res = run(inspect) if inspect is not None else CommandResult(127, "")
     if res.returncode != 0:
-        return [LockCheck("image", absent, f"{pinned}: not present (docker pull it by digest)")]
+        # Docker answers but the pinned image is not here: an encoder container that runs is
+        # still compared, or one started from another image would pass as "not verified".
+        return [
+            LockCheck("image", absent, f"{pinned}: not present (docker pull it by digest)"),
+            _container_without_pinned_image(lock, pinned, run, dock),
+        ]
     image_id, _, env_json = res.stdout.strip().partition("\t")
     checks = [_image_tag_check(pinned, tag, env_json)]
     checks.append(_container_check(lock, image_id, run, dock))
     return checks
+
+
+def created_from_pinned(created_from: str, ref: str, digest: str) -> bool:
+    """Whether a container's ``Config.Image`` (what ``docker run`` was given) names the pinned
+    digest of ``ref``: ``ref@digest`` or ``ref:tag@digest``, with or without ``docker.io/``."""
+    name, at, got = created_from.strip().partition("@")
+    if not at or got != digest:
+        return False
+    for prefix in ("docker.io/library/", "docker.io/"):
+        if name.startswith(prefix):
+            name = name[len(prefix) :]
+            break
+    if ":" in name.rsplit("/", 1)[-1]:
+        name = name.rsplit(":", 1)[0]
+    return name == ref
+
+
+def _container_without_pinned_image(
+    lock: ServingLock, pinned: str, run: Runner, dock: DockerArgv
+) -> LockCheck:
+    """The encoder container when the pinned image is absent: none is a ``skip``; one created
+    from another image a ``fail``; one created from the pinned digest (since removed here) is
+    compared like any other, without the image id."""
+    argv = dock(["inspect", ENCODER_CONTAINER, "--format", "{{.Config.Image}}"])
+    res = run(argv) if argv is not None else CommandResult(127, "")
+    if res.returncode != 0:
+        return LockCheck("encoder container", "skip", f"{ENCODER_CONTAINER}: not running")
+    created_from = res.stdout.strip()
+    if not created_from_pinned(created_from, lock.image.ref, lock.image.digest):
+        return LockCheck(
+            "encoder container",
+            "fail",
+            f"{ENCODER_CONTAINER}: runs {created_from or 'an unnamed image'}, not the pinned "
+            f"{pinned} (not present here)",
+        )
+    return _container_check(lock, None, run, dock)
 
 
 def _image_tag_check(pinned: str, tag: str, env_json: str) -> LockCheck:
@@ -1028,7 +1094,11 @@ def parse_inspect(stdout: str) -> ContainerState | None:
     return ContainerState(image, cmd, env, mounts, network.strip())
 
 
-def _container_check(lock: ServingLock, image_id: str, run: Runner, dock: DockerArgv) -> LockCheck:
+def _container_check(
+    lock: ServingLock, image_id: str | None, run: Runner, dock: DockerArgv
+) -> LockCheck:
+    """The running encoder container against the lock's recipe; ``image_id`` is the pinned
+    image's id (``None``: not present here, the container was created from the pinned digest)."""
     recipe = lock.recipe
     watched = _WATCHED_ENV | set(recipe.env if recipe is not None else ())
     argv = dock(["inspect", ENCODER_CONTAINER, "--format", inspect_format(watched)])
@@ -1038,7 +1108,7 @@ def _container_check(lock: ServingLock, image_id: str, run: Runner, dock: Docker
     state = parse_inspect(res.stdout)
     if state is None:
         return LockCheck("encoder container", "fail", f"{ENCODER_CONTAINER}: unreadable inspect")
-    if state.image != image_id:
+    if image_id is not None and state.image != image_id:
         return LockCheck(
             "encoder container",
             "fail",
@@ -1095,15 +1165,6 @@ class NetnsState(NamedTuple):
     pid: int
     interfaces: list[str]
     listeners: list[str]
-
-
-def _proc_address(hex_addr: str) -> ipaddress.IPv4Address | ipaddress.IPv6Address:
-    """A ``/proc/net/tcp{,6}`` address: little-endian 32-bit words, as the kernel prints them."""
-    raw = bytes.fromhex(hex_addr)
-    if len(raw) == 4:
-        return ipaddress.IPv4Address(raw[::-1])
-    words = b"".join(raw[i : i + 4][::-1] for i in range(0, len(raw), 4))
-    return ipaddress.IPv6Address(words)
 
 
 def _loopback(addr: ipaddress.IPv4Address | ipaddress.IPv6Address) -> bool:
@@ -1253,6 +1314,7 @@ __all__ = [
     "check_encoder_container",
     "check_serving_lock",
     "container_pid",
+    "created_from_pinned",
     "default_lock_path",
     "docker_argv",
     "encoder_recipe",

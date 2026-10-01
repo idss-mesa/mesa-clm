@@ -35,7 +35,8 @@ honest :class:`~mesa_clm.providers.base.DecisionRecord`:
   (:data:`REFUSED_STATUSES`: a rejected key or a wrong route, which would answer every group
   the same way) raises :class:`~mesa_clm.providers.base.DeciderRefused` instead, so a
   misconfigured run fails (and is recorded ``failed``) rather than quietly proposing
-  ``ols_rank`` under the requested tier.
+  ``ols_rank`` under the requested tier; so does a clm-serve port held by another account's
+  socket (:class:`mesa_clm.net.ListenerOwnerError`, the key not sent; DESIGN A5).
 
 :class:`FakeProvider` is the same provider over :class:`~mesa_clm.clm.fake.FakeClm` with
 ``method='fake'``, in process or through the fake transport. :class:`OlsRankProvider` is the
@@ -84,7 +85,7 @@ from mesa_clm.framings import (
     build_context,
     context_text,
 )
-from mesa_clm.net import EndpointError
+from mesa_clm.net import EndpointError, ListenerOwnerError
 from mesa_clm.providers.base import (
     ArtifactRef,
     CallStatus,
@@ -691,6 +692,10 @@ class TieredProvider:
                     error=message[:_ERROR_CHARS],
                 )
             )
+            if isinstance(exc, ListenerOwnerError):
+                # Another account holds clm-serve's port: the key was not sent, and every
+                # group would meet the same socket (DESIGN A5).
+                raise DeciderRefused(0, f"clm-serve refused before /v1/systemone: {exc}") from None
             if isinstance(exc, ClmError) and exc.status in REFUSED_STATUSES:
                 # A wrong key or route answers every group the same way: refuse the run rather
                 # than degrade it to ols_rank group by group (module docstring).

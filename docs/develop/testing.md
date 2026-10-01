@@ -73,8 +73,14 @@ refused, every command missing, no meminfo, no goldens. It also points `serving.
 an empty per-test path, so neither the installed serving lock nor the default key files under
 `~/.mesa/clm/secrets` reach a test (the `engine` tests keep the real home). The hermetic suite
 therefore never probes a port, runs `systemctl` or reads a key, whatever host it runs on; `tests/unit/test_health_serving.py` injects its own probes (the fake CLM transport,
-scripted `ss -ltn` and `systemctl` output, a meminfo file) to drive every serving check, and
-`tests/engine/test_doctor_live.py` passes the real `ServeProbes()`.
+scripted `ss -ltne` and `systemctl` output, a meminfo file, a scratch run directory with a real
+unix socket) to drive every serving check, and `tests/engine/test_doctor_live.py` passes the
+real `ServeProbes()`. The same fixture points `net.PROC_NET` at an empty path, so the keyed
+clients' port-owner check reads no listener of the host; `tests/unit/test_listener_owner.py`
+drives it with fixture `/proc/net/tcp` and `tcp6` files (another account's socket on 8090 or
+8700 is refused before the key is sent, the pre-flight exits 2, a refusal mid-run fails the
+run), and `serving/tests/test_encoder_proxy.py` the encoder's endpoint proxy (a symlinked or
+foreign socket refused, the relay, the connection limit, the idle timeout).
 
 ## Key tests
 

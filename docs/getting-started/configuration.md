@@ -37,7 +37,8 @@ neither `clm.api_key` nor `clm.api_key_file` is set, the key is read from
 `~/.mesa/clm/secrets/clm.key` if that file exists (what `mesa-clm serve keys --init` writes),
 and likewise `encoder.key` for the encoder: only in the `auto` and `file` modes, after an
 inline value, a configured file and (in `auto`) the keyring; an explicit empty value
-(`MESA_CLM_CLM__API_KEY_FILE=`) turns the default off. The default is resolved when the key is
+(`MESA_CLM_CLM__API_KEY_FILE=`) turns the default off, and so does an explicit `null` in the
+YAML file, which is why `config.yaml.example` keeps the four key settings commented out. The default is resolved when the key is
 read, never stored in the configuration, so `config_sha256` does not change with it, and the file
 must pass the same 0600 and owner rules as any key file. No secret is ever logged, hashed into
 a fingerprint or written to a run record, and a configuration error never shows a value or a

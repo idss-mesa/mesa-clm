@@ -40,7 +40,7 @@ repository and never imports `mesa_clm`. `mesa-clm annotate --provider clm` uses
 
 | Process | Port | What | Unit |
 |---|---|---|---|
-| Encoder | `127.0.0.1:8090` (a socket unit) | `vllm/vllm-openai` v0.27.1 (pinned by digest) running `Qwen/Qwen3-8B` at the pinned revision with `--runner pooling --dtype bfloat16 --max-model-len 4096 --max-num-seqs 8 --no-enable-prefix-caching --gpu-memory-utilization 0.20 --kv-cache-memory-bytes 4831838208 --enforce-eager`, vLLM's batch-invariant kernels (`VLLM_BATCH_INVARIANT=1`, DESIGN A3), the bearer guard `--middleware vllm_auth.require_api_key` mounted read-only and `--disable-fastapi-docs` (DESIGN A4), usage reporting off, offline HF cache mounted read-only, `VLLM_API_KEY` from an env file; the container has **no network** and serves on the unix socket `~/.mesa/clm/run/encoder.sock`, which `mesa-clm-encoder-proxy.socket` and `systemd-socket-proxyd` expose on 127.0.0.1:8090 (DESIGN A5) | `mesa-clm-encoder.service` (user unit, `sg docker`), which also starts the proxy socket and the headroom timer |
+| Encoder | `127.0.0.1:8090` (a socket unit) | `vllm/vllm-openai` v0.27.1 (pinned by digest) running `Qwen/Qwen3-8B` at the pinned revision with `--runner pooling --dtype bfloat16 --max-model-len 4096 --max-num-seqs 8 --no-enable-prefix-caching --gpu-memory-utilization 0.20 --kv-cache-memory-bytes 4831838208 --enforce-eager`, vLLM's batch-invariant kernels (`VLLM_BATCH_INVARIANT=1`, DESIGN A3), the bearer guard `--middleware vllm_auth.require_api_key` mounted read-only and `--disable-fastapi-docs` (DESIGN A4), usage reporting off, offline HF cache mounted read-only, `VLLM_API_KEY` from an env file; the container has **no network** and serves on the unix socket `~/.mesa/clm/run/encoder.sock`, which `mesa-clm-encoder-proxy.socket` exposes on 127.0.0.1:8090 through `mesa-clm-encoder-proxy` (`serving/encoder_proxy.py`: a socket of this account only, never through a symlink, at most 4,096 connections; DESIGN A5) | `mesa-clm-encoder.service` (user unit, `sg docker`), which requires the proxy socket (a port it cannot bind stops the encoder and clm-serve from starting) and starts the headroom timer |
 | clm-serve | `127.0.0.1:8700` | CLM `bb42c6c5` with patches 0001–0006 in its own venv (`~/.mesa/clm/serve/.venv`, uv CPython 3.11, torch CPU, **no vllm**), `--device cpu --action-cache 512MiB --max-tokens 4095 --no-download --no-ui`, the pinned head `CLM_v0.1-8B.pt` and promoted heads from `heads/served/` | `mesa-clm-serve.service` (`Requires=` the encoder) |
 
 Both bind loopback only and require bearer keys; the encoder answers nothing but `/health`
@@ -76,8 +76,12 @@ parameters, and the encoder gets the whole 0.20 GPU share (about 24.3 GiB on the
 unified-memory GB10). Without a pin vLLM sized its KV cache at each start to fill the share
 (25,153 MiB by `nvidia-smi`, `serving_m1b.json`); DESIGN A5 pins it to the 4.5 GiB that 8
 sequences of 4,096 tokens need, and the encoder now measures 19,609 MiB by `nvidia-smi` and
-21.45 GiB by the `MemAvailable` difference (`bench/results/2026-10-01/serving_m1c.json`). A
-recipe that fails after its model load is started at most three times an hour.
+21.45 GiB by the `MemAvailable` difference (`bench/results/2026-10-01/serving_m1c.json`). The
+encoder is started at most three times an hour, manual starts included, so a recipe that fails
+after its model load does not reload it on the shared GPU every few minutes. A loopback port is
+shared by every account on the host and free while the units are down, so every mesa-clm
+client that sends a key first checks that the socket holding the port belongs to this account
+and refuses another's (DESIGN A5).
 
 ## Patches carried
 
@@ -132,9 +136,11 @@ could not answer is reported as "not verified".
 
 `mesa-clm doctor --serve` (the light half automatic when both units are active) adds the live
 probes. Every URL first passes the clients' loopback rule and is printed redacted. Then:
-loopback-only binds on both ports (`ss -ltn`); the **encoder network**: the container's own
-namespace read from `/proc/<pid>/net`, which `ss` cannot see, where a listener on a non-loopback
-address next to an interface besides `lo` fails (DESIGN A5); the headroom timer active (a
+the **binds** of both ports (`ss -ltne`: loopback only, sockets of this account, and while the
+socket unit is active the encoder's port in the user manager's cgroup); the **encoder socket**
+(`~/.mesa/clm/run` holds nothing but a socket of this account, never a symlink); the **encoder
+network**: the container's own namespace read from `/proc/<pid>/net`, which `ss` cannot see,
+where a listener on a non-loopback address next to an interface besides `lo` fails (DESIGN A5); the headroom timer active (a
 warning otherwise); `/health` 200 on both without a key; the **401
 matrix**: without a key, every route vLLM registers on the encoder (17 besides `/health`) and an
 unknown path, and clm-serve's `/v1/models`, `/v1/systemone` and `/v1/rank`, must answer 401;

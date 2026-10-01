@@ -50,7 +50,7 @@ loopback and both behind bearer keys:
 | Unit | Port | What |
 |---|---|---|
 | `mesa-clm-encoder.service` | (a unix socket) | `vllm/vllm-openai` v0.27.1, pinned by digest, serving `Qwen/Qwen3-8B` bf16 with last-token pooling, offline, `--gpu-memory-utilization 0.20` with the KV cache pinned to 4.5 GiB, batch-invariant kernels (`VLLM_BATCH_INVARIANT=1`), every route but `/health` behind the bearer guard `serving/vllm_auth.py`; the container has no network (`--network none`) and listens on `~/.mesa/clm/run/encoder.sock` (DESIGN A5) |
-| `mesa-clm-encoder-proxy.socket`, `mesa-clm-encoder-proxy.service` | `127.0.0.1:8090` | the encoder's endpoint: systemd listens on loopback and `systemd-socket-proxyd` forwards each connection to the socket; started with the encoder (`Wants=`) and stopped with it (`PartOf=`) |
+| `mesa-clm-encoder-proxy.socket`, `mesa-clm-encoder-proxy.service` | `127.0.0.1:8090` | the encoder's endpoint: systemd listens on loopback and `mesa-clm-encoder-proxy` (`serving/encoder_proxy.py`) relays each connection to the socket, only when that entry is a socket of this account (never through a symlink: the container can write the directory), at most 4,096 connections at a time; the encoder requires it and starts after it (`Requires=`, `After=`: if the port cannot be bound, the encoder and clm-serve do not start) and it stops with the encoder (`PartOf=`) |
 | `mesa-clm-serve.service` | `127.0.0.1:8700` | the patched `clm-serve` (CLM `bb42c6c5` + patches 0001–0006) in `~/.mesa/clm/serve/.venv`, heads on CPU, the pinned head plus promoted heads, inputs truncated to 4,095 tokens |
 | `mesa-clm-headroom.timer` | — | every 5 minutes, fails when `MemAvailable` drops below 8 GiB; started and stopped with the encoder |
 
@@ -66,7 +66,7 @@ commands below prints a key, and nothing here enables a unit at boot.
 |---|---|---|
 | `serve/CLM`, `serve/.venv`, `serve/patches.applied.json` | bootstrap | patched clone, serve venv, the applied series and its git tree |
 | `heads/CLM_v0.1-8B.pt`, `heads/npz/<sha8>.npz`, `heads/served/` | bootstrap; promotion (M4) | the pinned head, its numpy export, promoted heads (clm-serve globs `*.pt` at start) |
-| `bin/` | bootstrap | `mesa-clm-encoder-run`, `mesa-clm-wait-http`, `mesa-clm-check-headroom`, `mesa-clm-serve-bootstrap` |
+| `bin/` | bootstrap | `mesa-clm-encoder-run`, `mesa-clm-wait-http`, `mesa-clm-check-headroom`, `mesa-clm-serve-bootstrap`, and `mesa-clm-encoder-proxy` (from `serving/encoder_proxy.py`, run by the serve venv's Python) |
 | `serve/vllm-auth/vllm_auth.py` (0700 directory, 0600 file) | bootstrap | the encoder's bearer guard, mounted read-only into the container (DESIGN A4) |
 | `serving.lock.json` | bootstrap | the lock the host was built from |
 | `secrets/` (0700) | keys step | `clm.key`, `encoder.key` (raw, 0600) and the derived `clm.env`, `encoder.env` (0600) |
@@ -94,9 +94,10 @@ It re-verifies the lock's `lock_sha`, clones CLM at the pinned commit, asserts t
 (vllm is never installed there), downloads the head at the pinned revision and verifies its size
 (75,557,149 bytes) and sha256, exports it to `heads/npz/`, installs the encoder's bearer guard
 (`serving/vllm_auth.py`, its sha256 checked against the lock's recipe) into
-`~/.mesa/clm/serve/vllm-auth/` with modes 0700/0600, and installs the scripts and the lock. A
-running encoder reads the guard only when it starts: restart the units after a bootstrap that
-changed it.
+`~/.mesa/clm/serve/vllm-auth/` with modes 0700/0600, and installs the scripts, the encoder's
+endpoint proxy (`serving/encoder_proxy.py` as `bin/mesa-clm-encoder-proxy`) and the lock. A
+running encoder reads the guard only when it starts, and the proxy only when its socket unit
+next starts it: restart the units after a bootstrap that changed either.
 Every step is skipped when it is already done and verified, so re-running it is safe; it refuses
 (and changes nothing) when the clone carries changes other than the series, or when a head file
 of another sha256 is in the way. It never creates keys, installs units or starts anything.
@@ -122,16 +123,28 @@ export MESA_CLM_CLM__API_KEY_FILE=/path/to/clm.key        # only when not ~/.mes
 export MESA_CLM_ENCODER__API_KEY_FILE=/path/to/encoder.key
 ```
 
-Rotate both keys, then restart both units so the running processes pick them up:
+Rotate both keys, then restart both units so the running processes pick them up (every start
+of the encoder counts against its limit of three an hour, manual ones included, so clear the
+counter first; section 4):
 
 ```bash
 uv run mesa-clm serve keys --rotate
+systemctl --user reset-failed mesa-clm-encoder.service
 systemctl --user restart mesa-clm-encoder.service mesa-clm-serve.service
 ```
 
-`--rotate` replaces the keys and prints that `systemctl --user restart` line; it restarts nothing
+`--rotate` replaces the keys and prints the `systemctl --user restart` line; it restarts nothing
 itself, and the running units keep the old keys until they are restarted. The library
 equivalent is `mesa_clm.serving.init_keys()` (`rotate=True`), which returns paths only.
+
+Keep keys off command lines and out of terminals: `/proc` on this host is mounted without
+`hidepid`, so every local account can read every process's arguments, and a terminal's output
+ends up in logs and transcripts. Never `cat`, `sed` or `grep` the `secrets/` directory to the
+screen. To check whether a key leaked into a tree, match it from its file and print file names
+only, e.g. `grep -rlF -f ~/.mesa/clm/secrets/clm.key -- DIR` (the pattern is read from the file,
+never put on argv; `-l` prints names, never the matching line), or match inside a process as
+`scripts/serving_probes.py` does. A key that was printed, logged or put on argv is exposed:
+rotate both as above.
 
 ## 3. Install the units without enabling them
 
@@ -145,7 +158,11 @@ systemd-analyze --user verify ~/.config/systemd/user/mesa-clm-*.service \
 
 `deploy/systemd/` is the default rendering of `mesa_clm.serving.render_units()` (a unit test
 keeps them identical); `uv run mesa-clm serve units [--home DIR]` prints the rendering for a
-serving home, and the units spell the home as `%h`. `systemd-analyze verify` only complains
+serving home, and the units spell the home as `%h`. Re-install them (and `daemon-reload`) after
+a mesa-clm update changes them: before the M1 merge the encoder unit gained `Requires=` and
+`After=` on its socket unit, and the proxy service now runs `mesa-clm-encoder-proxy` under
+`LimitNOFILE=16384` instead of `systemd-socket-proxyd` (DESIGN A5); a running unit keeps its old
+definition until it is restarted. `systemd-analyze verify` only complains
 about missing executables under `%h/.mesa/clm/` until the bootstrap has run. Do **not** run
 `systemctl --user enable`: with lingering on, an enabled unit starts at boot, and that waits for
 the CARC allocation below. The two proxy units have no install section and cannot be enabled at
@@ -170,10 +187,24 @@ systemctl --user stop mesa-clm-serve.service mesa-clm-encoder.service
 
 The encoder is started at most three times an hour (`StartLimitIntervalSec=1h`,
 `StartLimitBurst=3`), so a recipe that fails after its model load does not reload it on the
-shared GPU every few minutes; after the cause is fixed, `systemctl --user reset-failed
-mesa-clm-encoder.service` allows the next start. The run script refuses an `encoder.env` without
+shared GPU every few minutes. Every start counts, manual starts and restarts included, so a
+fourth start within the hour is refused with `start-limit-hit` even when nothing failed: before
+starting or restarting the encoder by hand, run
+
+```bash
+systemctl --user reset-failed mesa-clm-encoder.service   # clears the start counter (and a failed state)
+```
+
+and after a real failure, fix the cause first. The run script refuses an `encoder.env` without
 a usable `VLLM_API_KEY` line before docker runs (the bearer guard is only resolved after the model
 has loaded).
+
+The encoder requires its socket unit: if `127.0.0.1:8090` is already taken (another account's
+process can bind a free loopback port, and the port is free whenever the units are down), the
+socket unit fails, the encoder does not start and neither does clm-serve, so no key ever reaches
+whatever holds the port. `ss -ltne 'sport = :8090'` names the holder's uid. Every mesa-clm
+client that sends a key checks the same before each request and refuses another account's
+socket (`annotate` exits 2 naming the uid).
 
 Logs: `journalctl --user -u mesa-clm-encoder.service -u mesa-clm-serve.service -e`. An encoder
 start logs last-token pooling (`seq_pooling_type='LAST'`) with normalisation, prefix caching
@@ -190,9 +221,11 @@ to serve without one.
 ## 5. Health checks
 
 ```bash
-# Both ports listen on loopback only (8090 belongs to the systemd socket unit; nothing is published
-# by docker, and the container has no network of its own).
-ss -ltn '( sport = :8090 or sport = :8700 )'
+# Both ports listen on loopback only, in sockets of this account (uid:), 8090 in the user
+# manager's init.scope (the socket unit); nothing is published by docker, and the container has
+# no network of its own.
+ss -ltne '( sport = :8090 or sport = :8700 )'
+ls -l ~/.mesa/clm/run/                       # encoder.sock only, a socket (s...), this account's
 sg docker -c "docker inspect mesa-clm-encoder --format '{{.HostConfig.NetworkMode}}'"   # none
 # Only /health answers without a key (both units).
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8090/health        # 200
@@ -216,10 +249,13 @@ uv run mesa-clm serve lock --check --require-live
 uv run mesa-clm doctor --serve
 ```
 
-`mesa-clm doctor --serve` runs the lock check and the live probes: loopback-only binds on both
-ports (`ss -ltn`); the encoder container's own network namespace (`/proc/<pid>/net`, which `ss`
-on the host cannot see: a listener on a non-loopback address next to an interface besides `lo`
-fails); the headroom timer active (a warning otherwise); `/health` 200 on both without a key; the
+`mesa-clm doctor --serve` runs the lock check and the live probes: the binds on both ports
+(`ss -ltne`: loopback only, sockets of this account, and while the socket unit is active the
+encoder's port in the user manager's cgroup; the encoder unit active without its socket unit
+fails); the encoder socket (`~/.mesa/clm/run` holds nothing but `encoder.sock`, a socket of this
+account, never a symlink); the encoder container's own network namespace (`/proc/<pid>/net`,
+which `ss` on the host cannot see: a listener on a non-loopback address next to an interface
+besides `lo` fails); the headroom timer active (a warning otherwise); `/health` 200 on both without a key; the
 401 matrix (without a key every
 encoder route vLLM registers, 17 besides `/health`, and an unknown path, and clm-serve's
 `/v1/models`, `/v1/systemone` and `/v1/rank` answer 401); the authenticated model lists
@@ -266,7 +302,12 @@ request, bitwise, and against the existing reference of the same `encoder_fp`) a
 against the local head route (≤ 1e-4), reads the container's network namespace, and records
 latency and footprint; the 2026-10-01 records are `bench/results/2026-10-01/serving_m1b.md`
 (A3/A4) and `serving_m1c.md` (A5). Per-card annotate latency on non-bench cards is
-`scripts/annotate_latency.py` (`bench/results/2026-10-01/annotate_latency.md`).
+`scripts/annotate_latency.py` (`bench/results/2026-10-01/annotate_latency.md`). The endpoint
+itself (how the units are wired, the listeners' owners, the proxy's descriptor limit, a keyed
+request while 1,000 idle connections are held) is recorded by `uv run python
+scripts/endpoint_checks.py --out bench/results/<date>/serving_<tag>.json`; the record of the
+revision of DESIGN A5 before the merge, before and after its restart, is
+`bench/results/2026-10-01/serving_m1d.md`.
 
 ## 5a. Batch-invariant encoding
 
@@ -376,8 +417,12 @@ of the above.
 |---|---|
 | encoder unit fails at `ExecStartPre` | `MemAvailable` below 32 GiB: another tenant holds the memory (section 6) |
 | `permission denied` on the docker socket | this user is not listed in the `docker` group, or a unit calls docker without `sg` |
-| clm-serve times out waiting for :8090 | the model is still loading or the container failed: `journalctl --user -u mesa-clm-encoder.service`; until vLLM has created its socket, connections to :8090 are accepted by the socket unit and closed by the proxy (`journalctl --user -u mesa-clm-encoder-proxy.service`) |
-| `systemctl --user start mesa-clm-encoder.service` reports `start-limit-hit` | the encoder failed three times within an hour (DESIGN A5); fix the cause (`journalctl --user -u mesa-clm-encoder.service`), then `systemctl --user reset-failed mesa-clm-encoder.service` |
+| clm-serve times out waiting for :8090 | the model is still loading or the container failed: `journalctl --user -u mesa-clm-encoder.service`; until vLLM has created its socket, connections to :8090 are accepted by the socket unit and closed by the proxy (`journalctl --user -u mesa-clm-encoder-proxy.service`: "cannot reach …") |
+| `systemctl --user start mesa-clm-encoder.service` reports `start-limit-hit` | the encoder was started more than three times within an hour, manual starts and restarts included (DESIGN A5); a failure is only one way to get there: check `journalctl --user -u mesa-clm-encoder.service`, fix a cause if there is one, then `systemctl --user reset-failed mesa-clm-encoder.service` |
+| the encoder (and clm-serve) fail with a dependency error; `mesa-clm-encoder-proxy.socket` failed to bind | `127.0.0.1:8090` is held by another process: `ss -ltne 'sport = :8090'` names its uid; nothing starts until the port is free (fail-closed, DESIGN A5) |
+| `annotate` exits 2 with "… is held by a socket of uid N, not of this account" | another account holds 8700 or 8090 while the units are down; the key was not sent. Start the units (they fail if the port stays taken) and report the account |
+| the proxy's journal says `refused: …/encoder.sock: a symlink` (or "not a socket"), or the doctor fails `encoder socket` | something replaced the encoder's socket in `~/.mesa/clm/run`, which the container can write: treat the container as compromised; stop both units, inspect the directory, rotate the keys |
+| :8090 stops answering while the encoder runs, and the proxy's journal says "connection limit 4096 reached" | some account holds 4,096 connections (idle ones close after 900 s without traffic): `ss -tne 'dport = :8090'` shows the clients' uids |
 | encoder exits at once with `encoder.env has no usable VLLM_API_KEY line` | the env file lacks the key or carries characters an env file cannot hold literally: `uv run mesa-clm serve keys --init` (or `--rotate`) |
 | the doctor fails `encoder network` | the container runs on a docker network again (a hand-started container, an old unit or run script): re-run the bootstrap and install the units from `deploy/systemd/`, then restart both units |
 | clm-serve 502 on `/v1/systemone` | the encoder rejected clm-serve's key: `clm.env` and `encoder.env` disagree; re-run the keys step without `rotate`, then restart both units |

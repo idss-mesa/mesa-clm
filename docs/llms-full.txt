@@ -43,7 +43,8 @@ neither `clm.api_key` nor `clm.api_key_file` is set, the key is read from
 `~/.mesa/clm/secrets/clm.key` if that file exists (what `mesa-clm serve keys --init` writes),
 and likewise `encoder.key` for the encoder: only in the `auto` and `file` modes, after an
 inline value, a configured file and (in `auto`) the keyring; an explicit empty value
-(`MESA_CLM_CLM__API_KEY_FILE=`) turns the default off. The default is resolved when the key is
+(`MESA_CLM_CLM__API_KEY_FILE=`) turns the default off, and so does an explicit `null` in the
+YAML file, which is why `config.yaml.example` keeps the four key settings commented out. The default is resolved when the key is
 read, never stored in the configuration, so `config_sha256` does not change with it, and the file
 must pass the same 0600 and owner rules as any key file. No secret is ever logged, hashed into
 a fingerprint or written to a run record, and a configuration error never shows a value or a
@@ -229,7 +230,9 @@ redacted; a URL that does not is a failure and is never called.
 
 **Serve mode** (`--serve`, or automatically when both `mesa-clm-encoder.service` and
 `mesa-clm-serve.service` are active) replaces the `serving` line with live probes:
-`serving binds` (both ports listen on loopback only, from `ss -ltn`), `encoder health` and
+`serving binds` (both ports listen on loopback only, in sockets of this account, from
+`ss -ltne`; while the socket unit is active the encoder's port is the user manager's),
+`encoder socket` (`~/.mesa/clm/run` holds only the encoder's socket), `encoder health` and
 `clm-serve health` (`/health` 200 without a key), `encoder auth` and `clm-serve auth` (the 401
 matrix: without a key, every route vLLM registers on the encoder and an unknown path, and
 clm-serve's `GET /v1/models`, `POST /v1/systemone` and `POST /v1/rank`, must answer 401; any
@@ -964,7 +967,7 @@ repository and never imports `mesa_clm`. `mesa-clm annotate --provider clm` uses
 
 | Process | Port | What | Unit |
 |---|---|---|---|
-| Encoder | `127.0.0.1:8090` (a socket unit) | `vllm/vllm-openai` v0.27.1 (pinned by digest) running `Qwen/Qwen3-8B` at the pinned revision with `--runner pooling --dtype bfloat16 --max-model-len 4096 --max-num-seqs 8 --no-enable-prefix-caching --gpu-memory-utilization 0.20 --kv-cache-memory-bytes 4831838208 --enforce-eager`, vLLM's batch-invariant kernels (`VLLM_BATCH_INVARIANT=1`, DESIGN A3), the bearer guard `--middleware vllm_auth.require_api_key` mounted read-only and `--disable-fastapi-docs` (DESIGN A4), usage reporting off, offline HF cache mounted read-only, `VLLM_API_KEY` from an env file; the container has **no network** and serves on the unix socket `~/.mesa/clm/run/encoder.sock`, which `mesa-clm-encoder-proxy.socket` and `systemd-socket-proxyd` expose on 127.0.0.1:8090 (DESIGN A5) | `mesa-clm-encoder.service` (user unit, `sg docker`), which also starts the proxy socket and the headroom timer |
+| Encoder | `127.0.0.1:8090` (a socket unit) | `vllm/vllm-openai` v0.27.1 (pinned by digest) running `Qwen/Qwen3-8B` at the pinned revision with `--runner pooling --dtype bfloat16 --max-model-len 4096 --max-num-seqs 8 --no-enable-prefix-caching --gpu-memory-utilization 0.20 --kv-cache-memory-bytes 4831838208 --enforce-eager`, vLLM's batch-invariant kernels (`VLLM_BATCH_INVARIANT=1`, DESIGN A3), the bearer guard `--middleware vllm_auth.require_api_key` mounted read-only and `--disable-fastapi-docs` (DESIGN A4), usage reporting off, offline HF cache mounted read-only, `VLLM_API_KEY` from an env file; the container has **no network** and serves on the unix socket `~/.mesa/clm/run/encoder.sock`, which `mesa-clm-encoder-proxy.socket` exposes on 127.0.0.1:8090 through `mesa-clm-encoder-proxy` (`serving/encoder_proxy.py`: a socket of this account only, never through a symlink, at most 4,096 connections; DESIGN A5) | `mesa-clm-encoder.service` (user unit, `sg docker`), which requires the proxy socket (a port it cannot bind stops the encoder and clm-serve from starting) and starts the headroom timer |
 | clm-serve | `127.0.0.1:8700` | CLM `bb42c6c5` with patches 0001–0006 in its own venv (`~/.mesa/clm/serve/.venv`, uv CPython 3.11, torch CPU, **no vllm**), `--device cpu --action-cache 512MiB --max-tokens 4095 --no-download --no-ui`, the pinned head `CLM_v0.1-8B.pt` and promoted heads from `heads/served/` | `mesa-clm-serve.service` (`Requires=` the encoder) |
 
 Both bind loopback only and require bearer keys; the encoder answers nothing but `/health`
@@ -1000,8 +1003,12 @@ parameters, and the encoder gets the whole 0.20 GPU share (about 24.3 GiB on the
 unified-memory GB10). Without a pin vLLM sized its KV cache at each start to fill the share
 (25,153 MiB by `nvidia-smi`, `serving_m1b.json`); DESIGN A5 pins it to the 4.5 GiB that 8
 sequences of 4,096 tokens need, and the encoder now measures 19,609 MiB by `nvidia-smi` and
-21.45 GiB by the `MemAvailable` difference (`bench/results/2026-10-01/serving_m1c.json`). A
-recipe that fails after its model load is started at most three times an hour.
+21.45 GiB by the `MemAvailable` difference (`bench/results/2026-10-01/serving_m1c.json`). The
+encoder is started at most three times an hour, manual starts included, so a recipe that fails
+after its model load does not reload it on the shared GPU every few minutes. A loopback port is
+shared by every account on the host and free while the units are down, so every mesa-clm
+client that sends a key first checks that the socket holding the port belongs to this account
+and refuses another's (DESIGN A5).
 
 ## Patches carried
 
@@ -1056,9 +1063,11 @@ could not answer is reported as "not verified".
 
 `mesa-clm doctor --serve` (the light half automatic when both units are active) adds the live
 probes. Every URL first passes the clients' loopback rule and is printed redacted. Then:
-loopback-only binds on both ports (`ss -ltn`); the **encoder network**: the container's own
-namespace read from `/proc/<pid>/net`, which `ss` cannot see, where a listener on a non-loopback
-address next to an interface besides `lo` fails (DESIGN A5); the headroom timer active (a
+the **binds** of both ports (`ss -ltne`: loopback only, sockets of this account, and while the
+socket unit is active the encoder's port in the user manager's cgroup); the **encoder socket**
+(`~/.mesa/clm/run` holds nothing but a socket of this account, never a symlink); the **encoder
+network**: the container's own namespace read from `/proc/<pid>/net`, which `ss` cannot see,
+where a listener on a non-loopback address next to an interface besides `lo` fails (DESIGN A5); the headroom timer active (a
 warning otherwise); `/health` 200 on both without a key; the **401
 matrix**: without a key, every route vLLM registers on the encoder (17 besides `/health`) and an
 unknown path, and clm-serve's `/v1/models`, `/v1/systemone` and `/v1/rank`, must answer 401;
@@ -1303,7 +1312,7 @@ a batch all or nothing.
 | Milestone | Modules |
 |---|---|
 | M0 | `config.py`, `secrets.py`; `cards.py`, `states.py`, `registry.py`; `tasks.py`, `identity.py`; `policy_defaults.py` + `policy_defaults.yaml`; `ols.py`, `avu.py`, `ols_closure.py`; `planner/`; `provenance/labels.py`; `learn/labels.py`; `bench/_metrics.py` (vendored), `bench/{stats,results,baselines,mde,metrics}.py`, `bench/tasks/`; `health.py` (pins, versions, plugin API, policy, stores); `mcp_tools/` (entry-point stub); `cli.py` (`labels`, `bench`, `doctor`); `_vendor/clm/` |
-| M1 | `framings.py`, `render.py`, `framings.lock.json`; `vocab.py`; `perms.py`; `clm/{http,encoder,headproj,fingerprint,fake}.py`; `providers/{base,tiered,claude_provider,live}.py`; `pipeline.py`; `policy.py`; `provenance/{models,store,store_postgres,migrate,export}.py` and `migrations/0001_mesa_clm.sql`; `service.py`; `serving.py` (keys, units with the encoder's loopback socket proxy, the serving lock with its container recipe, its verification, the container's network namespace); `learn/features.py` (the feature store with float32 vectors and the lock's vector recipe, the X1/X2 manifest, the TextCache export) and `learn/offline.py` (offline scoring from cached vectors); `health.py` M1 checks (framings lock, schema sha256, sidecar schema, feature store, permissions, serving lock, host, `gpu_budget`, the serving reachability line and the serve-mode probes: the encoder network namespace, the headroom timer, the 401 matrix, goldens, long input, systemone parity, drift); `cli.py` M1 verbs (`framings`, `annotate`, `explain`, `review`, `feedback`, `provenance migrate\|export\|import\|prune`, `serve keys\|units\|lock`, `features build\|export-npz\|project\|stats`, `doctor --serve`); `serving/` (with the encoder's bearer guard `vllm_auth.py` and the route probe `vllm_routes.py`), `deploy/` (the serve-venv side, never importing `mesa_clm`); `scripts/` M1-A probes and records |
+| M1 | `framings.py`, `render.py`, `framings.lock.json`; `vocab.py`; `perms.py`; `clm/{http,encoder,headproj,fingerprint,fake}.py`; `providers/{base,tiered,claude_provider,live}.py`; `pipeline.py`; `policy.py`; `provenance/{models,store,store_postgres,migrate,export}.py` and `migrations/0001_mesa_clm.sql`; `service.py`; `serving.py` (keys, units with the encoder's loopback socket proxy, the serving lock with its container recipe, its verification, the container's network namespace); `learn/features.py` (the feature store with float32 vectors and the lock's vector recipe, the X1/X2 manifest, the TextCache export) and `learn/offline.py` (offline scoring from cached vectors); `health.py` M1 checks (framings lock, schema sha256, sidecar schema, feature store, permissions, serving lock, host, `gpu_budget`, the serving reachability line and the serve-mode probes: the binds' owners, the encoder socket, the encoder network namespace, the headroom timer, the 401 matrix, goldens, long input, systemone parity, drift); `cli.py` M1 verbs (`framings`, `annotate`, `explain`, `review`, `feedback`, `provenance migrate\|export\|import\|prune`, `serve keys\|units\|lock`, `features build\|export-npz\|project\|stats`, `doctor --serve`); `serving/` (with the encoder's bearer guard `vllm_auth.py`, the route probe `vllm_routes.py` and the encoder's endpoint proxy `encoder_proxy.py`), `deploy/` (the serve-venv side, never importing `mesa_clm`); `net.py`'s port-owner check (keyed clients never send a key to another account's loopback socket); `scripts/` M1-A probes and records |
 | M2 | `bench/{run,framing}.py` |
 | M3 | `apply.py`, `revert.py`, `irods_io.py`, `history/`; the five `mesa_clm_*` tools in `mcp_tools/` |
 | M4 | `learn/{linear,calibrate,fit,teacher}.py`, `artifacts.py`, `bench/e2e.py`, audits |
@@ -1418,8 +1427,14 @@ refused, every command missing, no meminfo, no goldens. It also points `serving.
 an empty per-test path, so neither the installed serving lock nor the default key files under
 `~/.mesa/clm/secrets` reach a test (the `engine` tests keep the real home). The hermetic suite
 therefore never probes a port, runs `systemctl` or reads a key, whatever host it runs on; `tests/unit/test_health_serving.py` injects its own probes (the fake CLM transport,
-scripted `ss -ltn` and `systemctl` output, a meminfo file) to drive every serving check, and
-`tests/engine/test_doctor_live.py` passes the real `ServeProbes()`.
+scripted `ss -ltne` and `systemctl` output, a meminfo file, a scratch run directory with a real
+unix socket) to drive every serving check, and `tests/engine/test_doctor_live.py` passes the
+real `ServeProbes()`. The same fixture points `net.PROC_NET` at an empty path, so the keyed
+clients' port-owner check reads no listener of the host; `tests/unit/test_listener_owner.py`
+drives it with fixture `/proc/net/tcp` and `tcp6` files (another account's socket on 8090 or
+8700 is refused before the key is sent, the pre-flight exits 2, a refusal mid-run fails the
+run), and `serving/tests/test_encoder_proxy.py` the encoder's endpoint proxy (a symlinked or
+foreign socket refused, the relay, the connection limit, the idle timeout).
 
 ## Key tests
 
@@ -1546,6 +1561,7 @@ third-party component and its hash.
 
 ## 2026-10-01
 
+* **Update**: [Serving runbook](deploy/serving.md) and [Serving](concepts/serving.md) for the pre-merge revision of DESIGN A5: the encoder unit requires its socket unit (a port another account holds stops the encoder and clm-serve from starting), the endpoint proxy is `mesa-clm-encoder-proxy` (`serving/encoder_proxy.py`: never through a symlink, at most 4,096 connections, idle ones closed) instead of `systemd-socket-proxyd`, keyed clients refuse another account's socket, and the doctor checks the listeners' owners and the run directory; the start limit counts manual starts (`reset-failed` before a manual restart, also after `serve keys --rotate`); keys stay off command lines and screens (`grep -rlF -f` to look for a leak); new troubleshooting rows. [Install](getting-started/install.md) and [Testing](develop/testing.md) describe the new checks and tests; [Configuration](getting-started/configuration.md) says why `config.yaml.example` keeps the key settings commented out; `llms.txt` and `llms-full.txt` regenerated.
 * **Update**: [Serving](concepts/serving.md) and the [Serving runbook](deploy/serving.md) for DESIGN A5: the encoder container has no network and serves on a unix socket that the new socket unit `mesa-clm-encoder-proxy.socket` exposes on 127.0.0.1:8090 through `systemd-socket-proxyd`; the KV cache is pinned to 4.5 GiB (the encoder now measures 19,609 MiB by `nvidia-smi`, 21.45 GiB of `MemAvailable`); the encoder unit starts the socket and the headroom timer and is started at most three times an hour; the doctor reads the container's network namespace, warns on a stopped headroom timer and checks the feature store; the runbook adds the six-unit install, `reset-failed`, the removal of the socket units, the draft of the CARC allocation request (not sent) and the fallback's refusal of a batched encoder. The fallback's parity run is described as passing its two cosine gates, with the probe gate still pending.
 * **Update**: [Learning and bench](concepts/learning-and-bench.md): the feature cache keeps float32 vectors (float16 only in the export), records the serving lock's vector recipe, and X1's cross-check passes from it (`bench/results/2026-10-01/x1_crosscheck.json`; from float16 it failed); bench-card membership is fixed and curator rows on bench cards are dropped before a target's label is chosen; X1's anchor-variant rule is withdrawn before G1. [Install](getting-started/install.md) adds the doctor's `feature store`, `encoder network` and `headroom timer` checks; [Testing](develop/testing.md) the engine tests on the non-bench SRER card and the offline-parity test, and the real command for the serve-side tests (`serving/tests`); `llms.txt` and `llms-full.txt` regenerated.
 * **Update**: [Serving](concepts/serving.md) and the [Serving runbook](deploy/serving.md) for DESIGN A3 and A4: the encoder runs vLLM's batch-invariant kernels (`encoder_fp` c3b3d5e1a283; the fallback at batch 1, b171b1ba4536), answers nothing but `/health` without its key (the bearer guard `serving/vllm_auth.py`; the "open by design on loopback" wording for `/tokenize` and `/metrics` is withdrawn), clients truncate at 4,095 tokens, and the lock carries the container recipe; the fallback's parity run passes at batch 1. Both pages now describe the doctor's full serve-mode probes (the 401 matrix over every encoder route, encoder goldens, the long-input probe, the systemone parity against the local route, the drift warning) and the live provider's refusals and keyed pre-flight, and say the keys under `~/.mesa/clm/secrets` are read by default.
