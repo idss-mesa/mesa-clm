@@ -11,10 +11,11 @@ The base URL goes through :func:`mesa_clm.net.assert_loopback` (loopback only un
 ``allow_remote`` *and* https), the client is built with ``trust_env=False`` so no proxy variable
 can redirect the bearer key, and the key itself is only ever placed in the ``Authorization``
 header, never logged. Before every keyed request over the real network the planner asks who
-holds the loopback port (:func:`mesa_clm.net.assert_listener_owner`, DESIGN A5): the default
-gateway port is the ``carc-litellm-tunnel`` user unit's, free for any local account to take
-whenever the tunnel is down, and another account's socket there gets no key (the plan falls back
-to the static rules).
+holds the loopback port (:func:`mesa_clm.net.assert_listener_owner`, DESIGN A5), and its
+transport asks again for each new connection once it is made and before a byte is sent on it
+(:class:`mesa_clm.net.OwnerCheckedTransport`): the default gateway port is the
+``carc-litellm-tunnel`` user unit's, free for any local account to take whenever the tunnel is
+down, and another account's socket there gets no key (the plan falls back to the static rules).
 """
 
 from __future__ import annotations
@@ -30,7 +31,7 @@ from pydantic import ValidationError
 
 from mesa_clm.cards import DatasetCard
 from mesa_clm.config import PlannerConfig
-from mesa_clm.net import assert_listener_owner, assert_loopback
+from mesa_clm.net import OwnerCheckedTransport, assert_listener_owner, assert_loopback
 from mesa_clm.planner.base import Plan, PlanResult
 from mesa_clm.planner.static_planner import StaticPlanner
 from mesa_clm.registry import ASPECT_OPTIONS, ONTOLOGY_REGISTRY
@@ -122,8 +123,11 @@ class GatewayPlanner:
         if api_key:
             headers["Authorization"] = f"Bearer {api_key}"
         # Over the real network (no injected client or transport) a keyed request first asks
-        # who holds a loopback port: the key never goes to another account's socket (DESIGN A5).
+        # who holds a loopback port, and each new connection is asked again before a byte is
+        # sent on it: the key never goes to another account's socket (DESIGN A5).
         self._check_owner = client is None and transport is None and bool(api_key)
+        if self._check_owner:
+            transport = OwnerCheckedTransport("planner gateway")
         # `client` replaces the whole client (its headers included); `transport` keeps ours and
         # swaps only the wire (httpx.MockTransport in tests).
         self._client = client or httpx.Client(

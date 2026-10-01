@@ -209,6 +209,17 @@ All notable changes to the mesa-clm package. The format follows
   new `serving units` check fails units that are not the checkout's rendering and a running
   proxy without the rendered command line or its sandbox (`bench/results/2026-10-01/serving_m1e.md`,
   `doctor_serve_m1e.md`).
+- Keyed clients check the connection itself, not only the port (DESIGN A5, third revision before
+  the merge): `net.assert_listener_owner` reads `/proc` and the request connected in a second
+  step, so another local account could bind the port in between and receive the key (a scratch
+  run with a dummy key captured it on 16 of 400 attempts against a toggling listener). Every
+  keyed client (`HttpEndpoint`, so `EncoderClient` and `ClmHttpClient`, the planner gateway
+  client and the raw clients of `scripts/serving_probes.py`) now sends through
+  `net.OwnerCheckedTransport`, which asks the kernel's socket diagnostics (`sock_diag`) which
+  account holds the server end of each new loopback connection once it is made and before a
+  byte is sent, and closes the connection unsent otherwise. DESIGN A5 also states the `docker`
+  group as a residual risk: its members are root-equivalent on the serving host and can read
+  the encoder key with `docker inspect`.
 
 ### Fixed
 

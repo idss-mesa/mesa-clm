@@ -79,7 +79,10 @@ real `ServeProbes()`. The same fixture points `net.PROC_NET` at an empty path, s
 clients' port-owner check reads no listener of the host; `tests/unit/test_listener_owner.py`
 drives it with fixture `/proc/net/tcp` and `tcp6` files (another account's socket on 8090 or
 8700 is refused before the key is sent, the pre-flight exits 2, a refusal mid-run fails the
-run, a retry asks again, the planner gateway and the probe scripts' raw clients ask too), and
+run, a retry asks again, the planner gateway and the probe scripts' raw clients ask too) and the
+check of each new connection against real loopback listeners of the test's own account (the
+kernel's answer for the server end before and after the accept, over IPv4, IPv6 and dual stack;
+another account's answer substituted, a port taken after the `/proc` check gets no byte), and
 `serving/tests/test_encoder_proxy.py` the encoder's endpoint proxy (the kernel's answer for the
 owner of a real loopback client, another account's connection closed without reaching the
 encoder, a symlinked or foreign socket refused, a swap after the check, the relay with a late

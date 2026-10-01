@@ -12,7 +12,9 @@ Transport rules (plan §6.4): the base URL passes :func:`mesa_clm.net.assert_loo
 or ``allow_remote`` *and* https), the ``httpx.Client`` runs with ``trust_env=False`` so no proxy
 variable can redirect a request, a keyed request to a loopback port first checks that no other
 account holds the port (:func:`mesa_clm.net.assert_listener_owner`, before every attempt over the
-real network; DESIGN A5), a :class:`~mesa_clm.net.CircuitBreaker` stops a client from
+real network; DESIGN A5) and every new connection is checked again once it is made and before a
+byte is sent on it (:class:`mesa_clm.net.OwnerCheckedTransport`: the port can change hands between
+the two), a :class:`~mesa_clm.net.CircuitBreaker` stops a client from
 hammering a server that keeps failing, and transient failures (transport errors and the statuses
 in :data:`RETRY_STATUSES`) are retried with exponential backoff. Every other non-2xx status is a
 :class:`ClmError` ``(status, message)`` mirroring the vendored ``CLMError``: ``message`` is the
@@ -37,7 +39,13 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from mesa_clm.config import ClmConfig
-from mesa_clm.net import CircuitBreaker, assert_listener_owner, assert_loopback, redact_url
+from mesa_clm.net import (
+    CircuitBreaker,
+    OwnerCheckedTransport,
+    assert_listener_owner,
+    assert_loopback,
+    redact_url,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -229,8 +237,12 @@ class HttpEndpoint:
         self._sleep = sleep
         self._api_key = api_key or None
         # Over the real network (no injected transport) a keyed request first asks who holds a
-        # loopback port: the key never goes to another account's socket (DESIGN A5).
+        # loopback port, and each new connection is asked again before a byte is sent on it (the
+        # port can change hands in between): the key never goes to another account's socket
+        # (DESIGN A5).
         self._check_owner = transport is None and self._api_key is not None
+        if self._check_owner:
+            transport = OwnerCheckedTransport(what)
         headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
         self._client = httpx.Client(
             base_url=self.base_url,
@@ -298,7 +310,8 @@ class HttpEndpoint:
         for attempt in range(attempts):
             last_try = attempt + 1 >= attempts
             if self._check_owner:
-                # ListenerOwnerError (an EndpointError): refused before a byte is sent.
+                # ListenerOwnerError (an EndpointError): refused before a byte is sent, here or by
+                # the transport's check of the new connection.
                 assert_listener_owner(self.base_url, what=self.what)
             try:
                 response = self._client.request(

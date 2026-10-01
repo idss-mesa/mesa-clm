@@ -208,9 +208,22 @@ socket unit fails, the encoder does not start and neither does clm-serve, so no 
 whatever holds the port. `ss -ltne 'sport = :8090'` names the holder's uid. Every mesa-clm
 client that sends a key (the serving pair's clients, the planner gateway client, the probe
 scripts) checks the same before each request and refuses another account's socket (`annotate`
-exits 2 naming the uid). The other way round, the proxy on :8090 relays only this account's
-connections: for each one it asks the kernel (`sock_diag`, the source of `ss -e`) who owns the
-client's socket and closes another account's at once, without reaching the encoder.
+exits 2 naming the uid), and checks each new connection again once it is made and before a
+byte is sent on it, asking the kernel (`sock_diag`, the source of `ss -e`) who holds the server
+end of that very connection, so a port taken between the two checks gets nothing either. The
+other way round, the proxy on :8090 relays only this account's connections: for each one it
+asks the kernel who owns the client's socket and closes another account's at once, without
+reaching the encoder.
+
+These checks name accounts, and the `docker` group is root-equivalent on a host whose daemon has
+no authorization plugin and no user-namespace remapping (`docker info`): any member of the group
+(`getent group docker`) can read the encoder key with `docker inspect mesa-clm-encoder` (the run
+script's `--env-file` puts it in the container's environment), enter the container, run a
+host-network container as this account's uid, which the proxy and the clients take for this
+account, or mount `~/.mesa/clm/secrets`. That is a residual risk of DESIGN A5, not something the
+units can close: keep the group to the accounts trusted with root, or move the host to rootless
+docker or `userns-remap`, and rotate both keys (`mesa-clm serve keys --rotate`) whenever the
+group held anyone else.
 
 Logs: `journalctl --user -u mesa-clm-encoder.service -u mesa-clm-serve.service -e`. An encoder
 start logs last-token pooling (`seq_pooling_type='LAST'`) with normalisation, prefix caching

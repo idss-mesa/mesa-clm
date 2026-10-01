@@ -109,7 +109,8 @@ mesa-clm writes under `~/.mesa/clm` is owner-only (0700/0600) whatever the umask
   unix socket that a loopback socket unit proxies (`serving/encoder_proxy.py`: a socket of this
   account only, never through a symlink; the encoder requires the socket unit, so a taken port
   fails closed), with its KV cache pinned to 4.5 GiB (A5), and clients truncate at 4,095 tokens
-  and never send a key to another account's loopback socket (`net.assert_listener_owner`);
+  and never send a key to another account's loopback socket (`net.assert_listener_owner` before
+  each request, `net.OwnerCheckedTransport` on each new connection before a byte is sent);
   `features build` and annotate check the running container against the lock first;
   remote URLs only with `MESA_CLM_CLM__ALLOW_REMOTE=1` **and** https. Never start, stop or
   enable the units as a side effect: that is the operator's.

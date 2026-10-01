@@ -52,7 +52,9 @@ bridge, where its port, and seven sockets of the engine process that no key cove
 rendezvous store and six collective sockets), were reachable from any local account
 (`bench/results/2026-10-01/serving_m1b.json`, `encoder_netns.json`); since DESIGN A5 the
 container has no network at all, the API is a unix socket in an owner-only directory, and the key
-is the control on the one loopback port that reaches it (`serving_m1c.json`). clm-serve's
+is the control on the one loopback port that reaches it (`serving_m1c.json`); members of the
+host's `docker` group are root-equivalent and outside that control (DESIGN A5, residual risks:
+`docker inspect` shows the encoder key). clm-serve's
 `/health` (which lists the head names)
 and its FastAPI schema pages answer without a key. Every client truncates its inputs to 4,095
 tokens from the left (`max_len - 1`): vLLM 0.27.1 never completes an input of exactly 4,096

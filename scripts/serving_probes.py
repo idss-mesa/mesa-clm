@@ -37,9 +37,10 @@ Keys are read from the 0600 files under ``~/.mesa/clm/secrets`` and never printe
 written: before anything is written the serialised output is checked for both key values and
 the run aborts if either appears. Only loopback addresses are recorded. Every keyed request,
 through mesa-clm's clients or the raw ``httpx`` clients here (:func:`owner_hook`), first asks
-who holds the loopback port (:func:`mesa_clm.net.assert_listener_owner`, DESIGN A5): run while
-the units are down or restarting, another account's socket on :8090 or :8700 gets no key and
-the run stops.
+who holds the loopback port (:func:`mesa_clm.net.assert_listener_owner`, DESIGN A5), and every
+new loopback connection is checked again before a byte is sent on it
+(:class:`mesa_clm.net.OwnerCheckedTransport`): run while the units are down or restarting,
+another account's socket on :8090 or :8700 gets no key and the run stops.
 """
 
 from __future__ import annotations
@@ -71,7 +72,7 @@ from mesa_clm.clm.fingerprint import EncoderSpec, encoder_fp
 from mesa_clm.clm.headproj import RAW_SCALE, HeadProjector
 from mesa_clm.clm.http import Choice, ClmHttpClient, Noul, Score, question_to_dict
 from mesa_clm.health import parse_listener_details
-from mesa_clm.net import assert_listener_owner
+from mesa_clm.net import OwnerCheckedTransport, assert_listener_owner
 from mesa_clm.registry import ANCHOR_KEY, ANCHORS, ONTOLOGY_REGISTRY
 from mesa_clm.states import target_state
 from mesa_clm.tasks import TASKS
@@ -212,12 +213,14 @@ def owner_hook(request: httpx.Request) -> None:
 
 
 def raw_client(timeout: float) -> httpx.Client:
-    """A raw client for the probes: no proxies from the environment, the owner check on every
-    keyed request."""
+    """A raw client for the probes: no proxies from the environment, the port's owner asked
+    before every keyed request, and every new loopback connection checked before a byte is sent
+    on it (keyed or not, since a connection is reused across requests)."""
     return httpx.Client(
         trust_env=False,
         timeout=httpx.Timeout(timeout, connect=5.0),
         event_hooks={"request": [owner_hook]},
+        transport=OwnerCheckedTransport("serving probe"),
     )
 
 

@@ -13,6 +13,8 @@ from __future__ import annotations
 import ipaddress
 import os
 import socket
+import struct
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -276,3 +278,334 @@ def test_a_squatted_port_mid_run_refuses_the_run(card: Any) -> None:
     with pytest.raises(DeciderRefused, match="held by a socket") as exc:
         provider.decide(fr.active_framing("term.fits"), [state], [cands])
     assert exc.value.status == 0
+
+
+# -- the connection itself: checked after the connect, before a byte is sent (DESIGN A5) ----------
+#
+# The /proc read and the connect are two steps, and another account can bind the port in between
+# (the convergence round after 9681eed captured a dummy key on 16 of 400 attempts against a
+# toggling listener). Each new connection of a keyed client is therefore checked once it exists:
+# the kernel's socket diagnostics name the owner of its server end. These tests run a real
+# loopback listener of this account; "another account" is the kernel's answer replaced
+# (``net.connection_owner``), since a test cannot own a socket as another uid.
+
+KEY = "dummy-key-0123456789abcdef"
+
+
+class _Recorder:
+    """A loopback server of this account for one connection: it records every byte it gets and
+    answers ``200 {}`` once a request's headers are in."""
+
+    def __init__(self, host: str = "127.0.0.1") -> None:
+        family = socket.AF_INET6 if ":" in host else socket.AF_INET
+        self.listener = socket.socket(family, socket.SOCK_STREAM)
+        self.listener.bind((host, 0))
+        self.listener.listen(8)
+        self.port = int(self.listener.getsockname()[1])
+        self.url = f"http://[{host}]:{self.port}" if ":" in host else f"http://{host}:{self.port}"
+        self.received = bytearray()
+        self.accepted = threading.Event()
+        self.thread = threading.Thread(target=self._serve, daemon=True)
+        self.thread.start()
+
+    def _serve(self) -> None:
+        self.listener.settimeout(5.0)
+        try:
+            conn, _ = self.listener.accept()
+        except OSError:
+            return
+        self.accepted.set()
+        with conn:
+            conn.settimeout(5.0)
+            while True:
+                try:
+                    chunk = conn.recv(1 << 16)
+                except OSError:
+                    break
+                if not chunk:
+                    break
+                self.received += chunk
+                if b"\r\n\r\n" in self.received:
+                    conn.sendall(
+                        b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n"
+                        b"Content-Length: 2\r\nConnection: close\r\n\r\n{}"
+                    )
+                    break
+
+    def close(self) -> bytes:
+        """Wait for the connection to end; the bytes the server received."""
+        self.thread.join(10.0)
+        self.listener.close()
+        return bytes(self.received)
+
+
+def _foreign_server_end(monkeypatch: pytest.MonkeyPatch, asked: list[int] | None = None) -> None:
+    """Make the kernel's answer name another account as the server end's owner."""
+
+    def owner(sock: socket.socket) -> net.SocketOwner:
+        if asked is not None:
+            asked.append(int(sock.getpeername()[1]))
+        return net.SocketOwner(state=1, uid=OTHER, inode=0)
+
+    monkeypatch.setattr(net, "connection_owner", owner)
+
+
+@pytest.mark.parametrize("host", ["127.0.0.1", "::1"])
+def test_the_kernel_names_the_server_end_of_a_connection(host: str) -> None:
+    """The real kernel's answer about a connection to a listener of this account. Before the
+    server accepts, the serving host's kernel (6.17) already names the listener's owner (no
+    inode yet), while older kernels report uid 0 with no inode, an answer the check asks again
+    about; once accepted, this account's uid with the inode."""
+    family = socket.AF_INET6 if ":" in host else socket.AF_INET
+    try:
+        listener = socket.socket(family, socket.SOCK_STREAM)
+        listener.bind((host, 0))
+    except OSError:
+        pytest.skip(f"no {host} on this host")
+    with listener, socket.socket(family, socket.SOCK_STREAM) as client:
+        listener.listen(1)
+        client.connect(listener.getsockname()[:2])
+        before = net.connection_owner(client)
+        assert before.state == 1 and before.inode == 0
+        assert before.uid == ME if before.decisive else before.uid == 0
+        server, _ = listener.accept()
+        with server:
+            after = net.connection_owner(client)
+            assert after.uid == ME and after.inode != 0 and after.decisive
+            net.assert_connection_owner(client, what="encoder")
+
+
+def test_a_dual_stack_listener_is_named_too() -> None:
+    """A listener on ``::`` takes an IPv4 connection with an IPv6 socket, which the kernel
+    reports in the IPv4-mapped form."""
+    try:
+        listener = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        listener.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+        listener.bind(("::", 0))
+    except OSError:
+        pytest.skip("no dual-stack IPv6 on this host")
+    with listener, socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+        listener.listen(1)
+        client.connect(("127.0.0.1", int(listener.getsockname()[1])))
+        server, _ = listener.accept()
+        with server:
+            assert net.connection_owner(client).uid == ME
+            net.assert_connection_owner(client, what="encoder")
+
+
+def _reply(
+    own: tuple[str, int], remote: tuple[str, int], *, state: int, uid: int, inode: int
+) -> bytes:
+    """A ``SOCK_DIAG_BY_FAMILY`` answer about the IPv4 socket ``own`` -> ``remote``."""
+    msg = bytearray(72)
+    msg[0], msg[1] = socket.AF_INET, state
+    msg[4:8] = struct.pack("!HH", own[1], remote[1])
+    msg[8:12] = ipaddress.ip_address(own[0]).packed
+    msg[24:28] = ipaddress.ip_address(remote[0]).packed
+    msg[64:72] = struct.pack("=II", uid, inode)
+    return struct.pack("=IHHII", 16 + 72, net.SOCK_DIAG_BY_FAMILY, 0, 1, 0) + bytes(msg)
+
+
+def test_the_kernels_answer_is_read_strictly() -> None:
+    own, remote = ("127.0.0.1", 8090), ("127.0.0.1", 40000)
+    request = net.sock_diag_request(own, remote)
+    assert struct.unpack_from("!HH", request, 16 + 8) == (8090, 40000)
+    assert net.sock_diag_owner(_reply(own, remote, state=1, uid=ME, inode=0), own, remote) == (
+        net.SocketOwner(state=1, uid=ME, inode=0)
+    )
+    # No such socket (ENOENT), an answer about another socket, a short reply: no owner.
+    enoent = struct.pack("=IHHII", 36, net.NLMSG_ERROR, 0, 1, 0) + struct.pack("=i", -2)
+    with pytest.raises(net.OwnerUnknown, match="sock_diag"):
+        net.sock_diag_owner(enoent, own, remote)
+    other = _reply(own, ("127.0.0.1", 40001), state=1, uid=ME, inode=7)
+    with pytest.raises(net.OwnerUnknown, match="another socket"):
+        net.sock_diag_owner(other, own, remote)
+    with pytest.raises(net.OwnerUnknown, match="short"):
+        net.sock_diag_owner(b"\0" * 8, own, remote)
+    done = struct.pack("=IHHII", 20, 3, 0, 1, 0) + b"\0" * 4  # NLMSG_DONE: not an answer
+    with pytest.raises(net.OwnerUnknown, match="unexpected sock_diag reply"):
+        net.sock_diag_owner(done, own, remote)
+    with pytest.raises(net.OwnerUnknown, match="mixed"):
+        net.sock_diag_request(("127.0.0.1", 1), ("::1", 2))
+    # The handshake and TIME_WAIT, and uid 0 without an inode, name nobody; root with an inode
+    # (an accepted socket) does.
+    assert not net.SocketOwner(state=net.TCP_SYN_RECV, uid=0, inode=0).decisive
+    assert not net.SocketOwner(state=net.TCP_TIME_WAIT, uid=0, inode=0).decisive
+    assert not net.SocketOwner(state=1, uid=0, inode=0).decisive
+    assert net.SocketOwner(state=1, uid=0, inode=9).decisive
+    assert net.SocketOwner(state=1, uid=OTHER, inode=0).decisive
+
+
+def test_another_accounts_server_end_is_refused(monkeypatch: pytest.MonkeyPatch) -> None:
+    with (
+        socket.create_server(("127.0.0.1", 0)) as listener,
+        socket.create_connection(listener.getsockname()[:2]) as client,
+    ):
+        _foreign_server_end(monkeypatch)
+        with pytest.raises(ListenerOwnerError, match=f"uid {OTHER}, not of this account"):
+            net.assert_connection_owner(client, what="encoder")
+        # An answer that names nobody is asked again and then refused: nothing unchecked.
+        answers = iter([net.SocketOwner(net.TCP_SYN_RECV, 0, 0), net.SocketOwner(1, ME, 0)])
+        monkeypatch.setattr(net, "connection_owner", lambda s: next(answers))
+        net.assert_connection_owner(client, what="encoder", sleep=lambda s: None)
+        monkeypatch.setattr(net, "connection_owner", lambda s: net.SocketOwner(1, 0, 0))
+        with pytest.raises(ListenerOwnerError, match="named no owner"):
+            net.assert_connection_owner(client, what="encoder", wait=0.0)
+        monkeypatch.setattr(net, "connection_owner", lambda s: net.SocketOwner(1, 0, 5))
+        net.assert_connection_owner(client, what="encoder")  # root's accepted socket
+
+        def gone(sock: socket.socket) -> net.SocketOwner:
+            raise net.OwnerUnknown("sock_diag answered about another socket")
+
+        monkeypatch.setattr(net, "connection_owner", gone)
+        with pytest.raises(ListenerOwnerError, match="another socket"):
+            net.assert_connection_owner(client, what="encoder", wait=0.0)
+
+        def no_netlink(sock: socket.socket) -> net.SocketOwner:
+            raise PermissionError(1, "Operation not permitted")
+
+        monkeypatch.setattr(net, "connection_owner", no_netlink)
+        with pytest.raises(ListenerOwnerError, match="cannot ask the kernel"):
+            net.assert_connection_owner(client, what="encoder")
+    # A connection that is not to a loopback address is not asked about.
+    monkeypatch.setattr(net, "connection_owner", gone)
+
+    class Remote:
+        family = socket.AF_INET
+
+        def getpeername(self) -> tuple[str, int]:
+            return ("192.0.2.7", 443)
+
+    net.assert_connection_owner(Remote(), what="CLM server")  # type: ignore[arg-type]
+    # A unix socket is not asked about; a TCP socket that is not connected is refused.
+    left, right = socket.socketpair()
+    with left, right:
+        net.assert_connection_owner(left, what="encoder")
+    with (
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM) as unconnected,
+        pytest.raises(ListenerOwnerError, match="closed before its owner was checked"),
+    ):
+        net.assert_connection_owner(unconnected, what="encoder")
+
+
+def test_the_trace_checks_only_a_new_connection_and_closes_it_on_refusal(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    seen: list[str] = []
+    trace = net.owner_trace("encoder", lambda event, info: seen.append(event))
+    trace("http11.send_request_headers.started", {})  # not a connect: nothing asked
+
+    class Stream:
+        closed = False
+
+        def __init__(self, sock: object) -> None:
+            self.sock = sock
+
+        def get_extra_info(self, name: str) -> object:
+            return self.sock if name == "socket" else None
+
+        def close(self) -> None:
+            self.closed = True
+
+    no_socket = Stream(None)
+    with pytest.raises(ListenerOwnerError, match="no socket to check"):
+        trace(net.CONNECT_TCP_COMPLETE, {"return_value": no_socket})
+    assert no_socket.closed
+    with pytest.raises(ListenerOwnerError, match="no socket to check"):
+        trace(net.CONNECT_TCP_COMPLETE, {"return_value": None})
+    with (
+        socket.create_server(("127.0.0.1", 0)) as listener,
+        socket.create_connection(listener.getsockname()[:2]) as client,
+        listener.accept()[0],
+    ):
+        own = Stream(client)
+        trace(net.CONNECT_TCP_COMPLETE, {"return_value": own})
+        assert not own.closed
+        _foreign_server_end(monkeypatch)
+        foreign = Stream(client)
+        with pytest.raises(ListenerOwnerError):
+            trace(net.CONNECT_TCP_COMPLETE, {"return_value": foreign})
+        assert foreign.closed
+    assert seen == ["http11.send_request_headers.started", *[net.CONNECT_TCP_COMPLETE] * 4]
+
+
+def test_a_port_taken_after_the_check_gets_no_byte(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The check-then-connect race: ``/proc`` shows the port as this account's (or nobody's)
+    when the endpoint asks, and another account's socket answers the connect. The connection
+    is refused before the request line, let alone the key, is written."""
+    server = _Recorder()
+    monkeypatch.setattr(net, "PROC_NET", _proc(tmp_path, ("127.0.0.1", server.port, ME)))
+    asked: list[int] = []
+    _foreign_server_end(monkeypatch, asked)
+    keyed = HttpEndpoint(server.url, KEY, what="encoder", timeout=5.0, retries=1)
+    try:
+        with pytest.raises(ListenerOwnerError, match="not of this account") as exc:
+            keyed.request("GET", "/v1/models")
+    finally:
+        keyed.close()
+    assert server.close() == b"" and asked == [server.port]
+    assert KEY not in str(exc.value) and keyed.calls == 0
+
+
+@pytest.mark.parametrize("host", ["127.0.0.1", "::1"])
+def test_this_accounts_connection_carries_the_request(host: str) -> None:
+    """The same endpoint against a listener of this account, the kernel's real answer: the
+    request (with its key) goes through the checked connection."""
+    try:
+        server = _Recorder(host)
+    except OSError:
+        pytest.skip(f"no {host} on this host")
+    keyed = HttpEndpoint(server.url, KEY, what="encoder", timeout=5.0, retries=1)
+    try:
+        assert isinstance(keyed._client._transport, net.OwnerCheckedTransport)
+        assert keyed.get_json("/v1/models") == {}
+    finally:
+        keyed.close()
+    received = server.close()
+    assert received.startswith(b"GET /v1/models ") and f"Bearer {KEY}".encode() in received
+
+
+def test_the_planner_and_the_probes_check_each_connection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The other keyed clients: the planner gateway client falls back to the static rules, and
+    the probes' raw client refuses a connection another account answered, keyed or not (a
+    connection is reused across requests)."""
+    import importlib.util
+
+    from mesa_clm.cards import load_card
+    from mesa_clm.planner.gateway_planner import GatewayPlanner
+
+    _foreign_server_end(monkeypatch)
+    server = _Recorder()
+    planner = GatewayPlanner(server.url, KEY, timeout=5.0)
+    assert planner._check_owner
+    assert isinstance(planner._client._transport, net.OwnerCheckedTransport)
+    card = load_card(
+        Path(__file__).resolve().parents[1]
+        / "fixtures"
+        / "cards-srer"
+        / "DP1.00004.001.BP_30min.md"
+    )
+    try:
+        assert planner.plan(card).fallback
+    finally:
+        planner._client.close()
+    assert server.close() == b""
+
+    path = Path(__file__).resolve().parents[2] / "scripts" / "serving_probes.py"
+    spec = importlib.util.spec_from_file_location("serving_probes_connection_check", path)
+    assert spec is not None and spec.loader is not None
+    probes = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(probes)
+    server = _Recorder()
+    http = probes.Http()
+    try:
+        assert isinstance(http.client._transport, net.OwnerCheckedTransport)
+        with pytest.raises(ListenerOwnerError):
+            http.status("GET", f"{server.url}/health")
+    finally:
+        http.client.close()
+    assert server.close() == b""

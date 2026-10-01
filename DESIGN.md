@@ -700,17 +700,32 @@ the plan's wording; none changes a decision (what D21's "interactive CLI" means 
 
 ### G1 freeze
 
-The pre-registration below (the LOCO folds and cells, rule R, lookup as a probability model,
-the citation test, the minimum detectable effect, X1–X4 and the kill and pivot criteria K0–K4)
-is **frozen as of the M1 merge commit**, the commit that merges `feat/m1-pipeline` into `main`.
-From that commit on it changes only by amendment, and an amendment made after an experiment has
-run marks every affected cell `exploratory:true`.
+*(Added before G1, in `8947e8b`.)* The pre-registration below (the LOCO folds and cells, rule R,
+lookup as a probability model, the citation test, the minimum detectable effect, X1–X4 and the
+kill and pivot criteria K0–K4) is **frozen as of the M1 merge commit**, the commit that merges
+`feat/m1-pipeline` into `main`. From that commit on it changes only by amendment, and an
+amendment made after an experiment has run marks every affected cell `exploratory:true`.
+*(Added before G1 by the convergence round after `9681eed`: the list above left the disclosure
+out, so nothing made it amendment-only after the merge.)* The rest of this section is frozen at
+the same commit and changes after it only by amendment too: this note, the note "Registered in
+M0, frozen at G1" and the disclosure of every look at labelled bench data before G1 (its opening
+paragraph, its numbered items and its closing paragraph on the hermetic suite).
 
-**Registered in M0, frozen at G1.** The text below is copied from plan §5.4, §5.6 and §8 and is
+**Registered in M0, frozen at G1.** ~~The text below is copied from plan §5.4, §5.6 and §8 and is
 committed verbatim at gate G1, before any M2 run, with one edit made before G1 and shown in
 place: X1's decision rule (6) is struck through and withdrawn (implementation note "The X1 anchor
-variant"). After G1 it changes only by amendment, and an amendment made after an experiment has
-run marks every affected cell `exploratory:true`.
+variant").~~ The sections below from "LOCO folds" to "Kill and pivot criteria" are the text
+registered in M0 and committed at gate G1, before any M2 run: plan §4.7 (the citation test),
+§5.4, §5.6 and §8, worded by M0 in a few places, with M0's additions (the `labels_content_sha256`
+parenthetical of the cell fields; in the lookup section the controls as M0 reproduced them, the
+tie rule and what was observed; the minimum detectable effect). Since M0 its only edit is X1's
+decision rule (6), struck through and withdrawn before G1 (implementation note "The X1 anchor
+variant"); the G1 freeze note above and the disclosure below were added before G1. *(Corrected
+before G1 by the convergence round after `9681eed`: the struck sentence, M0's own with a clause
+`ec2e2d4` added unmarked, called the whole text plan §5.4, §5.6 and §8 verbatim and rule (6) its
+one edit, but the citation test is plan §4.7's, M0 wrote the additions named, and the freeze note
+and the disclosure are additions too.)* After G1 it changes only by amendment, and an amendment
+made after an experiment has run marks every affected cell `exploratory:true`.
 
 **Disclosure: every look at labelled bench data before G1.** ~~No pre-registered cell has been
 computed.~~ No pre-registered **model** cell has been computed: the only cells flagged
@@ -718,19 +733,34 @@ computed.~~ No pre-registered **model** cell has been computed: the only cells f
 (`baselines.json`), the M0 controls. *(Corrected before G1 by the pre-merge review: the struck
 sentence overlooked those five cells. The same review corrected items 4 and 6 and added items 7
 and 8; each change is marked where it was made. The verification round after `70dbefe`
-completed items 4 and 7 and added item 9, marked the same way.)* What M0 and M1 did with the
-seven bench cards' silver labels, or with model outputs on those cards, and what was seen:
+completed items 4 and 7 and added item 9, marked the same way. The convergence round after
+`9681eed` completed items 1, 3, 4 and 7 and the closing paragraph, corrected item 8 and the next
+sentence (whose scope left out the planning stage and the reviews) and added item 10, marked the
+same way.)* What ~~M0 and M1~~ the planning stage, M0, M1 and the reviews before the merge did
+with the seven bench cards' silver labels, or with model outputs on those cards, and what was
+seen:
 
 1. *The M0 controls* (`bench/results/2026-09-29/baselines.json`, plan §5.4's verified controls):
    lookup LOCO accuracy 0.772 / 0.800, leave-one-product-out 0.723 / 0.721, the novel-key
    subsets 159 and 99 items, `lookup_prob`'s novel-key AUROC 0.424 / 0.396 (term.fits /
    column.ontology_fits). These are the baselines the rules compare against, computed as planned.
+   *(Added before G1 by the convergence round after `9681eed`:)* The planning stage computed
+   the same controls from the silver labels before M0 (plan §5.4's "verified controls
+   (read-only)" and novel-key majority rates and plan §5.1's label counts, 2026-09-28; plan §5.6
+   also cites mesa-anyjev's committed AnyJev L2 cells, the unpaired X2 baseline), and before the
+   M0 commit (2026-09-29, 08:09-08:15 MDT) M0 found the tie rule that reproduces those controls
+   by scoring alternative tie and novel-key rules against the silver labels in scratch scripts
+   outside the repository, one of which printed the conflicting keys with their labels; the
+   outcome is the lookup section's tie rule ("a symmetric tie rule gives 221/151").
 2. *The MDE simulation* (`bench/results/2026-09-29/mde.json`): the realised class counts per task
    and card, and simulated power; no model output.
 3. *AnyJev L2's held-out predictions* (`bench/baselines/anyjev_l2_2026-09-29.json`, X2's paired
    baseline): another model's per-item predictions against the silver labels, reproducing
    mesa-anyjev's committed cells exactly (term.fits accuracy 0.765, column.ontology_fits 0.837,
-   and the per-card accuracies).
+   and the per-card accuracies). *(Added before G1 by the convergence round after `9681eed`:)*
+   Before that run, a dry run of the same script with its fake backend (hashed features, no
+   model; `.local/serving/anyjev_l2_fake_dryrun.json`, 2026-09-29 12:37 MDT, outside the
+   repository) fitted and scored the same 285 + 190 items against the silver labels.
 4. *Label-free runs over the labelled rows' texts*: the collapse spikes
    (`bench/results/2026-09-29/collapse_spike.json`, `2026-10-01/collapse_spike.json`), the
    feature-store builds (`features_build.json`, `features_build_m1c.json`), the X1 cross-checks
@@ -757,6 +787,30 @@ seven bench cards' silver labels, or with model outputs on those cards, and what
    snapshot items, label-free, and the scripts keep what the stack returned outside the
    repository (`.local/serving/`: the vectors, `systemone_pairs.json` with `clm-latest`'s answers
    to the 50 pairs, `m1b/vllm_ref_systemone.json` with clm-serve's answers to the 20).
+   *(Added before G1 by the convergence round after `9681eed`: the item named only some of the
+   records that keep the stack's answers, and left out the goldens.)* Two committed records keep
+   answers too: `x1_crosscheck.json` records, for each of its 200 groups (141 `term.fits` and 59
+   `column.ontology_fits`; F4 67, F7 67, F9 66), the top choice of the offline store and of
+   clm-serve (`winner`: `store` and `served`) for `clm-latest` and for `clm-raw`, and
+   `features_build.json#/rerun/crosscheck/flips` one group's winner with its probabilities and
+   one noul pair's `p_true`; the silver labels being public in the same repository
+   (`bench/snapshots/2026-09-29.parquet`, `tests/fixtures/neon-avu-eval/`), zero-shot accuracy
+   on those groups can be computed from them without a model call. Outside the repository the
+   stack's answers on bench items are also kept in `.local/serving/m1b/systemone_pairs.json` and
+   `m1c/systemone_pairs.json` (`clm-latest`'s answers to the 50 pairs of `serving_m1b.json` and
+   `serving_m1c.json`), `.local/serving/vllm_ref_systemone.json` (both models' answers to the 20
+   pairs of the 2026-09-29 fallback-parity run) and `.local/live-final/crosscheck.json` (the
+   first cross-check's probabilities, `s_c` and winners for its 200 groups, both models), and
+   the doctor records of item 7. None of these was set against the labels. The 20 encoder
+   goldens (`GOLDEN_TEXTS` in `scripts/serving_probes.py`, the texts of
+   `.local/serving/encoder_golden.npz` and `encoder_golden_c3b3d5e1a283.npz`) include a bench
+   target's context: the seventh is the F9 context of brd_countdata's `observerDistance`
+   (`77bf030797bc…`, item 7), the eighth a definition of PATO's "distance". They were embedded,
+   label-free, by the probes' golden section (`serving_m1.json`, `serving_m1b.json`,
+   `serving_m1c.json`), as the first 20 texts of `batch_invariance.json` in both arms and of
+   both fallback-parity runs on both routes (`texts.goldens: 20`), and by every serve-mode
+   doctor (`encoder goldens`, the engine test's doctor check included), and they still are
+   after G1: they are what items 8 to 10 call the doctor's fixed texts.
 5. *The annotate smoke* (`bench/results/2026-10-01/annotate_smoke.md`, run 1): the live zero-shot
    stack on the bench card DP1.10003.001.brd_countdata, its outputs read against that card's
    silver labels and the anchor. Seen: zero-shot `column.annotate` answered No to all 14 of the
@@ -782,8 +836,13 @@ seven bench cards' silver labels, or with model outputs on those cards, and what
    for that task too): every serve-mode doctor run answered it at zero shot (the engine test's
    and plan §9's live-smoke step 1 included), and the recorded answer is PATO:0000040
    (`2026-10-01/doctor_serve.json`, `doctor_serve_m1c.json`), never set against the labels
-   *(until the verification round of item 9)*. The latency probes asked the same target against
-   12 PATO candidates and recorded ~~latencies only~~ latencies (`serving_m1.json`,
+   *(until the verification round of item 9)*. *(Added before G1 by the convergence round after
+   `9681eed`:)* Four scratch records outside the repository keep that answer too, never set
+   against the labels: `.local/live-final/doctor_serve_1.txt` (10:49 MDT) and
+   `doctor_serve_final.json` (11:00), `/tmp/mesa-clm-int/doctor_quick.txt` (10:47, a `--quick`
+   doctor in serve mode, the units being up) and `/tmp/doctor_live.json` (13:20, item 8). The
+   latency probes asked the same target against 12 PATO candidates and recorded ~~latencies
+   only~~ latencies (`serving_m1.json`,
    `serving_m1b.json`, `serving_m1c.json`, `batch_invariance.json`) and, in two `--quick` runs of
    the same script, the answer's full distribution over those candidates and the anchor
    (`.local/serving/quick_probe.json`, 2026-09-29T18:43:42Z, and
@@ -800,14 +859,25 @@ seven bench cards' silver labels, or with model outputs on those cards, and what
    struck words promised more than the code keeps, since a full probe run still asks the 50
    parity pairs of item 4; the struck row count missed the four `column.ontology_fits` rows,
    and the two quick-probe records were left out.)*
-8. *(Added before G1.)* *The pre-merge review's own label-free work on 2026-10-01*: a re-run of
-   `scripts/x1_crosscheck.py` (output outside the repository, identical to `x1_crosscheck.json`),
-   a 20-group `clm-raw` `/v1/systemone` probe on the same draw, and reading the silver labels of
+8. *(Added before G1.)* *The pre-merge review's own ~~label-free~~ work on 2026-10-01*: a re-run
+   of `scripts/x1_crosscheck.py` (output outside the repository, ~~identical to
+   `x1_crosscheck.json`~~ with results identical to `x1_crosscheck.json`'s; its start time,
+   durations, latencies, `clm-latest`'s cache-miss token count, command and store path differ), a
+   20-group `clm-raw` `/v1/systemone` probe on the same draw, ~~and~~ reading the silver labels of
    a few snapshot rows to build the tests of the fold filter and the gold source (none compared
-   with a model output); the fixes' live checks (`bench/results/2026-10-01/serving_m1d.json`,
-   `doctor_serve_m1d.json`, and one doctor run through a scratch port before the restart) asked
-   only the SRER golden question and the upstream drift questions and embedded the doctor's
-   fixed texts.
+   with a model output), one `mesa-clm doctor --serve` at 13:20 MDT on `ec2e2d4`'s code, which
+   still asked item 7's bench golden question at zero shot (`clm golden` on `clm-latest`,
+   `clm parity` on both models; the answer kept outside the repository in
+   `/tmp/doctor_live.json`, never set against the labels), and at 13:25 copies of this host's
+   five run sidecars into a scratch directory (the smoke sidecar holds item 5's zero-shot run on
+   brd_countdata, the latency sidecar the runs of `annotate_latency.json` on non-bench cards,
+   the other three fake-provider runs; whether a copy was opened is not recorded); the fixes'
+   live checks (`bench/results/2026-10-01/serving_m1d.json`, `doctor_serve_m1d.json`, and one
+   doctor run through a scratch port before the restart) asked only the SRER golden question and
+   the upstream drift questions and embedded the doctor's fixed texts. *(Corrected before G1 by
+   the convergence round after `9681eed`: the item called label-free work that read silver
+   labels, left out the 13:20 doctor run and the sidecar copies, and called the re-run identical
+   where its results are.)*
 9. *(Added before G1.)* *The verification round after `70dbefe` (2026-10-01).* While checking
    item 7, two of its reviewers printed the six snapshot rows of the former golden target
    (`77bf030797bc…`, brd_countdata's `observerDistance`) with their silver labels (task, option,
@@ -825,9 +895,32 @@ seven bench cards' silver labels, or with model outputs on those cards, and what
    `doctor_serve_m1e.json`, one more `mesa-clm doctor --serve` and the engine test's doctor
    check), which asked only the SRER golden question and the drift questions and embedded the
    doctor's fixed texts.
+10. *(Added before G1.)* *The convergence round after `9681eed` (2026-10-01), the last work
+    before the merge.* Its two reviewers (of this section and of the encoder endpoint) and the
+    judges of their findings reported reading no label value and no model answer on a bench
+    item: they inspected the records and scratch files behind items 1, 3, 4, 7 and 8 and the
+    closing paragraph by structure only (keys, types, counts, check names and statuses, the
+    source of scratch scripts; a path-only diff of item 8's re-run), ran clients and the proxy
+    against scratch sockets and ports with dummy keys, and counted, without printing, the
+    encoder key's occurrences in `docker inspect`'s output (A5). The fixes' own work was of the
+    same kind: the records named in items 1, 3, 4, 7 and 8 inspected by structure (one pair's
+    candidate keys listed in `vllm_ref_systemone.json`, no value read; the smoke and gate runs'
+    summaries read for their card, tier, fingerprint and counts), the seventh golden text
+    compared with the F9 rendering of its target, the hermetic suite (below), the serving tests,
+    a race experiment on a scratch port with a dummy key, the count-only check of
+    `docker inspect` again (A5), and two runs of `mesa-clm doctor --serve`, which asked only the
+    SRER golden question and the drift questions and embedded the doctor's fixed texts (item 4).
+    Anything else done before the merge that reads labelled bench data or asks a bench item is
+    added here, in place, before the merge commit.
 
 The hermetic test suite runs the deterministic fake provider (hashed n-grams, never evidence) on
-the fixture cards; it says nothing about the model.
+the fixture cards; it says nothing about the model. *(Added before G1 by the convergence round
+after `9681eed`:)* It also recomputes items 1 and 2 from the fixture's silver labels
+(`tests/unit/test_baselines.py`, `tests/unit/test_mde.py`), and its label-integrity tests flip
+silver items and put curator rows on bench cards in temporary stores
+(`tests/unit/test_bench_tasks.py`; while they were written, before `ec2e2d4`, a scratch store
+reproduced the finding they test with such a row), each time it runs, before G1 and after; no
+model output is involved.
 
 ### LOCO folds, leakage controls and cells (plan §5.4)
 
@@ -1193,8 +1286,10 @@ both stop with it, `PartOf=`) and is started at most three times an hour, manual
 restart), and its run script refuses an `encoder.env` without a usable `VLLM_API_KEY` line before
 docker runs. A client that sends a key to a loopback port first checks that the socket holding
 it belongs to this account (`net.assert_listener_owner`, before every keyed request: the serving
-pair's clients, the planner gateway client and the probe scripts' raw clients), and the
-doctor's `serving binds` requires sockets of this account and, while the socket unit is active,
+pair's clients, the planner gateway client and the probe scripts' raw clients) and, once a
+connection is made and before a byte is sent on it, that the kernel names this account as the
+owner of the connection's server end (`net.OwnerCheckedTransport`), and the doctor's
+`serving binds` requires sockets of this account and, while the socket unit is active,
 the encoder's port in the user manager's cgroup, its `encoder socket` check fails anything in
 `~/.mesa/clm/run` but a socket of this account, and its `serving units` check fails units that
 are not the checkout's rendering and a running proxy without the rendered command line or its
@@ -1344,6 +1439,52 @@ unauthenticated `GET /health` from uid 0 and uid 65534 in throwaway containers o
 network: the encoder's 92-byte answer before, nothing after; 9.8 → 5.9) and
 `doctor_serve_m1e.json` (36 ok, the drift warning, 0 failures). Nothing rotates: units and the
 proxy are not in the lock (`serving_lock_sha` `dd33f9fe…`, `encoder_fp` c3b3d5e1a283).
+
+**Third revision before the M1 merge (the convergence round after `9681eed`, 2026-10-01).** The
+text above now says, and `9681eed` did not, that each connection is checked and not only the
+port; and a residual risk is stated:
+
+- *The connection is checked, not only the port.* `assert_listener_owner` reads `/proc` and the
+  request then connects in a second step, so another account could bind the port in between
+  (while the units are down, the normal state, and on every restart) and receive the key: in
+  the round's scratch run (a dummy key; the listener was this account's, counted as another's),
+  a listener toggled 0.5 ms on and 4.5 ms off received the `Authorization` header on 16 of 400
+  attempts the check had passed, and one toggled 2 ms on and 8 ms off on 3. Every keyed client
+  (`HttpEndpoint`, hence the serving pair's clients, the planner gateway client and the probe
+  scripts' raw clients) now sends through `net.OwnerCheckedTransport`: each new connection to a
+  loopback address is checked once it is made and before TLS or a request byte, with one exact
+  `sock_diag` lookup of the connection's server end (the request the proxy makes for the client
+  end). On this kernel a connection not yet accepted already reports its listener's owner; an
+  answer that names nobody (the handshake, or uid 0 without an inode, which some kernels report
+  for a connection not yet accepted) is asked again for up to 5 s, and any owner but this
+  account or root closes the connection unsent (`ListenerOwnerError`). The same scratch run
+  against the fixed client: no byte reached the toggling listener in 800 attempts (101 refused
+  by the `/proc` check, 99 on the connection, the rest failing to connect).
+- *Residual risk: the docker group.* Three other local accounts are in the `docker` group (two
+  with a login shell, one service account; `getent group docker` lists them),
+  `/var/run/docker.sock` is `root:docker` 0660, and the daemon has no authorization plugin and
+  no user-namespace remapping (`docker info`), so on this host those accounts are
+  root-equivalent and the per-account boundary of this amendment does not hold against them:
+  `docker inspect mesa-clm-encoder` shows the encoder key (the run script's `--env-file` puts
+  `VLLM_API_KEY` into the container's `Config.Env`), `docker exec` and `docker cp` reach the
+  container, a host-network container run as this account's uid is relayed by the proxy and
+  passes the clients' checks as this account, and a bind mount of the home directory reaches
+  `~/.mesa/clm/secrets` (the clm key included). The remedies are the host's, not the recipe's:
+  the group's membership (for the host's administrators), rootless docker or `userns-remap`.
+  Keeping the key out of the container's environment (a read-only 0400 key file the guard
+  reads) would end the exposure through a routine `docker inspect` but not the others; it
+  changes the guard, the lock and the container and is left to an amendment. Rotating both
+  keys (`mesa-clm serve keys --rotate`, then `reset-failed` and a restart of both units) is an
+  operator action, due after this round: its count-only check of `docker inspect` (no key
+  printed) found the encoder key there, and its fixer wrote that command's output to a scratch
+  file readable by every local account for about a second before deleting it.
+
+Evidence: `tests/unit/test_listener_owner.py` (the kernel's answer for a connection's server end
+before and after the accept, over IPv4, IPv6 and a dual-stack listener; the answer read
+strictly; another account's server end refused, an undecided answer asked again; the trace on a
+new connection only; a port taken after the check gets no byte; the planner and the probes'
+raw client checking each connection). Nothing rotates: the clients are not in the lock, and
+neither the proxy nor the units changed.
 
 ## Plan (summary; the full plan is `design/plan-2026-09-28.md`)
 

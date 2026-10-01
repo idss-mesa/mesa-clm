@@ -981,7 +981,9 @@ bridge, where its port, and seven sockets of the engine process that no key cove
 rendezvous store and six collective sockets), were reachable from any local account
 (`bench/results/2026-10-01/serving_m1b.json`, `encoder_netns.json`); since DESIGN A5 the
 container has no network at all, the API is a unix socket in an owner-only directory, and the key
-is the control on the one loopback port that reaches it (`serving_m1c.json`). clm-serve's
+is the control on the one loopback port that reaches it (`serving_m1c.json`); members of the
+host's `docker` group are root-equivalent and outside that control (DESIGN A5, residual risks:
+`docker inspect` shows the encoder key). clm-serve's
 `/health` (which lists the head names)
 and its FastAPI schema pages answer without a key. Every client truncates its inputs to 4,095
 tokens from the left (`max_len - 1`): vLLM 0.27.1 never completes an input of exactly 4,096
@@ -1439,7 +1441,10 @@ real `ServeProbes()`. The same fixture points `net.PROC_NET` at an empty path, s
 clients' port-owner check reads no listener of the host; `tests/unit/test_listener_owner.py`
 drives it with fixture `/proc/net/tcp` and `tcp6` files (another account's socket on 8090 or
 8700 is refused before the key is sent, the pre-flight exits 2, a refusal mid-run fails the
-run, a retry asks again, the planner gateway and the probe scripts' raw clients ask too), and
+run, a retry asks again, the planner gateway and the probe scripts' raw clients ask too) and the
+check of each new connection against real loopback listeners of the test's own account (the
+kernel's answer for the server end before and after the accept, over IPv4, IPv6 and dual stack;
+another account's answer substituted, a port taken after the `/proc` check gets no byte), and
 `serving/tests/test_encoder_proxy.py` the encoder's endpoint proxy (the kernel's answer for the
 owner of a real loopback client, another account's connection closed without reaching the
 encoder, a symlinked or foreign socket refused, a swap after the check, the relay with a late
@@ -1573,6 +1578,7 @@ third-party component and its hash.
 
 ## 2026-10-01
 
+* **Update**: [Serving runbook](deploy/serving.md) and [Serving](concepts/serving.md) for the third pre-merge revision of DESIGN A5: every keyed client also checks each new connection, once it is made and before a byte is sent, by asking the kernel which account holds its server end (a port taken between the `/proc` check and the connect gets nothing), and the `docker` group is named as a residual risk (root-equivalent without an authorization plugin or user-namespace remapping: `docker inspect` shows the encoder key). [Testing](develop/testing.md) describes the new connection-check tests. `llms.txt` and `llms-full.txt` regenerated.
 * **Update**: [Serving runbook](deploy/serving.md), [Serving](concepts/serving.md) and [Install](getting-started/install.md) for the second pre-merge revision of DESIGN A5: the encoder's proxy relays only this account's connections (the kernel names the client socket's owner) and runs sandboxed without namespaces, logs each kind of refusal at most once per 10 s, and the doctor's new `serving units` check compares the loaded units and the running proxy with the checkout's rendering; every keyed client named (the planner gateway client and the probe scripts check the port's owner too); `endpoint_checks.py --foreign` and the `serving_m1e` record; new troubleshooting rows (another account's connection, the AppArmor denial of a namespaced proxy, `serving units`). [Quickstart](getting-started/quickstart.md): no live **annotate** run uses a bench card before the M2 cells. `llms.txt` and `llms-full.txt` regenerated.
 * **Update**: [Serving runbook](deploy/serving.md) and [Serving](concepts/serving.md) for the pre-merge revision of DESIGN A5: the encoder unit requires its socket unit (a port another account holds stops the encoder and clm-serve from starting), the endpoint proxy is `mesa-clm-encoder-proxy` (`serving/encoder_proxy.py`: never through a symlink, at most 4,096 connections, idle ones closed) instead of `systemd-socket-proxyd`, keyed clients refuse another account's socket, and the doctor checks the listeners' owners and the run directory; the start limit counts manual starts (`reset-failed` before a manual restart, also after `serve keys --rotate`); keys stay off command lines and screens (`grep -rlF -f` to look for a leak); new troubleshooting rows. [Install](getting-started/install.md) and [Testing](develop/testing.md) describe the new checks and tests; [Configuration](getting-started/configuration.md) says why `config.yaml.example` keeps the key settings commented out; `llms.txt` and `llms-full.txt` regenerated.
 * **Update**: [Serving](concepts/serving.md) and the [Serving runbook](deploy/serving.md) for DESIGN A5: the encoder container has no network and serves on a unix socket that the new socket unit `mesa-clm-encoder-proxy.socket` exposes on 127.0.0.1:8090 through `systemd-socket-proxyd`; the KV cache is pinned to 4.5 GiB (the encoder now measures 19,609 MiB by `nvidia-smi`, 21.45 GiB of `MemAvailable`); the encoder unit starts the socket and the headroom timer and is started at most three times an hour; the doctor reads the container's network namespace, warns on a stopped headroom timer and checks the feature store; the runbook adds the six-unit install, `reset-failed`, the removal of the socket units, the draft of the CARC allocation request (not sent) and the fallback's refusal of a batched encoder. The fallback's parity run is described as passing its two cosine gates, with the probe gate still pending.
