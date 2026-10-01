@@ -1,0 +1,496 @@
+{
+ "format": "mesa-clm/serving-probes/1",
+ "started_at": "2026-09-29T19:06:06+00:00",
+ "host": "sparky-1",
+ "command": "uv run python scripts/serving_probes.py",
+ "binds": {
+  "command": "ss -Hltn '( sport = :8090 or sport = :8700 )'",
+  "listeners": [
+   "127.0.0.1:8090",
+   "127.0.0.1:8700"
+  ],
+  "loopback_only": true,
+  "ports_seen": [
+   "8090",
+   "8700"
+  ],
+  "docker_port": "8090/tcp -> 127.0.0.1:8090"
+ },
+ "auth": {
+  "guarded": [
+   {
+    "unit": "encoder",
+    "route": "GET http://127.0.0.1:8090/v1/models",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "unit": "encoder",
+    "route": "POST http://127.0.0.1:8090/v1/embeddings",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "unit": "clm-serve",
+    "route": "GET http://127.0.0.1:8700/v1/models",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "unit": "clm-serve",
+    "route": "POST http://127.0.0.1:8700/v1/systemone",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   },
+   {
+    "unit": "clm-serve",
+    "route": "POST http://127.0.0.1:8700/v1/rank",
+    "no_key": 401,
+    "wrong_key": 401,
+    "other_units_key": 401,
+    "right_key": 200
+   }
+  ],
+  "named_v1_routes_all_401_without_valid_key": true,
+  "right_key_all_200": true,
+  "open_routes": {
+   "encoder GET /health": 200,
+   "encoder GET /metrics": 200,
+   "encoder GET /version": 200,
+   "encoder POST /tokenize (no key)": 200,
+   "encoder POST /tokenize (key)": 200,
+   "clm-serve GET /health": 200,
+   "clm-serve GET / (--no-ui)": 404
+  },
+  "tokenize": {
+   "works_under_runner_pooling": true,
+   "guarded_by_key": false
+  },
+  "encoder_routes_outside_v1_v2_without_key": {
+   "encoder POST /pooling (no key)": 200,
+   "encoder POST /invocations (no key)": 200,
+   "encoder POST /score (no key)": 200,
+   "encoder POST /rerank (no key)": 200,
+   "encoder POST /detokenize (no key)": 200,
+   "encoder POST /v1/score (no key)": 401,
+   "encoder POST /v2/embed (no key)": 401,
+   "encoder GET /load (no key)": 200,
+   "encoder GET /openapi.json (no key)": 200
+  },
+  "note": "vLLM's API-key middleware guards only the /v1, /v2, /inference and /cohere prefixes; a 200 above without a key means that route is reachable by any local user on loopback."
+ },
+ "versions": {
+  "vllm_version": "0.27.1",
+  "image_id": "sha256:2c211a1273b48e8929f893b267aeb1509e6b84654cdbde1bad56d79e3964224d",
+  "container_image_ref": "vllm/vllm-openai@sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967",
+  "image_repo_digests": [
+   "vllm/vllm-openai@sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967"
+  ],
+  "lock_image_digest": "sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967",
+  "image_digest_matches_lock": true,
+  "encoder_fp_lock": "852efc921a8a",
+  "encoder_fp_recomputed": "852efc921a8a",
+  "lock_sha": "3c032477ff05e20bba4f9bcb59cbcde9d77ed18c4706d651eada2352c66780a3",
+  "head_npz_sha256": "0039c8bfafb2a5c2ec9e5c492a93edc419971b85efc4bee583b75e1ae3e722f8",
+  "units_enabled": {
+   "mesa-clm-encoder.service": "disabled",
+   "mesa-clm-serve.service": "disabled"
+  },
+  "units_active": {
+   "mesa-clm-encoder.service": "active",
+   "mesa-clm-serve.service": "active"
+  }
+ },
+ "models": {
+  "encoder": [
+   {
+    "id": "qwen3-8b",
+    "root": "Qwen/Qwen3-8B",
+    "max_model_len": 4096,
+    "owned_by": "vllm"
+   }
+  ],
+  "encoder_has_qwen3_8b": true,
+  "clm_serve": [
+   "clm-latest",
+   "clm-raw"
+  ],
+  "clm_serve_has_latest_and_raw": true,
+  "clm_serve_health": {
+   "ok": true,
+   "embedder": true,
+   "models": [
+    "clm-latest",
+    "clm-raw"
+   ],
+   "cache_device": "cpu",
+   "cache_reserved_mb": 536.9
+  }
+ },
+ "drift": {
+  "source": "README.md at Contrastive-LM/CLM bb42c6c5 (gh api .../contents/README.md?ref=bb42c6c5...); issue #15 comment 2026-09-28 (vLLM 0.30.0, max-model-len 8192, GB10)",
+  "quickstart": {
+   "observed": {
+    "urgency": 0.8449,
+    "department": "billing",
+    "billing": 0.9878,
+    "frustration": 2.0,
+    "input_tokens": 0,
+    "latency_ms_header": 0.6
+   },
+   "issue15": {
+    "urgency": 0.8366,
+    "billing": 0.9888,
+    "frustration": 2.0
+   },
+   "readme_printed": {
+    "urgency": 0.41022,
+    "billing": 0.93878,
+    "frustration": 1.98386
+   },
+   "tolerance": 0.01,
+   "within_tolerance_of_issue15": {
+    "urgency": true,
+    "billing": true,
+    "frustration": true
+   },
+   "pass": true
+  },
+  "tides_rank": {
+   "top_candidate": "The Moon's gravitational pull.",
+   "top_prob": 0.9939,
+   "ranked": [
+    {
+     "rank": 1,
+     "candidate": "The Moon's gravitational pull.",
+     "prob": 0.993894
+    },
+    {
+     "rank": 2,
+     "candidate": "Because the Earth is round.",
+     "prob": 0.006079
+    },
+    {
+     "rank": 3,
+     "candidate": "Photosynthesis in plants.",
+     "prob": 2.7e-05
+    }
+   ],
+   "model_card": 0.993,
+   "readme": 0.997,
+   "tolerance": 0.005,
+   "pass": true
+  }
+ },
+ "truncation": {
+  "text_sha256": "7a33ed862836d8a34c2578b432da99b6c47219d5346590a3c43c897f2904b300",
+  "text_tokens": 5005,
+  "corpus": "tests/fixtures/cards/*.md concatenated, first 4990 tokens, plus a target line",
+  "max_model_len_boundary": {
+   "token_ids_2048": [
+    {
+     "status": 200,
+     "prompt_tokens": 2048,
+     "seconds": 0.44
+    },
+    {
+     "status": 200,
+     "prompt_tokens": 2048,
+     "seconds": 0.45
+    }
+   ],
+   "token_ids_2049": [
+    {
+     "status": 200,
+     "prompt_tokens": 2049,
+     "seconds": 0.52
+    },
+    {
+     "status": 200,
+     "prompt_tokens": 2049,
+     "seconds": 0.51
+    }
+   ],
+   "token_ids_4095": [
+    {
+     "status": 200,
+     "prompt_tokens": 4095,
+     "seconds": 0.9
+    },
+    {
+     "status": 200,
+     "prompt_tokens": 4095,
+     "seconds": 0.91
+    }
+   ],
+   "token_ids_4096": [
+    {
+     "status": "timeout",
+     "seconds": 30.1
+    },
+    {
+     "status": "timeout",
+     "seconds": 30.1
+    }
+   ],
+   "text_truncate_4096_left": {
+    "status": "timeout",
+    "seconds": 60.06
+   },
+   "text_no_truncation": {
+    "status": 400,
+    "seconds": 0.02
+   }
+  },
+  "requests_that_timed_out": [
+   "token_ids_4096",
+   "text_truncate_4096_left"
+  ],
+  "left": {
+   "request": "EncoderClient(max_len=4095).embed: truncate_prompt_tokens=4095, truncation_side=left",
+   "prompt_tokens_charged": 4095,
+   "cos_vs_last_4095_token_ids": 1.0,
+   "cos_vs_decoded_tail_text": 1.0,
+   "decoded_tail_text_tokens_charged": 4095,
+   "tail_ids_tokens_charged": 4095,
+   "gate": 0.9999,
+   "pass": true
+  },
+  "right_default": {
+   "request": "truncate_prompt_tokens=4095 without truncation_side",
+   "prompt_tokens_charged": 4095,
+   "cos_vs_first_4095_token_ids": 1.0,
+   "cos_vs_left_truncated": 0.8106729
+  }
+ },
+ "goldens": {
+  "file": ".local/serving/encoder_golden.npz",
+  "file_sha256": "fe0f5882e5e8b85549afca31e9b645c0582db22876a94ec306d0c60d4002e359",
+  "n": 20,
+  "dtype": "float32",
+  "prompt_tokens": 294,
+  "texts_sha256": [
+   "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+   "9b0fa2f1d13bd58c8c4cbb22d8edf6dd31747d622c228998a7237524e09e26e3",
+   "10196960f95b6e365d0323159fcdec1bdb2a2c5abb261979f8ee7a50269a131c",
+   "80a2affc53b2da89d33414a674c9f4d1fc22272d68be01348d603aed0df30f0c",
+   "a0c5d0292f507e465bf8b3a92aa0716fd9252a825b276a793cf476c846f1b291",
+   "fe05f70b51e3cc534544fe71b75a60c66346167918acea7e38bfa8fe26f69fac",
+   "51468669fc30dac19f5eec49e210730f59a292bf0c41b318fb25aec02107271c",
+   "d2ea0a746e595f2f3c46e12318869792989b243469b311a215e924203196e567",
+   "e37dc1196c11a7935ae5b59dca5641b7634bab9069d814f340805a1019a61ce7",
+   "b5df74764b71afb21807ff2b2476ad461683cd08ef1e37bf94e2b082d638e8a4",
+   "9269c5ae57f3afa457b4b15a97ece33422b8df080dd55e7e000f7ba775a57e77",
+   "b238205f538cbf7ce0e65292f4784e530c577921906fe1786c39d0fda28d4704",
+   "88411cb1eedff659e67d30f1b64a7f45db05ac8bc4c4f7228126ea6f413cf138",
+   "4e1de7a17385d0309d5986a4ccce6d980f92ba377dba3434a8c899cac736a6da",
+   "81da3ad2edde4af8d859fd65ba6c4e5db1db218a1a832940eaf395323eafb2ac",
+   "fef1f747f3db48496dcbb43611e30059cd7343a576f73873fea72b626cabdff5",
+   "abd432d76b34637f1c888dfba899e30d8fc0f6b72a01abbf49cf12cb8c2f79da",
+   "d2435553f976a5ac564deb5123cb54e32aa21906a96e6ff2c3e14956c1af39da",
+   "4b72359e78c3e622284a309fdfda2bbd3b6245dda9f4472de3d508b535fd2202",
+   "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881"
+  ],
+  "batch_vs_one_by_one": {
+   "min_cos": 0.9999507,
+   "mean_cos": 0.9999865
+  },
+  "batch_vs_batch_repeat": {
+   "min_cos": 0.9998659,
+   "mean_cos": 0.999992
+  },
+  "one_by_one_vs_one_by_one_repeat": {
+   "min_cos": 1.0,
+   "mean_cos": 1.0,
+   "bitwise_identical": 20
+  },
+  "golden_gate_0_9999": {
+   "batch_vs_one_by_one_pass": true,
+   "batch_vs_batch_repeat_pass": false,
+   "one_by_one_repeat_pass": true
+  }
+ },
+ "parity": {
+  "n_pairs": 50,
+  "mix": {
+   "term.fits F7": 30,
+   "term.fits F1 noul": 10,
+   "column.ontology_fits F7": 10
+  },
+  "head_npz_sha256": "0039c8bfafb2a5c2ec9e5c492a93edc419971b85efc4bee583b75e1ae3e722f8",
+  "head_source_sha256": "b2b4a8c9c2d39263eff78a351eb909a342ce9b3bf21a3f07c1d1bf15f1c4eda5",
+  "head_scale": 100.0,
+  "gate": 0.0001,
+  "clm-latest": {
+   "served_vs_local": {
+    "max_abs_prob_diff": 0.04344310871428447,
+    "mean_abs_prob_diff": 0.005592136869343987,
+    "p95_abs_prob_diff": 0.023282010349218046,
+    "top_choice_agreement": "49/50",
+    "worst_pair": "term.fits/F7/0279bc7c45df",
+    "pass": false
+   },
+   "local_vs_local_repeat_noise_floor": {
+    "max_abs_prob_diff": 0.024803169100168,
+    "mean_abs_prob_diff": 0.0037450032027359264,
+    "p95_abs_prob_diff": 0.020541900834220597,
+    "top_choice_agreement": "49/50",
+    "worst_pair": "term.fits/F7/07e8bed38ae1"
+   }
+  },
+  "clm-raw": {
+   "served_vs_local": {
+    "max_abs_prob_diff": 0.059052156911363674,
+    "mean_abs_prob_diff": 0.005821338187705104,
+    "p95_abs_prob_diff": 0.03536729380727439,
+    "top_choice_agreement": "49/50",
+    "worst_pair": "term.fits/F7/2611d4b9d7d1",
+    "pass": false
+   },
+   "local_vs_local_repeat_noise_floor": {
+    "max_abs_prob_diff": 0.03628655160025951,
+    "mean_abs_prob_diff": 0.0022471471492770474,
+    "p95_abs_prob_diff": 0.010457532330001256,
+    "top_choice_agreement": "49/50",
+    "worst_pair": "column.ontology_fits/F7/07e8bed38ae1"
+   }
+  },
+  "head_only_clm_latest": {
+   "vectors_file": ".local/serving/parity_vectors.npz",
+   "n_questions": 50,
+   "n_candidates": 159,
+   "torch": "2.14.0+cu130",
+   "weights_only_load_ok": true,
+   "headpair_scale": 100.0,
+   "max_abs_projection_diff": 6.258487701416016e-07,
+   "max_abs_prob_diff": 3.799481302829699e-06,
+   "projection_gate": 1e-05,
+   "projection_pass": true,
+   "prob_pass_1e-4": true
+  },
+  "pairs_file": ".local/serving/systemone_pairs.json"
+ },
+ "latency": {
+  "rank_fit_request": {
+   "state": "target_state of DP1.10003.001.brd_countdata observerDistance (fixture card)",
+   "state_tokens": 371,
+   "candidates": "12 PATO 'distance' OLS fixture terms '<label>: <definition>' + __none__",
+   "model": "clm-latest"
+  },
+  "systemone_warm_same_state": {
+   "n": 30,
+   "p50_ms": 1.0,
+   "p95_ms": 1.6,
+   "min_ms": 0.7,
+   "max_ms": 1.8,
+   "mean_ms": 1.0,
+   "server_header": {
+    "n": 30,
+    "p50_ms": 0.4,
+    "p95_ms": 0.6,
+    "min_ms": 0.2,
+    "max_ms": 0.6,
+    "mean_ms": 0.4
+   }
+  },
+  "systemone_cold_new_state": {
+   "n": 30,
+   "p50_ms": 110.1,
+   "p95_ms": 111.6,
+   "min_ms": 108.0,
+   "max_ms": 113.1,
+   "mean_ms": 110.1,
+   "server_header": {
+    "n": 30,
+    "p50_ms": 108.6,
+    "p95_ms": 110.1,
+    "min_ms": 106.2,
+    "max_ms": 111.5,
+    "mean_ms": 108.5
+   },
+   "input_tokens_per_request": [
+    371
+   ],
+   "note": "new state text each time (card rows varied); candidate vectors cached"
+  },
+  "embeddings_batch_32": {
+   "n": 30,
+   "p50_ms": 2820.3,
+   "p95_ms": 2840.6,
+   "min_ms": 2764.0,
+   "max_ms": 2845.0,
+   "mean_ms": 2815.3,
+   "prompt_tokens": 14004,
+   "texts": "first 32 distinct term.fits target_state contexts of the snapshot"
+  }
+ },
+ "footprint": {
+  "memavailable_now_gib": 78.15,
+  "memavailable_pre_start_gib": 107.8,
+  "memavailable_encoder_only_gib": 80.3,
+  "delta_both_units_gib": 29.65,
+  "delta_encoder_gib": 27.5,
+  "delta_clm_serve_gib": 2.15,
+  "budget_vllm_gib": 24.3,
+  "docker_stats": {
+   "MemUsage": "4.792GiB / 121.7GiB",
+   "MemPerc": "3.94%",
+   "CPUPerc": "1.25%",
+   "PIDs": "170"
+  },
+  "nvidia_smi_compute_apps": [
+   "VLLM::EngineCore, 24799 MiB"
+  ],
+  "nvidia_smi_memory_used": "[N/A], [N/A]",
+  "clm_serve_proc_status": {
+   "VmHWM": "1261548 kB",
+   "VmRSS": "1254280 kB",
+   "RssAnon": "1009204 kB",
+   "RssFile": "245076 kB"
+  },
+  "clm_serve_unit_memory_current_bytes": "1041092608",
+  "clm_serve_unit_memory_peak_bytes": "1059602432",
+  "encoder_log": {
+   "model_loading": "14.11 GiB memory and 66.028679 seconds",
+   "kv_cache": "9.49 GiB",
+   "free_on_startup": "105.2/121.69 GiB",
+   "seq_pooling_type": "LAST",
+   "enable_prefix_caching": "False",
+   "resolved_pooling": "pooling_type=LAST(source=model_default), tok_pooling_type=ALL(source=model_default), use_activation=True(source=pooler_default)",
+   "version": "v0.27.1",
+   "routes": [
+    "POST /detokenize",
+    "HEAD, GET /docs",
+    "HEAD, GET /docs/oauth2-redirect",
+    "GET /health",
+    "POST /invocations",
+    "GET /load",
+    "GET /metrics",
+    "HEAD, GET /openapi.json",
+    "GET /ping",
+    "POST /ping",
+    "POST /pooling",
+    "HEAD, GET /redoc",
+    "POST /rerank",
+    "POST /score",
+    "POST /tokenize",
+    "POST /v1/embeddings",
+    "GET /v1/models",
+    "POST /v1/rerank",
+    "POST /v1/score",
+    "POST /v2/embed",
+    "POST /v2/rerank",
+    "GET /version"
+   ]
+  }
+ },
+ "seconds": 303.5
+}

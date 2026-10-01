@@ -1,0 +1,344 @@
+{
+ "format": "mesa-clm/collapse-spike/1",
+ "created_at": "2026-09-29T19:12:48+00:00",
+ "command": "uv run python scripts/collapse_spike.py",
+ "label_free": true,
+ "snapshot": "bench/snapshots/2026-09-29.parquet",
+ "labels_sha256": "aafd18f8cea7992c9a8e0d12ded5a60ae2534a6677e911c28c2b05deaa1b752c",
+ "rows": {
+  "term.fits": 285,
+  "column.ontology_fits": 190
+ },
+ "ontology_state_rows_given_task_scope": {
+  "term.fits": 0,
+  "column.ontology_fits": 190
+ },
+ "encoder": {
+  "url": "http://127.0.0.1:8090",
+  "model": "qwen3-8b",
+  "max_len": 4096,
+  "encoder_fp": "852efc921a8a",
+  "route": "vllm"
+ },
+ "head": {
+  "npz": "b2b4a8c9.npz",
+  "source_sha256": "b2b4a8c9c2d39263eff78a351eb909a342ce9b3bf21a3f07c1d1bf15f1c4eda5",
+  "side": "state"
+ },
+ "n_distinct_texts_embedded": 925,
+ "prompt_tokens": 392978,
+ "embed_seconds": 79.5,
+ "variants": {
+  "state_only": "render.to_text(target_state_from(state))",
+  "suffixed": "render.state_text(view, TASKS[task].text)",
+  "f9_query": "framings.context_text(framing(task, 'F9'), state)",
+  "control_f1": "framings.context_text(framing(task, 'F1'), state): the stored anyjev per-candidate state + the question (one context per row)"
+ },
+ "headline_mean_pairwise_cos": {
+  "term.fits": {
+   "raw_4096": {
+    "state_only": 0.7297,
+    "suffixed": 0.9932,
+    "f9_query": 0.9448,
+    "control_f1": 0.9887
+   },
+   "projected_512": {
+    "state_only": 0.6747,
+    "suffixed": 0.9691,
+    "f9_query": 0.7488,
+    "control_f1": 0.949
+   }
+  },
+  "column.ontology_fits": {
+   "raw_4096": {
+    "state_only": 0.8541,
+    "suffixed": 0.9948,
+    "f9_query": 0.9388,
+    "control_f1": 0.9892
+   },
+   "projected_512": {
+    "state_only": 0.7398,
+    "suffixed": 0.9735,
+    "f9_query": 0.7271,
+    "control_f1": 0.9458
+   }
+  }
+ },
+ "issue15_reference": {
+  "state_only_raw": 0.452,
+  "suffixed_raw": 0.958,
+  "suffixed_projected": 0.947
+ },
+ "results": {
+  "term.fits": {
+   "state_only": {
+    "n_distinct_texts": 143,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 411.0,
+     "p95": 528.6,
+     "max": 588
+    },
+    "raw_4096": {
+     "n": 143,
+     "n_pairs": 10153,
+     "mean_pairwise_cos": 0.7297,
+     "min_pairwise_cos": 0.0814,
+     "within_card_mean": 0.7441,
+     "across_card_mean": 0.7273,
+     "n_within_pairs": 1444,
+     "top_pc_variance_fraction": 0.588,
+     "top3_pc_variance_fraction": 0.7624,
+     "norm_of_mean_vector": 0.8553
+    },
+    "projected_512": {
+     "n": 143,
+     "n_pairs": 10153,
+     "mean_pairwise_cos": 0.6747,
+     "min_pairwise_cos": 0.3549,
+     "within_card_mean": 0.6954,
+     "across_card_mean": 0.6712,
+     "n_within_pairs": 1444,
+     "top_pc_variance_fraction": 0.3053,
+     "top3_pc_variance_fraction": 0.516,
+     "norm_of_mean_vector": 0.8228
+    }
+   },
+   "suffixed": {
+    "n_distinct_texts": 143,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 439.0,
+     "p95": 556.6,
+     "max": 616
+    },
+    "raw_4096": {
+     "n": 143,
+     "n_pairs": 10153,
+     "mean_pairwise_cos": 0.9932,
+     "min_pairwise_cos": 0.9822,
+     "within_card_mean": 0.994,
+     "across_card_mean": 0.993,
+     "n_within_pairs": 1444,
+     "top_pc_variance_fraction": 0.2949,
+     "top3_pc_variance_fraction": 0.4581,
+     "norm_of_mean_vector": 0.9966
+    },
+    "projected_512": {
+     "n": 143,
+     "n_pairs": 10153,
+     "mean_pairwise_cos": 0.9691,
+     "min_pairwise_cos": 0.9155,
+     "within_card_mean": 0.974,
+     "across_card_mean": 0.9682,
+     "n_within_pairs": 1444,
+     "top_pc_variance_fraction": 0.1779,
+     "top3_pc_variance_fraction": 0.3912,
+     "norm_of_mean_vector": 0.9845
+    }
+   },
+   "f9_query": {
+    "n_distinct_texts": 101,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 34.0,
+     "p95": 49.0,
+     "max": 60
+    },
+    "raw_4096": {
+     "n": 101,
+     "n_pairs": 5050,
+     "mean_pairwise_cos": 0.9448,
+     "min_pairwise_cos": 0.7377,
+     "within_card_mean": 0.9517,
+     "across_card_mean": 0.9437,
+     "n_within_pairs": 735,
+     "top_pc_variance_fraction": 0.256,
+     "top3_pc_variance_fraction": 0.4833,
+     "norm_of_mean_vector": 0.9723
+    },
+    "projected_512": {
+     "n": 101,
+     "n_pairs": 5050,
+     "mean_pairwise_cos": 0.7488,
+     "min_pairwise_cos": 0.4952,
+     "within_card_mean": 0.7785,
+     "across_card_mean": 0.7438,
+     "n_within_pairs": 735,
+     "top_pc_variance_fraction": 0.2272,
+     "top3_pc_variance_fraction": 0.458,
+     "norm_of_mean_vector": 0.8668
+    }
+   },
+   "control_f1": {
+    "n_distinct_texts": 285,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 502.0,
+     "p95": 627.8,
+     "max": 685
+    },
+    "raw_4096": {
+     "n": 285,
+     "n_pairs": 40470,
+     "mean_pairwise_cos": 0.9887,
+     "min_pairwise_cos": 0.9604,
+     "within_card_mean": 0.9895,
+     "across_card_mean": 0.9886,
+     "n_within_pairs": 5732,
+     "top_pc_variance_fraction": 0.1627,
+     "top3_pc_variance_fraction": 0.3416,
+     "norm_of_mean_vector": 0.9944
+    },
+    "projected_512": {
+     "n": 285,
+     "n_pairs": 40470,
+     "mean_pairwise_cos": 0.949,
+     "min_pairwise_cos": 0.8517,
+     "within_card_mean": 0.9529,
+     "across_card_mean": 0.9484,
+     "n_within_pairs": 5732,
+     "top_pc_variance_fraction": 0.1397,
+     "top3_pc_variance_fraction": 0.2988,
+     "norm_of_mean_vector": 0.9743
+    }
+   }
+  },
+  "column.ontology_fits": {
+   "state_only": {
+    "n_distinct_texts": 60,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 418.5,
+     "p95": 522.5999999999999,
+     "max": 575
+    },
+    "raw_4096": {
+     "n": 60,
+     "n_pairs": 1770,
+     "mean_pairwise_cos": 0.8541,
+     "min_pairwise_cos": 0.4947,
+     "within_card_mean": 0.877,
+     "across_card_mean": 0.8503,
+     "n_within_pairs": 251,
+     "top_pc_variance_fraction": 0.678,
+     "top3_pc_variance_fraction": 0.7799,
+     "norm_of_mean_vector": 0.9255
+    },
+    "projected_512": {
+     "n": 60,
+     "n_pairs": 1770,
+     "mean_pairwise_cos": 0.7398,
+     "min_pairwise_cos": 0.3737,
+     "within_card_mean": 0.7688,
+     "across_card_mean": 0.735,
+     "n_within_pairs": 251,
+     "top_pc_variance_fraction": 0.3682,
+     "top3_pc_variance_fraction": 0.5186,
+     "norm_of_mean_vector": 0.8626
+    }
+   },
+   "suffixed": {
+    "n_distinct_texts": 60,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 436.5,
+     "p95": 540.5999999999999,
+     "max": 593
+    },
+    "raw_4096": {
+     "n": 60,
+     "n_pairs": 1770,
+     "mean_pairwise_cos": 0.9948,
+     "min_pairwise_cos": 0.9877,
+     "within_card_mean": 0.9955,
+     "across_card_mean": 0.9947,
+     "n_within_pairs": 251,
+     "top_pc_variance_fraction": 0.1455,
+     "top3_pc_variance_fraction": 0.3738,
+     "norm_of_mean_vector": 0.9975
+    },
+    "projected_512": {
+     "n": 60,
+     "n_pairs": 1770,
+     "mean_pairwise_cos": 0.9735,
+     "min_pairwise_cos": 0.9298,
+     "within_card_mean": 0.9769,
+     "across_card_mean": 0.973,
+     "n_within_pairs": 251,
+     "top_pc_variance_fraction": 0.16,
+     "top3_pc_variance_fraction": 0.3768,
+     "norm_of_mean_vector": 0.9869
+    }
+   },
+   "f9_query": {
+    "n_distinct_texts": 45,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 34.0,
+     "p95": 49.0,
+     "max": 59
+    },
+    "raw_4096": {
+     "n": 45,
+     "n_pairs": 990,
+     "mean_pairwise_cos": 0.9388,
+     "min_pairwise_cos": 0.7972,
+     "within_card_mean": 0.9463,
+     "across_card_mean": 0.9376,
+     "n_within_pairs": 143,
+     "top_pc_variance_fraction": 0.3191,
+     "top3_pc_variance_fraction": 0.5993,
+     "norm_of_mean_vector": 0.9696
+    },
+    "projected_512": {
+     "n": 45,
+     "n_pairs": 990,
+     "mean_pairwise_cos": 0.7271,
+     "min_pairwise_cos": 0.5026,
+     "within_card_mean": 0.7681,
+     "across_card_mean": 0.7201,
+     "n_within_pairs": 143,
+     "top_pc_variance_fraction": 0.2703,
+     "top3_pc_variance_fraction": 0.5651,
+     "norm_of_mean_vector": 0.8562
+    }
+   },
+   "control_f1": {
+    "n_distinct_texts": 190,
+    "n_cards": 7,
+    "tokens": {
+     "p50": 470.0,
+     "p95": 587.1999999999999,
+     "max": 630
+    },
+    "raw_4096": {
+     "n": 190,
+     "n_pairs": 17955,
+     "mean_pairwise_cos": 0.9892,
+     "min_pairwise_cos": 0.9674,
+     "within_card_mean": 0.991,
+     "across_card_mean": 0.9888,
+     "n_within_pairs": 2727,
+     "top_pc_variance_fraction": 0.178,
+     "top3_pc_variance_fraction": 0.3681,
+     "norm_of_mean_vector": 0.9946
+    },
+    "projected_512": {
+     "n": 190,
+     "n_pairs": 17955,
+     "mean_pairwise_cos": 0.9458,
+     "min_pairwise_cos": 0.8437,
+     "within_card_mean": 0.9537,
+     "across_card_mean": 0.9444,
+     "n_within_pairs": 2727,
+     "top_pc_variance_fraction": 0.1335,
+     "top3_pc_variance_fraction": 0.3271,
+     "norm_of_mean_vector": 0.9727
+    }
+   }
+  }
+ },
+ "contexts_file": ".local/serving/collapse_contexts.json",
+ "seconds": 82.6
+}

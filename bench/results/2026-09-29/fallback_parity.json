@@ -1,0 +1,150 @@
+{
+ "format": "mesa-clm/fallback-parity/1",
+ "started_at": "2026-09-29T19:17:34+00:00",
+ "host": "sparky-1",
+ "commands": [
+  "uv run python scripts/fallback_parity.py dump",
+  "systemctl --user stop mesa-clm-serve.service mesa-clm-encoder.service",
+  "HF_HUB_OFFLINE=1 ~/.mesa/clm/serve/.venv/bin/python scripts/fallback_parity.py compare --batch 8 --diagnostic-batch 1"
+ ],
+ "reference_route": {
+  "route": "vllm",
+  "encoder_fp": "852efc921a8a",
+  "spec": {
+   "model": "Qwen/Qwen3-8B",
+   "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+   "dtype": "bfloat16",
+   "pooling": "LAST",
+   "normalize": true,
+   "max_len": 4096,
+   "truncation_side": "left",
+   "prefix_caching": false,
+   "route": "vllm"
+  },
+  "vectors_sha256": "7f315096ff04f8c6bdfe4319ab1d984c71a0db922acac10efef3e783683b6473",
+  "golden_repeat_vs_encoder_golden_npz": {
+   "min_cos": 0.9998659443280649,
+   "mean_cos": 0.9999904937262206
+  }
+ },
+ "fallback_route": {
+  "route": "transformers",
+  "encoder_fp": "82f4ff33b628",
+  "spec": {
+   "model": "Qwen/Qwen3-8B",
+   "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+   "dtype": "bfloat16",
+   "pooling": "LAST",
+   "normalize": true,
+   "max_len": 4096,
+   "truncation_side": "left",
+   "prefix_caching": false,
+   "route": "transformers"
+  },
+  "class": "serving/cuda_encoder.py CudaEncoder",
+  "device": "cuda",
+  "batch": 8,
+  "triton_deregistered": true,
+  "torch": "2.14.0+cu130",
+  "transformers": "5.17.0",
+  "gpu": "NVIDIA GB10",
+  "hf_hub_offline": "1"
+ },
+ "texts": {
+  "n": 220,
+  "goldens": 20,
+  "contexts": 200,
+  "tokens": 84660
+ },
+ "encoder_parity": {
+  "min_cos": {
+   "value": 0.9989754534767172,
+   "gate": 0.999,
+   "pass": false
+  },
+  "mean_cos": {
+   "value": 0.9999074326177999,
+   "gate": 0.9999,
+   "pass": true
+  },
+  "pass": false,
+  "per_kind": {
+   "golden": {
+    "n": 20,
+    "min_cos": 0.9998683215583434,
+    "mean_cos": 0.9999607816105088
+   },
+   "context": {
+    "n": 200,
+    "min_cos": 0.9989754534767172,
+    "mean_cos": 0.999902097718529
+   }
+  },
+  "worst_text_sha256": "8cfa218cd45fc1121acb545635db4c08d9e7bcf94a2323c9617e9657092df1e3",
+  "worst_kind": "context",
+  "n_below_0_9999": 52,
+  "reference": "vLLM vectors from EncoderClient.embed in batches of 32 (the dump)",
+  "vs_single_request_reference": {
+   "min_cos": 0.9989754534767172,
+   "mean_cos": 0.9999071393271632,
+   "min_pass": false,
+   "mean_pass": true
+  },
+  "vllm_batched_vs_single_request": {
+   "min_cos": 0.9998946107989615,
+   "mean_cos": 0.9999984996387391
+  }
+ },
+ "diagnostic_other_batch": {
+  "batch": 1,
+  "seconds": 26.77,
+  "vs_batched_reference": {
+   "min_cos": 0.9994006197465558,
+   "mean_cos": 0.9999132254122624
+  },
+  "vs_single_request_reference": {
+   "min_cos": 0.9994006197465558,
+   "mean_cos": 0.9999136323436703
+  },
+  "vs_primary_fallback_run": {
+   "min_cos": 0.9991306827153412,
+   "mean_cos": 0.9999185454782591
+  },
+  "worst_text_sha256": "8cfa218cd45fc1121acb545635db4c08d9e7bcf94a2323c9617e9657092df1e3"
+ },
+ "systemone_parity": {
+  "n_pairs": 20,
+  "engine": "clm.engine.Engine(embedder=CudaEncoder, device='cpu', action_cache='512MiB')",
+  "head": "CLM_v0.1-8B.pt",
+  "clm-latest": {
+   "n_questions": 20,
+   "max_abs_prob_diff": 0.03278376555266016,
+   "mean_abs_prob_diff": 0.00826875773262577,
+   "top_choice_agreement": "20/20",
+   "top_choice_agreement_rate": 1.0,
+   "worst_pair": "term.fits/F7/1a24f0e8ef03"
+  },
+  "clm-raw": {
+   "n_questions": 20,
+   "max_abs_prob_diff": 0.071680099994813,
+   "mean_abs_prob_diff": 0.015196692787244717,
+   "top_choice_agreement": "19/20",
+   "top_choice_agreement_rate": 0.95,
+   "worst_pair": "term.fits/F7/0b1785e813aa"
+  }
+ },
+ "timing_s": {
+  "model_load": 88.3,
+  "embed_all": 25.95,
+  "embed_ms_per_text": 118.0,
+  "systemone_all_pairs_both_models": 9.05
+ },
+ "memory_gib": {
+  "memavailable_before": 107.63,
+  "memavailable_low_water": 89.49,
+  "peak_footprint_memavailable_delta": 18.15,
+  "torch_cuda_max_allocated": 14.6,
+  "torch_cuda_max_reserved": 14.9,
+  "process_max_rss": 4.89
+ }
+}
