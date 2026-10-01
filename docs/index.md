@@ -19,9 +19,9 @@ through pre-registered, leakage-aware, nested-selection bench cells, and the fir
 ships proposed-only.
 
 It is developed by [idss-mesa](https://github.com/idss-mesa){target=_blank} at the University
-of New Mexico and released under the MIT license. Status: pre-alpha (milestone M0: scaffold,
-ports, labels and baselines). Pages describe planned behaviour and say which milestone
-delivers it.
+of New Mexico and released under the MIT license. Status: pre-alpha (milestone M1: the serving
+stack, the rank-first annotate pipeline, the sidecar and the review verbs; proposed-only). Pages
+say which milestone delivers what they describe, and mark what is still planned.
 
 ## Documentation
 
@@ -29,7 +29,7 @@ This site is an [Open Knowledge Format (OKF) v0.2](https://github.com/GoogleClou
 knowledge bundle; the corpus is available to agents at [`llms.txt`](llms.txt) and
 [`llms-full.txt`](llms-full.txt).
 
-* [Getting started](getting-started/index.md) - Install mesa-clm and configure it.
+* [Getting started](getting-started/index.md) - Install mesa-clm, annotate and review a first card, and configure it.
 * [Concepts](concepts/index.md) - The decision model, tiers and the write policy, provenance and history, learning and the bench, serving.
 * [Develop](develop/index.md) - Architecture, milestones and the hermetic test suite.
 * [About](about/index.md) - How agents should consume this site, licenses, and the change log.

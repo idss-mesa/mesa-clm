@@ -42,9 +42,16 @@ M0_CHECKS = [
     "mesa-mcp plugin api",
     "plugin entry point",
     "vendored files",
+    "framings lock",
+    "schema sha256",
     "policy defaults",
     "provenance path",
     "labels store",
+    "sidecar schema",
+    "serving lock",
+    "host",
+    "gpu_budget",
+    "serving",
 ]
 
 
@@ -95,6 +102,13 @@ def test_doctor_is_green_on_this_checkout(tmp_path: Path) -> None:
     assert "proposed-only" in by["policy defaults"].detail
     assert by["provenance path"].status == "ok" and str(tmp_path) in by["provenance path"].detail
     assert by["labels store"].detail.startswith("none yet")
+    # M1: the pins and the (offline) serving view; the conftest makes every probe offline.
+    assert by["framings lock"].status == "ok" and "in sync" in by["framings lock"].detail
+    assert by["schema sha256"].detail.startswith("52cec58afbf4 = vendored.sha256 entry")
+    assert by["sidecar schema"].detail.startswith("none yet")
+    assert by["serving lock"].detail.startswith("skipped: no serving home")
+    assert by["host"].detail.startswith("skipped") and by["gpu_budget"].status == "ok"
+    assert by["serving"].status == "warn" and "unreachable" in by["serving"].detail
 
 
 def test_quick_skips_the_hashing(tmp_path: Path) -> None:
@@ -287,7 +301,7 @@ def test_provenance_path_checks(tmp_path: Path) -> None:
 
     by = _store_checks("postgresql://user:s3cret@db.example/clm")
     assert by["provenance path"].status == "warn"
-    assert "not probed in M0" in by["provenance path"].detail
+    assert "no local path to probe" in by["provenance path"].detail
     assert "s3cret" not in by["provenance path"].detail and "labels store" not in by
 
     if os.getuid() != 0:  # root ignores directory modes

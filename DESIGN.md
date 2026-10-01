@@ -61,7 +61,7 @@ history, is the design record `design/plan-2026-09-28.md` (cited below as "plan 
 | D18 | Probe before head; a head is promoted only if it beats the probe under rule R | accepted |
 | D19 | Teacher labels from `accepted` items of neon `curation/generic/<DP>.validated.json`, in-registry only, weight 0.5 / implicit 0.3, never fold-eligible, leak group = product; refuse files whose replicate model starts with `mesa-clm`; corpus frozen by sha256 before M6 | accepted |
 | D20 | Label weights are `sample_weight` in Platt, logreg, LDA and ridge; heads exclude teacher rows; a test shows the teacher weight changes the fit | accepted |
-| D21 | Curator labels only from MRTR elicitation or the interactive CLI; a plain tool pick is `agent_pick` (weight 0, not fold-eligible); runs store `owner` and every follow-up checks it | accepted |
+| D21 | Curator labels only from MRTR elicitation or the interactive CLI; a plain tool pick is `agent_pick` (weight 0, not fold-eligible); runs store `owner` and every follow-up checks it | accepted; amended by [A2](#a2-2026-09-29--amends-d21) |
 | D22 | The planner plans, never decides; Claude is a second opinion only, never `auto` | accepted |
 | D23 | Builders and `state_sha256` byte-identical to mesa-anyjev; contexts come from additive views that end with the target; `--max-model-len 4096` plus a client token guard | accepted |
 | D24 | Specificity: one rank over {parent, ≤10 children, anchor}; a child wins at `p_fit(child) ≥ p_fit(parent)+0.10`; unbenched, so proposed-only | accepted |
@@ -95,6 +95,13 @@ not orphan labels, so labels are identified by `(task_key, target_sha256, option
 label_source)` (`option_key=''` for choice tasks); `state_sha256` is kept for anyjev import and
 parity. The anyjev `candidate_state` contains `n_candidates`, so one pair can have several
 state shas, and an anchor pick has no candidate state at all; neither can be a label identity.
+
+*Note (M1, 2026-09-29; a clarification, not a change).* `target_sha256` hashes the compact
+target key `{dataset, scope, target, aspect?, term?}` (`identity.target_key`), and `aspect` is
+part of it whenever the state carries one, as every `term.fits` `target_state` does. A
+`term.fits` label on (column, CURIE, aspect) therefore does not transfer to the same column
+and CURIE asked under another aspect: the question differs ("is PATO:0000040 the *measurement*
+of observerDistance" vs its *method*), so the answer may too. This is intended.
 
 ## D2. Rank-first with a fixed abstain anchor
 
@@ -353,7 +360,77 @@ tie-free inputs the functions equal the vendored ones exactly (`tests/unit/test_
 so mesa-anyjev's continuous-probability L2 cells stay directly comparable. Accuracy, macro-F1,
 Brier and NLL do not sort and still come from the vendored module.
 
+## Implementation notes (M1)
+
+How M1 realised the decisions above where the plan left room. Each note refines a decision or
+the plan's wording; none changes a decision (the one that widened D21's wording is amendment
+[A2](#a2-2026-09-29--amends-d21)).
+
+- **One `decisions` row per CLM question (D2, plan §4.2 Q4).** A rank_fit group is one
+  `/v1/systemone` Choice, so it is one `decisions` row (the answered candidate's `s_c`/`p_fit`
+  on the row) with one `decision_options` row per candidate *and* one for the anchor, plus the
+  `decision_groups` row, not one `decisions` row per candidate. Rationale: the row is the
+  question that was asked; the options carry every per-candidate number (`rank`, `s_c`,
+  `p_fit`, `prob`, `raw_prob`, `masked`), and the anchor row keeps "none of these" addressable.
+- **Q3 asks all twelve registry ontologies, then masks (plan §4.2 Q3).** One rank over the full
+  registry plus the anchor per (column, aspect), masked after scoring by the aspect and by the
+  planner's in-play set (`masked=true` rows kept). Rationale: the question (hence its context,
+  cache key and `question_key`) stays identical across aspects and plans; the mask is pure and
+  idempotent.
+- **Q1 and Q2 share one request per column (plan §4.1).** `column.annotate` and
+  `column.aspect` render the same `column_state`, so they travel in one request. Rationale:
+  "questions sharing a context go in one request"; one embedding of the context.
+- **Selecting the degraded method (D28).** `ols_rank` runs for every rank_fit task through
+  `decider.tier: ols_rank` (now a `config.Tier`), `annotate(tier="ols_rank")` or
+  `--tier ols_rank`, per task through `ols_rank_tasks=`, and per group whenever the CLM record is
+  `unavailable` or `truncated`. The closed choices (Q1, Q2, Q7) still go to CLM. Rationale: the
+  K1/K2(c) pivots are per task; a whole-run switch is what an outage needs.
+- **clm-serve down at the start (D28, plan §7.1).** `annotate --provider clm` asks clm-serve's
+  `/health` first; tier `auto` with `decider.ols_rank_fallback: true` then runs `ols_rank`,
+  anything else refuses (exit 1, the plugin's `decider_unavailable`); an explicit CLM tier
+  always refuses. Rationale: an operator may prefer proposed-only OLS ranks to nothing, but only
+  by saying so; the default never silently degrades.
+- **`pending_groups` (plan §7.1 MRTR).** Only `term.fits` groups wait for a reviewer: proposed,
+  escalated or anchor-won, not yet settled (`human`, `rejected`), minus a parent whose D24
+  refinement group (which offers the parent too) is asked instead. Rationale: ontology groups
+  build no AVU; asking the parent twice would split one answer across two groups.
+- **`record_human_pick` (D21).** It requires `owner`; `reject` is an explicit "none of these"
+  (anchor-positive row plus a negative per offered candidate); `decline` keeps its override row
+  and writes no labels, links or group outcome. Rationale: a declined question was seen, not
+  answered.
+- **Keep-rule drops (D25).** What the dedup and the cap drop gets no link row and is listed in
+  `abstained` with the reason `duplicate`, `over_cap` or `avu_unbuildable`. Rationale: a link row
+  means "could be applied"; the reason keeps the drop explainable.
+- **The second taxon (plan §4.2 Q6).** Q6 keeps the dataset's top two taxa, but the second is
+  capped at `proposed` and must out-rank the anchor. Rationale: the policy judged only the
+  winner; a runner-up below "none of these" is not a proposal.
+- **Failed runs (D11).** A run that raises is committed with status `failed` (what it decided
+  so far, its calls) and the error is re-raised. Rationale: the post-mortem needs the rows; the
+  caller still sees the failure.
+- **Bulk sidecar inserts (D11).** DuckDB 1.5.6 tries `import pandas` for every Python value it
+  binds when pandas is absent, which made a per-row `executemany` commit cost about a second per
+  card. `provenance.store.bulk_insert` binds one JSON value per chunk and unpacks it with
+  `from_json_strict` (a failed cast is an error, never a NULL); a chunk JSON cannot carry falls
+  back to `executemany`. The rows are identical (`tests/unit/test_provenance_bulk_insert.py`
+  compares both paths table by table) and the data never enters the SQL text.
+- **The live fingerprint (D5).** The live provider takes the serving lock the host runs,
+  `~/.mesa/clm/serving.lock.json` (the bootstrap's copy), else the checkout's
+  `serving/serving.lock.json`, and refuses a lock that does not verify and a served head other
+  than `clm-latest`/`clm-raw` until M7.
+- **Doctor serve mode (plan §6.8).** The live serving probes run under `--serve` or when both
+  `mesa-clm-*` user units are active; an unreachable endpoint fails under `--serve` (or
+  auto-detected serve mode without `--quick`) and warns otherwise, so `doctor --quick` (the
+  future `mesa_clm_health`) stays green during a planned GPU window.
+
 ## Pre-registration (G1)
+
+### G1 freeze
+
+The pre-registration below (the LOCO folds and cells, rule R, lookup as a probability model,
+the citation test, the minimum detectable effect, X1–X4 and the kill and pivot criteria K0–K4)
+is **frozen as of the M1 merge commit**, the commit that merges `feat/m1-pipeline` into `main`.
+From that commit on it changes only by amendment, and an amendment made after an experiment has
+run marks every affected cell `exploratory:true`.
 
 **Registered in M0, frozen at G1.** The text below is copied from plan §5.4, §5.6 and §8 and is
 committed verbatim at gate G1, before any M2 run. After G1 it changes only by amendment, and an
@@ -504,9 +581,34 @@ effect is ≈ null, stated in advance.
 
 ## Amendments
 
-None yet. Format for each entry: `### A<n> (YYYY-MM-DD) — amends D<k>` followed by the new
-decision, the evidence (results JSON or RESEARCH.md fact) and which cells, locks or artifacts
-it rotates. The first expected amendment is A1, the production framing chosen by X1 (M2).
+Format for each entry: `### A<n> (YYYY-MM-DD) — amends D<k>` followed by the new decision, the
+evidence (results JSON or RESEARCH.md fact) and which cells, locks or artifacts it rotates.
+**A1 is reserved** for the production framing chosen by X1 (M2): the pre-registration and plan
+§8 refer to it by that number ("the A1 framing", "fold_choices agree with A1"), so amendments
+made before it take the numbers after it.
+
+### A2 (2026-09-29) — amends D21
+
+**Decision.** "The interactive CLI" in D21 means the `mesa-clm` command line run under the
+account that holds the sidecar: `review` (interactive), its non-interactive form
+`review --pick GROUP=OPTION_KEY|none --decline GROUP`, and `feedback --action
+pick|reject|decline` all record `via='cli'` and therefore curator labels (the pick at 1.0,
+implicit negatives at 0.7, an explicit none as an anchor-positive row plus a negative per
+offered candidate). Every one of them acts as `--actor` (default `$USER`) and refuses a run
+whose `owner` differs; the non-interactive `review` resolves and checks every answer against
+the offered candidates before it records any.
+
+**Why.** A curator's scripted batch of picks and the hermetic tests need a non-interactive
+form. The threat D21 closes, defect (g), is an MCP tool call made by an agent on someone's
+behalf; that stays `via='tool'`, `agent_pick`, weight 0. The CLI's trust boundary is the OS
+account: the sidecar is a per-user file under `~/.mesa/clm/` (D11).
+
+**Residual risk.** An agent with a shell under the curator's account can run these verbs and
+mint curator labels. Until that is closed (for example by requiring a terminal for `via='cli'`
+or by tagging answers given without one), a shell-capable agent is trusted like the curator.
+
+**Evidence and rotations.** `tests/unit/test_cli_m1.py` (owner refusals, all-or-nothing
+`--pick`, `via='cli'` override rows). No framing, lock, cell or artifact rotates.
 
 ## Plan (summary; the full plan is `design/plan-2026-09-28.md`)
 

@@ -13,7 +13,7 @@ extra_css = ["stylesheets/extra.css"]
 
 nav = [
   { "Home" = "index.md" },
-  { "Getting started" = [ { "Contents" = "getting-started/index.md" }, "getting-started/install.md", "getting-started/configuration.md" ] },
+  { "Getting started" = [ { "Contents" = "getting-started/index.md" }, "getting-started/install.md", "getting-started/quickstart.md", "getting-started/configuration.md" ] },
   { "Concepts" = [ { "Contents" = "concepts/index.md" }, "concepts/decision-model.md", "concepts/tiers-and-policy.md", "concepts/provenance.md", "concepts/learning-and-bench.md", "concepts/serving.md" ] },
   { "Deploy" = [ "deploy/serving.md" ] },
   { "Develop" = [ { "Contents" = "develop/index.md" }, "develop/architecture.md", "develop/testing.md" ] },

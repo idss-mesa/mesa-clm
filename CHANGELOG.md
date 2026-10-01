@@ -8,7 +8,76 @@ All notable changes to the mesa-clm package. The format follows
 
 ## [Unreleased]
 
+### Added (milestone M1)
+
+- Track B, the hermetic pipeline. `framings.py` and `framings.lock.json` (tasks vs framings,
+  `question_key`, the F1/F4/F7/F9 framings with F7 active, the lock and its drift report;
+  DESIGN D1) and `render.py`, the typed facade over the vendored CLM `schema.py` (D4). The
+  torch-free CLM clients: `clm/http.py` (`ClmHttpClient`: `/v1/systemone`, `/v1/rank`,
+  `/v1/models`, `/health`; retries, circuit breaker, loopback rule, keys redacted from every
+  error), `clm/encoder.py` (`EncoderClient`: `/v1/embeddings` with `truncate_prompt_tokens` and
+  `truncation_side: left`, base64 float32, L2, the token guard over `/tokenize`, the `tokenize`
+  extra or chars/2), `clm/headproj.py` (CLM's head MLP in numpy over an exported `.npz`),
+  `clm/fingerprint.py` (`encoder_fp`, `clm_model_fp`, `Fingerprint`, the self-verifying
+  `serving.lock.json` model; D5) and `clm/fake.py` with `tests/fakes/clm_transport.py` (a
+  deterministic fake encoder and clm-serve behind `httpx.MockTransport`), wire parity against
+  the vendored CLM client and committed goldens.
+- Providers (D2, D6, D7, D22, D28): `DecisionRecord` with the `_honest` invariants mirrored in
+  the sidecar CHECKs, `TieredProvider` (zero_shot and calibrated tiers, `s_c` recovery against
+  the anchor, one request per shared context, the aspect mask, per-call `clm_calls`),
+  `FakeProvider`, the degraded `ols_rank` records and `OlsRankProvider`, the Claude
+  structured-output second opinion, and `providers/live.py` (the live provider over the
+  serving lock the host runs, and the `/health` pre-flight). `policy.py`: `outcome()` with the
+  explicit rule and `ols_rank` branches, masks, the keep rule and specificity helpers.
+- The `mesa_clm` sidecar (D11): row models, the DuckDB store opened per operation under the
+  shared flock with a `RunBuffer` committed in one transaction, the optional Postgres store with
+  its migration rendered from the DuckDB DDL, and Parquet export, import and terminal-only prune.
+- `pipeline.py`, `Annotator.annotate` Q1–Q8 (rank-first with the anchor, rank-and-cap,
+  specificity, value kinds, the keep rule, `ols_rank` per group, task or run; failed runs
+  committed as `failed`), and `service.py`, `DecisionService` (decider lock, owners,
+  `run_summary`, `candidates_for_group`, `explain`, `record_human_pick` with `via`; D21). Where
+  M1 refined the plan is recorded in DESIGN.md "Implementation notes (M1)".
+- Track A, the serving stack for sparky-1: CLM patches 0001–0006, `serving/serving.lock.json`,
+  the serve-venv requirements, `serving/{export_head,cuda_encoder,fallback_serve}.py` with their
+  tests, `deploy/bin/mesa-clm-{encoder-run,serve-bootstrap,wait-http,check-headroom}`, the
+  systemd user units (encoder, clm-serve, headroom service and timer), `serving.py` (keys,
+  rendered units, lock verification against the host) and the `serving.yml` CI job.
+- CLI verbs (plan §7.2): `framings --check|--update-lock`; `annotate --card PATH [--provider
+  clm|fake] [--planner static|gateway|claude] [--tier auto|zero_shot|calibrated|probe|head|ols_rank]
+  [--owner] [--out FILE|-] [--eval-result] [--fake-seed N]`; `explain --run-id|--irods-path
+  [--limit]`; `review --run-id` (interactive, or `--pick GROUP=OPTION_KEY|none` and `--decline
+  GROUP`, all-or-nothing); `feedback --group-id --action pick|reject|decline [--option-key]`;
+  `provenance migrate [--dsn]|export --run-id --out DIR|import PATH|prune [--ttl-days]
+  [--dry-run]`; `serve keys --init|--rotate` (paths only; `--rotate` prints the `systemctl
+  --user restart` to run), `serve units`, `serve lock --check [--require-live]`. Run and group
+  ids accept unique prefixes. `review` and `feedback` record `via='cli'` (DESIGN A2).
+- Doctor checks (plan §6.8): `framings lock`, `schema sha256` (against `vendored.sha256` and the
+  serving pin), `sidecar schema` (read-only; Postgres through `current_version`), `serving
+  lock` (when `~/.mesa/clm` exists), `host` (MemAvailable, warn below 8 GiB), `gpu_budget`
+  (active `carc-vllm@*` units), a `serving` reachability line, and with `--serve` (or when both
+  units are active) the live probes: loopback binds from `ss -ltn`, 401 on unauthenticated
+  `/v1/models` on both ports, `/health` on both, the authenticated model lists and one golden
+  `/v1/systemone` call. An unreachable endpoint fails under `--serve` and warns otherwise.
+- `tests/engine/test_doctor_live.py` (marker `engine`): `doctor --serve` and a zero-shot
+  annotate against the live stack.
+
+### Changed
+
+- `decider.tier` accepts `ols_rank` (the degraded D28 method for every rank_fit task);
+  `decider.ols_rank_fallback` (default false) lets `annotate --provider clm` at tier `auto` run
+  `ols_rank` when clm-serve does not answer instead of refusing; `encoder.tokenizer_json`
+  (`MESA_CLM_ENCODER__TOKENIZER_JSON`) feeds `EncoderClient.from_config`.
+- `provenance.export.prune` takes `dry_run`; its summary carries `dry_run`.
+- CI runs `mesa-clm framings --check`.
+
 ### Fixed
+
+- Sidecar commits no longer pay DuckDB 1.5.6's failed `import pandas` per bound value (pandas
+  is not a dependency): `provenance.store.bulk_insert` binds one JSON value per chunk and
+  unpacks it with `from_json_strict`, falling back to `executemany` for a chunk JSON cannot
+  carry; `set_link_status` updates a chunk of ids per statement. Rows are identical to the old
+  path (compared table by table in `tests/unit/test_provenance_bulk_insert.py`, which also bounds
+  the commit of seven fake runs); export staging uses the same path.
 
 - Bench ranking metrics no longer depend on the order of tied confidences (DESIGN D33):
   `mesa_clm.bench.metrics` replaces the vendored `ece`, `coverage_at_risk` and `aurc` in every

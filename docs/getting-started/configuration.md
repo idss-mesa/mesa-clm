@@ -8,7 +8,7 @@ tags:
   - environment
 generated:
   by: "claude/fable-5.1"
-  at: "2026-09-29T00:00:00Z"
+  at: "2026-09-29T20:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -40,8 +40,8 @@ secret is ever logged, hashed into a fingerprint or written to a run record.
 | Section | What it configures |
 |---|---|
 | `clm` | The clm-serve URL (`http://127.0.0.1:8700`), key, model (`clm-latest`, `clm-raw` or a promoted head), `allow_remote` (needs https). |
-| `encoder` | The vLLM pooling URL (`http://127.0.0.1:8090`), key, `max_len` (4096), the token guard. |
-| `decider` | Tier request (`auto`), temperature (always 1 on the wire; calibration is client-side). |
+| `encoder` | The vLLM pooling URL (`http://127.0.0.1:8090`), key, `max_len` (4096), and `tokenizer_json` (the pinned Qwen3 `tokenizer.json`, counted by the `tokenize` extra when the encoder has no `/tokenize`; unset, the token guard over-counts with `ceil(chars / 2)`). |
+| `decider` | `tier`: `auto` (the best promoted artifact, else `zero_shot`), `zero_shot`, `calibrated`, `probe`, `head`, or `ols_rank` (the degraded OLS top-1 method for every candidate group, proposed-only, DESIGN D28); `ols_rank_fallback` (default `false`): whether `annotate --provider clm` at tier `auto` runs `ols_rank` when clm-serve does not answer instead of refusing. Requests always use temperature 1; calibration is client-side. |
 | `planner` | The reasoning model that only plans: `static` (default in 0.1.0), `claude`, `gateway`. |
 | `claude` | Credentials profile and model for the planner and the second opinion. |
 | `policy` | Profile (`prod` needs `calibrated` for auto-writes and an audit; `dev` allows `--history none`), thresholds file (`policy_defaults.yaml`). |
@@ -53,5 +53,6 @@ secret is ever logged, hashed into a fingerprint or written to a run record.
 | `neon` | The neon-ducklake root, iRODS root and curation-sync switch for the adapter (0.2.0). |
 
 The configuration module is ported from mesa-anyjev in M0; the serving-facing sections
-(`clm`, `encoder`) become live in M1 and `history`/`apply` in M3. The authoritative field list is
+(`clm`, `encoder`, `decider`) are live since M1 (`annotate --provider clm`, `doctor --serve`) and
+`history`/`apply` become live in M3. The authoritative field list is
 the `mesa_clm.config` model and `config.yaml.example` in the repository.

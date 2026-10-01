@@ -11,7 +11,7 @@ tags:
   - clm
 generated:
   by: "claude/fable-5.1"
-  at: "2026-09-29T00:00:00Z"
+  at: "2026-09-29T20:00:00Z"
 sources:
   - id: plan
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/plan-2026-09-28.md"
@@ -90,14 +90,17 @@ of another sha256 is in the way. It never creates keys, installs units or starts
 
 ## 2. Keys
 
-Create both keys and derive the two env files (the result names paths only):
+Create both keys and derive the two env files:
 
 ```bash
-uv run python -c "from mesa_clm.serving import init_keys; print(init_keys())"
+uv run mesa-clm serve keys --init
 ```
 
-Re-running without rotation keeps the keys and re-derives the env files. The core reads the raw
-key files (never the env files):
+It writes the raw keys `~/.mesa/clm/secrets/{clm,encoder}.key` and the units' env files
+`clm.env` and `encoder.env`, all 0600 in a 0700 directory (`--secrets-dir` for another place),
+and prints the file paths and the two lines that point the core at the key files, never a key.
+Re-running keeps existing keys and re-derives the env files. The core reads the raw key files
+(never the env files):
 
 ```bash
 export MESA_CLM_CLM__API_KEY_FILE=~/.mesa/clm/secrets/clm.key
@@ -107,11 +110,13 @@ export MESA_CLM_ENCODER__API_KEY_FILE=~/.mesa/clm/secrets/encoder.key
 Rotate both keys, then restart both units so the running processes pick them up:
 
 ```bash
-uv run python -c "from mesa_clm.serving import init_keys; print(init_keys(rotate=True))"
+uv run mesa-clm serve keys --rotate
 systemctl --user restart mesa-clm-encoder.service mesa-clm-serve.service
 ```
 
-`mesa-clm serve keys --init|--rotate` is the planned CLI for the same calls (plan §6.4).
+`--rotate` replaces the keys and prints that `systemctl --user restart` line; it restarts nothing
+itself, and the running units keep the old keys until they are restarted. The library
+equivalent is `mesa_clm.serving.init_keys()` (`rotate=True`), which returns paths only.
 
 ## 3. Install the units without enabling them
 
@@ -123,7 +128,8 @@ systemd-analyze --user verify ~/.config/systemd/user/mesa-clm-*.service ~/.confi
 ```
 
 `deploy/systemd/` is the default rendering of `mesa_clm.serving.render_units()` (a unit test
-keeps them identical); the units spell the home as `%h`. `systemd-analyze verify` only complains
+keeps them identical); `uv run mesa-clm serve units [--home DIR]` prints the rendering for a
+serving home, and the units spell the home as `%h`. `systemd-analyze verify` only complains
 about missing executables under `%h/.mesa/clm/` until the bootstrap has run. Do **not** run
 `systemctl --user enable`: with lingering on, an enabled unit starts at boot, and that waits for
 the CARC allocation below.
@@ -164,14 +170,25 @@ curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8700/v1/models     # 4
 # With a key: the header is read from a process substitution, so the key never appears in argv.
 curl -s -H @<(printf 'Authorization: Bearer %s\n' "$(cat ~/.mesa/clm/secrets/encoder.key)") \
   http://127.0.0.1:8090/v1/models
-# The host against the lock: image digest and tag, running container recipe, head sha256,
-# clone commit and patched tree, the serve venv's schema.py. Empty means no problem.
-uv run python -c "from mesa_clm.serving import verify_serving_lock; print(verify_serving_lock(require_live=True))"
+# The host against the lock: patch files, installed lock copy, clone commit and applied series,
+# schema.py in the clone and the serve venv, head size and sha256, image digest and tag, and the
+# running container's image and recipe. Exit 1 on any failure; absent pieces fail with --require-live.
+uv run mesa-clm serve lock --check --require-live
+# Everything above at once (with the key files exported, section 2):
+uv run mesa-clm doctor --serve
 ```
 
-`mesa-clm doctor --serve` adds the golden-vector, tail-probe and golden `/v1/systemone`
-checks when they land (plan §6.8). Any lock mismatch fails the doctor and the provider refuses
-until the task is re-benched (K4).
+`mesa-clm doctor --serve` runs the lock check and the live probes: loopback-only binds on both
+ports (`ss -ltn`), an unauthenticated `GET /v1/models` answered 401 on both, `/health` 200 on
+both, the authenticated model lists (`qwen3-8b` on the encoder; `clm-latest` and `clm-raw` on
+clm-serve), and one golden `/v1/systemone` call whose answer must cover every key with
+probabilities above 0 summing to 1. It also reports `host` (`MemAvailable`) and `gpu_budget`
+(active CARC backends). The doctor runs these probes automatically whenever both units are
+active; an unreachable endpoint then fails unless `--quick` is given (a warning), and always
+fails under `--serve`. The golden encoder vectors, the 5,000-token tail probe and the
+clm-serve-vs-local head parity are not doctor checks: they are the M1 track A measurements of
+`scripts/serving_probes.py`. Any lock mismatch fails the doctor and the provider refuses until
+the task is re-benched (K4).
 
 ## 6. GPU budget and CARC coexistence
 

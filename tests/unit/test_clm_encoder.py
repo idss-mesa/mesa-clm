@@ -8,6 +8,7 @@ from __future__ import annotations
 import base64
 import json
 import math
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -385,3 +386,16 @@ def test_construction_rules_and_from_config(server: FakeClmServer) -> None:
     assert remote.url == "https://enc.example.org"
     with pytest.raises(EndpointError):
         EncoderClient.from_config(EncoderConfig(url="https://enc.example.org"))
+
+
+def test_from_config_takes_the_sections_tokenizer_json(tmp_path: Path) -> None:
+    """``encoder.tokenizer_json`` (``MESA_CLM_ENCODER__TOKENIZER_JSON``) reaches the client; an
+    explicit argument still wins."""
+    from mesa_clm.config import load_config
+
+    cfg = load_config(env={"MESA_CLM_ENCODER__TOKENIZER_JSON": str(tmp_path / "tok.json")})
+    assert cfg.encoder.tokenizer_json == str(tmp_path / "tok.json")
+    assert EncoderClient.from_config(cfg.encoder).tokenizer_json == tmp_path / "tok.json"
+    other = tmp_path / "other.json"
+    assert EncoderClient.from_config(cfg.encoder, tokenizer_json=other).tokenizer_json == other
+    assert EncoderClient.from_config(EncoderConfig()).tokenizer_json is None

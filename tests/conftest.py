@@ -48,3 +48,13 @@ def card() -> Any:
 @pytest.fixture
 def fixture_cards() -> list[Path]:
     return sorted(CARDS_DIR.glob("*.md"))
+
+
+@pytest.fixture(autouse=True)
+def _offline_serving(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The doctor never probes this host in the hermetic suite: no serving home, refused
+    connections, missing commands (``health.ServeProbes.offline``). Tests that exercise the
+    serving checks pass their own ``ServeProbes``."""
+    from mesa_clm import health
+
+    monkeypatch.setattr(health, "default_probes", health.ServeProbes.offline)

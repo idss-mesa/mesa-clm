@@ -8,7 +8,7 @@ tags:
   - policy
 generated:
   by: "claude/fable-5.1"
-  at: "2026-09-29T00:00:00Z"
+  at: "2026-09-29T20:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -43,6 +43,24 @@ win or a truncated context is an abstain and builds no AVU; `ols_rank` records h
 and are never `auto`; every record carries `task_key, question_key, framing_id, encoder_fp,
 clm_model_fp, schema_sha256, state_sha256, target_sha256, context_sha256, context_tokens`
 (plan §4.6). The same invariants are CHECK constraints in the sidecar.
+
+## Choosing a tier
+
+`decider.tier` (`MESA_CLM_DECIDER__TIER`, or `annotate --tier`) asks for a tier: `auto` (the
+best tier the provider can serve for each question key: `calibrated` when a promoted artifact
+has its calibrator, else `zero_shot`), an explicit `zero_shot`, `calibrated`, `probe` or `head`
+(refused before any request when the provider cannot serve it; `probe` arrives with M4, `head`
+with M7), or `ols_rank`: every candidate group (`term.fits`, `column.ontology_fits`) is decided
+by the degraded method, the OLS top-1 as `proposed` with no probabilities (DESIGN D28), while
+the closed choices (annotate, aspect, value kind) are still asked. The pipeline also falls back
+to `ols_rank` per group when a CLM answer is unavailable or the context was truncated, and the
+run is marked `degraded`.
+
+When `annotate --provider clm` finds clm-serve not answering before it starts, tier `auto` runs
+`ols_rank` for the whole card only if `decider.ols_rank_fallback` is `true`
+(`MESA_CLM_DECIDER__OLS_RANK_FALLBACK`); otherwise, and always for an explicit CLM tier, the
+command refuses (exit 1), as the plugin tool will with `decider_unavailable`. Either way nothing
+is ever `auto` without a calibrated, cited tier.
 
 ## Outcomes
 

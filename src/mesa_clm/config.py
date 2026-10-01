@@ -60,7 +60,8 @@ KEYRING_SERVICE = "mesa-clm"
 MiB = 1024 * 1024
 
 PlannerKind = Literal["static", "gateway", "claude"]
-Tier = Literal["auto", "zero_shot", "calibrated", "probe", "head"]
+# ``ols_rank`` is the degraded D28 method for every rank_fit task (proposed-only, never auto).
+Tier = Literal["auto", "zero_shot", "calibrated", "probe", "head", "ols_rank"]
 Profile = Literal["prod", "dev"]
 FixtureMode = Literal["off", "record", "replay", "auto"]
 HistoryBackend = Literal["direct", "spool", "none", "auto"]
@@ -123,6 +124,9 @@ class EncoderConfig(_KeyedSection):
     # --max-model-len; the client token guard abstains above max_len - 16 (D23, §4.3).
     max_len: int = Field(default=4096, gt=16)
     timeout: float = Field(default=120.0, gt=0)
+    # The pinned Qwen3 revision's tokenizer.json for the token guard's second counter (the
+    # `tokenize` extra) when the encoder has no /tokenize; unset: chars/2 (plan §4.3).
+    tokenizer_json: str | None = None
 
     def resolved_api_key(self, mode: SecretsMode | None = None) -> str | None:
         """The bearer key for the encoder (keyring entry ``mesa-clm``/``encoder``)."""
@@ -130,9 +134,14 @@ class EncoderConfig(_KeyedSection):
 
 
 class DeciderConfig(_Section):
-    """Which tier answers (D6): ``auto`` takes the best promoted artifact, else zero_shot."""
+    """Which tier answers (D6): ``auto`` takes the best promoted artifact, else zero_shot;
+    ``ols_rank`` sends every rank_fit task to the degraded method (D28)."""
 
     tier: Tier = "auto"
+    # `annotate --provider clm` with tier auto when clm-serve does not answer /health: False
+    # refuses (decider_unavailable, the plugin's rule); True runs the degraded ols_rank method
+    # instead (proposed-only, never auto; D28). An explicit CLM tier always refuses.
+    ols_rank_fallback: bool = False
 
 
 class PlannerConfig(_KeyedSection):

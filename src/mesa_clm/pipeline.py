@@ -146,8 +146,8 @@ MAX_TAXON_AVUS: Final[int] = 2
 ONTOLOGY_KEEP: Final[int] = 2
 MAX_QUERIES: Final[int] = 3
 MAX_CHILDREN: Final[int] = 10
-# What ``Annotator(tier=...)`` accepts: the CLM tiers of ``config.Tier`` plus ``ols_rank``, the
-# degraded method for every rank_fit task (D28).
+# What ``Annotator(tier=...)`` and ``decider.tier`` accept (``config.Tier``, asserted equal by
+# the tests): the CLM tiers plus ``ols_rank``, the degraded method for every rank_fit task (D28).
 TIERS: Final[tuple[str, ...]] = ("auto", "zero_shot", "calibrated", "probe", "head", "ols_rank")
 ANNOTATE_YES: Final[str] = "Yes"
 _PROPOSING: Final[frozenset[str]] = frozenset({"auto", "proposed"})

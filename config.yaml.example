@@ -19,8 +19,10 @@ encoder:                               # vLLM pooling server, Qwen3-8B last-toke
   model: qwen3-8b                      # --served-model-name of the encoder unit
   max_len: 4096                        # --max-model-len; the token guard abstains above max_len-16
   timeout: 120.0
+  tokenizer_json: null                 # pinned Qwen3 tokenizer.json for the guard when /tokenize is absent
 decider:
-  tier: auto                           # auto | zero_shot | calibrated | probe | head (D6)
+  tier: auto                           # auto | zero_shot | calibrated | probe | head | ols_rank (D6, D28)
+  ols_rank_fallback: false             # annotate --provider clm, tier auto, clm-serve down: true runs ols_rank
 planner:                               # plans, never decides (D22)
   kind: static                         # static | gateway | claude
   gateway_base_url: http://127.0.0.1:8000   # loopback tunnel to the CARC LiteLLM gateway; no /v1

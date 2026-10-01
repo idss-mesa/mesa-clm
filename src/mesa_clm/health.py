@@ -1,4 +1,4 @@
-"""``mesa-clm doctor``: what this host can run, honestly (plan §6.8; the M0 subset).
+"""``mesa-clm doctor``: what this host can run, honestly (plan §6.8; the M0 and M1 subset).
 
 Every check is one :class:`Check` with a status ``ok``, ``warn`` or ``fail``; a report is ``ok``
 when nothing failed and the CLI exits 1 otherwise. M0 checks the pins and the ground the later
@@ -17,9 +17,30 @@ milestones stand on:
   label store, any configured key file (stat-ed for mode 0600, never opened), the eval root and
   the OLS fixture directory.
 
-``quick=True`` skips the file hashing; from M1 it also skips the serving probes (encoder :8090,
-clm-serve :8700, goldens and the serving lock) that ``mesa_clm_health`` does not run. Nothing
-here touches the network or reads a secret.
+M1 adds:
+
+* ``framings lock``: the framing keys against ``framings.lock.json`` (``framings --check``);
+* ``schema sha256``: :func:`mesa_clm.render.schema_sha256` against the ``vendored.sha256`` entry
+  and the serving pin (D4, D5);
+* ``sidecar schema``: the ``mesa_clm`` schema version of the sidecar, read without creating
+  anything (a DuckDB file is opened read-only under the shared flock; Postgres through
+  :func:`mesa_clm.provenance.migrate.current_version`);
+* ``serving lock``: :func:`mesa_clm.serving.check_serving_lock` when the serving home
+  (``~/.mesa/clm``) exists (skipped by ``--quick`` unless ``--serve``);
+* ``host`` (``MemAvailable``; warn below the 8 GiB running floor, plan §6.5) and ``gpu_budget``
+  (active CARC vLLM backends, ``systemctl list-units carc-vllm@*``, read-only);
+* the serving endpoints. Without serve mode one ``serving`` line says whether both ``/health``
+  routes answer (``warn`` when not: annotate falls back to ``--provider fake`` or fails). **Serve
+  mode** (``--serve``, or automatically when both ``mesa-clm-*`` user units are active) runs the
+  live probes: loopback binds (``ss -ltn``), unauthenticated ``GET /v1/models`` answered 401 on
+  both ports, ``/health`` 200 on both, the authenticated model lists (``qwen3-8b``;
+  ``clm-latest`` and ``clm-raw``) and one golden ``/v1/systemone`` call. An unreachable endpoint
+  fails under ``--serve`` (or auto-detected serve mode without ``--quick``) and is a warning
+  otherwise.
+
+Everything that touches the host or the network goes through :class:`ServeProbes` (serving
+home, httpx transport, command runner, ``/proc/meminfo``), so the tests inject fakes and the
+hermetic suite never probes a port. No key is ever read into a report line.
 """
 
 from __future__ import annotations
@@ -32,16 +53,28 @@ import inspect
 import json
 import os
 import sys
+from collections.abc import Callable, Sequence
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Final, Literal
+from urllib.parse import urlsplit
 
 import duckdb
+import httpx
 
 import mesa_clm
 from mesa_clm import __version__
 from mesa_clm.config import Config, config_sha256, duckdb_path, expand_path, redact_dsn
 from mesa_clm.secrets import SecretError, check_secret_file_stat
+from mesa_clm.serving import (
+    RUN_HEADROOM_GIB,
+    START_HEADROOM_GIB,
+    UNIT_NAMES,
+    CommandResult,
+    docker_argv,
+    run_command,
+    serving_home,
+)
 
 Status = Literal["ok", "warn", "fail"]
 
@@ -111,8 +144,60 @@ class HealthReport:
         }
 
 
-def doctor(cfg: Config, *, quick: bool = False) -> HealthReport:
-    """Run every M0 check against ``cfg``; ``quick`` skips the vendored-file hashing."""
+@dataclass
+class ServeProbes:
+    """What the host and serving checks touch, injectable for tests: the serving home (``None``:
+    ``~/.mesa/clm``), the httpx transport of every probe (``None``: the network), the command
+    runner (``ss``, ``systemctl``, git and the venv through :func:`mesa_clm.serving.run_command`),
+    the docker argv builder and the meminfo file."""
+
+    home: Path | None = None
+    transport: httpx.BaseTransport | None = None
+    runner: Callable[[Sequence[str]], CommandResult] = run_command
+    docker: Callable[[Sequence[str]], list[str] | None] = docker_argv
+    meminfo: Path = Path("/proc/meminfo")
+
+    @classmethod
+    def offline(cls, home: Path | None = None) -> ServeProbes:
+        """No serving home, every connection refused, every command missing (exit 127), no
+        meminfo: what the hermetic test suite runs the doctor with."""
+
+        def refuse(request: httpx.Request) -> httpx.Response:
+            raise httpx.ConnectError("offline (ServeProbes.offline)", request=request)
+
+        return cls(
+            home=home if home is not None else Path("/nonexistent/mesa-clm-serving-home"),
+            transport=httpx.MockTransport(refuse),
+            runner=lambda argv: CommandResult(127, ""),
+            docker=lambda args: None,
+            meminfo=Path("/nonexistent/meminfo"),
+        )
+
+
+def default_probes() -> ServeProbes:
+    """The real host (the hermetic test suite replaces this with :meth:`ServeProbes.offline`)."""
+    return ServeProbes()
+
+
+def units_active(runner: Callable[[Sequence[str]], CommandResult]) -> bool:
+    """Both serving units active under the user manager (``systemctl --user is-active``)."""
+    units = UNIT_NAMES[:2]
+    res = runner(["systemctl", "--user", "is-active", *units])
+    states = res.stdout.split()
+    return len(states) == len(units) and all(s == "active" for s in states)
+
+
+def doctor(
+    cfg: Config,
+    *,
+    quick: bool = False,
+    serve: bool | None = False,
+    probes: ServeProbes | None = None,
+) -> HealthReport:
+    """Run every check against ``cfg`` (module docstring). ``quick`` skips the vendored-file
+    hashing and the serving-lock verification; ``serve`` ``True`` runs the live serving probes,
+    ``None`` runs them when both serving units are active (the CLI's default), ``False`` never."""
+    probes = probes if probes is not None else default_probes()
     rep = HealthReport()
     _config_check(cfg, rep)
     _python_check(rep)
@@ -123,10 +208,14 @@ def doctor(cfg: Config, *, quick: bool = False) -> HealthReport:
     _entry_point_check(rep)
     if not quick:
         _vendored_check(rep)
+    _framings_check(rep)
+    _schema_sha_check(rep)
     _policy_check(cfg, rep)
     _store_checks(cfg, rep)
+    _sidecar_check(cfg, rep)
     _secret_checks(cfg, rep)
     _path_checks(cfg, rep)
+    _serving_checks(cfg, rep, quick=quick, serve=serve, probes=probes)
     return rep
 
 
@@ -352,8 +441,8 @@ def _store_checks(cfg: Config, rep: HealthReport) -> None:
         rep.add(
             "provenance path",
             "warn",
-            f"{redact_dsn(dsn)}: not a duckdb:/// DSN; not probed in M0 (the Postgres dialect "
-            "lands in M1)",
+            f"{redact_dsn(dsn)}: not a duckdb:/// DSN; no local path to probe (the Postgres "
+            "sidecar is checked under 'sidecar schema'; the M0 label verbs need DuckDB)",
         )
         return
     if path.exists():
@@ -427,3 +516,499 @@ def _path_checks(cfg: Config, rep: HealthReport) -> None:
             rep.add("ols fixtures", "fail", f"replay: {fixtures} does not exist")
         else:
             rep.add("ols fixtures", "ok", f"{cfg.ols.fixtures}: {fixtures} will be created")
+
+
+# -- M1: framings lock, schema contract, sidecar schema -----------------------------------------
+
+_SCHEMA_ENTRY: Final = "src/mesa_clm/_vendor/clm/schema.py"
+_MAX_PROBLEMS: Final = 5
+
+
+def _framings_check(rep: HealthReport) -> None:
+    """The framing keys against ``framings.lock.json`` (the ``framings --check`` rule)."""
+    from mesa_clm import framings
+
+    if not framings.LOCK_PATH.is_file() and repo_root() is None:
+        rep.add(
+            "framings lock",
+            "ok",
+            f"skipped: no {framings.LOCK_PATH.name} beside the package (installed from a wheel)",
+        )
+        return
+    problems = framings.lock_drift()
+    if problems:
+        more = f" (+{len(problems) - _MAX_PROBLEMS} more)" if len(problems) > _MAX_PROBLEMS else ""
+        rep.add(
+            "framings lock",
+            "fail",
+            "; ".join(problems[:_MAX_PROBLEMS])
+            + more
+            + "; after a deliberate framing change run `mesa-clm framings --update-lock`",
+        )
+        return
+    rep.add(
+        "framings lock",
+        "ok",
+        f"{framings.LOCK_PATH.name} in sync; lock_sha {framings.lock_sha()[:12]}",
+    )
+
+
+def _schema_sha_check(rep: HealthReport) -> None:
+    """``render.schema_sha256()`` (what every record cites, D5) against the ``vendored.sha256``
+    entry and the serving lock's pin (the schema clm-serve renders with, D4)."""
+    from mesa_clm import render
+    from mesa_clm.serving import SCHEMA_SHA256
+
+    actual = render.schema_sha256()
+    problems: list[str] = []
+    sources = ["serving pin"]
+    root = repo_root()
+    if root is not None:
+        entries = {
+            name: sha for sha, name in parse_manifest((root / VENDORED_MANIFEST).read_text())
+        }
+        expected = entries.get(_SCHEMA_ENTRY)
+        if expected is None:
+            problems.append(f"{VENDORED_MANIFEST} has no entry for {_SCHEMA_ENTRY}")
+        elif expected != actual:
+            problems.append(f"{VENDORED_MANIFEST} pins {expected[:12]}")
+        sources.insert(0, f"{VENDORED_MANIFEST} entry")
+    if actual != SCHEMA_SHA256:
+        problems.append(f"the serving pin is {SCHEMA_SHA256[:12]}")
+    if problems:
+        rep.add(
+            "schema sha256", "fail", f"render.schema_sha256() {actual[:12]}: " + "; ".join(problems)
+        )
+    else:
+        rep.add("schema sha256", "ok", f"{actual[:12]} = {' = '.join(sources)}")
+
+
+def _duckdb_schema(path: Path) -> tuple[int | None, set[str]]:
+    """``(schema version or None, table names)`` of the ``mesa_clm`` schema in a DuckDB file,
+    opened read-only under the sidecar's shared flock (nothing is created)."""
+    from mesa_clm.provenance.store import SCHEMA, DuckDBStore
+
+    with DuckDBStore(path).connect(read_only=True) as con:
+        tables = {
+            str(r[0])
+            for r in con.execute(
+                "SELECT table_name FROM duckdb_tables() WHERE schema_name = ?", [SCHEMA]
+            ).fetchall()
+        }
+        if "schema_versions" not in tables:
+            return None, tables
+        got = con.execute(f"SELECT max(version) FROM {SCHEMA}.schema_versions").fetchone()  # noqa: S608
+    return (int(got[0]) if got and got[0] is not None else None), tables
+
+
+def _sidecar_check(cfg: Config, rep: HealthReport) -> None:
+    """The ``mesa_clm`` schema version of the configured sidecar, without creating anything."""
+    from mesa_clm.provenance.store import RUN_TABLES, SCHEMA_VERSION, is_postgres_dsn
+
+    dsn = cfg.provenance.dsn
+    path = duckdb_path(dsn)
+    expected = {*RUN_TABLES, "labels", "audits", "schema_versions"}
+    if path is not None:
+        if not path.is_file():
+            rep.add(
+                "sidecar schema",
+                "ok",
+                f"none yet (the first annotate creates schema v{SCHEMA_VERSION})",
+            )
+            return
+        try:
+            version, tables = _duckdb_schema(path)
+        except (duckdb.Error, OSError) as exc:
+            rep.add(
+                "sidecar schema", "fail", f"{path}: cannot open read-only ({type(exc).__name__})"
+            )
+            return
+        if version is None:
+            status: Status = "ok" if tables <= {"labels"} else "warn"
+            rep.add(
+                "sidecar schema",
+                status,
+                f"{path}: no schema_versions ({', '.join(sorted(tables)) or 'no tables'}); the "
+                f"next write or `mesa-clm provenance migrate` creates schema v{SCHEMA_VERSION}",
+            )
+            return
+        missing = sorted(expected - tables)
+    elif is_postgres_dsn(dsn):
+        from mesa_clm.provenance.migrate import current_version
+
+        try:
+            version = current_version(dsn)
+        except ImportError:
+            rep.add(
+                "sidecar schema", "warn", "Postgres DSN but psycopg is not installed (pg extra)"
+            )
+            return
+        except Exception as exc:  # connection refused, auth, DNS: named, never the password
+            rep.add("sidecar schema", "fail", f"{redact_dsn(dsn)}: {type(exc).__name__}")
+            return
+        missing = []
+    else:
+        rep.add("sidecar schema", "fail", f"{redact_dsn(dsn)}: unsupported DSN")
+        return
+    where = str(path) if path is not None else redact_dsn(dsn)
+    if version > SCHEMA_VERSION:
+        rep.add(
+            "sidecar schema",
+            "fail",
+            f"{where}: schema v{version} is newer than this mesa-clm (v{SCHEMA_VERSION})",
+        )
+    elif version < SCHEMA_VERSION or missing:
+        gap = f"; missing {', '.join(missing)}" if missing else ""
+        rep.add(
+            "sidecar schema",
+            "warn",
+            f"{where}: schema v{version}{gap}; run `mesa-clm provenance migrate`",
+        )
+    else:
+        rep.add("sidecar schema", "ok", f"{where}: mesa_clm schema v{version}")
+
+
+# -- M1: serving (plan §6.4, §6.5, §6.8) ------------------------------------------------------------
+
+PROBE_TIMEOUT_S: Final = 5.0
+_LOOPBACK_HOSTS: Final = frozenset({"127.0.0.1", "::1", "[::1]", "localhost"})
+# One fixed /v1/systemone question the doctor asks (plan §6.8 "golden /v1/systemone"): a NEON
+# column as a target state and two candidate terms plus the term anchor. What is checked is the
+# answer's shape (every key answered, p > 0, sum 1), not its numbers.
+GOLDEN_STATE: Final[dict[str, Any]] = {
+    "card": {
+        "dataset": "DP1.10003.001.brd_countdata",
+        "product_title": "Breeding landbird point counts",
+    },
+    "scope": "column",
+    "aspect": "measurement",
+    "column": {
+        "name": "observerDistance",
+        "description": "Radial distance between the observer and the individual(s) being observed",
+        "dtype": "real",
+        "unit": "meter",
+    },
+}
+GOLDEN_CRITERIA: Final[dict[str, str]] = {
+    "PATO:0000040": "distance: A 1-D extent quality which is equal to the distance between two "
+    "points.",
+    "UO:0000008": "meter: A length unit which is equal to the length of the path travelled by "
+    "light in vacuum during a time interval of 1/299 792 458 of a second.",
+    "__none__": "None of these terms is the right concept for this target.",
+}
+
+
+def meminfo_gib(path: Path, field_name: str = "MemAvailable") -> float | None:
+    """A ``/proc/meminfo`` field in GiB, ``None`` when the file or field is missing."""
+    try:
+        text = path.read_text(encoding="ascii", errors="replace")
+    except OSError:
+        return None
+    for line in text.splitlines():
+        name, _, rest = line.partition(":")
+        if name.strip() == field_name:
+            parts = rest.split()
+            if parts and parts[0].isdigit():
+                return int(parts[0]) / (1024 * 1024)
+    return None
+
+
+def _host_checks(rep: HealthReport, probes: ServeProbes) -> None:
+    """``host``: MemAvailable against the running floor; ``gpu_budget``: CARC's co-tenancy."""
+    avail = meminfo_gib(probes.meminfo)
+    if avail is None:
+        rep.add("host", "ok", f"skipped: no MemAvailable in {probes.meminfo}")
+    elif avail < RUN_HEADROOM_GIB:
+        rep.add(
+            "host",
+            "warn",
+            f"MemAvailable {avail:.1f} GiB < {RUN_HEADROOM_GIB} GiB, the encoder's running floor "
+            "(plan §6.5: stop both mesa-clm units)",
+        )
+    else:
+        rep.add(
+            "host",
+            "ok",
+            f"MemAvailable {avail:.1f} GiB (floors: {START_HEADROOM_GIB} GiB to start the encoder, "
+            f"{RUN_HEADROOM_GIB} GiB while it runs)",
+        )
+    res = probes.runner(
+        ["systemctl", "list-units", "--no-legend", "--plain", "--state=active", "carc-vllm@*"]
+    )
+    if res.returncode == 127:
+        rep.add("gpu_budget", "ok", "systemctl not available; CARC presence unknown")
+        return
+    active = [line.split()[0] for line in res.stdout.splitlines() if line.strip()]
+    if not active:
+        rep.add("gpu_budget", "ok", "no CARC vLLM backend active (carc-vllm@*)")
+        return
+    tight = avail is not None and avail < START_HEADROOM_GIB
+    rep.add(
+        "gpu_budget",
+        "warn" if tight else "ok",
+        f"CARC vLLM active: {', '.join(active)}"
+        + (
+            f"; MemAvailable {avail:.1f} GiB < {START_HEADROOM_GIB} GiB, the encoder could not start"
+            if tight
+            else ""
+        )
+        + "; the encoder's 0.20 share needs the written CARC allocation (plan §6.5)",
+    )
+
+
+def _port(url: str, default: int) -> int:
+    try:
+        return urlsplit(url).port or default
+    except ValueError:
+        return default
+
+
+def parse_listeners(ss_output: str, port: int) -> list[str]:
+    """The local addresses listening on ``port`` in ``ss -ltn`` output (``127.0.0.1``,
+    ``[::1]``, ``0.0.0.0``, ``*`` ...)."""
+    out: list[str] = []
+    for line in ss_output.splitlines():
+        parts = line.split()
+        if len(parts) < 4 or parts[0] != "LISTEN":
+            continue
+        host, _, p = parts[3].rpartition(":")
+        if p == str(port):
+            out.append(host.split("%", 1)[0])
+    return out
+
+
+def _is_loopback(host: str) -> bool:
+    return host in _LOOPBACK_HOSTS or host.startswith("127.")
+
+
+def _binds_check(
+    rep: HealthReport, probes: ServeProbes, ports: dict[str, int], bad: Status
+) -> None:
+    res = probes.runner(["ss", "-ltn"])
+    if res.returncode != 0:
+        rep.add("serving binds", "warn", "`ss -ltn` not available; binds not checked")
+        return
+    problems, seen = [], []
+    for name, port in ports.items():
+        hosts = parse_listeners(res.stdout, port)
+        exposed = [h for h in hosts if not _is_loopback(h)]
+        if not hosts:
+            problems.append(f"nothing listens on :{port} ({name})")
+        elif exposed:
+            problems.append(f"{name} :{port} listens on {', '.join(exposed)} (not loopback)")
+        else:
+            seen.append(f"{name} {', '.join(sorted(set(hosts)))}:{port}")
+    if any("not loopback" in p for p in problems):
+        rep.add("serving binds", "fail", "; ".join(problems))
+    elif problems:
+        rep.add("serving binds", bad, "; ".join(problems))
+    else:
+        rep.add("serving binds", "ok", "loopback only: " + "; ".join(seen))
+
+
+def _http(probes: ServeProbes) -> httpx.Client:
+    return httpx.Client(timeout=PROBE_TIMEOUT_S, trust_env=False, transport=probes.transport)
+
+
+def _status_of(client: httpx.Client, url: str) -> int | None:
+    """The HTTP status of an unauthenticated GET, ``None`` when nothing answered."""
+    try:
+        return client.get(url).status_code
+    except httpx.HTTPError:
+        return None
+
+
+def _reachability_check(cfg: Config, rep: HealthReport, probes: ServeProbes) -> None:
+    """Without serve mode: do both ``/health`` routes answer? A warning when not."""
+    with _http(probes) as client:
+        got = {
+            f"encoder :{_port(cfg.encoder.url, 8090)}": _status_of(
+                client, f"{cfg.encoder.url}/health"
+            ),
+            f"clm-serve :{_port(cfg.clm.base_url, 8700)}": _status_of(
+                client, f"{cfg.clm.base_url}/health"
+            ),
+        }
+    down = [
+        f"{name} {'unreachable' if st is None else f'/health {st}'}"
+        for name, st in got.items()
+        if st != 200
+    ]
+    if down:
+        rep.add(
+            "serving",
+            "warn",
+            "; ".join(down) + " (annotate --provider clm needs both; --provider fake runs offline; "
+            "live probes: `mesa-clm doctor --serve`)",
+        )
+    else:
+        rep.add(
+            "serving",
+            "ok",
+            " and ".join(got) + " answer /health (live probes: `mesa-clm doctor --serve`)",
+        )
+
+
+def _model_names(models: list[dict[str, Any]], key: str) -> list[str]:
+    return [str(m.get(key)) for m in models if m.get(key)]
+
+
+def _live_checks(cfg: Config, rep: HealthReport, probes: ServeProbes, *, strict: bool) -> None:
+    """Serve mode: binds, 401s, health, model lists and one golden /v1/systemone call."""
+    from mesa_clm.clm.encoder import EncoderClient
+    from mesa_clm.clm.http import Choice, ChoiceAnswer, ClmError, ClmHttpClient
+    from mesa_clm.net import EndpointError
+
+    bad: Status = "fail" if strict else "warn"
+    endpoints = {"encoder": cfg.encoder.url, "clm-serve": cfg.clm.base_url}
+    _binds_check(
+        rep,
+        probes,
+        {"encoder": _port(cfg.encoder.url, 8090), "clm-serve": _port(cfg.clm.base_url, 8700)},
+        bad,
+    )
+    up: dict[str, bool] = {}
+    with _http(probes) as client:
+        for name, url in endpoints.items():
+            st = _status_of(client, f"{url}/health")
+            up[name] = st == 200
+            if st == 200:
+                rep.add(f"{name} health", "ok", f"{url}/health 200")
+            else:
+                rep.add(
+                    f"{name} health", bad, f"{url}/health {'unreachable' if st is None else st}"
+                )
+        for name, url in endpoints.items():
+            if not up[name]:
+                continue
+            st = _status_of(client, f"{url}/v1/models")
+            if st == 401:
+                rep.add(f"{name} auth", "ok", "GET /v1/models without a key -> 401")
+            else:
+                rep.add(
+                    f"{name} auth",
+                    "fail",
+                    f"GET /v1/models without a key -> {st}: the route must require the key "
+                    "(plan §6.4)",
+                )
+    hints = {
+        "encoder": "MESA_CLM_ENCODER__API_KEY_FILE=~/.mesa/clm/secrets/encoder.key",
+        "clm-serve": "MESA_CLM_CLM__API_KEY_FILE=~/.mesa/clm/secrets/clm.key",
+    }
+    keys: dict[str, str | None] = {}
+    for name, section in (("encoder", cfg.encoder), ("clm-serve", cfg.clm)):
+        if not up[name]:
+            continue
+        try:
+            keys[name] = section.resolved_api_key()
+        except SecretError as exc:
+            rep.add(f"{name} models", "fail", str(exc))
+            continue
+        if not keys[name]:
+            rep.add(f"{name} models", bad, f"no key configured (set {hints[name]})")
+    if keys.get("encoder"):
+        try:
+            with EncoderClient(
+                cfg.encoder.url,
+                keys["encoder"],
+                model=cfg.encoder.model,
+                timeout=PROBE_TIMEOUT_S,
+                transport=probes.transport,
+                allow_remote=cfg.clm.allow_remote,
+                retries=1,
+            ) as enc:
+                names = _model_names(enc.models(), "id")
+        except (ClmError, EndpointError) as exc:
+            rep.add("encoder models", "fail", _key_hint(exc, "encoder"))
+        else:
+            want = cfg.encoder.model
+            rep.add(
+                "encoder models",
+                "ok" if want in names else "fail",
+                f"{', '.join(names) or 'none'}" + ("" if want in names else f"; {want} missing"),
+            )
+    if keys.get("clm-serve"):
+        try:
+            with ClmHttpClient(
+                cfg.clm.base_url,
+                keys["clm-serve"],
+                timeout=max(PROBE_TIMEOUT_S, 30.0),
+                transport=probes.transport,
+                allow_remote=cfg.clm.allow_remote,
+                retries=1,
+            ) as clm:
+                names = _model_names(clm.models(), "name")
+                missing = [m for m in ("clm-latest", "clm-raw") if m not in names]
+                rep.add(
+                    "clm-serve models",
+                    "fail" if missing else "ok",
+                    f"{', '.join(names) or 'none'}"
+                    + (f"; missing {', '.join(missing)}" if missing else ""),
+                )
+                response = clm.system_one(
+                    GOLDEN_STATE, {"fit": Choice(criteria=GOLDEN_CRITERIA)}, model="clm-latest"
+                )
+        except (ClmError, EndpointError) as exc:
+            rep.add("clm golden", "fail", _key_hint(exc, "clm-serve"))
+        else:
+            answer = response.answers.get("fit")
+            ok = (
+                isinstance(answer, ChoiceAnswer)
+                and set(answer.probabilities) == set(GOLDEN_CRITERIA)
+                and all(p > 0 for p in answer.probabilities.values())
+                and abs(sum(answer.probabilities.values()) - 1.0) <= 1e-3
+            )
+            if isinstance(answer, ChoiceAnswer) and ok:
+                latency = (
+                    f"{response.latency_ms:.0f} ms, " if response.latency_ms is not None else ""
+                )
+                rep.add(
+                    "clm golden",
+                    "ok",
+                    f"/v1/systemone clm-latest: {latency}answer {answer.choice}, "
+                    f"{response.usage.input_tokens} input tokens",
+                )
+            else:
+                rep.add("clm golden", "fail", "/v1/systemone answer does not cover the golden keys")
+
+
+def _key_hint(exc: Exception, name: str) -> str:
+    status = getattr(exc, "status", None)
+    if status == 401:
+        return (
+            f"{name} rejected the configured key (401): it differs from the unit's; re-read "
+            "`mesa-clm serve keys --init` and restart the units if the keys were rotated"
+        )
+    return f"{type(exc).__name__}: {exc}"
+
+
+def _serving_checks(
+    cfg: Config, rep: HealthReport, *, quick: bool, serve: bool | None, probes: ServeProbes
+) -> None:
+    from mesa_clm.serving import check_serving_lock
+
+    home = serving_home(probes.home)
+    active = units_active(probes.runner) if serve is None else False
+    serve_mode = serve if serve is not None else active
+    strict = serve is True or (serve is None and active and not quick)
+    if not home.is_dir():
+        rep.add("serving lock", "ok", f"skipped: no serving home at {home} (not the serving host)")
+    elif quick and not serve_mode:
+        rep.add("serving lock", "ok", "skipped (--quick; `mesa-clm serve lock --check` runs it)")
+    else:
+        checks = check_serving_lock(
+            home=home, require_live=serve_mode, runner=probes.runner, docker=probes.docker
+        )
+        failed = [f"{c.name}: {c.detail}" for c in checks if c.status == "fail"]
+        n_ok = sum(c.status == "ok" for c in checks)
+        n_skip = sum(c.status == "skip" for c in checks)
+        if failed:
+            rep.add("serving lock", "fail", "; ".join(failed))
+        else:
+            lock = next((c.detail for c in checks if c.name == "lock"), "")
+            rep.add("serving lock", "ok", f"{lock}; {n_ok} ok, {n_skip} skipped")
+    _host_checks(rep, probes)
+    if serve_mode:
+        _live_checks(cfg, rep, probes, strict=strict)
+    else:
+        _reachability_check(cfg, rep, probes)

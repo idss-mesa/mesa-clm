@@ -35,7 +35,7 @@ from __future__ import annotations
 import fcntl
 import json
 import re
-from collections.abc import Iterable, Iterator, Sequence
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
@@ -382,6 +382,94 @@ def insert_sql(table: str, columns: Sequence[str]) -> str:
         f"INSERT INTO {SCHEMA}.{table} ({', '.join(columns)}) "  # noqa: S608
         f"VALUES ({', '.join('?' for _ in columns)})"
     )
+
+
+# -- DuckDB bulk inserts --------------------------------------------------------------------------------
+#
+# DuckDB 1.5.6 tries ``import pandas`` twice for every Python value it binds when pandas is not
+# installed (the failed import is not cached), about 75 us per value: a fake run's 600 rows took
+# 1.2 s to commit through ``executemany``, and multi-row ``VALUES`` statements bind the same
+# number of values. :func:`bulk_insert` binds *one* value per chunk instead: the rows as a JSON
+# array, unpacked in SQL by ``from_json_strict`` (a failed cast is an error, never a NULL). The
+# data never enters the SQL text; the statement carries only column names checked against
+# :data:`_IDENT` and type names from a fixed set. JSON and TIMESTAMPTZ columns travel as text and
+# are cast by the INSERT (``_cell`` already renders dicts and lists as JSON text; datetimes go as
+# ISO 8601 with their offset), numbers and booleans as JSON scalars (Python's shortest round-trip
+# ``repr`` parses back to the same double). A chunk JSON cannot carry (a non-finite float, a
+# value of another type, a lone surrogate) goes through ``executemany`` unchanged, so the rows
+# and every error are what the per-row path produced.
+
+BULK_INSERT_ROWS: Final = 1000
+_NATIVE_JSON_TYPES: Final[frozenset[str]] = frozenset({"BIGINT", "BOOLEAN", "DOUBLE", "INTEGER"})
+_IDENT: Final = re.compile(r"[a-z_][a-z0-9_]*")
+
+
+def _json_scalar(value: Any) -> Any:
+    return value.isoformat() if isinstance(value, datetime) else value
+
+
+def column_types(con: duckdb.DuckDBPyConnection, table: str) -> dict[str, str]:
+    """Column name -> DuckDB type name of ``mesa_clm.<table>`` on this connection."""
+    rows = con.execute(
+        "SELECT column_name, data_type FROM duckdb_columns() "
+        "WHERE schema_name = ? AND table_name = ? ORDER BY column_index",
+        [SCHEMA, table],
+    ).fetchall()
+    return {str(name): str(kind) for name, kind in rows}
+
+
+def bulk_insert_sql(table: str, columns: Sequence[str], types: Mapping[str, str]) -> str:
+    """``INSERT INTO mesa_clm.<table> (...) SELECT r."c", ... FROM unnest(from_json_strict(?,
+    '<structure>'))``: one bound parameter, the rows as a JSON array of objects."""
+    if not _IDENT.fullmatch(table):
+        raise ValueError(f"bad table name {table!r}")
+    structure: dict[str, str] = {}
+    for col in columns:
+        if not _IDENT.fullmatch(col):
+            raise ValueError(f"bad column name {col!r}")
+        kind = types.get(col)
+        if kind is None:
+            raise KeyError(f"{SCHEMA}.{table} has no column {col!r}")
+        structure[col] = kind if kind in _NATIVE_JSON_TYPES else "VARCHAR"
+    literal = json.dumps([structure], separators=(",", ":"))
+    picked = ", ".join(f'r."{c}"' for c in columns)
+    return (
+        f"INSERT INTO {SCHEMA}.{table} ({', '.join(columns)}) "  # noqa: S608
+        f"SELECT {picked} FROM (SELECT unnest(from_json_strict(?, '{literal}')) AS r)"
+    )
+
+
+def _rows_json(columns: Sequence[str], rows: Sequence[Sequence[Any]]) -> str | None:
+    """The rows as one JSON array of objects, or ``None`` when JSON cannot carry them exactly."""
+    try:
+        text = json.dumps(
+            [{c: _json_scalar(v) for c, v in zip(columns, values, strict=True)} for values in rows],
+            ensure_ascii=False,
+            allow_nan=False,
+            separators=(",", ":"),
+        )
+        text.encode("utf-8")
+    except (TypeError, ValueError, UnicodeEncodeError):
+        return None
+    return text
+
+
+def bulk_insert(con: duckdb.DuckDBPyConnection, table: str, rows: Sequence[BaseModel]) -> int:
+    """Insert row models into ``mesa_clm.<table>`` on ``con`` (the caller's transaction), in
+    chunks of :data:`BULK_INSERT_ROWS` with one bound JSON value per chunk (see above)."""
+    if not rows:
+        return 0
+    cols, _ = row_values(rows[0])
+    values = [row_values(r)[1] for r in rows]
+    sql = bulk_insert_sql(table, cols, column_types(con, table))
+    for start in range(0, len(values), BULK_INSERT_ROWS):
+        chunk = values[start : start + BULK_INSERT_ROWS]
+        payload = _rows_json(cols, chunk)
+        if payload is None:
+            con.executemany(insert_sql(table, cols), chunk)
+        else:
+            con.execute(sql, [payload])
+    return len(rows)
 
 
 def finish_run_sql(status: str, stats: dict[str, Any]) -> tuple[str, list[Any]]:
@@ -786,11 +874,7 @@ class DuckDBStore:
     # -- writes -----------------------------------------------------------------------------------------
     @staticmethod
     def _insert(con: duckdb.DuckDBPyConnection, table: str, rows: Sequence[BaseModel]) -> int:
-        if not rows:
-            return 0
-        cols, _ = row_values(rows[0])
-        con.executemany(insert_sql(table, cols), [row_values(r)[1] for r in rows])
-        return len(rows)
+        return bulk_insert(con, table, rows)
 
     def commit_run(self, buffer: RunBuffer) -> UUID:
         """Write every buffered row in one transaction (D11); the buffer is marked committed."""
@@ -859,8 +943,16 @@ class DuckDBStore:
             spool_batch_id=spool_batch_id,
             accepted_by=accepted_by,
         )
+        # One UPDATE per chunk of ids (``link_id IN (...)``), not one bound row per link: DuckDB
+        # 1.5.6 pays a failed pandas import per bound value (see ``bulk_insert``).
+        head = sql.removesuffix("link_id = ?")
+        if head == sql:  # pragma: no cover - set_link_status_sql always ends with the id
+            raise AssertionError("set_link_status_sql must end with 'link_id = ?'")
         with self._write() as con:
-            con.executemany(sql, [[*values, i] for i in ids])
+            for start in range(0, len(ids), BULK_INSERT_ROWS):
+                chunk = ids[start : start + BULK_INSERT_ROWS]
+                marks = ", ".join("?" for _ in chunk)
+                con.execute(f"{head}link_id IN ({marks})", [*values, *chunk])
         return len(ids)
 
     def link_snapshot(

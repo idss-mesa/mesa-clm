@@ -163,7 +163,8 @@ class EncoderClient:
         tokenizer_json: str | Path | None = None,
     ) -> EncoderClient:
         """A client from the ``encoder`` section; ``allow_remote`` is the ``clm`` section's one
-        switch for the serving pair (plan §6.4)."""
+        switch for the serving pair (plan §6.4). ``tokenizer_json`` defaults to the section's
+        ``tokenizer_json`` (``MESA_CLM_ENCODER__TOKENIZER_JSON``)."""
         return cls(
             cfg.url,
             cfg.resolved_api_key(),
@@ -172,7 +173,7 @@ class EncoderClient:
             timeout=cfg.timeout,
             transport=transport,
             allow_remote=allow_remote,
-            tokenizer_json=tokenizer_json,
+            tokenizer_json=tokenizer_json if tokenizer_json is not None else cfg.tokenizer_json,
         )
 
     @property

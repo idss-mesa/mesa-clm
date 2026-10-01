@@ -521,6 +521,24 @@ def test_the_ols_rank_tier_skips_clm_for_every_rank_fit_task(tmp_path: Path) -> 
     _assert_ols_rank_rows(rows)
 
 
+def test_decider_tier_ols_rank_in_the_config_selects_the_degraded_method(tmp_path: Path) -> None:
+    """``decider.tier: ols_rank`` (``MESA_CLM_DECIDER__TIER``) is a ``config.Tier`` and reaches
+    the run through ``DecisionService`` without a per-call override (D28)."""
+    from typing import get_args
+
+    from mesa_clm.config import Tier
+    from mesa_clm.pipeline import TIERS
+
+    assert get_args(Tier) == TIERS
+    store = DuckDBStore(tmp_path / "prov.duckdb")
+    svc = service(store, cfg=config(DECIDER__TIER="ols_rank"))
+    run = svc.annotate(card(SERVICE_CARD), "agent-x", owner="alice")
+    row = store.run(run.run_id)
+    assert row is not None and row["tier"] == "ols_rank" and run.degraded
+    assert run.proposals and all(p.method == "ols_rank" for p in run.proposals)
+    assert all(p.outcome == "proposed" for p in run.proposals)
+
+
 def test_ols_rank_per_task(tmp_path: Path) -> None:
     store = DuckDBStore(tmp_path / "prov.duckdb")
     run = annotator(store, ols_rank_tasks={"term.fits"}).annotate(card(SERVICE_CARD))

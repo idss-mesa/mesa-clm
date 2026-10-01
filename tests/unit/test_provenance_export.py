@@ -407,6 +407,10 @@ def test_prune_deletes_only_terminal_or_expired_runs(store: DuckDBStore, tmp_pat
     # abandoned_young: finished_at from _populate is T0 + 3 s; make it recent
     store.finish_run(abandoned_young, "abandoned", finished_at=now - timedelta(days=2))
 
+    dry = prune(store, ttl_days=30, now=now, dry_run=True)
+    assert set(dry.deleted) == {applied_terminal, abandoned_old} and dry.rows == {}
+    assert dry.summary()["dry_run"] is True and store.run(applied_terminal) is not None
+
     report = prune(store, ttl_days=30, now=now)
     assert set(report.deleted) == {applied_terminal, abandoned_old}
     assert (
@@ -422,7 +426,8 @@ def test_prune_deletes_only_terminal_or_expired_runs(store: DuckDBStore, tmp_pat
     assert store.run(applied_terminal) is None and store.run(abandoned_old) is None
     assert store.run(applied_pending) is not None and len(store.labels_for("term.fits")) == 1
     summary = report.summary()
-    assert set(summary) == {"deleted", "rows", "skipped"} and len(summary["deleted"]) == 2
+    assert set(summary) == {"dry_run", "deleted", "rows", "skipped"}
+    assert len(summary["deleted"]) == 2 and summary["dry_run"] is False
 
     # the escalated group gets its answer: now terminal
     store.update_group(UUID(store.groups(applied_open_group)[0]["group_id"]), outcome="human")

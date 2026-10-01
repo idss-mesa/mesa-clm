@@ -50,8 +50,7 @@ from mesa_clm.provenance.store import (
     SCHEMA_VERSION,
     ProvenanceStore,
     RunBuffer,
-    insert_sql,
-    row_values,
+    bulk_insert,
 )
 
 MANIFEST_FORMAT: Final = "mesa-clm-run/1"
@@ -125,10 +124,7 @@ def _stage(con: duckdb.DuckDBPyConnection, table: str, rows: Sequence[Mapping[st
     or stale row fails validation instead of landing in a file."""
     model = RUN_TABLE_MODELS[table]
     validated = [model.model_validate(dict(r)) for r in rows]
-    if not validated:
-        return
-    cols, _ = row_values(validated[0])
-    con.executemany(insert_sql(table, cols), [row_values(r)[1] for r in validated])
+    bulk_insert(con, table, validated)
 
 
 def export_run(
@@ -322,9 +318,11 @@ class PruneReport:
     deleted: list[UUID] = field(default_factory=list)
     rows: dict[str, int] = field(default_factory=dict)
     skipped: dict[UUID, str] = field(default_factory=dict)
+    dry_run: bool = False
 
     def summary(self) -> dict[str, Any]:
         return {
+            "dry_run": self.dry_run,
             "deleted": [str(r) for r in self.deleted],
             "rows": dict(sorted(self.rows.items())),
             "skipped": {str(k): v for k, v in self.skipped.items()},
@@ -346,8 +344,10 @@ def prune(
     terminal_only: bool = True,
     ttl_days: int,
     now: datetime | None = None,
+    dry_run: bool = False,
 ) -> PruneReport:
-    """Delete local rows of finished runs (plan §7.3 step 9).
+    """Delete local rows of finished runs (plan §7.3 step 9). ``dry_run`` decides the same way
+    and deletes nothing: ``deleted`` then lists the runs that would go and ``rows`` stays empty.
 
     Always eligible: an ``applied`` run that is terminal (:func:`is_terminal`) *and* exported
     (``exported_at`` set; D29 keeps the Parquet copy in the project); an ``abandoned`` run
@@ -359,7 +359,7 @@ def prune(
     if ttl_days < 0:
         raise ValueError("ttl_days must be >= 0")
     moment = now or _now()
-    report = PruneReport()
+    report = PruneReport(dry_run=dry_run)
     for run in store.runs(limit=None):
         run_id = UUID(str(run["run_id"]))
         status = str(run["status"])
@@ -384,7 +384,8 @@ def prune(
         elif age < ttl_days:
             report.skipped[run_id] = f"{status} {age:.1f} d ago (ttl {ttl_days} d)"
             continue
-        for table, n in store.delete_run(run_id).items():
-            report.rows[table] = report.rows.get(table, 0) + n
+        if not dry_run:
+            for table, n in store.delete_run(run_id).items():
+                report.rows[table] = report.rows.get(table, 0) + n
         report.deleted.append(run_id)
     return report

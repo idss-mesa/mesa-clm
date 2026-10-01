@@ -13,8 +13,9 @@ a provenance sidecar next to the AVU history kept by
 [mesa-ducklake](https://github.com/idss-mesa/mesa-ducklake). The core is a torch-free client;
 the encoder and `clm-serve` run as separate processes.
 
-Status: pre-alpha, milestone M0 (scaffold, ports, labels, baselines). See `DESIGN.md` for the
-decisions (U1–U4, D0–D32, the pre-registered experiments), `RESEARCH.md` for the verified facts
+Status: pre-alpha, milestone M1 (the serving stack on sparky-1 and the hermetic rank-first
+pipeline: `annotate`, `explain`, `review`, `feedback`, proposed-only). See `DESIGN.md` for the
+decisions (U1–U4, D0–D33, the pre-registered experiments), `RESEARCH.md` for the verified facts
 the design rests on, `design/plan-2026-09-28.md` for the plan, and `CLAUDE.md` for how to work
 here.
 
@@ -40,10 +41,10 @@ sha256sum -c vendored.sha256              # vendored CLM and AnyJev files are by
 ```
 
 Requires Python 3.11+. `mesa-mcp` and `mesa-ducklake` are installed from pinned git commits
-(neither is on PyPI). Serving (a vLLM pooling container plus a patched `clm-serve`) is set up
-in milestone M1 and documented at `docs/concepts/serving.md`.
+(neither is on PyPI). Serving (a vLLM pooling container plus a patched `clm-serve`) runs on the
+GPU host; see `docs/concepts/serving.md` and the runbook `docs/deploy/serving.md`.
 
-## Command line (milestone M0)
+## Command line
 
 ```bash
 uv run mesa-clm doctor                    # pins, versions, mesa-mcp plugin API, policy, stores (--quick, --json)
@@ -55,9 +56,25 @@ uv run mesa-clm bench baselines --snapshot bench/snapshots/today.parquet        
 uv run mesa-clm bench mde --snapshot bench/snapshots/today.parquet                   # minimum detectable effect
 ```
 
-`labels import-anyjev --dsn <sidecar>` reads a mesa-anyjev sidecar read-only. The annotation
-verbs (`plan`, `annotate`, `apply`, `revert`, `explain`) and the `mesa_clm_*` MCP tools arrive
-with milestones M1 and M3; `mesa-clm --help` lists what exists.
+`labels import-anyjev --dsn <sidecar>` reads a mesa-anyjev sidecar read-only.
+
+Annotation (milestone M1; every outcome is proposed-only until evidence-cited autos land in M4):
+
+```bash
+export MESA_CLM_OLS__FIXTURES=replay MESA_CLM_OLS__FIXTURES_DIR=tests/fixtures/ols
+uv run mesa-clm --provenance duckdb:////tmp/clm.duckdb annotate \
+    --card tests/fixtures/cards/DP1.10003.001.brd_countdata.md --provider fake --out run.json
+uv run mesa-clm --provenance duckdb:////tmp/clm.duckdb explain --run-id <id or prefix>
+uv run mesa-clm --provenance duckdb:////tmp/clm.duckdb review --run-id <id or prefix>   # interactive
+uv run mesa-clm framings --check          # framing keys match framings.lock.json
+```
+
+On the serving host, `--provider clm` (the default) talks to the loopback encoder and
+clm-serve with the keys named by `MESA_CLM_CLM__API_KEY_FILE` and
+`MESA_CLM_ENCODER__API_KEY_FILE` (`mesa-clm serve keys --init` creates them and prints those
+lines); `mesa-clm doctor --serve` checks the stack first. `provenance migrate|export|import|prune`
+maintain the sidecar. `plan`, `apply`, `revert` and the `mesa_clm_*` MCP tools arrive with M3;
+`mesa-clm --help` lists what exists.
 
 ## Links
 

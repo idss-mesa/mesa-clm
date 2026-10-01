@@ -7,7 +7,7 @@ tags:
   - architecture
 generated:
   by: "claude/fable-5.1"
-  at: "2026-09-29T00:00:00Z"
+  at: "2026-09-29T20:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -30,20 +30,51 @@ write, and `revert` undoes exactly what `apply` wrote (DESIGN D31).
 
 Layers: the CLM clients (`clm/http.py` for `/v1/systemone`, `/v1/rank`, `/v1/models`,
 `/health`; `clm/encoder.py` for `/v1/embeddings` with the token guard; `clm/headproj.py`, a
-numpy re-implementation of the head for local probes; `clm/fake.py`, a deterministic hashed
-n-gram fake with a collapse knob) below the providers (`DecisionRecord` with level,
-calibration and fingerprints; the tiered provider that resolves a tier per `question_key`)
-below the pipeline (`Annotator.annotate`, Q1–Q8). The planner is a separate role that only
-proposes. `mesa_mcp.ols` provides the OLS client and the canonical AVU transform;
-`mesa_ducklake.DuckLakeClient` records snapshots; the vendored `clm/schema.py` is reached only
-through `render.py` (DESIGN D4).
+numpy re-implementation of the head for local probes; `clm/fingerprint.py`, the D5 bundle and
+the serving lock; `clm/fake.py`, a deterministic hashed n-gram fake with a collapse knob) below
+the providers (`providers/base.py`: `DecisionRecord` with level, calibration and fingerprints
+and its `_honest` invariants; `providers/tiered.py`: the tiered provider that resolves a tier
+per `question_key`, the fake provider and the degraded `ols_rank` records;
+`providers/claude_provider.py`: the recorded second opinion; `providers/live.py`: the live
+provider) below the pipeline (`pipeline.py`, `Annotator.annotate`, Q1–Q8), the policy
+(`policy.py`, every outcome) and the sidecar (`provenance/`). `service.py` puts one provider,
+planner, OLS layer, policy and store behind the decider lock for the CLI and, from M3, the MCP
+tools. The planner is a separate role that only proposes. `mesa_mcp.ols` provides the OLS
+client and the canonical AVU transform; `mesa_ducklake.DuckLakeClient` records snapshots (M3);
+the vendored `clm/schema.py` is reached only through `render.py` (DESIGN D4).
+
+**The live provider** (`providers/live.py`). `clm_provider(cfg)` builds what `annotate
+--provider clm` decides with: a `TieredProvider` over `ClmHttpClient` (the `clm` section:
+loopback URL, key from the configured secrets source) with `EncoderClient` (the `encoder`
+section) as the token guard's counter, stamped with the fingerprint of the serving lock the
+host runs (`~/.mesa/clm/serving.lock.json`, the copy the bootstrap installed, else the
+checkout's `serving/serving.lock.json`) under the served head `clm.model`. A lock that does not
+verify refuses the build (K4); only `clm-latest` and `clm-raw` are servable until promoted heads
+arrive (M7). `clm_status(client)` is the pre-flight `GET /health` (unguarded on loopback, 5 s, no
+retry) that tells an unreachable clm-serve from one whose encoder is down; the CLI turns a
+failed pre-flight into a refusal or, with `decider.ols_rank_fallback`, the degraded `ols_rank`
+method (DESIGN D28).
+
+**Sidecar writes** (`provenance/store.py`). A run's rows are buffered in a `RunBuffer` and
+committed in one transaction under the flock (DESIGN D11). DuckDB 1.5.6 tries `import pandas`
+twice for every Python value it binds when pandas is not installed (the failed import is not
+cached), so a commit that binds one parameter per value spends most of its time in failed
+imports; multi-row `VALUES` statements bind just as many values. `bulk_insert` therefore binds one value per chunk
+of up to 1,000 rows, the rows as a JSON array unpacked in SQL by `from_json_strict` (a failed
+cast is an error, never a silent NULL): the data never enters the SQL text, which carries only
+checked column names and type names from a fixed set, and JSON and timestamp columns travel as
+text cast by the INSERT. A chunk JSON cannot carry exactly (a non-finite float, a value of
+another type) goes through `executemany` unchanged, so the rows and every error are what the
+per-row path produced (`tests/unit/test_provenance_bulk_insert.py` compares the two table by
+table). `set_link_status` updates chunks of ids with `link_id IN (…)` for the same reason.
 
 ## Modules by milestone
 
 | Milestone | Modules |
 |---|---|
-| M0 (this) | `config.py`, `secrets.py`; `cards.py`, `states.py`, `registry.py`; `tasks.py`, `identity.py`; `policy_defaults.py` + `policy_defaults.yaml`; `ols.py`, `avu.py`, `ols_closure.py`; `planner/`; `provenance/labels.py`; `learn/labels.py`; `bench/_metrics.py` (vendored), `bench/{stats,results,baselines,mde}.py`, `bench/tasks/`; `health.py` (pins, versions, plugin API, policy, stores); `mcp_tools/` (entry-point stub); `cli.py` (`labels`, `bench`, `doctor`); `_vendor/clm/` |
-| M1 | `framings.py`, `render.py`, `framings.lock.json`; `clm/{http,encoder,headproj,fingerprint,fake}.py`; `providers/`; `pipeline.py`; `policy.py`; `provenance/{models,store,migrate,export}.py`; `service.py`; `health.py` serving probes; `learn/features.py`; `serving/`, `deploy/` |
+| M0 | `config.py`, `secrets.py`; `cards.py`, `states.py`, `registry.py`; `tasks.py`, `identity.py`; `policy_defaults.py` + `policy_defaults.yaml`; `ols.py`, `avu.py`, `ols_closure.py`; `planner/`; `provenance/labels.py`; `learn/labels.py`; `bench/_metrics.py` (vendored), `bench/{stats,results,baselines,mde,metrics}.py`, `bench/tasks/`; `health.py` (pins, versions, plugin API, policy, stores); `mcp_tools/` (entry-point stub); `cli.py` (`labels`, `bench`, `doctor`); `_vendor/clm/` |
+| M1 (exists) | `framings.py`, `render.py`, `framings.lock.json`; `vocab.py`; `clm/{http,encoder,headproj,fingerprint,fake}.py`; `providers/{base,tiered,claude_provider,live}.py`; `pipeline.py`; `policy.py`; `provenance/{models,store,store_postgres,migrate,export}.py` and `migrations/0001_mesa_clm.sql`; `service.py`; `serving.py` (keys, units, the serving lock and its verification); `health.py` M1 checks (framings lock, schema sha256, sidecar schema, serving lock, host, `gpu_budget`, the serving reachability line and the serve-mode probes); `cli.py` M1 verbs (`framings`, `annotate`, `explain`, `review`, `feedback`, `provenance migrate\|export\|import\|prune`, `serve keys\|units\|lock`, `doctor --serve`); `serving/`, `deploy/` (the serve-venv side, never importing `mesa_clm`) |
+| M1 (still planned) | `learn/features.py` (feature cache and npz export) |
 | M2 | `bench/{run,framing}.py` |
 | M3 | `apply.py`, `revert.py`, `irods_io.py`, `history/`; the five `mesa_clm_*` tools in `mcp_tools/` |
 | M4 | `learn/{linear,calibrate,fit,teacher}.py`, `artifacts.py`, `bench/e2e.py`, audits |
@@ -53,11 +84,13 @@ through `render.py` (DESIGN D4).
 Deferred to M8: DataCite questions, the chooser for mesa-mcp's own picker, dense retrieval
 over pre-embedded registry ontologies, `mesa_clm_rank`.
 
-## Service and tools (milestone M3)
+## Service (milestone M1) and tools (milestone M3)
 
-`service.py` holds the collaborators (provider, planner, OLS layer, policy, store) and owns the
-human-feedback path (`record_human_pick(via=)`), the candidate read-back for elicitations and
-the run-owner checks (DESIGN D21). The CLI and the five tools build on it:
+`service.py` holds the collaborators (provider, planner, OLS layer, policy, store) behind a
+decider lock (`DeciderBusy` when it stays taken) and owns the human-feedback path
+(`record_human_pick(via=)`), the candidate read-back for elicitations and the run-owner checks
+(DESIGN D21). The CLI verbs `annotate`, `explain`, `review` and `feedback` build on it now; the
+five tools build on it in M3:
 
 | Tool | Phase | What it does |
 |---|---|---|

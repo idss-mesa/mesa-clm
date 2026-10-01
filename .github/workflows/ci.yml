@@ -28,7 +28,7 @@ jobs:
       - run: uv run ruff check src tests scripts
       - run: uv run ruff format --check src tests
       - run: uv run mypy --strict src
-      # TODO(M1): - run: uv run mesa-clm framings --check   # framing keys match framings.lock.json
+      - run: uv run mesa-clm framings --check   # framing keys match framings.lock.json (D1)
       # The console script installs and the M0 doctor is green on a bare runner (no hashing: the vendored job does that).
       - run: uv run mesa-clm doctor --quick
       - run: uv run pytest -q --cov=mesa_clm --cov-report=term --cov-report=xml
