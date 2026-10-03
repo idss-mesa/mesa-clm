@@ -59,7 +59,7 @@ from mesa_clm.learn.features import (
 from mesa_clm.providers.tiered import fake_fingerprint
 from mesa_clm.registry import ANCHOR_KEY, ANCHORS, entry
 from mesa_clm.serving import CLM_COMMIT
-from mesa_clm.states import candidate_state, ontology_state, target_state
+from mesa_clm.states import candidate_state, ontology_state, state_sha256, target_state
 from mesa_clm.tasks import TASKS
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -675,20 +675,74 @@ def test_x2_joint_specs_are_the_pr13_layout(full: feat.Manifest) -> None:
         assert key[2] in s1ns  # the candidate is inside the joint state
 
 
+# Every column that carries a label or where it came from, overwritten without reading it: the
+# label-bearing columns get values derived from the identity columns only, label_source ordered
+# against state_sha256 so a manifest that sorted (or filtered) by it would change.
+LABEL_FREE_REPLACE = (
+    "SELECT * REPLACE ("
+    "'synthetic-' || md5(state_sha256 || task_id || option_key) AS label_id, "
+    "CASE WHEN substr(md5(target_sha256 || option_key), 1, 1) < '8' THEN 'consensus_all' "
+    "ELSE 'consensus_negative' END AS label_source, "
+    "'x' AS label, 0 AS label_index, 0.1 AS weight, false AS fold_eligible, true AS bench_card, "
+    "'synthetic' AS origin, 'nobody' AS actor, "
+    "TIMESTAMPTZ '2000-01-01 00:00:00+00' AS created_at) FROM read_parquet(?)"
+)
+
+
 def test_manifest_is_label_free(tmp_path: Path, full: feat.Manifest) -> None:
     flipped = tmp_path / "flipped.parquet"
     con = duckdb.connect()
     try:
         con.execute(
-            "COPY (SELECT * REPLACE (CASE WHEN label = 'Yes' THEN 'No' ELSE 'Yes' END AS label, "  # noqa: S608
-            "1 - label_index AS label_index, 0.1 AS weight) FROM read_parquet(?)) "
-            f"TO '{flipped}' (FORMAT PARQUET)",
+            f"COPY ({LABEL_FREE_REPLACE}) TO '{flipped}' (FORMAT PARQUET)",
             [str(SNAPSHOT)],
         )
     finally:
         con.close()
     other = manifest(flipped)
     assert other.rows == full.rows and other.labels_sha256 != full.labels_sha256
+
+
+def test_a_duplicate_identity_takes_the_smallest_state_sha_whatever_its_source(
+    tmp_path: Path,
+) -> None:
+    """Two label rows of one D1 identity on states that differ in ``n_candidates`` (as mesa-anyjev
+    records them): the manifest renders the state with the smaller ``state_sha256`` (D1), never
+    one chosen by ``label_source`` or any other label column."""
+    con = duckdb.connect()
+    try:
+        # identity and state of one row; every label-bearing column replaced before it is read
+        first = f"SELECT * FROM ({LABEL_FREE_REPLACE}) WHERE task_id = 'term.fits'"  # noqa: S608
+        con.execute(
+            f"CREATE TABLE t AS {first} ORDER BY target_sha256, option_key LIMIT 1",
+            [str(SNAPSHOT)],
+        )
+        (state_json,) = con.execute("SELECT state_json FROM t").fetchone() or ("{}",)
+        state = json.loads(state_json)
+        other = {**state, "n_candidates": int(state.get("n_candidates", 0)) + 5}
+        con.execute(
+            "INSERT INTO t SELECT * REPLACE (? AS label_id, ? AS state_sha256, ? AS state_json) "
+            "FROM t",
+            ["synthetic-dup", state_sha256(other), json.dumps(other, sort_keys=True)],
+        )
+        small = min(state_sha256(state), state_sha256(other))
+        picks = []
+        for first in ("consensus_all", "consensus_negative"):
+            last = "consensus_negative" if first == "consensus_all" else "consensus_all"
+            out = tmp_path / f"{first}.parquet"
+            con.execute(
+                "UPDATE t SET label_source = CASE WHEN state_sha256 = ? THEN ? ELSE ? END, "
+                "label = 'x', label_index = 0, weight = 0.1",
+                [small, last, first],
+            )
+            con.execute(f"COPY t TO '{out}' (FORMAT PARQUET)")
+            picks.append(manifest(out, "term.fits", "F1"))
+    finally:
+        con.close()
+    assert picks[0].rows == picks[1].rows
+    contexts = [r.text for r in picks[0].rows if r.role == "context"]
+    chosen = state if state_sha256(state) == small else other
+    assert len(contexts) == 1 and f"n_candidates: {chosen['n_candidates']}" in contexts[0]
 
 
 def test_manifest_subsets_aliases_and_refusals(tmp_path: Path) -> None:

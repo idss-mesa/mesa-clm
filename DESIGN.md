@@ -696,6 +696,101 @@ the plan's wording; none changes a decision (what D21's "interactive CLI" means 
   measured totals of the A5 recipe; it has **not** been sent, because sending it needs the user's
   go-ahead (plan §1). Until it is accepted the units stay not enabled at boot.
 
+## Implementation notes (M2)
+
+How M2 reads the frozen pre-registration where its text leaves room. None of these notes changes
+the frozen section below; each says what the code does and where the reading is written down.
+
+- **M2 analysis plan (pre-run).** Every frozen rule M2 runs (the LOCO folds and cells, rule R, the
+  lookup gate, the citation test's fields, X1, X2, X3's zero_shot and calibrated tiers, K1) is
+  read as one deterministic algorithm in `design/m2-analysis-plan.md`, committed and pushed with
+  its code (`src/mesa_clm/bench/{framing,cells,x2,registered,run,stats,results}.py`,
+  `learn/{calibrate,features,offline}.py`, `cli.py`, `scripts/x1_latency.py`) **before the first
+  run on the snapshot's labels**, so the commit shows every choice was made before a result
+  existed. Where the frozen text admits more than one reading the plan names each alternative and
+  why it was rejected (the more conservative reading wins; §0). The readings the three pre-commit
+  reviews changed, in short: ΔAUROC(real − shuffle) is the real AUROC minus the mean AUROC of 200
+  seeded within-card derangements (§5; the drafts' AUROC of the expected shuffled score was biased
+  against every arm); rule (2) is read literally, an F7 or F9 NLL winner stands and the token
+  tie-break applies only when the cacheability step leaves both (§7.5–§7.6); no calibrator is fitted
+  on fewer than 100 items, per fit (§6.3); Platt's targets are the hard labels and the temperature
+  bounds [1e-4, 1e4] (§6.4–§6.5); the candidate-only probe is a learned probe on the PR #13 recipe
+  (§7.11); the tier run (`tiers.json`) is the one producer of the citable-form
+  `<task>.<tier>.<A1>` cells, X1 (`x1.json`) chooses (§8.6); a run is *registered* only on the
+  registered snapshot (`bench/snapshots/2026-09-29.parquet`, both its hashes, the published counts)
+  with the registered configuration, and any other run is written with every cell
+  `pre_registered: false`, `exploratory: true` (§13). A finishing pass, still before any run, made
+  every producer apply the registration itself (X1, the tier cells and X2 write a call on other
+  labels or with other settings unregistered whatever its caller says, and refuse labels that claim
+  the registered snapshot but give other counts; §1.3, §13.2), added X2's report-only comparison of
+  the recomputed no-model controls with the M0 cells (§10.1) and a test that holds the plan's
+  Appendix B and §1.3 to the code (§0.2). A second review round (faithfulness and code), still
+  before any run, changed: the registration also pins the framings lock of G1 (`b432d32a7536…`),
+  each model's D5 fingerprint under the serving lock of G1 (`dd33f9fedbae…`; `clm_model_fp`
+  78be8c462b2e and 9f44b0301ee3) and, in X2's producer too, the AnyJev dump, and a run is
+  registered only when its item tables score exactly the configured grid and it covers the
+  registered tasks and tiers (§1.4-§1.5, §13); `bench framing --decide --from` re-derives the status
+  from the identity `x1.json` records, holds the numbers `x1.md` prints to the traces and to the
+  items file (the arm records, the arm cells' counts, metrics and per-item predictions, the
+  `p_loco` column, the probe's statistics, the published counts) and names what it cannot replay
+  (the arm cells' lookup controls and `beats_lookup_novel`, the probe's fits, the label-free
+  diagnostics; §12.6), and `bench run` recomputes X1 before it takes the outcome (§12.7, §14.6); the tier
+  cells keep X1's trace pointer (`x1_trace`, §9.5); the plan names the one-sided reading of
+  "cluster-LB" and labels every reported interval as the 90% interval it is (§4.2), keeps
+  "cluster-LB > 0.5" as the bound alone where the frozen MDE simulated rule R (§4.3, §9.9), corrects
+  what `lopo` and a nested cell's diagnostics cover (§9.9-§9.10) and says a fit that does not
+  converge is used as it is and flagged (§6.4, §6.5, §10.2); the timing run asks each target under
+  both models back to back, alternating which goes first, and records which asks found new texts
+  (§11.3). After the first run nothing in the plan or the code changes except by amendment with the
+  affected cells marked exploratory (§15).
+- **M2 pre-run disclosure: every look at labelled bench data from G1 to this commit.** Nothing in
+  this phase computed a quantity that combines a silver label with a model output (from the feature
+  store, clm-serve or anything else), and no M2 verb ran on the registered snapshot. What was read
+  or run on real data, all label-free or already published:
+  1. *Published counts*: the class counts, items per card (`per_fold_n`) and label-source counts of
+     `bench/results/2026-09-29/baselines.json`, and `mde.json`'s per-card class counts (both M0
+     files), to write the plan's floors, guards, weights and count check.
+  2. *The snapshot, label-free*: its column names, per-task counts, identity columns and
+     `state_json` (the manifests, the request builders, the AnyJev join test); the distinct targets
+     per card (5–25); how many identities have several rows or states (no label column read). The
+     hermetic suite now also reads, on every run: the snapshot's identity and state columns (the M2
+     CLI tests build a synthetic world on them, with generated labels; the timing script's test
+     builds requests from them for a stub that answers nothing), the snapshot's label-content digest
+     against the published `labels_content_sha256` (`tests/unit/test_bench_registered.py`; a hash,
+     no value), and the committed AnyJev dump's `state_json` (its identities equal the snapshot's,
+     `tests/unit/test_x2.py`). The label-free manifest tests now overwrite every label-bearing column
+     (label, index, weight, source, origin, actor, fold flags, ids) before comparing.
+  3. *The AnyJev L2 dump*, structure only (keys, item counts, the presence of `state_json`, the null
+     counts and lengths of its fields) and its `state_json`; no label or `p_yes` value was printed or
+     used.
+  4. *The feature store*: coverage and stats (1,563 X1/X2 texts, all embedded, 0 truncated); the
+     label-free `features build` of the 390 closed-choice texts
+     (`--tasks column.annotate,column.aspect,avu.value_kind --framings F7`, 2026-10-02T00:36:06Z to
+     00:37:00Z, 165,575 encoder tokens, 0 truncated) and `features project` (00:37:07Z), after which
+     the store holds 1,953 texts and vectors under the live recipe; the encoder token counts of the
+     F4/F7/F9 contexts per target (§7.6 quotes them). The pinned head's `exp(logit_scale)` (100.811)
+     was read from its export, and the committed collapse-spike reports were read.
+  5. *The three reviews* (faithfulness, statistics, integrity), the integration and the finishing
+     pass ran synthetic computations only (planted-signal worlds, fake stores, mutation runs of the
+     test suite in `/tmp` copies; the M2 CLI test world also runs `bench baselines`' code on its
+     generated labels), plus the label-free reads above; the integrity review verified that
+     `bench/results` is unchanged since G1 and that the feature store holds only the manifests'
+     texts. The duplicate-identity manifest test replaces every label-bearing column before it reads
+     its one snapshot row. One synthetic X1 output left in `/tmp` (labels_sha256 `aaaa…`, cards
+     `DP0.0000k.001.synthetick`) was deleted. The second review round (faithfulness, code) and its
+     fixes did the same: synthetic worlds and mutation runs in `/tmp` copies of the checkout (which
+     hold the committed snapshot file, read there only as the hermetic suite reads it), the
+     registration's framings lock and fingerprints taken from the committed `framings.lock.json` and
+     `serving/serving.lock.json`, and label-free counts of the timing run's requests against a
+     text-keyed cache, before and after its order changed (requests built from the snapshot's
+     identity and state columns, a stub that answered nothing). Its new tests read the snapshot as before: the manifest of the closed
+     choices (with a request builder made to fail) and the timing script's requests, label-free.
+  6. *After this commit*, before the X1 run, the label-free timing run of the plan's §14.3 will ask
+     clm-serve 20 manifest targets per (task, framing), each under both models back to back,
+     discarding every answer; it is added here when it has run.
+  Anything else done before the first run that reads labelled bench data or asks a bench item is
+  added here, in place, before that run.
+
 ## Pre-registration (G1)
 
 ### G1 freeze

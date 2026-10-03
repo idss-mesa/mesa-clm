@@ -51,12 +51,17 @@ them: one JSON array per chunk unpacked by ``from_json_strict`` (BLOBs as base64
 write here; serving keeps its own in-memory caches (plan §5.2).
 
 **Manifest.** :func:`manifest` lists every text X1 and X2 embed for ``term.fits`` and
-``column.ontology_fits``, built from a frozen label snapshot (``labels snapshot``, D30) through
-:mod:`mesa_clm.framings` and :mod:`mesa_clm.render` only: per labelled (target, option) pair and
-framing, the state text and the action texts exactly as CLM's engine renders them
-(``render.build_pairs`` over ``framings.build_request``). The snapshot is read label-free (no
-``label`` or ``weight`` column is read), its file sha256 is ``labels_sha256``, and the order is
-deterministic (tasks and framings as requested, then targets, options and roles sorted).
+``column.ontology_fits`` and, for M2's tier cells, every text the closed-choice tasks
+``column.annotate``, ``column.aspect`` and ``avu.value_kind`` are asked with, built from a
+frozen label snapshot (``labels snapshot``, D30) through :mod:`mesa_clm.framings` and
+:mod:`mesa_clm.render` only: per labelled (target, option) pair and framing, the state text and
+the action texts exactly as CLM's engine renders them (``render.build_pairs`` over
+``framings.build_request``). The snapshot is read label-free (no ``label`` or ``weight`` column
+is read), its file sha256 is ``labels_sha256``, and the order is deterministic (tasks and
+framings as requested, then targets, options and roles sorted). Every requested (task, framing)
+pair must exist: the rank_fit tasks take F1, F4, F7, F9 and the X2 specs, a closed-choice task
+only its one framing F7 (``framings.FRAMINGS``), so a request such as ``--tasks column.aspect``
+with the default X1/X2 framings is refused rather than silently narrowed.
 
 * **F4, F7, F9** (non-control rank_fit arms): one ``context`` row per target (option ``''``; the
   ``target_state`` view, with the task's scope added to a ``column.ontology_fits`` state, which
@@ -78,6 +83,14 @@ deterministic (tasks and framings as requested, then targets, options and roles 
   (``render.state_text(anyjev state, None)``). One ``context`` row per labelled pair (option =
   the candidate), no action rows. A probe on the target context alone is invalid for a pair
   question, which is why both specs embed the candidate.
+
+* **Closed choices** (``column.annotate`` K=2, ``column.aspect`` K=8, ``avu.value_kind`` K=4;
+  framing F7, plan §4.2 Q1, Q2, Q7): one ``context`` row per labelled target (the
+  ``column_state`` or ``value_kind_state`` view, no instructions; ``column.annotate`` and
+  ``column.aspect`` render the same column text, which serving asks once per column) and one
+  ``option`` row per closed option, keyed by its wire key (the ``ANNOTATE_OPTIONS`` keys, the
+  ``ASPECTS``, ``framings.VALUE_KIND_KEYS``), in option order. Option texts are the same for every
+  target; they are listed per target, as the anchor is, so a row set describes one request.
 
 *Builder order.* ``state_json`` is stored as canonical JSON (sorted keys at every depth; it is
 identity only, DESIGN D23 and plan §4.3), but CLM renders a dict in its key order and the
@@ -129,6 +142,8 @@ from mesa_clm.states import candidate_state, ontology_state, target_state, value
 from mesa_clm.tasks import TASKS
 
 __all__ = [
+    "CHOICE_FRAMINGS",
+    "CHOICE_TASKS",
     "DB_FILE",
     "DEFAULT_EMBED_MODEL",
     "DEFAULT_FRAMINGS",
@@ -136,6 +151,7 @@ __all__ = [
     "FORMAT",
     "FP16_MIN_COSINE",
     "LOCK_FILE",
+    "MANIFEST_TASKS",
     "X1_FRAMINGS",
     "X1_TASKS",
     "X2_ALIAS",
@@ -169,7 +185,7 @@ TEXTCACHE_COMMIT: Final[str] = "bb42c6c5bf914fd449bed2f6ca65be80602cb1f7"
 DEFAULT_EMBED_MODEL: Final[str] = "Qwen/Qwen3-8B"
 DEFAULT_MAX_LEN: Final[int] = 4096
 
-Role = Literal["context", "candidate", "anchor", "noul_true", "noul_false"]
+Role = Literal["context", "candidate", "anchor", "noul_true", "noul_false", "option"]
 ROLES: Final[tuple[str, ...]] = get_args(Role)
 # The side of the head a role's text goes through (CLM embeds contexts with the state head).
 ROLE_SIDE: Final[dict[str, Side]] = {
@@ -178,8 +194,13 @@ ROLE_SIDE: Final[dict[str, Side]] = {
     "anchor": "action",
     "noul_true": "action",
     "noul_false": "action",
+    "option": "action",
 }
 X1_TASKS: Final[tuple[str, ...]] = ("term.fits", "column.ontology_fits")
+# The closed-choice tasks of M2's tier cells (plan §8 M2) and the one framing each has.
+CHOICE_TASKS: Final[tuple[str, ...]] = ("column.annotate", "column.aspect", "avu.value_kind")
+CHOICE_FRAMINGS: Final[tuple[str, ...]] = ("F7",)
+MANIFEST_TASKS: Final[tuple[str, ...]] = (*X1_TASKS, *CHOICE_TASKS)
 X1_FRAMINGS: Final[tuple[str, ...]] = ("F1", "F4", "F7", "F9")
 X2_SPECS: Final[tuple[str, ...]] = ("joint4096@S1", "joint4096@S1ns")
 X2_ALIAS: Final[str] = "X2"
@@ -707,6 +728,29 @@ class FeatureStore:
         decoded = {s: np.frombuffer(found[s], dtype="<f4") for s in distinct}
         return np.stack([decoded[s] for s in shas]).astype(np.float32)
 
+    def token_counts(self, texts: Sequence[str]) -> list[int]:
+        """The token guard's exact count of each of ``texts`` as stored (``texts.tokens``), in
+        input order; :class:`FeatureMissing` names texts the store has never seen."""
+        if not texts:
+            return []
+        shas = [text_sha256(t) for t in texts]
+        distinct = list(dict.fromkeys(shas))
+        found: dict[str, int] = {}
+        with self._read() as con:
+            if con is not None:
+                for start in range(0, len(distinct), _CHUNK):
+                    chunk = distinct[start : start + _CHUNK]
+                    for sha, tokens in con.execute(
+                        "SELECT text_sha256, tokens FROM texts WHERE text_sha256 IN "
+                        "(SELECT unnest(from_json_strict(?, '[\"VARCHAR\"]')))",
+                        [_json_list(chunk)],
+                    ).fetchall():
+                        found[str(sha)] = int(tokens)
+        missing = [s for s in distinct if s not in found]
+        if missing:
+            raise FeatureMissing(missing, what="token count")
+        return [found[s] for s in shas]
+
     def embedded_texts(self) -> list[str]:
         """Every text that has a vector, in ``text_sha256`` order."""
         with self._read() as con:
@@ -1074,9 +1118,9 @@ def builder_ordered(state: Mapping[str, Any]) -> dict[str, Any]:
 
 class ManifestRow(BaseModel):
     """One text a task and framing needs for one target (and option). ``option_key`` is ``''``
-    for a per-target context, ``__none__`` for the anchor and the candidate's key otherwise;
-    ``side`` is the head the text goes through (``context`` -> ``state``, the rest ->
-    ``action``)."""
+    for a per-target context, ``__none__`` for the anchor, the wire key of a closed option
+    (role ``option``) and the candidate's key otherwise; ``side`` is the head the text goes
+    through (``context`` -> ``state``, the rest -> ``action``)."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -1163,13 +1207,30 @@ def expand_framings(ids: str | Iterable[str]) -> tuple[str, ...]:
 def _check_tasks(ids: str | Iterable[str]) -> tuple[str, ...]:
     out: list[str] = []
     for tid in _csv(ids):
-        if tid not in X1_TASKS:
-            raise ManifestError(f"unknown task {tid!r}; X1/X2 cover {', '.join(X1_TASKS)}")
+        if tid not in MANIFEST_TASKS:
+            raise ManifestError(
+                f"unknown task {tid!r}; X1/X2 cover {', '.join(X1_TASKS)} and the closed "
+                f"choices {', '.join(CHOICE_TASKS)} take {', '.join(CHOICE_FRAMINGS)}"
+            )
         if tid not in out:
             out.append(tid)
     if not out:
         raise ManifestError("no tasks given")
     return tuple(out)
+
+
+def _check_pairs(task_ids: Sequence[str], framing_ids: Sequence[str]) -> None:
+    """Every requested (task, framing) pair must exist: a closed-choice task has F7 only."""
+    for tid in task_ids:
+        if tid not in CHOICE_TASKS:
+            continue
+        other = [fid for fid in framing_ids if fid not in CHOICE_FRAMINGS]
+        if other:
+            raise ManifestError(
+                f"unknown task {tid!r} for framing {other[0]!r}: the X1/X2 framings cover "
+                f"{', '.join(X1_TASKS)}; the closed choice {tid} is framed only as "
+                f"{', '.join(CHOICE_FRAMINGS)} (request it with --framings F7)"
+            )
 
 
 class _Pair(NamedTuple):
@@ -1274,6 +1335,32 @@ def _arm_rows(
     return rows, conflicts
 
 
+def _choice_rows(
+    task_id: str, f: framings.Framing, pairs: Sequence[_Pair]
+) -> tuple[list[ManifestRow], int]:
+    """Closed-choice rows: per labelled target the context and every closed option, from the one
+    request ``framings.build_request`` makes for it (what serving sends, plan §4.2)."""
+    rows: list[ManifestRow] = []
+    conflicts = 0
+    by_target: dict[str, list[_Pair]] = {}
+    for p in pairs:
+        by_target.setdefault(p.target_sha256, []).append(p)
+    wire = list(f.closed_options or {})
+    for target, group in by_target.items():
+        contexts = {framings.context_text(f, p.state) for p in group}
+        conflicts += len(contexts) > 1
+        state, questions = framings.build_request(f, group[0].state)
+        state_text, keys, texts = render.build_pairs(state, questions)[task_id]
+        if keys != wire:
+            raise ManifestError(f"{task_id}/{f.id}: the request keys are not the closed options")
+        rows.append(_row(task_id, f.id, target, "", "context", state_text))
+        rows.extend(
+            _row(task_id, f.id, target, key, "option", text)
+            for key, text in zip(keys, texts, strict=True)
+        )
+    return rows, conflicts
+
+
 def _control_rows(task_id: str, f: framings.Framing, pairs: Sequence[_Pair]) -> list[ManifestRow]:
     """F1 rows: per labelled pair the stored anyjev state + task sentence and the two noul
     candidates CLM derives from that sentence."""
@@ -1314,14 +1401,16 @@ def manifest(
     framing_ids: str | Iterable[str] = DEFAULT_FRAMINGS,
 ) -> Manifest:
     """Every X1/X2 text of ``tasks`` under ``framing_ids`` for the labelled pairs of a frozen
-    snapshot (module docstring). ``framing_ids`` accepts ``X2`` for both joint specs.
-    :class:`ManifestError` for a missing or unreadable snapshot, an unknown task or framing, or a
-    row whose identity does not match its state."""
+    snapshot, and the F7 texts of the closed-choice tasks (module docstring). ``framing_ids``
+    accepts ``X2`` for both joint specs. :class:`ManifestError` for a missing or unreadable
+    snapshot, an unknown task or framing, a (task, framing) pair that does not exist (a closed
+    choice under anything but F7), or a row whose identity does not match its state."""
     path = Path(snapshot_path).expanduser()
     if not path.is_file():
         raise ManifestError(f"{path}: no such labels snapshot (write one with `labels snapshot`)")
     task_ids = _check_tasks(tasks)
     framing_list = expand_framings(framing_ids)
+    _check_pairs(task_ids, framing_list)
     labels_sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
     pairs = _snapshot_pairs(path, task_ids)
     rows: list[ManifestRow] = []
@@ -1334,6 +1423,10 @@ def manifest(
             f = framings.framing(task_id, fid)
             if f.control:
                 rows.extend(_control_rows(task_id, f, pairs[task_id]))
+            elif f.shape == "choice":
+                choice, n = _choice_rows(task_id, f, pairs[task_id])
+                rows.extend(choice)
+                conflicts += n
             else:
                 arm, n = _arm_rows(task_id, f, pairs[task_id])
                 rows.extend(arm)

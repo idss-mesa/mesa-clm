@@ -7,10 +7,12 @@ It is the standalone successor-sibling of mesa-anyjev: the generic layers are po
 logprob readout is replaced by a torch-free HTTP client for a vLLM pooling encoder plus a
 patched `clm-serve`. Python 3.11+, hatchling `src/` layout, package `mesa_clm`, console script
 `mesa-clm`, MCP tools `mesa_clm_*`. House style follows `idss-mesa/mesa-anyjev` (and through
-it `neon-mcp`). `DESIGN.md` records every decision (U1–U4, D0–D33, the M1 implementation notes,
-the pre-registration frozen at G1 = the M1 merge commit, amendments from A2; A1 is reserved for
-the X1 framing) and `RESEARCH.md` the verified facts; read both before changing behaviour. The full plan is
-`design/plan-2026-09-28.md`.
+it `neon-mcp`). `DESIGN.md` records every decision (U1–U4, D0–D33, the M1 and M2 implementation notes with
+M2's pre-run disclosure, the pre-registration frozen at G1 = the M1 merge commit, amendments from
+A2; A1 is reserved for the X1 framing) and `RESEARCH.md` the verified facts; read both before
+changing behaviour. The full plan is `design/plan-2026-09-28.md`; how M2 reads the frozen rules
+(X1, the tier cells, X2, every constant) is `design/m2-analysis-plan.md`, committed before any M2
+result and changed after the first run only by amendment.
 
 ## Commands
 
@@ -30,6 +32,12 @@ uv run mesa-clm provenance migrate|export --run-id R --out DIR|import PATH|prune
 uv run mesa-clm serve keys --init|--rotate | serve units | serve lock --check   # never prints a key
 uv run mesa-clm features build --snapshot bench/snapshots/2026-09-29.parquet | export-npz --out DIR | project | stats [--json]
 uv run python scripts/doctor_record.py --out bench/results/<date>/doctor_serve.json   # doctor --serve as a results file
+uv run python scripts/x1_latency.py --out bench/results/<date>/x1_latency.json   # X1's p50: label-free live timing, answers discarded
+uv run mesa-clm bench framing --date <date> --latency bench/results/<date>/x1_latency.json --decide   # X1: x1.json, x1_items.parquet, x1.md
+uv run mesa-clm bench framing --decide --from bench/results/<date>/x1.json   # replay + recompute X1 from the files alone
+uv run mesa-clm bench run --tiers zero_shot,calibrated --loco --date <date>   # tier cells of all five tasks (tiers.json)
+uv run mesa-clm bench x2 --date <date>                # X2: M0 controls, PR #13 replica, AnyJev L2 (x2.json)
+uv run mesa-clm bench table --date <date> [--out bench/results/<date>/table.md]   # every row names file#cell
 MESA_CLM_LIVE=1 uv run pytest -q -m live            # real EMBL-EBI OLS: fixture recording and closure only
 MESA_CLM_ENGINE=1 uv run pytest -q -m engine        # real encoder :8090 + clm-serve :8700 (doctor --serve, non-bench annotate, offline vs /v1/systemone and /v1/rank)
 MESA_CLM_CLM_SRC=~/.mesa/clm/serve/CLM/src uvx --with fastapi --with httpx --with numpy --with requests \
@@ -47,7 +55,17 @@ Bench sequence (plan §9; verbs land milestone by milestone, `mesa-clm --help` l
 ingest-neon-eval|import-anyjev|snapshot|stats`, `bench baselines` (lookup_prob, novel-key, LOPO)
 and `bench mde`, both stamped with the `labels_sha256` of `bench/snapshots/<date>.parquet`
 (written from the store when missing, refused when the store has changed since; DESIGN D30), and
-`doctor`. M1 adds `framings`, `annotate` (`--provider clm|fake`, `--tier
+`doctor`. M2 (pre-run) adds `bench framing|run|x2|table`: they read only the registered
+snapshot (`bench/snapshots/2026-09-29.parquet`, refused by both hashes and the published counts,
+never written), take B, the seed and alpha from the registration (no option for them), write any
+other invocation with every cell `pre_registered: false, exploratory: true` (the producers also
+hold the framings lock, each model's fingerprint, X2's AnyJev dump and the evaluated grid to the
+registration), and replace no results file without `--force`; `bench run` replays and recomputes
+its `x1.json` before using it. **M2 run protocol** (plan §14; once each, nothing run on real
+labels before the plan and code are pushed, outputs committed as produced): `x1_latency.py` →
+`bench framing --latency … --decide` → `bench framing --decide --from x1.json` → `bench run --tiers
+zero_shot,calibrated --loco` → `bench x2` → `bench table --out …`. M1 adds `framings`, `annotate`
+(`--provider clm|fake`, `--tier
 auto|zero_shot|…|ols_rank`; clm-serve down at tier auto runs `ols_rank` only with
 `decider.ols_rank_fallback: true`, otherwise exit 1), `explain`, `review`, `feedback`,
 `provenance migrate|export|import|prune`, `serve keys|units|lock` and `features
@@ -160,10 +178,15 @@ verification, the container's network namespace) **M1** · `learn/features.py`
 (`FeatureStore`: float32 vectors, the lock's vector recipe and `lock_sha` stamped, format 2; the
 X1/X2 manifest, `builder_ordered`, TextCache npz export) and `learn/offline.py` (offline
 rank_fit/noul scoring from the cached float32 vectors; `scripts/x1_crosscheck.py` checks it
-against clm-serve) **M1** · `apply.py`,
+against clm-serve) **M1** · `bench/framing.py` (X1: scores, the within-card shuffle, LOCO-Platt,
+the decision rules, nesting, `decide_from_json`), `bench/cells.py` (the zero_shot and calibrated
+cells, the one producer of citable `<task>.<tier>.<A1>` cells), `bench/x2.py`,
+`bench/registered.py` (the registered snapshot, counts, B/seed/alpha, framings lock, model
+fingerprints, AnyJev dump), `bench/run.py` (the M2
+verbs), `learn/calibrate.py` (weighted Platt, temperature) **M2 (pre-run)** · `apply.py`,
 `revert.py`, `irods_io.py`, `history/` (two-phase apply, revert, backends, spool, recorder, lock
-set) M3 · `learn/{linear,calibrate,fit}.py`, `artifacts.py`,
-`learn/teacher.py` M4 · `bench/{run,framing,e2e}.py` M2–M4 · `adapters/neon.py` M6 ·
+set) M3 · `learn/{linear,fit}.py`, `artifacts.py`,
+`learn/teacher.py` M4 · `bench/e2e.py` M4 · `adapters/neon.py` M6 ·
 `learn/finetune.py` M7. `serving/` and `deploy/` hold the serve-venv side (patches, encoder
 scripts, units) and never import `mesa_clm`.
 
@@ -184,6 +207,11 @@ scripts, units) and never import `mesa_clm`.
   the hashes.
 - Every number in docs or tables names the results JSON it came from (AnyJev ground rule 1);
   numbers marked *to reproduce* in RESEARCH.md are not cited until the bench reproduces them.
+- M2 pre-commitment: until the analysis plan and its code are pushed, nothing combines a model
+  output with the snapshot's silver labels and no M2 verb runs on the registered snapshot; the M2
+  tests run on synthetic labels only (from the snapshot they read its identity and state columns,
+  rows whose label-bearing columns were replaced first, and its label digest).
+  `tests/unit/test_m2_plan_constants.py` holds the plan's Appendix B to the code.
 - No token, key or password is ever logged, printed, hashed into a fingerprint or committed;
   secrets resolve through `env|file|keyring|auto`.
 

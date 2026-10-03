@@ -64,6 +64,7 @@ __all__ = [
     "RankFitScores",
     "pairwise_s_c",
     "sigmoid",
+    "store_vectors",
 ]
 
 RAW_MODEL: Final[str] = "clm-raw"
@@ -319,6 +320,18 @@ class OfflineScorer:
         zs = self._store_side(store, "state", [state_text])
         za = self._store_side(store, "action", [false_text, true_text])
         return self.noul(zs[0], za[0], za[1], temperature=temperature)
+
+
+def store_vectors(
+    scorer: OfflineScorer, store: FeatureStore, side: Side, texts: Sequence[str]
+) -> F32:
+    """The ``side`` vectors ``scorer`` scores ``texts`` with, read from ``store`` in input order:
+    the L2-normalised raw vectors for ``clm-raw``, the head's cached projections for any other
+    model (computed and cached on first use, under the scorer's ``clm_model_fp``). The same
+    vectors :meth:`OfflineScorer.rank_fit_texts` and :meth:`OfflineScorer.noul_texts` read, for
+    every text of a task at once (X1 scores whole item sets with :func:`pairwise_s_c`).
+    :class:`~mesa_clm.learn.features.FeatureMissing` names texts without a vector."""
+    return scorer._store_side(store, side, texts)
 
 
 def pairwise_s_c(

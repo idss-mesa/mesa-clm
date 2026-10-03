@@ -113,7 +113,7 @@ def test_help_lists_the_m0_verbs(capsys: pytest.CaptureFixture[str]) -> None:
     assert "{labels,bench,doctor," in out and "--provenance" in out and "--actor" in out
     for verb, choices in (
         ("labels", "{ingest-neon-eval,import-anyjev,snapshot,stats}"),
-        ("bench", "{baselines,mde}"),
+        ("bench", "{baselines,mde,framing,run,x2,table}"),
     ):
         with pytest.raises(SystemExit) as sub:
             main([verb, "--help"])
@@ -128,7 +128,7 @@ def test_version(capsys: pytest.CaptureFixture[str]) -> None:
 
 
 def test_no_verb_and_unknown_verb_are_argparse_errors(capsys: pytest.CaptureFixture[str]) -> None:
-    for argv in ([], ["frobnicate"], ["labels"], ["bench", "run"]):
+    for argv in ([], ["frobnicate"], ["labels"], ["bench", "frobnicate"]):
         with pytest.raises(SystemExit) as exc:
             main(argv)
         assert exc.value.code == 2, argv

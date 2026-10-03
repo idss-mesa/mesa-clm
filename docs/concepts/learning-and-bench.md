@@ -1,6 +1,6 @@
 ---
 title: "Learning and bench"
-description: "Where mesa-clm's labels come from and how they are identified and frozen, the feature cache, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, and the pre-registered experiments X1-X4 with the AnyJev baseline numbers."
+description: "Where mesa-clm's labels come from and how they are identified and frozen, the feature cache, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, the pre-registered experiments X1-X4 with the AnyJev baseline numbers, and how M2's analysis plan runs X1, the tier cells and X2 (committed before any result)."
 type: Guide
 tags:
   - concepts
@@ -10,7 +10,7 @@ tags:
   - calibration
 generated:
   by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  at: "2026-10-03T12:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -39,6 +39,10 @@ sources:
   - id: features-build
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/bench/results/2026-10-01/features_build.json"
     title: "mesa-clm feature store build under encoder_fp c3b3d5e1a283, 2026-10-01"
+    author: "team:idss-mesa"
+  - id: m2-plan
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/m2-analysis-plan.md"
+    title: "mesa-clm M2 analysis plan (pre-run): X1, the zero_shot and calibrated tiers, X2"
     author: "team:idss-mesa"
 status: draft
 stale_after: "2027-03-31T00:00:00Z"
@@ -171,6 +175,89 @@ Kill and pivot criteria K0–K4 are fixed with them: no state signal makes a tas
 audit-only and its proposals `ols_rank`; a task earns auto-eligibility only by beating the
 lookup on novel keys and matching AnyJev L2 in a paired test with ECE at most 0.08.
 
+## Milestone M2: the analysis plan (pre-run)
+
+`design/m2-analysis-plan.md` reads every frozen rule M2 runs as one deterministic algorithm,
+names each alternative reading with the reason it was rejected (the more conservative one wins),
+and lists every constant; it and its code were committed and pushed **before** the first run on
+the snapshot's labels, so the commit shows every choice preceded the results (DESIGN,
+"Implementation notes (M2)", with the pre-run disclosure of every label-free look). After the
+first run it changes only by amendment, with the affected cells marked exploratory.
+
+**Inputs.** Only the registered snapshot `bench/snapshots/2026-09-29.parquet`: `bench framing`,
+`bench run` and `bench x2` refuse any other file by its sha256 and its label content, never write a
+snapshot, load its rows into a scratch label store (the per-host sidecar is never read) and check
+every task's items, class counts, items per card and `min_weight` against the counts M0
+published, before any statistic. Every run records its configuration; anything but the
+registered one (both X1 tasks, F1/F4/F7/F9 on `clm-latest` and `clm-raw` with every one of the 16
+arms scored, the full run and the nesting, B = 2000, seed 0, α = 0.05, 200 shuffle draws; the
+framings lock of G1 and each model's fingerprint under the serving lock of G1; for X2 the
+registered AnyJev dump) is written with every cell `pre_registered: false`, `exploratory: true`,
+and no verb takes an option for B, the seed or α. The producers check this themselves, so a library
+call under another lock, fingerprint or dump is unregistered too.
+
+### How X1 decides
+
+Each arm (a framing on a model) scores the same items offline from the feature cache:
+`s = scale·(zs·zc − zs·za)` for F4, F7 and F9, the noul logit difference for the F1 control.
+**Rule (1)** qualifies an F4/F7/F9 arm when the AUROC of `s` has a card-cluster lower bound above
+0.5 and is at least 0.60, and its ΔAUROC against the **within-card state shuffle** passes rule R:
+the shuffle gives every target the context of another target of its own card, the comparator is
+the mean AUROC of 200 seeded derangements, and both rule R conditions are computed on that
+difference (the drafts' AUROC of an averaged score was biased against every arm and was replaced
+before any run). If nothing qualifies on either model the outcome is **K1** (the task's CLM tiers
+become audit-only, proposals use `ols_rank`, M4 goes probe-first). Otherwise **rule (2)** ranks
+the qualified arms of `clm-latest` (of `clm-raw` when `clm-latest` has none) by the pooled NLL of
+leave-one-card-out Platt (weighted, 30/5 guards, no fit on fewer than 100 items): an F7 or F9
+winner stands; an F4 winner yields to a more cacheable qualified arm it does not beat under rule
+R, and between F7 and F9 the lower NLL wins only if it beats the other under rule R, else the one
+with fewer encoder tokens per target, then F7. **Rule (3)** keeps `clm-latest` unless `clm-raw`
+beats it on NLL at that framing; **rule (4)** only recommends an amendment reopening D3 when F1
+beats every eligible arm, never adopts it; rule (6) is withdrawn. The learned candidate-only probe
+(the PR #13 recipe on the candidate vectors), the mean-context score, the collapse diagnostic,
+calls and tokens per target and the p50 latency of a label-free timing run are reported, never
+read by a rule. `bench framing --decide --from x1.json` replays every decision from the JSON
+(each rule R verdict against its own numbers and the run's bootstrap settings, the arm records,
+cells and fold choices against the traces, each cell's metrics against its own per-item
+predictions) and recomputes the decisions, the arm records, the `p_loco` column, the cells'
+predictions and the probe's statistics from `x1_items.parquet`; the arm cells' lookup controls and
+`beats_lookup_novel` need the items' states and are report-only. "Cluster-LB" is the one-sided
+95% bound of the card bootstrap, so every interval `[lower, upper]` the reports print is a 90%
+interval, and they say so. The timing run asks each drawn target under both models back to back,
+alternating which goes first, and flags each ask that sent a text the run had not sent before
+(clm-serve's embedder cache is shared by both models).
+
+### Nested selection
+
+For each held-out card the whole decision is made again on the other six cards only (their
+shuffles, their folds, their bootstraps); `fold_choices` records each fold's arm. A fold whose
+inner outcome is K1 or undecidable chooses no arm and is skipped in both tiers. The full-data
+choice is the production choice A1 (an amendment records it); a citable cell needs at least 5 of 7
+folds to agree with A1 on framing **and** model.
+
+### The tier cells and X2
+
+`bench run --tiers zero_shot,calibrated --loco` writes `tiers.json`, the one producer of the
+citable-form `<task>.<tier>.<A1>` cells: fold *c* is scored (and at `calibrated` fitted) with fold
+*c*'s own arm, X1's outcome taken only from a registered `x1.json` that replays, recomputes and
+names the same labels, framings lock and model fingerprints; each fold's `fold_choices` entry keeps
+X1's pointer to its inner trace (`x1_trace`) and the file's note names `x1.json` by sha256. `zero_shot` is `σ(s_c)` or CLM's softmax;
+`calibrated` is weighted Platt with hard targets on `s_c` or the logit difference, temperature
+(T in [1e-4, 1e4]) at K > 2, with the unweighted fit reported beside it. `…@full` (A1 in every
+fold) is exploratory; without an A1 the default F7@`clm-latest` is reported for audit only; the
+closed choices are F7@`clm-latest` (not citable in M2) with `@clm-raw` reported. Every cell carries
+the frozen fields, the lookup controls on its own folds, `beats_lookup_novel` with both of its
+conditions and the reason when it fails, and its per-item predictions. `bench x2` writes the M0
+controls (with a note on whether they equal the published M0 cells), the PR #13 replica (unweighted,
+float32 vectors) and AnyJev L2 joined by D1 identity; X2 gates nothing.
+
+### Planned results
+
+None exist yet. The run protocol (plan §14) runs once each, after the push: the label-free timing
+run, `bench framing --decide`, the replay, `bench run`, `bench x2`, `bench table`; every output is
+committed as produced under `bench/results/<date>/` (`x1_latency.json`, `x1.json`,
+`x1_items.parquet`, `tiers.json`, `x2.json`, `table.md`), and this page will cite those files.
+
 ## Baseline numbers
 
 From mesa-anyjev's `bench/results/2026-09-25/Qwen__Qwen3-8B.hf.json` (Qwen/Qwen3-8B bf16,
@@ -197,5 +284,5 @@ leave-one-product-out 0.723 / 0.721 / 0.724 / 0.350 / 0.543; novel-key subsets o
 B=2000, seed 0) puts the minimum detectable effect under rule R at AUROC 0.625 on term.fits
 (0.675 on its novel keys), 0.650 on ontology_fits (0.750 on novel keys, with four counting
 cards) and 0.700 on annotate, whose novel-key population has one counting card and therefore
-cannot pass rule R at any effect. Model cells (X1, X2) follow in milestone M2, and every cell
-names its results JSON here.
+cannot pass rule R at any effect. Model cells (X1, the tier cells, X2) follow in milestone M2
+under the analysis plan above, and every cell will name its results JSON here.

@@ -24,6 +24,17 @@ prove it re-derived the committed cell from the same rows.
 
 Every model forbids unknown keys. ``cov@5%`` and ``cov@10%`` keep their AnyJev names in the JSON
 through field aliases (``cov_at_5``, ``cov_at_10`` in Python).
+
+M2 adds optional fields, all defaulting to ``None`` so every M0 cell still loads unchanged
+(``design/m2-analysis-plan.md`` §9.6–§9.11), three on the cell: ``model`` (the served model a
+cell's scores came from), ``variant`` (a second cell of the same framing: ``full`` for X1's full-data choice,
+which D27 makes exploratory, or a non-production model such as ``clm-raw``; the results key
+becomes ``<task>.<tier>.<framing>@<variant>``, which the policy's cite pattern can never name),
+``items`` (the pooled per-item predictions, so every paired comparison can be recomputed from the
+results file alone); and two in the baselines block: ``novel_key_lookup`` and ``beats_detail``.
+``baselines.novel_key`` is always *this cell's* predictions on the novel keys (in the M0 cell
+those are ``lookup_prob``'s own); ``novel_key_lookup`` is ``lookup_prob`` on the same items, the
+comparator of ``beats_lookup_novel``.
 """
 
 from __future__ import annotations
@@ -95,7 +106,13 @@ class CellBaselines(_Model):
     """The baselines block of a cell. ``lookup_acc`` is the deterministic lookup (copy the most
     common label of the key among the training cards), ``lookup_nll`` and ``lookup_prob_acc``
     the Laplace-smoothed ``lookup_prob`` model; ``beats_lookup_novel`` is ``None`` on a baseline
-    cell and a verdict on a model cell."""
+    cell and a verdict on a model cell.
+
+    ``novel_key`` is the cell's own predictions on the novel-key items; ``novel_key_lookup``
+    (``None`` on a baseline cell, whose predictions are ``lookup_prob``'s) is ``lookup_prob`` on
+    the same items, and ``beats_detail`` records the two conditions of ``beats_lookup_novel``
+    (the novel-key AUROC cluster lower bound and rule R on NLL) with the reason of a ``False``.
+    """
 
     lookup_key: str
     lookup_rule: str
@@ -106,6 +123,8 @@ class CellBaselines(_Model):
     novel_key: NovelKey
     lopo: Lopo
     beats_lookup_novel: bool | None = None
+    novel_key_lookup: NovelKey | None = None
+    beats_detail: dict[str, Any] | None = None
 
 
 class CellCounts(_Model):
@@ -132,8 +151,22 @@ class CellMetrics(_Model):
     threshold_cp: dict[str, float | None]
 
 
+class CellItem(_Model):
+    """One pooled held-out prediction of a cell: the item's D1 identity, its card (the fold it
+    was held out in), its label, the predicted distribution over the task's options and whether
+    its lookup key was novel in that fold."""
+
+    target_sha256: str
+    option_key: str
+    card: str
+    label: int
+    probs: list[float]
+    novel: bool
+
+
 class BenchCell(_Model):
-    """One measurement, keyed in the results file as ``<task>.<tier>.<framing>``."""
+    """One measurement, keyed in the results file as ``<task>.<tier>.<framing>``, or
+    ``<task>.<tier>.<framing>@<variant>`` for a variant cell (module docstring)."""
 
     task: str
     task_id: str
@@ -165,10 +198,13 @@ class BenchCell(_Model):
     baselines: CellBaselines | None
     diagnostics: dict[str, Any] = Field(default_factory=dict)
     notes: str = ""
+    model: str | None = None
+    variant: str | None = None
+    items: list[CellItem] | None = None
 
     @property
     def key(self) -> str:
-        return cell_key(self.task, self.tier, self.framing)
+        return cell_key(self.task, self.tier, self.framing, self.variant)
 
 
 class BenchResults(_Model):
@@ -185,9 +221,11 @@ class BenchResults(_Model):
     notes: list[str] = Field(default_factory=list)
 
 
-def cell_key(task: str, tier: str, framing: str) -> str:
-    """The dotted cell path a policy ``cite`` names after ``#`` (plan §4.7)."""
-    return f"{task}.{tier}.{framing}"
+def cell_key(task: str, tier: str, framing: str, variant: str | None = None) -> str:
+    """The dotted cell path a policy ``cite`` names after ``#`` (plan §4.7); a variant cell
+    appends ``@<variant>``, which the cite pattern does not admit (never citable)."""
+    base = f"{task}.{tier}.{framing}"
+    return base if not variant else f"{base}@{variant}"
 
 
 def cite(path: str | Path, task: str, tier: str, framing: str) -> str:
@@ -220,10 +258,23 @@ def results_path(out_dir: str | Path, date: str, name: str) -> Path:
     return Path(out_dir) / date / f"{name}.json"
 
 
-def write_results(results: BenchResults, out_dir: str | Path = DEFAULT_OUT_DIR) -> Path:
+class ResultsExist(FileExistsError):
+    """``write_results`` would overwrite an earlier run's results file (one run per file,
+    committed as produced; ``design/m2-analysis-plan.md`` §14)."""
+
+
+def write_results(
+    results: BenchResults, out_dir: str | Path = DEFAULT_OUT_DIR, *, force: bool = False
+) -> Path:
     """Write ``<out_dir>/<date>/<name>.json`` (sorted keys, one-space indent, like mesa-anyjev)
-    and the ``.md`` table beside it; returns the JSON path."""
+    and the ``.md`` table beside it; returns the JSON path. Refuses (:class:`ResultsExist`) to
+    replace an existing file unless ``force``."""
     path = results_path(out_dir, results.date, results.name)
+    existing = [p for p in (path, path.with_suffix(".md")) if p.exists()]
+    if existing and not force:
+        raise ResultsExist(
+            f"{existing[0]} exists: one run per results file (pass --force to replace)"
+        )
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = results.model_dump(by_alias=True, mode="json")
     path.write_text(json.dumps(payload, indent=1, sort_keys=True) + "\n", encoding="utf-8")
@@ -295,8 +346,8 @@ def markdown_table(results: BenchResults) -> str:
         f"(labels_sha256 `{results.labels_sha256[:12]}…`). Silver labels are four-model agreement, "
         "not truth.",
         "",
-        "| cell | n | n_neg | acc | nll | ece | auroc [95% cluster] | majority | lookup | "
-        "novel n | novel auroc | novel nll | lopo acc |",
+        "| cell | n | n_neg | acc | nll | ece | auroc [one-sided 95% bounds; 90% interval] | "
+        "majority | lookup | novel n | novel auroc | novel nll | lopo acc |",
         "|---|---|---|---|---|---|---|---|---|---|---|---|---|",
     ]
     for key, cell in results.cells.items():

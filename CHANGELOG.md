@@ -8,6 +8,61 @@ All notable changes to the mesa-clm package. The format follows
 
 ## [Unreleased]
 
+### Added (milestone M2, pre-run: the analysis plan and its code, before any result)
+
+- `design/m2-analysis-plan.md`: the M2 analysis plan, every frozen rule M2 runs (X1, the
+  zero_shot and calibrated tiers, X2, K1) read as one deterministic algorithm, each alternative
+  reading named with the reason it was rejected, every constant in Appendix B, the run protocol
+  (§14). Committed and pushed with its code before the first run on the snapshot's labels; until
+  then nothing combined a model output with a silver label (DESIGN, "Implementation notes (M2)":
+  the pre-run disclosure).
+- `bench/framing.py` (X1): per-item scores offline from the feature store; the AUROC of `s` with
+  its card-cluster CI; ΔAUROC(real − shuffle) against the mean AUROC of 200 seeded within-card
+  derangements under rule R (`stats.rule_r_auroc_mean`, `stats.mean_auroc_ci`); weighted
+  LOCO-Platt with the 30/5 guards and a floor of 100 training items per fit; the decision rules
+  (1)–(5) as a pure function (rule (2) read literally: an F7 or F9 NLL winner stands, the token
+  tie-break only when the cacheability step leaves both); the nesting on each fold's six training
+  cards; the learned candidate-only probe (the PR #13 recipe) and the mean-context score
+  (report-only); `x1.json`, `x1_items.parquet`, `x1.md`; `decide_from_json` replays every trace
+  from the JSON (each rule R verdict against its own numbers and the run's bootstrap settings, the
+  arm records and cells against their traces, each cell's counts, metrics and novel-key block
+  against its own items, `a1`, `fold_choices`, the published counts) and recomputes the decisions,
+  every arm record's statistics, the `p_loco` column, the cells' per-item predictions and the
+  probe's statistics from the items file; what it cannot replay (the arm cells' lookup controls and
+  `beats_lookup_novel`, the probe's fits) is named in the plan and in `x1.md`.
+- `bench/cells.py`: the zero_shot and calibrated cells of all five tasks (`tiers.json`), the one
+  producer of the citable-form `<task>.<tier>.<A1>` cells (nested: each fold scored by its own
+  fold's X1 arm, its `fold_choices` entry keeping X1's `outcome` and `x1_trace` pointer),
+  `@full` and audit-only K1 cells, `beats_lookup_novel` with both conditions and its reason,
+  per-item predictions, the unweighted-calibrator sensitivity (report-only).
+  `bench/x2.py`: the M0 controls, the PR #13 replica (`joint4096@S1`/`@S1ns`, unweighted, float32)
+  and the AnyJev L2 cell joined by D1 identity. `learn/calibrate.py`: the code base's one weighted
+  Platt (hard targets) and temperature (T in [1e-4, 1e4]) with every fitter constant recorded.
+- `bench/registered.py`: the registered snapshot (both hashes), the published counts, the
+  AnyJev dump's sha256, B = 2000, seed 0, alpha 0.05, the framings lock of G1 and each model's D5
+  fingerprint under the serving lock of G1; any other run, through the verbs or the library
+  (another framings lock or fingerprint, another or no dump, a subset of the grid, tasks or
+  tiers), is written with every cell `pre_registered: false`, `exploratory: true`, and X1 refuses
+  an item table that does not score exactly the configured arms.
+- `mesa-clm bench framing [--decide [--from X1_JSON]] [--latency FILE]`, `bench run --tiers
+  zero_shot,calibrated --loco`, `bench x2` and `bench table` (`bench/run.py`): the labels come from
+  the registered snapshot only (refused by hash, label content and published counts; no snapshot
+  is ever written), no option for B, the seed, alpha, the models or the framings, and no results
+  file is replaced without `--force` (also for `bench baselines` and `bench mde`). `bench x2`
+  notes whether its recomputed controls equal M0's cells; `bench run` replays and recomputes the
+  `x1.json` it takes X1's outcome from and names it by sha256. `scripts/x1_latency.py`: the
+  label-free live timing run for X1's p50 latency (answers discarded), each target asked under both
+  models back to back with the first model alternating, every ask flagged `first` and `new_text`;
+  `bench framing --latency` refuses a timing file about other labels or another serving lock.
+  Every reported AUROC interval is labelled as what it is, the pair of one-sided 95% bounds (a 90%
+  interval).
+- The feature manifest covers the closed-choice tasks (F7 options), `FeatureStore.token_counts`,
+  `offline.store_vectors`; the cell schema gains `model`, `variant` (`…@<variant>` keys are never
+  citable), per-item `items`, `novel_key_lookup` and `beats_detail`.
+- Tests (synthetic data only): `test_framing_x1`, `test_cells`, `test_x2`, `test_calibrate`,
+  `test_bench_m2_cli`, `test_bench_registered`, `test_features_choice`, `test_x1_latency_script`
+  and `test_m2_plan_constants` (Appendix B and §1.3 of the plan against the code).
+
 ### Added (milestone M1)
 
 - Track B, the hermetic pipeline. `framings.py` and `framings.lock.json` (tasks vs framings,

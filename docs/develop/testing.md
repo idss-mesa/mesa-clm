@@ -1,13 +1,13 @@
 ---
 title: "Testing"
-description: "How to run the hermetic mesa-clm test suite, what the fake CLM transport, the recorded OLS fixtures and the offline doctor cover, the vendored-file and parity checks, the M1 tests, and the opt-in live, engine, GPU, Postgres, end-to-end and neon tiers."
+description: "How to run the hermetic mesa-clm test suite, what the fake CLM transport, the recorded OLS fixtures and the offline doctor cover, the vendored-file and parity checks, the M1 tests, the M2 bench tests on synthetic labels only (and the plan-constants test), and the opt-in live, engine, GPU, Postgres, end-to-end and neon tiers."
 type: Guide
 tags:
   - develop
   - testing
 generated:
   by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  at: "2026-10-03T12:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -16,6 +16,10 @@ sources:
   - id: plan
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/plan-2026-09-28.md"
     title: "mesa-clm implementation plan (v1.1, 2026-09-28)"
+    author: "team:idss-mesa"
+  - id: m2-plan
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/m2-analysis-plan.md"
+    title: "mesa-clm M2 analysis plan (pre-run)"
     author: "team:idss-mesa"
 status: draft
 stale_after: "2027-03-31T00:00:00Z"
@@ -91,6 +95,75 @@ throttled refusal logs, the backlog kept from the socket unit). `tests/unit/test
 also drives `serving units` with unit files under `tmp_path`, a scripted `systemctl --user show`
 and a fake `/proc/<pid>` (the old units, a stale unsandboxed proxy, a pending `daemon-reload`).
 
+## The M2 bench tests (pre-run)
+
+The M2 analysis code was written, reviewed and tested **before** the first run on the snapshot's
+labels (`design/m2-analysis-plan.md` §14), so its tests run on synthetic labels only: generated
+cards and labels with planted signal, fake feature stores, a random head exported under the lock's
+sha, and a stand-in registration (`mesa_clm.bench.registered.REGISTERED` monkeypatched with the
+synthetic snapshot's hashes and counts). No test combines a silver label with a model output.
+What they read from the committed snapshot is label-free: its identity and state columns (the M2
+CLI world and the timing script's requests), its label-content digest against the published one
+(`test_bench_registered`), and, in the manifest tests, rows whose every label-bearing column was
+replaced first.
+
+- `test_framing_x1`: weighted Platt; the 30/5 guards and the floor of 100 at its boundary; the
+  shuffle's seeded derangements, its mean-AUROC rule R against brute force over all 200 draws and
+  its null calibration (the drafts' comparator was biased); rules (1)–(5) one by one, rule (2)'s
+  literal reading and the F7/F9 tie; nesting and K1 folds, a fold's choice blind to its held-out
+  card; the registration (every run parameter is a deviation, any deviation writes every cell
+  unregistered, registered labels must give the published counts, another framings lock or model
+  fingerprint is a deviation, an item table that is not the configured grid is refused, a file
+  without a configured task or arm is refused); the replay's checks (each edit of a verdict, its
+  bootstrap settings, a cell's identity field, metrics, counts, novel-key block or diagnostics, an
+  arm record's AUROC, shuffle verdict or NLL, `a1`, `fold_choices`, `skipped_folds`, a nested
+  trace or the record's shape is refused) and the recompute from `x1_items.parquet` (an edited
+  sensitivity or mean-context record, `p_loco`, item, label or shuffle draw is refused); the
+  settings at every call site (each nested fold equals `decide` on an evidence built with the
+  literal registered settings, the intervals and rule R the statistics' own at seed 0, the shuffle
+  draws an independent rejection sampler and golden draws); the floor, the guards and the tokens
+  per target inside a nested fold, and an inner fold that pools nothing; the mean-AUROC rule R's
+  card eligibility and ties; the report-only controls' values; the learned candidate-only probe
+  equal to scikit-learn fold by fold, blind to weights and held-out labels.
+- `test_cells`: arm scores equal the offline scorer's; zero shot is `σ(s_c)`; the calibrated tier
+  recovers a planted Platt or temperature; a held-out card never sees its own labels; each fold is
+  scored by its own fold's arm, exactly; a guarded fold without an arm is accounted for in both
+  tiers; `beats_lookup_novel` fails when either of its two conditions fails (its rule R at seed
+  0); the label weights change the fit and the unweighted sensitivity ignores them; a tier run off
+  the registration (labels, settings, a fingerprint, the framings lock, a subset of tiers) is
+  unregistered; on cards interleaved in the bench's identity order every item's prediction, the
+  NLL, the sensitivity block and the raw-score AUROC equal a computation keyed by identity (rank_fit,
+  K = 2, K > 2); `n_saturated` and annotate's raw-score AUROC by value; X1's trace pointer kept in
+  `fold_choices`, a colliding selector key refused.
+- `test_x2` (the replica equals scikit-learn, unweighted, training rows only, also on
+  interleaved cards; the AnyJev join; another or no dump, no replica or another fingerprint
+  unregistered; probabilities outside [0, 1] refused, a card without a prediction skipped),
+  `test_calibrate`, `test_features_choice` (the closed-choice manifest; a request whose keys are not
+  the closed options refused), `test_x1_latency_script` (every drawn target's requests asked once
+  per model in the alternating order, the `first` and `new_text` flags, the sha256 draw order, a
+  request that does not render the manifest refused, no key written, every answer discarded),
+  `test_bench_registered` (the registration against the published files and the committed locks,
+  by digest and count).
+- `test_bench_m2_cli`: `bench framing`, `--decide --from`, `bench run`, `bench x2` and
+  `bench table` end to end on the synthetic world: the registered run and its replay, partial runs
+  written unregistered, another or a missing snapshot refused (none written), the published counts
+  and the scratch store checked, results never overwritten without `--force`, a tampered or
+  foreign `x1.json` refused (an items file edited behind the replay too: `bench run` recomputes),
+  `tiers.json`'s fold pointers resolving into `x1.json`, another AnyJev dump, a timing file about
+  other labels or another serving lock and a store of another vector recipe refused, an
+  unregistered run's own replay, X2's controls equal to what `bench baselines` publishes.
+- `test_m2_plan_constants`: parses the plan's Appendix B and §1.3 and fails when a value is not
+  the one the code applies or a name in the "where" column does not exist.
+
+Before the commit the suite was also checked by mutation (in `/tmp` copies, never the working
+tree): every property above was shown to fail on code with the corresponding bug (for example
+rule (2)'s drafts' reading, a fixed arm in the nested cell, a calibrator fitted on the held-out
+card, either half of `beats_lookup_novel` removed, a single shuffle draw, an unchecked deviation).
+A second review round mutated the code again and found paths no test guarded (the realignment of
+fold-pooled predictions, the seeds and settings inside the nesting, the inner-fold floor, the
+timing run's request order, several refusals); each fix above came with a test that fails on the
+reverted code or the reviewers' mutant.
+
 ## Key tests
 
 Vendored hashes; `test_anyjev_parity` (state shas, task keys and AVUs equal mesa-anyjev's);
@@ -132,7 +205,8 @@ TextCache format, offline scores equal to the fake's `/v1/systemone`);
 `test_provenance_bulk_insert` (the JSON bulk insert writes exactly the rows the per-row path
 wrote on real fake runs, hostile strings stay data, failed casts raise, non-finite floats fall
 back to `executemany`, and seven fake runs commit within a loose time bound); the encoder's
-`tokenizer_json` from the configuration in `test_clm_encoder`. From M3: `test_apply_anonymous_rejected`,
+`tokenizer_json` from the configuration in `test_clm_encoder`. From M2 (pre-run): the bench tests
+above. From M3: `test_apply_anonymous_rejected`,
 `test_apply_crash_retry`, `test_revert`, `test_history_spool_recorder` (two VMs, dedup,
 quarantine), `test_mcp_conformance`. From
 M4: `test_policy_citations`, `test_loco_leakage`, `test_nested_selection`, `test_rule_r`,

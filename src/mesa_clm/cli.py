@@ -117,6 +117,9 @@ EXIT_OK, EXIT_FAIL, EXIT_CONFIG = 0, 1, 2
 
 DEFAULT_OUT_DIR = "bench/results"
 DEFAULT_SNAPSHOT_DIR = "bench/snapshots"
+# The M2 verbs' one snapshot (mesa_clm.bench.registered; asserted by the CLI tests) so building
+# the parser imports nothing.
+REGISTERED_SNAPSHOT = "bench/snapshots/2026-09-29.parquet"
 # Mirrors bench.stats.DEFAULT_B / DEFAULT_SEED and bench.mde.DEFAULT_N_SIMS (asserted by the
 # CLI tests) so building the parser never imports numpy.
 DEFAULT_B = 2000
@@ -293,6 +296,10 @@ def _fmt(value: float | None) -> str:
 
 
 def _cmd_bench(args: argparse.Namespace, cfg: Config) -> int:
+    if args.verb in ("framing", "run", "x2", "table"):
+        return _cmd_bench_m2(args, cfg)
+    from mesa_clm.bench.results import ResultsExist
+
     store = label_store(cfg)
     date = args.date or _today()
     sha, snap = _frozen_labels(store, args, date)
@@ -309,7 +316,10 @@ def _cmd_bench(args: argparse.Namespace, cfg: Config) -> int:
             B=args.B,
             seed=args.seed,
         )
-        path = write_results(results, args.out_dir)
+        try:
+            path = write_results(results, args.out_dir, force=args.force)
+        except ResultsExist as exc:
+            raise UsageError(str(exc), EXIT_FAIL) from exc
         print(path)
         print(markdown_table(results))
         return EXIT_OK
@@ -318,6 +328,11 @@ def _cmd_bench(args: argparse.Namespace, cfg: Config) -> int:
 
     tasks = tasks_from_store(store, policy_path=cfg.policy.policy_path)
     mde = run_mde(tasks, labels_sha256=sha, date=date, n_sims=args.n_sims, B=args.B, seed=args.seed)
+    out = Path(args.out_dir) / date / "mde.json"
+    if out.exists() and not args.force:
+        raise UsageError(
+            f"{out} exists: one run per results file (pass --force to replace)", EXIT_FAIL
+        )
     path = write_mde(mde, args.out_dir)
     print(path)
     for c in mde.curves:
@@ -329,6 +344,139 @@ def _cmd_bench(args: argparse.Namespace, cfg: Config) -> int:
         if c.not_applicable:
             line += f" ({c.not_applicable})"
         print(line)
+    return EXIT_OK
+
+
+def _csv_arg(text: str | None) -> list[str] | None:
+    if text is None:
+        return None
+    return [t.strip() for t in text.split(",") if t.strip()]
+
+
+def _cmd_bench_m2(args: argparse.Namespace, cfg: Config) -> int:
+    """``bench framing|run|x2|table`` (M2; ``design/m2-analysis-plan.md`` §12, §14): refusals of
+    the registered inputs and of an X1 file that does not reproduce exit 1, usage problems 2."""
+    from mesa_clm.bench import run as m2
+    from mesa_clm.bench.framing import X1DataError, X1Exists, X1ReproError
+    from mesa_clm.bench.registered import RegistrationError
+    from mesa_clm.bench.results import ResultsExist
+    from mesa_clm.learn.features import FeatureMissing, FeatureStoreError, ManifestError
+
+    date = getattr(args, "date", None) or _today()
+    try:
+        if args.verb == "framing":
+            return _bench_framing(args, cfg, date)
+        if args.verb == "run":
+            if not args.loco:
+                raise UsageError(
+                    "bench run needs --loco: leave-one-card-out is the only split a cell may be "
+                    "cited from (D8)"
+                )
+            path, results = m2.run_tiers(
+                cfg,
+                date=date,
+                out_dir=args.out_dir,
+                framing_from=args.framing_from,
+                snapshot=args.snapshot,
+                tiers=_csv_arg(args.tiers) or [],
+                force=args.force,
+            )
+            print(path)
+            for key, cell in results.cells.items():
+                print(
+                    f"{key}: n={cell.counts.n} selection={cell.selection} "
+                    f"pre_registered={cell.pre_registered} exploratory={cell.exploratory}"
+                )
+            return EXIT_OK
+        if args.verb == "x2":
+            path, results = m2.run_x2(
+                cfg, date=date, out_dir=args.out_dir, snapshot=args.snapshot, force=args.force
+            )
+            print(path)
+            print("\n".join(sorted(results.cells)))
+            return EXIT_OK
+        paths = (
+            [Path(p) for p in args.results]
+            if args.results
+            else m2.results_files(args.out_dir, date)
+        )
+        missing = [p for p in paths if not p.is_file()]
+        if missing:
+            raise UsageError(f"{missing[0]}: no such results file")
+        text = m2.table(paths)
+        if args.out:
+            out = Path(args.out)
+            if out.exists() and not args.force:
+                raise UsageError(f"{out} exists (pass --force to replace)", EXIT_FAIL)
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(text, encoding="utf-8")
+            print(out)
+        else:
+            print(text, end="")
+        return EXIT_OK
+    except m2.BenchRunError as exc:
+        raise UsageError(str(exc), EXIT_CONFIG if exc.usage else EXIT_FAIL) from exc
+    except (RegistrationError, X1DataError, X1ReproError, FeatureMissing, FeatureStoreError) as exc:
+        raise UsageError(str(exc), EXIT_FAIL) from exc
+    except (X1Exists, ResultsExist) as exc:
+        raise UsageError(str(exc), EXIT_FAIL) from exc
+    except ManifestError as exc:
+        raise UsageError(str(exc), EXIT_FAIL) from exc
+
+
+def _print_decisions(decisions: dict[str, Any]) -> None:
+    for task, d in decisions.items():
+        if d is None:
+            print(f"{task}: no full run")
+            continue
+        choice = "-" if d.choice is None else d.choice.arm
+        print(f"{task}: {d.outcome} -> {choice}")
+
+
+def _bench_framing(args: argparse.Namespace, cfg: Config, date: str) -> int:
+    from mesa_clm.bench import framing
+    from mesa_clm.bench import run as m2
+
+    if args.from_ is not None:
+        if not args.decide:
+            raise UsageError("--from replays an x1.json and needs --decide")
+        path = Path(args.from_)
+        if not path.is_file():
+            raise UsageError(f"--from {path}: no such file")
+        decisions = framing.decide_from_json(path)
+        print(f"{path}: the pre-registered run; every decision replays and recomputes")
+        _print_decisions(decisions)
+        return EXIT_OK
+    full, nested = {"full": (True, False), "nested": (False, True)}.get(args.part, (True, True))
+    path, run = m2.run_framing(
+        cfg,
+        date=date,
+        out_dir=args.out_dir,
+        snapshot=args.snapshot,
+        tasks=_csv_arg(args.tasks),
+        full=full,
+        nested=nested,
+        latency=args.latency,
+        force=args.force,
+    )
+    block = run.results.x1
+    print(path)
+    print(
+        "registered run"
+        if block.registered
+        else f"NOT the registered run ({'; '.join(block.deviations)}): every cell exploratory"
+    )
+    if block.latency is None:
+        print(
+            "no --latency file: p50 latency is not reported (design/m2-analysis-plan.md §11.3)",
+            file=sys.stderr,
+        )
+    _print_decisions({t: r.decision for t, r in block.tasks.items()})
+    if args.decide:
+        framing.decide_from_json(path, require_registered=block.registered)
+        print(
+            f"{path}: replayed and recomputed from {block.items_file.name if block.items_file else '-'}"
+        )
     return EXIT_OK
 
 
@@ -1605,25 +1753,111 @@ def build_parser() -> argparse.ArgumentParser:
 
     be = sub.add_parser(
         "bench",
-        parents=[common],
-        help="no-model controls (baselines: lookup_prob, novel-key, LOPO) and the MDE simulation",
+        help="the bench: no-model controls and the MDE (M0); X1, the tier cells, X2 and the "
+        "table (M2)",
     )
-    be.add_argument("verb", choices=["baselines", "mde"])
-    be.add_argument("--out-dir", default=DEFAULT_OUT_DIR, help="results root (<out-dir>/<date>/)")
-    be.add_argument("--date", help="results directory name (default: today, UTC)")
-    be.add_argument(
-        "--snapshot",
-        help=(
-            "frozen labels snapshot to stamp the cells with "
-            f"(default {DEFAULT_SNAPSHOT_DIR}/<date>.parquet, written when missing)"
-        ),
-    )
-    be.add_argument("--B", dest="B", type=int, default=DEFAULT_B, help="bootstrap replicates")
-    be.add_argument("--seed", type=int, default=DEFAULT_SEED, help="bootstrap seed")
-    be.add_argument(
-        "--n-sims", type=int, default=DEFAULT_N_SIMS, help="simulated datasets per grid point (mde)"
-    )
+    be_sub = be.add_subparsers(dest="verb", required=True)
     be.set_defaults(func=_cmd_bench)
+    m0 = {
+        "baselines": "no-model controls: lookup_prob, novel-key, LOPO",
+        "mde": "the minimum detectable effect simulation",
+    }
+    for verb, text in m0.items():
+        sp = be_sub.add_parser(verb, parents=[common], help=text)
+        sp.add_argument(
+            "--out-dir", default=DEFAULT_OUT_DIR, help="results root (<out-dir>/<date>/)"
+        )
+        sp.add_argument("--date", help="results directory name (default: today, UTC)")
+        sp.add_argument(
+            "--snapshot",
+            help=(
+                "frozen labels snapshot to stamp the cells with "
+                f"(default {DEFAULT_SNAPSHOT_DIR}/<date>.parquet, written when missing)"
+            ),
+        )
+        sp.add_argument("--B", dest="B", type=int, default=DEFAULT_B, help="bootstrap replicates")
+        sp.add_argument("--seed", type=int, default=DEFAULT_SEED, help="bootstrap seed")
+        if verb == "mde":
+            sp.add_argument(
+                "--n-sims",
+                type=int,
+                default=DEFAULT_N_SIMS,
+                help="simulated datasets per grid point",
+            )
+        sp.add_argument("--force", action="store_true", help="replace an existing results file")
+    registered = (
+        f"the registered labels snapshot (default {REGISTERED_SNAPSHOT}; any other file is "
+        "refused, none is ever written)"
+    )
+    fr = be_sub.add_parser(
+        "framing",
+        parents=[common],
+        help="X1 framing A/B: x1.json, x1_items.parquet, x1.md; --decide --from replays one",
+    )
+    fr.add_argument("--out-dir", default=DEFAULT_OUT_DIR, help="results root (<out-dir>/<date>/)")
+    fr.add_argument("--date", help="results directory name (default: today, UTC)")
+    fr.add_argument("--snapshot", help=registered)
+    fr.add_argument(
+        "--tasks",
+        help="term.fits,column.ontology_fits (default both; a subset is not the registered run)",
+    )
+    part = fr.add_mutually_exclusive_group()
+    part.add_argument(
+        "--both",
+        dest="part",
+        action="store_const",
+        const="both",
+        help="the full run and the nesting (default; the registered run)",
+    )
+    part.add_argument(
+        "--full", dest="part", action="store_const", const="full", help="the full run only"
+    )
+    part.add_argument(
+        "--nested", dest="part", action="store_const", const="nested", help="the nesting only"
+    )
+    fr.add_argument(
+        "--latency",
+        help="the live timing run's file (scripts/x1_latency.py) for the p50 latency",
+    )
+    fr.add_argument("--force", action="store_true", help="replace an existing x1.json")
+    fr.add_argument(
+        "--decide",
+        action="store_true",
+        help="replay and recompute the decision from the JSON (after the run, or --from FILE)",
+    )
+    fr.add_argument("--from", dest="from_", metavar="X1_JSON", help="an x1.json to replay")
+    fr.set_defaults(part="both")
+    rn = be_sub.add_parser(
+        "run",
+        parents=[common],
+        help="the zero_shot and calibrated cells of every task: tiers.json",
+    )
+    rn.add_argument("--tiers", default="zero_shot,calibrated", help="zero_shot,calibrated (M2)")
+    rn.add_argument("--loco", action="store_true", help="leave-one-card-out (required)")
+    rn.add_argument(
+        "--framing-from",
+        metavar="X1_JSON",
+        help="X1's outcome (default <out-dir>/<date>/x1.json), replayed and recomputed before use",
+    )
+    rn.add_argument("--out-dir", default=DEFAULT_OUT_DIR, help="results root (<out-dir>/<date>/)")
+    rn.add_argument("--date", help="results directory name (default: today, UTC)")
+    rn.add_argument("--snapshot", help=registered)
+    rn.add_argument("--force", action="store_true", help="replace an existing tiers.json")
+    x2 = be_sub.add_parser(
+        "x2",
+        parents=[common],
+        help="X2 baselines: no-model controls, the PR #13 replica, AnyJev L2: x2.json",
+    )
+    x2.add_argument("--out-dir", default=DEFAULT_OUT_DIR, help="results root (<out-dir>/<date>/)")
+    x2.add_argument("--date", help="results directory name (default: today, UTC)")
+    x2.add_argument("--snapshot", help=registered)
+    x2.add_argument("--force", action="store_true", help="replace an existing x2.json")
+    tb = be_sub.add_parser("table", help="one markdown table over results files")
+    tb.add_argument("--out-dir", default=DEFAULT_OUT_DIR, help="results root (<out-dir>/<date>/)")
+    tb.add_argument("--date", help="every results file of <out-dir>/<date>/ (default: today)")
+    tb.add_argument("--results", nargs="+", metavar="JSON", help="these results files instead")
+    tb.add_argument("--out", help="write the table here instead of printing it")
+    tb.add_argument("--force", action="store_true", help="replace an existing --out file")
 
     d = sub.add_parser(
         "doctor", help="what this host can run: pins, versions, stores, paths, serving"
