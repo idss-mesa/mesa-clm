@@ -8,6 +8,43 @@ All notable changes to the mesa-clm package. The format follows
 
 ## [Unreleased]
 
+### Added (milestone M2: the registered run)
+
+- `bench/results/2026-10-03/`: the registered M2 outputs, committed as produced by the protocol of
+  `design/m2-analysis-plan.md` §14, run once (`x1_latency.json`, `x1.json`, `x1_items.parquet`,
+  `x1.md`, `tiers.json`, `tiers.md`, `x2.json`, `x2.md`, `table.md`). X1's outcome: `term.fits`
+  **K1** (no F4/F7/F9 arm qualifies on either model; every nested fold K1 too);
+  `column.ontology_fits` **F9 on `clm-latest`** (7 of 7 nested folds agree). `RESEARCH.md`, "M2
+  results (registered run)", gives every number with its file and JSON pointer (X1 per arm, the
+  nested and audit cells, the closed choices, X2, the independent recomputation); DESIGN.md
+  records the decision as amendment A1 and, in its M2 implementation notes, the outputs' sha256,
+  the protocol times and the post-run disclosure.
+- Tests: `test_k1_default` (the shipped defaults after A1: `term.fits` proposals are `ols_rank`, D24
+  not asked and recorded, Q3 asked with F9, the audit run, the CLI), the replay of the committed
+  registered run under the rotated framings lock (`test_bench_registered`), and the A1 rotation
+  moving no `question_key` (`test_framings`).
+
+### Changed (milestone M2: DESIGN A1, the X1 framing and K1)
+
+- `column.ontology_fits` is asked with **F9** (X1's registered choice; `framings.ACTIVE`).
+  `framings.lock.json` rotates: `column.ontology_fits` `active_framing` F7 → F9, `lock_sha`
+  `b432d32a7536…` → `7c93cc3e0ff6…`; no `question_key`, `task_key`, label or fingerprint changes.
+  `term.fits` and the closed choices keep F7. `framings.lock_payload(active=…)` and
+  `lock_sha(active=…)` build the lock under another active map (G1's, every task at F7, is the
+  lock M2's registration keeps, so the committed run still replays; a new X1 or tier run under
+  the rotated lock is written unregistered).
+- **K1 for `term.fits`**: the new `decider.ols_rank_tasks` (default `[term.fits]`;
+  `MESA_CLM_DECIDER__OLS_RANK_TASKS`, a list, a comma-separated string or `none`; `annotate
+  --ols-rank-tasks TASKS|none`) sends every `term.fits` group (Q4, Q5, Q6) to `ols_rank`, the OLS
+  top-1 as `proposed`, never auto (D28). `none` or `[]` asks CLM for `term.fits` too, an audit
+  run. D24's refinement needs `p_fit`, so it is not asked for an `ols_rank` group, which its group
+  records (`search_json.specificity: {asked: false, reason: no_p_fit_ols_rank}`) as does the
+  proposal's rationale. A run is `degraded` only when CLM did not answer or the tier is
+  `ols_rank`, not for the tasks `ols_rank` decides by design. The annotate summary and the
+  `--out` JSON (both shapes) name the `ols_rank_tasks`; an explicit learned tier is checked only
+  for the tasks CLM answers. `Annotator` and `DecisionService` take `ols_rank_tasks=None` for the
+  configured default. The closed choices are unchanged.
+
 ### Added (milestone M2, pre-run: the analysis plan and its code, before any result)
 
 - `design/m2-analysis-plan.md`: the M2 analysis plan, every frozen rule M2 runs (X1, the

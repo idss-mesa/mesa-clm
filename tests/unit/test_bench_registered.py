@@ -20,6 +20,8 @@ from mesa_clm.tasks import TASKS
 
 ROOT = Path(__file__).resolve().parents[2]
 PUBLISHED = ROOT / "bench" / "results" / "2026-09-29" / "baselines.json"
+# The framings lock of G1, which M2's registered run scored under (x1.json#/x1/framings_lock_sha).
+G1_FRAMINGS_LOCK = "b432d32a7536c8f455098ae4a23139f6badbae7bc181a3a64853df3e80921eca"
 
 
 def test_the_registration_is_the_published_snapshot() -> None:
@@ -95,7 +97,11 @@ def test_the_checks_refuse_another_snapshot_and_other_counts(
 
 def test_the_registered_framings_and_models_are_the_committed_locks() -> None:
     """§1.4-§1.6, §13.1: the framings lock of G1 and each X1 model's D5 fingerprint under the
-    serving lock of G1 are the checkout's (``framings.lock.json``, ``serving/serving.lock.json``).
+    serving lock of G1. The serving lock is the checkout's (``serving/serving.lock.json``). The
+    framings lock is G1's, which DESIGN A1 rotated after the registered run (column.ontology_fits'
+    active framing F7 -> F9, no ``question_key`` moved): the registration keeps G1's
+    (``b432d32a7536``), which is today's framings with every task's active framing F7, and the
+    checkout's lock is no longer registered, so a new X1 or tier run under it is unregistered.
     Hashes of committed files only."""
     from mesa_clm import framings as fr
     from mesa_clm.bench.framing import MODELS, fingerprints_for_lock
@@ -103,7 +109,9 @@ def test_the_registered_framings_and_models_are_the_committed_locks() -> None:
 
     r = reg.REGISTERED
     lock = load_serving_lock(ROOT / "serving" / "serving.lock.json")
-    assert r.framings_lock_sha == reg.FRAMINGS_LOCK_SHA == fr.lock_sha()
+    g1 = fr.lock_sha({task_id: "F7" for task_id in fr.FRAMINGS})
+    assert r.framings_lock_sha == reg.FRAMINGS_LOCK_SHA == g1 == G1_FRAMINGS_LOCK
+    assert fr.lock_sha() == fr.read_lock()["lock_sha"] != reg.FRAMINGS_LOCK_SHA
     assert r.serving_lock_sha == reg.SERVING_LOCK_SHA == lock.lock_sha
     assert sorted(r.fingerprints) == sorted(MODELS)
     assert {m: dict(fp) for m, fp in r.fingerprints.items()} == fingerprints_for_lock(lock)
@@ -111,10 +119,13 @@ def test_the_registered_framings_and_models_are_the_committed_locks() -> None:
     assert r.fingerprints["clm-latest"]["encoder_fp"] == "c3b3d5e1a283"
     assert (
         reg.identity_deviations(
-            framings_lock_sha=fr.lock_sha(), fingerprints=fingerprints_for_lock(lock), models=MODELS
+            framings_lock_sha=g1, fingerprints=fingerprints_for_lock(lock), models=MODELS
         )
         == []
     )
+    assert reg.identity_deviations(
+        framings_lock_sha=fr.lock_sha(), fingerprints=fingerprints_for_lock(lock), models=MODELS
+    ) == [f"framings lock_sha {fr.lock_sha()[:12]} is not b432d32a7536"]
 
 
 def test_identity_dump_and_task_deviations() -> None:
@@ -158,3 +169,30 @@ def test_identity_dump_and_task_deviations() -> None:
     assert reg.task_set_deviations(["neon_term_fits"]) == [
         "tasks ['neon_annotate', 'neon_aspect', 'neon_ontology_fits', 'neon_value_kind'] are not run"
     ]
+
+
+def test_the_registered_x1_run_replays_under_the_rotated_lock() -> None:
+    """M2's acceptance criterion ("``--decide`` reproducible from the JSON") survives DESIGN A1:
+    the committed registered run replays and recomputes from its own files (the JSON and its
+    items file; no feature store, no label store) although the checkout's framings lock has
+    rotated, because the replay holds the lock the file records to the registration (G1's). Its
+    full-run decisions are A1's: F9 on clm-latest for column.ontology_fits, K1 for term.fits; the
+    rotation moved no ``question_key`` the file records."""
+    from mesa_clm import framings as fr
+    from mesa_clm.bench.framing import decide_from_json, load_x1
+
+    path = ROOT / "bench" / "results" / "2026-10-03" / "x1.json"
+    res = load_x1(path)
+    assert res.x1.registered and res.x1.deviations == []
+    assert res.x1.framings_lock_sha == reg.FRAMINGS_LOCK_SHA != fr.lock_sha()
+    assert res.x1.question_keys == {
+        task: {f: fr.framing(task, f).question_key for f in keys}
+        for task, keys in res.x1.question_keys.items()
+    }
+    decisions = decide_from_json(path)
+    onto, term = decisions["neon_ontology_fits"], decisions["neon_term_fits"]
+    assert term is not None and term.outcome == "K1" and term.choice is None
+    assert onto is not None and onto.outcome == "choice" and onto.choice is not None
+    assert (onto.choice.framing, onto.choice.model) == ("F9", "clm-latest")
+    assert fr.ACTIVE["column.ontology_fits"] == onto.choice.framing
+    assert fr.ACTIVE["term.fits"] == "F7"  # K1: no A1 framing; F7 keeps its audit records

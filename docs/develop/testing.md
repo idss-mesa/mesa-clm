@@ -1,13 +1,13 @@
 ---
 title: "Testing"
-description: "How to run the hermetic mesa-clm test suite, what the fake CLM transport, the recorded OLS fixtures and the offline doctor cover, the vendored-file and parity checks, the M1 tests, the M2 bench tests on synthetic labels only (and the plan-constants test), and the opt-in live, engine, GPU, Postgres, end-to-end and neon tiers."
+description: "How to run the hermetic mesa-clm test suite, what the fake CLM transport, the recorded OLS fixtures and the offline doctor cover, the vendored-file and parity checks, the M1 tests, the M2 bench tests on synthetic labels only (and the plan-constants test), the tests of amendment A1 after the registered run, and the opt-in live, engine, GPU, Postgres, end-to-end and neon tiers."
 type: Guide
 tags:
   - develop
   - testing
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-03T12:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T18:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -164,6 +164,29 @@ fold-pooled predictions, the seeds and settings inside the nesting, the inner-fo
 timing run's request order, several refusals); each fix above came with a test that fails on the
 reverted code or the reviewers' mutant.
 
+## After the registered run (DESIGN A1)
+
+The registered M2 run is committed (`bench/results/2026-10-03/`) and amendment A1 records its
+outcome; these tests hold the code to it:
+
+- `test_bench_registered` replays and recomputes the committed `x1.json` from its own files (no
+  feature store, no label store) under the rotated framings lock, and checks that the registration
+  keeps G1's lock, which is today's framings with every task's active framing F7.
+- `test_framings`: the active framings are A1's (F9 for `column.ontology_fits`, F7 elsewhere) and
+  the rotation moved no `question_key`.
+- `test_k1_default` (the fake provider): under the shipped defaults every `term.fits` decision and
+  proposal is `ols_rank` (no probabilities, proposed, never auto), no D24 refinement is asked and
+  the groups that would have had one record it, the run is not `degraded`, Q3 is asked with F9
+  (its `question_key` and context hash), an audit run (`decider.ols_rank_tasks: []` or
+  `--ols-rank-tasks none`) asks CLM about `term.fits` again, and the CLI prints and writes the
+  tasks `ols_rank` decided.
+
+The pipeline helpers (`tests/fakes/pipeline.py` `config()`) are audit configurations
+(`decider.ols_rank_tasks: []`), so `test_pipeline_fake`, `test_service` and the review tests keep
+exercising CLM's `term.fits` path (specificity, the second opinion, runner-ups);
+`shipped_config()` gives the shipped defaults. The synthetic M2 registrations stand in the
+checkout's framings lock.
+
 ## Key tests
 
 Vendored hashes; `test_anyjev_parity` (state shas, task keys and AVUs equal mesa-anyjev's);
@@ -205,8 +228,8 @@ TextCache format, offline scores equal to the fake's `/v1/systemone`);
 `test_provenance_bulk_insert` (the JSON bulk insert writes exactly the rows the per-row path
 wrote on real fake runs, hostile strings stay data, failed casts raise, non-finite floats fall
 back to `executemany`, and seven fake runs commit within a loose time bound); the encoder's
-`tokenizer_json` from the configuration in `test_clm_encoder`. From M2 (pre-run): the bench tests
-above. From M3: `test_apply_anonymous_rejected`,
+`tokenizer_json` from the configuration in `test_clm_encoder`. From M2: the bench tests and the A1
+tests above. From M3: `test_apply_anonymous_rejected`,
 `test_apply_crash_retry`, `test_revert`, `test_history_spool_recorder` (two VMs, dedup,
 quarantine), `test_mcp_conformance`. From
 M4: `test_policy_citations`, `test_loco_leakage`, `test_nested_selection`, `test_rule_r`,

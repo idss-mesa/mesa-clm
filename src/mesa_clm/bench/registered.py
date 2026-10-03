@@ -74,10 +74,13 @@ class TaskCounts:
 
 
 # The framings and models of G1 (plan §1.4-§1.6), checked against the committed files by
-# tests/unit/test_bench_registered.py: `framings.lock.json`'s lock_sha (F1, F4, F7, F9 of every
-# task) and, under `serving/serving.lock.json` (lock_sha below), the D5 fingerprint of each X1
-# model: the encoder c3b3d5e1a283 (A3), clm-latest through its pinned head (clm_model_fp
-# 78be8c462b2e), clm-raw (the raw encoder vectors, 9f44b0301ee3), the vendored schema's sha256.
+# tests/unit/test_bench_registered.py: the lock_sha of `framings.lock.json` at G1 (F1, F4, F7, F9
+# of every task, F7 active everywhere; DESIGN A1 later moved column.ontology_fits' active framing
+# to F9, which rotated the checkout's lock_sha and no question_key, so the test rebuilds G1's lock
+# from today's framings and the registered x1.json still replays) and, under
+# `serving/serving.lock.json` (lock_sha below), the D5 fingerprint of each X1 model: the encoder
+# c3b3d5e1a283 (A3), clm-latest through its pinned head (clm_model_fp 78be8c462b2e), clm-raw (the
+# raw encoder vectors, 9f44b0301ee3), the vendored schema's sha256.
 FRAMINGS_LOCK_SHA: Final[str] = "b432d32a7536c8f455098ae4a23139f6badbae7bc181a3a64853df3e80921eca"
 SERVING_LOCK_SHA: Final[str] = "dd33f9fedbaee0129b09a21311227118461bed9326c942c2af7d0bd9b31b5237"
 _ENCODER_FP: Final[str] = "c3b3d5e1a283"

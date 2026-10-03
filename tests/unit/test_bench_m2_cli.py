@@ -28,7 +28,7 @@ import duckdb
 import numpy as np
 import pytest
 
-from mesa_clm import serving
+from mesa_clm import framings, serving
 from mesa_clm.bench import framing as x1
 from mesa_clm.bench import registered as reg
 from mesa_clm.bench import run as m2run
@@ -235,6 +235,9 @@ def world(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
         anyjev_dump=str(dump),
         anyjev_sha256=hashlib.sha256(dump.read_bytes()).hexdigest(),
         B=200,
+        # the checkout's framings lock: the real registration keeps G1's, which DESIGN A1
+        # rotated after the registered run
+        framings_lock_sha=framings.lock_sha(),
     )
     home = root / "serving-home"
     h = random_head(3, hidden_size=4096)

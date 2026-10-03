@@ -1,6 +1,6 @@
 ---
 title: "Learning and bench"
-description: "Where mesa-clm's labels come from and how they are identified and frozen, the feature cache, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, the pre-registered experiments X1-X4 with the AnyJev baseline numbers, and how M2's analysis plan runs X1, the tier cells and X2 (committed before any result)."
+description: "Where mesa-clm's labels come from and how they are identified and frozen, the feature cache, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, the pre-registered experiments X1-X4 with the AnyJev baseline numbers, how M2's analysis plan runs X1, the tier cells and X2 (committed before any result), and the registered M2 results (term.fits K1; F9 for column.ontology_fits)."
 type: Guide
 tags:
   - concepts
@@ -9,8 +9,8 @@ tags:
   - labels
   - calibration
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-03T12:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T19:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -43,6 +43,10 @@ sources:
   - id: m2-plan
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/m2-analysis-plan.md"
     title: "mesa-clm M2 analysis plan (pre-run): X1, the zero_shot and calibrated tiers, X2"
+    author: "team:idss-mesa"
+  - id: m2-results
+    resource: "https://github.com/idss-mesa/mesa-clm/tree/main/bench/results/2026-10-03"
+    title: "mesa-clm M2 registered run, 2026-10-03 (x1.json, tiers.json, x2.json, table.md)"
     author: "team:idss-mesa"
 status: draft
 stale_after: "2027-03-31T00:00:00Z"
@@ -251,12 +255,72 @@ conditions and the reason when it fails, and its per-item predictions. `bench x2
 controls (with a note on whether they equal the published M0 cells), the PR #13 replica (unweighted,
 float32 vectors) and AnyJev L2 joined by D1 identity; X2 gates nothing.
 
-### Planned results
+## Milestone M2: the registered results (2026-10-03)
 
-None exist yet. The run protocol (plan §14) runs once each, after the push: the label-free timing
-run, `bench framing --decide`, the replay, `bench run`, `bench x2`, `bench table`; every output is
-committed as produced under `bench/results/<date>/` (`x1_latency.json`, `x1.json`,
-`x1_items.parquet`, `tiers.json`, `x2.json`, `table.md`), and this page will cite those files.
+The run protocol (plan §14) ran once on the serving host, each step once, after the plan and its
+code were pushed: the label-free timing run, `bench framing --decide`, the replay, `bench run`,
+`bench x2`, `bench table`. Every output was committed as produced under
+`bench/results/2026-10-03/` (`x1_latency.json`, `x1.json`, `x1_items.parquet`, `x1.md`,
+`tiers.json`, `tiers.md`, `x2.json`, `x2.md`, `table.md`); the run is the registered one
+(`x1.json#/x1/registered`), and `bench framing --decide --from` replays and recomputes it from the
+files. DESIGN.md records the outcome as amendment A1 and RESEARCH.md ("M2 results") holds every
+number with its JSON pointer; the main ones follow. Intervals are the pair of one-sided 95% card
+bootstrap bounds (a 90% interval); silver labels are agreement between models, not truth.
+
+**X1** (`x1.json#/x1/tasks/<task>/arms/<arm>`; AUROC of the raw score, rule (1) needs a lower
+bound above 0.5, AUROC at least 0.60 and a ΔAUROC over the within-card shuffle that passes rule R):
+
+| arm | term.fits AUROC | rule (1) | ontology_fits AUROC | rule (1) | ontology_fits LOCO-Platt NLL |
+|---|---|---|---|---|---|
+| F4@clm-latest | 0.497 [0.406, 0.572] | fails | 0.611 [0.529, 0.677] | qualifies | 0.666 |
+| F4@clm-raw | 0.458 [0.413, 0.505] | fails | 0.501 [0.399, 0.614] | fails | 0.693 |
+| F7@clm-latest | 0.511 [0.482, 0.544] | fails | 0.693 [0.611, 0.762] | qualifies | 0.633 |
+| F7@clm-raw | 0.494 [0.428, 0.549] | fails | 0.592 [0.546, 0.637] | fails | 0.688 |
+| F9@clm-latest | 0.557 [0.512, 0.596] | fails | 0.751 [0.697, 0.805] | qualifies | 0.602 |
+| F9@clm-raw | 0.539 [0.495, 0.592] | fails | 0.745 [0.700, 0.804] | qualifies | 0.618 |
+
+* **term.fits: K1.** No arm qualifies on either model (every one is under the 0.60 floor), and
+  every nested fold's inner outcome is K1 too (`x1.json#/x1/tasks/neon_term_fits/decision`,
+  `nested/fold_choices`). As the pre-registered K1 says, its zero_shot and calibrated tiers are
+  audit-only, its proposals use `ols_rank`, and M4 goes probe-first.
+* **column.ontology_fits: F9 on `clm-latest`.** Rule (2) ranks the qualified `clm-latest` arms by
+  NLL (F9 lowest), rule (3) keeps `clm-latest` (`clm-raw` does not beat it at F9 under rule R),
+  rule (4) does not fire (no D3 amendment), and all 7 nested folds choose F9@`clm-latest`
+  (`x1.json#/x1/tasks/neon_ontology_fits/decision`, `a1`, `nested/fold_choices`).
+* The candidate-only probe (report-only, the PR #13 recipe on the candidate vectors alone) reaches
+  AUROC 0.808 [0.765, 0.858] on term.fits and 0.816 [0.758, 0.873] on ontology_fits
+  (`x1.json#/x1/tasks/<task>/candidate_probe`).
+
+**The tier cells** (`tiers.json`). The citable-form nested cells of column.ontology_fits
+(`neon_ontology_fits.<tier>.F9`, 7 of 7 folds agreeing with A1): zero_shot accuracy 0.489, NLL
+2.624, ECE 0.464, AUROC 0.751 [0.697, 0.805]; calibrated accuracy 0.642, NLL 0.602, ECE 0.123,
+AUROC 0.732 [0.673, 0.802]. Neither has `beats_lookup_novel`: on the 99 novel-key items the
+AUROC lower bound passes (0.597 and 0.584) but the NLL comparison with `lookup_prob` (NLL 0.653)
+does not pass rule R (zero shot NLL 2.846; calibrated NLL 0.594, the bootstrap lower bound of the
+difference −0.046), and neither cell has a
+Clopper–Pearson threshold at 5% or 10% risk (`baselines/beats_detail`, `metrics/threshold_cp`).
+The term.fits audit cells (F7@`clm-latest`, not pre-registered under K1): zero_shot accuracy 0.495,
+AUROC 0.511; calibrated accuracy 0.698 (majority 0.698), AUROC 0.457. The closed choices
+(F7@`clm-latest`) score below their majority rates at zero shot: column.annotate 0.357 against
+0.643, column.aspect 0.050 against 0.300, avu.value_kind 0.324 against 0.478 (calibrated 0.324);
+the calibrated cells of annotate and aspect are empty because no fold trains on 100 items.
+
+**X2** (`x2.json`, baselines that gate nothing):
+
+| cell | acc | AUROC | NLL | ECE | beats_lookup_novel |
+|---|---|---|---|---|---|
+| `neon_term_fits.baseline.pr13@S1` | 0.723 | 0.709 [0.643, 0.771] | 1.460 | 0.215 | false |
+| `neon_term_fits.baseline.pr13@S1ns` | 0.747 | 0.786 [0.738, 0.839] | 1.019 | 0.184 | false |
+| `neon_term_fits.baseline.anyjev_l2` | 0.765 | 0.782 [0.743, 0.833] | 0.499 | 0.058 | true |
+| `neon_ontology_fits.baseline.pr13@S1` | 0.821 | 0.884 [0.842, 0.927] | 0.791 | 0.131 | false |
+| `neon_ontology_fits.baseline.pr13@S1ns` | 0.821 | 0.905 [0.869, 0.941] | 0.568 | 0.137 | false |
+| `neon_ontology_fits.baseline.anyjev_l2` | 0.837 | 0.908 [0.884, 0.940] | 0.375 | 0.078 | true |
+
+The recomputed no-model controls equal M0's cells field for field (`x2.json#/notes/2`), and the
+AnyJev L2 cells join all 285 and 190 items. Two independent recomputations after the run agree with
+every number they recomputed (RESEARCH.md, which also names what the repository reproduces itself:
+the replay, and X1's decisions under 200 other bootstrap seeds). What A1 changes in the pipeline is on
+[Decision model](decision-model.md): Q3 asks F9, term.fits groups are `ols_rank` by default.
 
 ## Baseline numbers
 
@@ -284,5 +348,5 @@ leave-one-product-out 0.723 / 0.721 / 0.724 / 0.350 / 0.543; novel-key subsets o
 B=2000, seed 0) puts the minimum detectable effect under rule R at AUROC 0.625 on term.fits
 (0.675 on its novel keys), 0.650 on ontology_fits (0.750 on novel keys, with four counting
 cards) and 0.700 on annotate, whose novel-key population has one counting card and therefore
-cannot pass rule R at any effect. Model cells (X1, the tier cells, X2) follow in milestone M2
-under the analysis plan above, and every cell will name its results JSON here.
+cannot pass rule R at any effect. The model cells of milestone M2 (X1, the tier cells, X2) are
+above, each named by its results file.

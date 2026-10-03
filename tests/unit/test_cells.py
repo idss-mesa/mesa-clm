@@ -1308,9 +1308,12 @@ def test_a_tier_run_off_the_registration_is_unregistered(
     off = run_tier_cells(tasks, w.index, w.store, _scorers(w.store), FINGERPRINTS, **kw, **TC)
     assert "labels_sha256 aaaaaaaaaaaa" in off.notes[0] and "B 200 is not 2000" in off.notes[0]
     assert all(c.exploratory and not c.pre_registered for c in off.cells.values())
+    # The framings lock is the checkout's: the real registration keeps G1's, which DESIGN A1
+    # rotated after the registered run.
     stand_in = reg.Registration(
         snapshot="s", labels_sha256="a" * 64, labels_content_sha256="b" * 64,
-        published="synthetic", B=B, fingerprints=FINGERPRINTS,
+        published="synthetic", B=B, framings_lock_sha=C.framings.lock_sha(),
+        fingerprints=FINGERPRINTS,
     )  # fmt: skip
     monkeypatch.setattr(reg, "REGISTERED", stand_in)
     on = run_tier_cells(tasks, w.index, w.store, _scorers(w.store), FINGERPRINTS, **kw, **TC)

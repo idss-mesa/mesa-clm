@@ -8,8 +8,8 @@ tags:
   - annotate
   - review
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T19:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -52,8 +52,12 @@ Mind the slashes in a DuckDB DSN: the path starts after `duckdb:///`, so
 `duckdb:///x.duckdb` is `x.duckdb` in the working directory and `duckdb:////tmp/x.duckdb` (four
 slashes) is the absolute `/tmp/x.duckdb`. Without `--provenance` or the variable the sidecar is
 `~/.mesa/clm/provenance.duckdb`. Without `MESA_CLM_OLS__FIXTURES` the default (`off`) queries the
-live EMBL-EBI OLS. `--fake-seed` picks the fake head; seed 5 answers "Yes" to enough columns for
-every pipeline step to run on the fixture cards (the default seed 0 annotates few columns).
+live EMBL-EBI OLS. `--fake-seed` picks the fake head; seed 5 answers "Yes" to enough columns that
+every step asked of the provider runs on the fixture cards (the default seed 0 annotates few
+columns). Under the shipped default (K1, DESIGN A1) the `term.fits` steps are not among them:
+`ols_rank` decides Q4–Q6 and the specificity refinement Q4b (D24) is not asked, so add
+`--ols-rank-tasks none` (an audit run) for the provider to answer the `term.fits` steps and Q4b
+too.
 
 `annotate` prints a summary:
 
@@ -68,11 +72,17 @@ every pipeline step to run on the fixture cards (the default seed 0 annotates fe
 * `fingerprint`: `encoder_fp`, `clm_model_fp` and the first characters of `serving_lock_sha`,
   the D5 bundle stamped on every decision (the fake has its own, with route `fake`, so a fake
   run can never pass for a real one);
+* `ols_rank tasks: term.fits`: since DESIGN A1 the `term.fits` groups (the column terms, the site
+  biomes, the taxon) are decided by `ols_rank` by default, because the registered framing experiment
+  found no qualifying framing for that task (K1); their proposals are the OLS top-1 of each group,
+  with no `p_fit`, and the column-to-ontology questions (Q3) are asked with the A1 framing F9.
+  `--ols-rank-tasks none` asks the provider about `term.fits` too: an audit run, which the line then
+  says;
 * the provider note and `next: mesa-clm review --run-id <run_id>`.
 
 `--out run.json` holds the full run: every proposal with its attribute, value, unit, CURIE,
 `p_fit`, level (`zero_shot` for CLM, `none` for `ols_rank`), calibration, method and rationale,
-plus the abstentions. `--out -` prints it instead, and `--eval-result` writes the neon-avu-eval
+plus the abstentions and `ols_rank_tasks`. `--out -` prints it instead, and `--eval-result` writes the neon-avu-eval
 result shape so its scoring scripts run unchanged.
 
 ### Read the run back
@@ -94,7 +104,8 @@ uv run mesa-clm review --run-id <prefix>
 Interactive, and it needs a terminal. For each group that waits for a reviewer (term groups
 that are proposed, escalated to a human, or whose anchor won, and groups only an agent has
 answered so far) it shows the target, aspect and ontology, then the offered candidates best
-`p_fit` first, numbered, and `0. none of these (the anchor)`. Answer with a number to accept
+`p_fit` first (in OLS order for an `ols_rank` group), numbered, and `0. none of these (the
+anchor)`. Answer with a number to accept
 that candidate, `0` or `n` for none of these, `d` to decline (you saw it but answer nothing),
 `s` or Enter to skip, `q` (or end of input) to quit. Each answer is recorded with `via=cli`: a
 pick writes curator labels (the pick, and implicit negatives for the other offered candidates),
@@ -150,9 +161,9 @@ MESA_CLM_OLS__FIXTURES=replay MESA_CLM_OLS__FIXTURES_DIR=tests/fixtures/ols-srer
 ```
 
 The live example uses a **non-bench** card (plan §9's smoke card, with its recorded OLS
-responses): until the pre-registered M2 cells exist, no live annotate run looks at the seven
-bench cards (DESIGN, "G1 freeze"). For other cards, live OLS is used with `ols.fixtures` `auto`
-or `record`.
+responses): until the pre-registered M2 cells existed (`bench/results/2026-10-03/`), no live
+annotate run looked at the seven bench cards (DESIGN, "G1 freeze"), and they stay the bench's
+held-out cards. For other cards, live OLS is used with `ols.fixtures` `auto` or `record`.
 
 `--tier zero_shot` asks CLM's released head (`clm.model`, default `clm-latest`) and records
 level `zero_shot`, calibration `uncalibrated`: `p_fit = σ(s_c)` with `s_c` the log-odds of a

@@ -25,10 +25,17 @@ cards never enter a context. Only :mod:`mesa_clm.render` touches the vendored te
 (D4); this module builds wire-shaped dicts and hands them to it.
 
 X1 arms for ``term.fits`` and ``column.ontology_fits`` (plan §5.6): F1 control, F4 Choice with a
-task-sentence ``instructions``, F7 state-only (the default until amendment A1), F9 the short
-query-shaped template ending in ``... ontology term:``. ``column.annotate``, ``column.aspect``
-and ``avu.value_kind`` have one state-only framing F7 each. ``column.ontology`` (the wide
-mesa-anyjev choice) is never asked: its registry is ranked as ``column.ontology_fits`` (Q3).
+task-sentence ``instructions``, F7 state-only, F9 the short query-shaped template ending in
+``... ontology term:``. ``column.annotate``, ``column.aspect`` and ``avu.value_kind`` have one
+state-only framing F7 each. ``column.ontology`` (the wide mesa-anyjev choice) is never asked: its
+registry is ranked as ``column.ontology_fits`` (Q3).
+
+The production framing of each task is :data:`ACTIVE`. Until amendment A1 it was F7 everywhere
+(the lock of G1, which M2's registration pins). A1 (DESIGN, 2026-10-03) records X1's registered
+outcome: ``column.ontology_fits`` is asked with F9 on ``clm-latest``; ``term.fits`` had no
+qualifying arm (K1), keeps F7 for its audit records and is proposed through ``ols_rank`` by
+default (``decider.ols_rank_tasks``, D28). ``active`` is not part of a ``question_key``, so the
+rotation moved the lock's ``lock_sha`` and no key.
 """
 
 from __future__ import annotations
@@ -37,7 +44,7 @@ import hashlib
 import json
 import string
 from collections.abc import Iterable, Mapping, Sequence
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, fields, replace
 from pathlib import Path
 from typing import Any, Final, Literal, Protocol
 
@@ -676,11 +683,27 @@ _F9_TERM: Final[dict[str, str]] = {
 }
 
 
+# The production framing per task (module docstring). F7 everywhere until amendment A1; A1
+# (DESIGN, 2026-10-03) records X1's registered choice, F9 on clm-latest, for column.ontology_fits
+# (bench/results/2026-10-03/x1.json#/x1/tasks/neon_ontology_fits/a1). term.fits keeps F7, the
+# framing of its audit records: K1 (no arm qualified) makes its CLM tiers audit-only and its
+# proposals ols_rank (config.DeciderConfig.ols_rank_tasks). The closed choices have F7 only.
+ACTIVE: Final[dict[str, str]] = {
+    "column.annotate": "F7",
+    "column.aspect": "F7",
+    "column.ontology_fits": "F9",
+    "term.fits": "F7",
+    "avu.value_kind": "F7",
+}
+
+
 def _fit_framings(
     task_id: str, anchor: str, control_view: ContextView, f9: str | dict[str, str]
 ) -> dict[str, Framing]:
-    """The four X1 arms of a rank_fit task (plan §5.6): F1 control, F4, F7 (active), F9."""
+    """The four X1 arms of a rank_fit task (plan §5.6): F1 control, F4, F7, F9; the one
+    :data:`ACTIVE` names is active (never the control)."""
     mask: MaskRule | None = "aspect" if task_id == "column.ontology_fits" else None
+    active = ACTIVE[task_id]
     return {
         "F1": Framing(
             "F1",
@@ -703,7 +726,7 @@ def _fit_framings(
             anchor_key=ANCHOR_KEY,
             anchor_text=anchor,
             mask_rule=mask,
-            active=False,
+            active=active == "F4",
         ),
         "F7": Framing(
             "F7",
@@ -713,6 +736,7 @@ def _fit_framings(
             anchor_key=ANCHOR_KEY,
             anchor_text=anchor,
             mask_rule=mask,
+            active=active == "F7",
         ),
         "F9": Framing(
             "F9",
@@ -723,7 +747,7 @@ def _fit_framings(
             anchor_key=ANCHOR_KEY,
             anchor_text=anchor,
             mask_rule=mask,
-            active=False,
+            active=active == "F9",
         ),
     }
 
@@ -765,8 +789,8 @@ FRAMINGS: Final[dict[str, dict[str, Framing]]] = {
     "avu.value_kind": {"F7": _closed_f7("avu.value_kind", "value_kind_state", VALUE_KIND_KEYS)},
 }
 
-# The production framing per task: F7 everywhere until amendment A1 (the X1 winner) says otherwise.
-ACTIVE: Final[dict[str, str]] = {task_id: "F7" for task_id in FRAMINGS}
+if set(ACTIVE) != set(FRAMINGS):
+    raise RuntimeError("mesa_clm.framings: ACTIVE must name one framing per framed task")
 
 if (
     TASKS["column.aspect"].options != ASPECT_OPTIONS
@@ -806,7 +830,8 @@ def framing(task_id: str, framing_id: str) -> Framing:
 
 
 def active_framing(task_id: str) -> Framing:
-    """The production framing of a task (F7 until A1)."""
+    """The production framing of a task (:data:`ACTIVE`: F9 for ``column.ontology_fits`` since
+    DESIGN A1, F7 for the others)."""
     try:
         return FRAMINGS[task_id][ACTIVE[task_id]]
     except KeyError as exc:
@@ -840,24 +865,39 @@ def _sha(body: Mapping[str, Any]) -> str:
     return hashlib.sha256(canonical_json(body).encode("utf-8")).hexdigest()
 
 
-def lock_payload() -> dict[str, Any]:
+def _with_active(f: Framing, active: bool) -> Framing:
+    return f if f.active == active else replace(f, active=active)
+
+
+def lock_payload(active: Mapping[str, str] | None = None) -> dict[str, Any]:
     """``{schema_sha256, tasks: {task_id: {task_key, shape, active_framing, framings: {id:
-    entry}}}, lock_sha}``; ``lock_sha`` hashes the canonical JSON of the rest."""
-    tasks = {
-        task_id: {
+    entry}}}, lock_sha}``; ``lock_sha`` hashes the canonical JSON of the rest. ``active``
+    (default :data:`ACTIVE`) names each task's active framing; another map gives the lock these
+    framings would have under it, e.g. G1's (every task at F7), the lock M2's registration pins
+    (DESIGN A1). No ``question_key`` depends on it."""
+    chosen = dict(ACTIVE if active is None else active)
+    if set(chosen) != set(FRAMINGS):
+        raise FramingError(f"an active framing for each of {sorted(FRAMINGS)} is needed")
+    tasks: dict[str, Any] = {}
+    for task_id, arms in FRAMINGS.items():
+        current = chosen[task_id]
+        if current not in arms or arms[current].control:
+            raise FramingError(f"{task_id}: {current!r} cannot be the active framing")
+        tasks[task_id] = {
             "task_key": TASKS[task_id].key,
             "shape": next(iter(arms.values())).shape,
-            "active_framing": ACTIVE[task_id],
-            "framings": {fid: framing_entry(f) for fid, f in arms.items()},
+            "active_framing": current,
+            "framings": {
+                fid: framing_entry(_with_active(f, fid == current)) for fid, f in arms.items()
+            },
         }
-        for task_id, arms in FRAMINGS.items()
-    }
     body = {"schema_sha256": render.schema_sha256(), "tasks": tasks}
     return {**body, "lock_sha": _sha(body)}
 
 
-def lock_sha() -> str:
-    return str(lock_payload()["lock_sha"])
+def lock_sha(active: Mapping[str, str] | None = None) -> str:
+    """The ``lock_sha`` of :func:`lock_payload` (``active`` as there)."""
+    return str(lock_payload(active)["lock_sha"])
 
 
 def read_lock(path: Path = LOCK_PATH) -> dict[str, Any]:

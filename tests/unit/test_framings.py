@@ -76,14 +76,49 @@ def test_registry_covers_the_five_clm_tasks_with_the_x1_arms() -> None:
         fr.framings_for("column.ontology")
 
 
-def test_f7_is_active_everywhere_until_a1() -> None:
+# DESIGN A1 (2026-10-03): X1's registered run chose F9 on clm-latest for column.ontology_fits
+# (bench/results/2026-10-03/x1.json#/x1/tasks/neon_ontology_fits/a1); term.fits was K1 and keeps
+# F7 for its audit records; the closed choices have F7 only. Before A1 every task was at F7.
+A1_ACTIVE = {
+    "column.annotate": "F7",
+    "column.aspect": "F7",
+    "column.ontology_fits": "F9",
+    "term.fits": "F7",
+    "avu.value_kind": "F7",
+}
+
+
+def test_the_active_framings_are_a1s() -> None:
+    assert fr.ACTIVE == A1_ACTIVE
     for task_id, arms in fr.FRAMINGS.items():
         active = fr.active_framing(task_id)
-        assert active is arms["F7"] and active.active and not active.control
-        assert fr.ACTIVE[task_id] == "F7"
-        assert sum(f.active for f in arms.values()) == 1
+        assert active is arms[A1_ACTIVE[task_id]] and active.active and not active.control
+        assert [fid for fid, f in arms.items() if f.active] == [A1_ACTIVE[task_id]]
     with pytest.raises(fr.FramingError, match="no active framing"):
         fr.active_framing("avu.keep")
+
+
+def test_the_a1_rotation_moved_no_question_key() -> None:
+    """``active`` is not part of a ``question_key`` (D1): A1 rotated the lock and no key. The
+    lock of G1 (every task at F7), which M2's registration pins, is today's framings under the
+    G1 map; the checkout's lock differs from it in column.ontology_fits' active framing only."""
+    g1 = {task_id: "F7" for task_id in fr.FRAMINGS}
+    assert fr.lock_sha(g1) == "b432d32a7536c8f455098ae4a23139f6badbae7bc181a3a64853df3e80921eca"
+    assert fr.lock_sha() != fr.lock_sha(g1) and fr.lock_sha(fr.ACTIVE) == fr.lock_sha()
+    before, after = fr.lock_payload(g1)["tasks"], fr.lock_payload()["tasks"]
+    for task_id in fr.FRAMINGS:
+        keys = {fid: e["question_key"] for fid, e in after[task_id]["framings"].items()}
+        assert keys == {fid: e["question_key"] for fid, e in before[task_id]["framings"].items()}
+        if task_id != "column.ontology_fits":
+            assert after[task_id] == before[task_id]
+    onto_before, onto_after = before["column.ontology_fits"], after["column.ontology_fits"]
+    assert (onto_before["active_framing"], onto_after["active_framing"]) == ("F7", "F9")
+    assert onto_after["framings"]["F9"]["question_key"] == "c95785008b523fd0"
+    assert onto_after["framings"]["F9"]["active"] and not onto_after["framings"]["F7"]["active"]
+    with pytest.raises(fr.FramingError, match="cannot be the active framing"):
+        fr.lock_payload({**g1, "term.fits": "F1"})  # the control is never active
+    with pytest.raises(fr.FramingError, match="an active framing for each"):
+        fr.lock_payload({"term.fits": "F7"})
 
 
 def test_fit_arms_follow_the_pre_registration() -> None:
@@ -371,7 +406,11 @@ def test_build_context_sends_the_view_dict_for_state_only_framings(card: Dataset
     # A stored anyjev candidate_state projects onto the same target_state (key order too).
     stored = candidate_state(card, "column", col, "measurement", {"label": "d", "curie": "X:1"}, 9)
     assert fr.build_context(fr.active_framing("term.fits"), stored) == st
-    assert fr.build_context(fr.active_framing("column.ontology_fits"), stored) == st
+    assert fr.build_context(fr.framing("column.ontology_fits", "F7"), stored) == st
+    # column.ontology_fits' active framing is F9 since DESIGN A1: its template, not the dict.
+    f9 = fr.build_context(fr.active_framing("column.ontology_fits"), stored)
+    assert isinstance(f9, str) and f9.startswith("NEON dataset ")
+    assert f9.endswith("measurement ontology term:")
     ann = fr.build_context(fr.active_framing("column.annotate"), stored)
     assert ann == column_state(card, col) and list(ann) == ["card", "column"]
     vk = value_kind_state(card, col, {"label": "distance", "curie": "PATO:0000040"}, "measurement")
@@ -601,13 +640,14 @@ def test_f1_control_for_ontology_fits_is_the_anyjev_ontology_state(card: Dataset
 
 
 def test_ontology_candidates_reproduce_the_registry_option_texts() -> None:
-    f7 = fr.active_framing("column.ontology_fits")
     cands = fr.ontology_candidates()
     assert [c.key for c in cands] == [e.id for e in ONTOLOGY_REGISTRY]
-    assert [fr.candidate_text(f7, c) for c in cands] == list(ONTOLOGY_OPTIONS)
-    q = fr.build_question(f7, cands)
-    assert list(q["criteria"]) == [*[e.id for e in ONTOLOGY_REGISTRY], ANCHOR_KEY]
-    assert q["criteria"][ANCHOR_KEY] == ANCHORS["ontology"]
+    # F7 and F9 (the A1 framing) share the candidate template: the same option texts.
+    for f in (fr.framing("column.ontology_fits", "F7"), fr.active_framing("column.ontology_fits")):
+        assert [fr.candidate_text(f, c) for c in cands] == list(ONTOLOGY_OPTIONS)
+        q = fr.build_question(f, cands)
+        assert list(q["criteria"]) == [*[e.id for e in ONTOLOGY_REGISTRY], ANCHOR_KEY]
+        assert q["criteria"][ANCHOR_KEY] == ANCHORS["ontology"]
     assert [c.key for c in fr.ontology_candidates(["UO", "envo"])] == ["envo", "uo"]
     with pytest.raises(fr.FramingError, match="unknown registry"):
         fr.ontology_candidates(["go"])
@@ -647,7 +687,8 @@ def test_lock_payload_shape() -> None:
     assert set(payload["tasks"]) == set(fr.FRAMINGS)
     for task_id, entry_ in payload["tasks"].items():
         assert list(entry_) == ["task_key", "shape", "active_framing", "framings"]
-        assert entry_["task_key"] == TASKS[task_id].key and entry_["active_framing"] == "F7"
+        assert entry_["task_key"] == TASKS[task_id].key
+        assert entry_["active_framing"] == A1_ACTIVE[task_id]
         for fid, f in entry_["framings"].items():
             framing_ = fr.framing(task_id, fid)
             assert f["question_key"] == framing_.question_key

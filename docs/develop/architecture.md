@@ -6,8 +6,8 @@ tags:
   - develop
   - architecture
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T18:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -97,9 +97,9 @@ a batch all or nothing.
 |---|---|
 | M0 | `config.py`, `secrets.py`; `cards.py`, `states.py`, `registry.py`; `tasks.py`, `identity.py`; `policy_defaults.py` + `policy_defaults.yaml`; `ols.py`, `avu.py`, `ols_closure.py`; `planner/`; `provenance/labels.py`; `learn/labels.py`; `bench/_metrics.py` (vendored), `bench/{stats,results,baselines,mde,metrics}.py`, `bench/tasks/`; `health.py` (pins, versions, plugin API, policy, stores); `mcp_tools/` (entry-point stub); `cli.py` (`labels`, `bench`, `doctor`); `_vendor/clm/` |
 | M1 | `framings.py`, `render.py`, `framings.lock.json`; `vocab.py`; `perms.py`; `clm/{http,encoder,headproj,fingerprint,fake}.py`; `providers/{base,tiered,claude_provider,live}.py`; `pipeline.py`; `policy.py`; `provenance/{models,store,store_postgres,migrate,export}.py` and `migrations/0001_mesa_clm.sql`; `service.py`; `serving.py` (keys, units with the encoder's loopback socket proxy, the serving lock with its container recipe, its verification, the container's network namespace); `learn/features.py` (the feature store with float32 vectors and the lock's vector recipe, the X1/X2 manifest, the TextCache export) and `learn/offline.py` (offline scoring from cached vectors); `health.py` M1 checks (framings lock, schema sha256, sidecar schema, feature store, permissions, serving lock, host, `gpu_budget`, the serving reachability line and the serve-mode probes: the binds' owners, the encoder socket, the units against the rendering, the encoder network namespace, the headroom timer, the 401 matrix, goldens, long input, systemone parity, drift); `cli.py` M1 verbs (`framings`, `annotate`, `explain`, `review`, `feedback`, `provenance migrate\|export\|import\|prune`, `serve keys\|units\|lock`, `features build\|export-npz\|project\|stats`, `doctor --serve`); `serving/` (with the encoder's bearer guard `vllm_auth.py`, the route probe `vllm_routes.py` and the encoder's endpoint proxy `encoder_proxy.py`), `deploy/` (the serve-venv side, never importing `mesa_clm`); `net.py`'s port-owner check (keyed clients never send a key to another account's loopback socket); `scripts/` M1-A probes and records |
-| M2 | `bench/{run,framing}.py` |
+| M2 | `bench/{framing,cells,x2,registered,run}.py` (X1, the tier cells, X2, the registration, the verbs), `learn/calibrate.py` (weighted Platt, temperature); after the registered run, amendment A1: `framings.ACTIVE` (F9 for `column.ontology_fits`) and `decider.ols_rank_tasks` (`term.fits` decided by `ols_rank`, K1) |
 | M3 | `apply.py`, `revert.py`, `irods_io.py`, `history/`; the five `mesa_clm_*` tools in `mcp_tools/` |
-| M4 | `learn/{linear,calibrate,fit,teacher}.py`, `artifacts.py`, `bench/e2e.py`, audits |
+| M4 | `learn/{linear,fit,teacher}.py`, `artifacts.py`, `bench/e2e.py`, audits |
 | M6 | `adapters/neon.py` |
 | M7 | `learn/finetune.py`, `serving/finetune_preflight.py`, `serving/rescore_head.py` |
 

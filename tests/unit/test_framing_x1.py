@@ -30,6 +30,7 @@ from typing import Any
 import numpy as np
 import pytest
 
+from mesa_clm import framings as fr
 from mesa_clm.bench import cells as tier_cells
 from mesa_clm.bench import framing as x1
 from mesa_clm.bench import registered as reg
@@ -197,13 +198,16 @@ def _registration(
     labels_sha256: str = "a" * 64, content: str = "b" * 64, *, b: int = B
 ) -> reg.Registration:
     """A stand-in registration for synthetic labels (never the real snapshot's) and the
-    synthetic runs' fingerprints; the framings lock is the registered one (the checkout's)."""
+    synthetic runs' fingerprints. The framings lock is the checkout's: the real registration
+    keeps G1's, which DESIGN A1 rotated after the registered run, and the producers compare the
+    lock they score under with the registration's."""
     return reg.Registration(
         snapshot="synthetic.parquet",
         labels_sha256=labels_sha256,
         labels_content_sha256=content,
         published="synthetic",
         B=b,
+        framings_lock_sha=fr.lock_sha(),
         fingerprints=FPS,
     )
 
@@ -1801,7 +1805,7 @@ def test_the_registration_covers_the_framings_and_the_models(
     with monkeypatch.context() as mp:
         mp.setattr(x1.fr, "lock_sha", lambda: "0" * 64)
         rotated = x1.run_x1_items(tasks, items, fingerprints=FPS, **REG_KW).results.x1
-    assert rotated.deviations == ["framings lock_sha 000000000000 is not b432d32a7536"]
+    assert rotated.deviations == [f"framings lock_sha 000000000000 is not {fr.lock_sha()[:12]}"]
     assert rotated.framings_lock_sha == "0" * 64
     pristine = path.read_text()
     for edit in (

@@ -58,6 +58,14 @@ socket is refused before the key is sent (exit 2; ``net.assert_listener_owner``,
 ``--provider fake`` is the deterministic offline fake; it exercises the pipeline and is never
 evidence.
 
+**K1 for term.fits (DESIGN A1).** X1 found no qualifying arm for ``term.fits``, so ``annotate``
+decides its groups (Q4, Q5, Q6) by ``ols_rank`` by default (``decider.ols_rank_tasks``: the OLS
+top-1 per group, proposed-only, never auto, D28; the D24 refinement needs ``p_fit`` and is not
+asked, which the group records). ``--ols-rank-tasks none`` (or ``decider.ols_rank_tasks: []``)
+asks CLM for ``term.fits`` too: an audit run, whose ``term.fits`` tiers K1 makes audit-only.
+``column.ontology_fits`` (Q3) is asked with its A1 framing F9; the closed choices are unchanged.
+The summary and the ``--out`` JSON name the tasks ``ols_rank`` decided (``ols_rank_tasks``).
+
 ``bench baselines`` and ``bench mde`` stamp their cells with the ``labels_sha256`` of a frozen
 snapshot (DESIGN D30): ``--snapshot PATH`` names one written by ``labels snapshot``, otherwise
 ``bench/snapshots/<date>.parquet`` is used and written from the store when missing. An existing
@@ -675,13 +683,49 @@ def _annotate_provider(
     return stack.provider, tier, notes, stack.close
 
 
-def _check_tier(provider: Any, tier: str) -> None:
-    """Refuse an explicit learned tier the provider cannot serve before any request is spent."""
+def _ols_rank_tasks(args: argparse.Namespace, cfg: Config) -> list[str]:
+    """``annotate --ols-rank-tasks`` (``none`` for none), else ``decider.ols_rank_tasks``."""
+    from mesa_clm.tasks import RANK_FIT_TASKS
+
+    text = args.ols_rank_tasks
+    if text is None:
+        return list(cfg.decider.ols_rank_tasks)
+    names = [p.strip() for p in text.split(",") if p.strip()]
+    if names == ["none"]:
+        return []
+    unknown = sorted(set(names) - RANK_FIT_TASKS)
+    if not names or unknown:
+        raise UsageError(
+            f"--ols-rank-tasks takes rank_fit tasks ({', '.join(sorted(RANK_FIT_TASKS))}) or "
+            f"'none'; not {', '.join(unknown) or repr(text)}"
+        )
+    return list(dict.fromkeys(names))
+
+
+def _ols_rank_note(tasks: Sequence[str], tier: str) -> str:
+    """The summary line naming what ``ols_rank`` decided by design (K1, DESIGN A1)."""
+    if tier == "ols_rank":
+        return "ols_rank: every candidate group (tier ols_rank, D28)"
+    if "term.fits" in tasks:
+        return (
+            f"ols_rank tasks: {', '.join(sorted(tasks))} (term.fits: K1, DESIGN A1; its "
+            "proposals are the OLS top-1, proposed-only, D28)"
+        )
+    shown = ", ".join(sorted(tasks)) or "none"
+    return (
+        f"ols_rank tasks: {shown}; term.fits asked of CLM: an audit run (K1 makes its "
+        "zero_shot/calibrated tiers audit-only, DESIGN A1)"
+    )
+
+
+def _check_tier(provider: Any, tier: str, skip: Sequence[str] = ()) -> None:
+    """Refuse an explicit learned tier the provider cannot serve before any request is spent;
+    the tasks ``ols_rank`` decides (``skip``) never ask it."""
     if tier not in ("calibrated", "probe", "head"):
         return
     from mesa_clm.framings import FRAMINGS
 
-    missing = [t for t in FRAMINGS if not provider.supports_tier(t, tier)]
+    missing = [t for t in FRAMINGS if t not in skip and not provider.supports_tier(t, tier)]
     if missing:
         raise UsageError(
             f"tier {tier} is not servable for {', '.join(missing)}: no promoted artifacts "
@@ -698,10 +742,13 @@ def _cmd_annotate(args: argparse.Namespace, cfg: Config) -> int:
     card = _load_card_arg(args.card)
     owner = args.owner or args.actor
     tier = args.tier or cfg.decider.tier
+    ols_rank_tasks = _ols_rank_tasks(args, cfg)
     provider, tier, notes, close = _annotate_provider(cfg, args, tier)
     try:
-        _check_tier(provider, tier)
-        svc = DecisionService.from_config(cfg, provider, planner_kind=args.planner)
+        _check_tier(provider, tier, ols_rank_tasks)
+        svc = DecisionService.from_config(
+            cfg, provider, planner_kind=args.planner, ols_rank_tasks=ols_rank_tasks
+        )
         try:
             run = svc.annotate(card, args.actor, owner=owner, tier=tier)
         except DeciderBusy as exc:
@@ -723,9 +770,11 @@ def _cmd_annotate(args: argparse.Namespace, cfg: Config) -> int:
     finally:
         close()
     out = run.to_eval_result() if args.eval_result else run.to_dict()
-    # Whether the encoder recipe was verified travels with either shape (the run row does not
-    # record it until M3); an extra key leaves neon-avu-eval's scoring unchanged.
+    # Whether the encoder recipe was verified, and which tasks ols_rank decided by design (K1,
+    # DESIGN A1), travel with either shape (the run row records neither until M3); an extra key
+    # leaves neon-avu-eval's scoring unchanged.
     out["preflight"] = notes
+    out["ols_rank_tasks"] = list(run.ols_rank_tasks)
     if not args.eval_result:
         out["tier"] = tier
         out["next_step"] = f"mesa-clm review --run-id {run.run_id}"
@@ -759,6 +808,7 @@ def _cmd_annotate(args: argparse.Namespace, cfg: Config) -> int:
         + (", ".join(f"{k}={v}" for k, v in _abstain_counts(run.abstained).items()) or "none"),
         f"  fingerprint: encoder_fp {fp.get('encoder_fp')} clm_model_fp {fp.get('clm_model_fp')} "
         f"serving_lock_sha {str(fp.get('serving_lock_sha'))[:12]}",
+        f"  {_ols_rank_note(run.ols_rank_tasks, tier)}",
         *(f"  {n}" for n in notes),
     ]
     if args.out and args.out != "-":
@@ -1599,6 +1649,13 @@ def _m1_parsers(sub: Any, common: argparse.ArgumentParser) -> None:
         "--planner", choices=["static", "gateway", "claude"], help="default: planner.kind"
     )
     an.add_argument("--tier", choices=tiers, help="default: decider.tier (auto)")
+    an.add_argument(
+        "--ols-rank-tasks",
+        metavar="TASKS|none",
+        help="comma-separated rank_fit tasks decided by ols_rank (OLS top-1, proposed-only, D28); "
+        "default: decider.ols_rank_tasks (term.fits: K1, DESIGN A1); 'none' asks CLM for "
+        "term.fits too, an audit run",
+    )
     an.add_argument("--owner", help="who the run belongs to (default: --actor)")
     an.add_argument("--out", help="write the run as JSON to this file ('-': stdout)")
     an.add_argument(

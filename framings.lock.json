@@ -88,7 +88,7 @@
   "column.ontology_fits": {
    "task_key": "f45eb7fe2fbefdb5",
    "shape": "rank_fit",
-   "active_framing": "F7",
+   "active_framing": "F9",
    "framings": {
     "F1": {
      "question_key": "7187328988b9192f",
@@ -145,7 +145,7 @@
      "mask_rule": "aspect",
      "render_version": "1",
      "control": false,
-     "active": true
+     "active": false
     },
     "F9": {
      "question_key": "c95785008b523fd0",
@@ -162,7 +162,7 @@
      "mask_rule": "aspect",
      "render_version": "1",
      "control": false,
-     "active": false
+     "active": true
     }
    }
   },
@@ -291,5 +291,5 @@
    }
   }
  },
- "lock_sha": "b432d32a7536c8f455098ae4a23139f6badbae7bc181a3a64853df3e80921eca"
+ "lock_sha": "7c93cc3e0ff6c26918a631cb787ceb6623dfd797fa1bb90cc353e956c1856920"
 }

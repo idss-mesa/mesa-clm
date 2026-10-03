@@ -425,8 +425,9 @@ class DecisionService:
     :data:`~mesa_clm.learn.labels.BENCH_CARDS` plus the cards with silver consensus labels in
     the store, D30; a caller that passes a list owns it, which only tests do, and the bench drops
     curator rows on the fixed bench cards whatever their tag); ``ols_rank_tasks`` sends those
-    rank_fit tasks to the degraded method (D28); ``claude_client`` is handed to the
-    second-opinion provider (a fake in tests)."""
+    rank_fit tasks to the degraded method (D28; default ``cfg.decider.ols_rank_tasks``,
+    ``term.fits`` under K1, DESIGN A1; an empty collection asks CLM for every task, an audit
+    run); ``claude_client`` is handed to the second-opinion provider (a fake in tests)."""
 
     def __init__(
         self,
@@ -438,7 +439,7 @@ class DecisionService:
         policy: Policy,
         store: ProvenanceStore,
         bench_cards: Collection[str] | None = None,
-        ols_rank_tasks: Collection[str] = (),
+        ols_rank_tasks: Collection[str] | None = None,
         claude_client: Any | None = None,
     ) -> None:
         self.cfg = cfg
@@ -450,7 +451,9 @@ class DecisionService:
         self.lock = threading.Lock()
         self.max_wait_s = float(cfg.policy.max_wait_s)
         self.bench_cards = frozenset(bench_cards) if bench_cards is not None else None
-        self.ols_rank_tasks = frozenset(ols_rank_tasks)
+        self.ols_rank_tasks: frozenset[str] | None = (
+            frozenset(ols_rank_tasks) if ols_rank_tasks is not None else None
+        )
         self._claude_client = claude_client
         self._second_opinion: DecisionProvider | None = None
 

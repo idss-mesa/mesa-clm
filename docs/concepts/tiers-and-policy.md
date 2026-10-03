@@ -7,8 +7,8 @@ tags:
   - calibration
   - policy
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T18:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -55,6 +55,17 @@ by the degraded method, the OLS top-1 as `proposed` with no probabilities (DESIG
 the closed choices (annotate, aspect, value kind) are still asked. The pipeline also falls back
 to `ols_rank` per group when a CLM answer is unavailable or the context was truncated, and the
 run is marked `degraded`.
+
+`decider.ols_rank_tasks` (`MESA_CLM_DECIDER__OLS_RANK_TASKS`, or `annotate --ols-rank-tasks`)
+names the candidate-group tasks that `ols_rank` decides whatever the tier. Its shipped default is
+`[term.fits]`: the pre-registered framing experiment found no qualifying framing for `term.fits`
+on either model, so its kill criterion K1 ("no state signal") makes that task's zero_shot and
+calibrated tiers audit-only, with `ols_rank` proposals until a probe is promoted (DESIGN A1;
+`bench/results/2026-10-03/x1.json`). Those groups get no probabilities and no specificity
+refinement (it ranks by `p_fit`; the group records that it was not asked), and the run is not
+marked `degraded` for them. An audit run asks CLM about `term.fits` anyway: `--ols-rank-tasks
+none` or `decider.ols_rank_tasks: []`; its `term.fits` decisions are `zero_shot`, never `auto`.
+`column.ontology_fits` is asked with its A1 framing (F9).
 
 When `annotate --provider clm` finds clm-serve not answering before it starts, tier `auto` runs
 `ols_rank` for the whole card only if `decider.ols_rank_fallback` is `true`

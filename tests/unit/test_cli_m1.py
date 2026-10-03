@@ -77,7 +77,10 @@ def _annotate(capsys: pytest.CaptureFixture[str], *extra: str) -> dict[str, Any]
 
 @pytest.fixture(scope="module")
 def template(tmp_path_factory: pytest.TempPathFactory) -> Iterator[tuple[Path, dict[str, Any]]]:
-    """One fake run of the fixture card through the CLI (owner alice), copied per test."""
+    """One fake run of the fixture card through the CLI (owner alice), copied per test. An audit
+    run (``--ols-rank-tasks none``): the review tests need CLM's ``term.fits`` groups (the D24
+    refinement, a rejected refinement), which the shipped default decides by ``ols_rank`` (K1,
+    DESIGN A1; ``tests/unit/test_k1_default.py``)."""
     mp = pytest.MonkeyPatch()
     tmp = tmp_path_factory.mktemp("cli-m1")
     for key in list(os.environ):
@@ -101,6 +104,8 @@ def template(tmp_path_factory: pytest.TempPathFactory) -> Iterator[tuple[Path, d
                 "fake",
                 "--fake-seed",
                 str(FAKE_SEED),
+                "--ols-rank-tasks",
+                "none",
                 "--out",
                 str(out),
             ]

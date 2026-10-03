@@ -8,11 +8,23 @@ logprob readout is replaced by a torch-free HTTP client for a vLLM pooling encod
 patched `clm-serve`. Python 3.11+, hatchling `src/` layout, package `mesa_clm`, console script
 `mesa-clm`, MCP tools `mesa_clm_*`. House style follows `idss-mesa/mesa-anyjev` (and through
 it `neon-mcp`). `DESIGN.md` records every decision (U1–U4, D0–D33, the M1 and M2 implementation notes with
-M2's pre-run disclosure, the pre-registration frozen at G1 = the M1 merge commit, amendments from
-A2; A1 is reserved for the X1 framing) and `RESEARCH.md` the verified facts; read both before
-changing behaviour. The full plan is `design/plan-2026-09-28.md`; how M2 reads the frozen rules
-(X1, the tier cells, X2, every constant) is `design/m2-analysis-plan.md`, committed before any M2
-result and changed after the first run only by amendment.
+M2's pre-run disclosure and post-run record, the pre-registration frozen at G1 = the M1 merge
+commit, amendments A1–A5; A1 is X1's registered outcome) and `RESEARCH.md` the verified facts
+(the M2 results with their JSON pointers included); read both before changing behaviour. The full
+plan is `design/plan-2026-09-28.md`; how M2 reads the frozen rules (X1, the tier cells, X2, every
+constant) is `design/m2-analysis-plan.md`, committed before any M2 result and changed after the
+first run only by amendment.
+
+**Current state (2026-10-03): M2 done, on `feat/m2-evidence` (draft PR #4).** The registered run
+(plan §14, once; outputs committed as produced in `bench/results/2026-10-03/`, never edited)
+decided, and DESIGN **A1** records: `column.ontology_fits` → **F9 on `clm-latest`**
+(`framings.ACTIVE`, `framings.lock.json` rotated, lock_sha `7c93cc3e0ff6…`; no question_key
+moved); `term.fits` → **K1** (no arm qualified): its proposals are `ols_rank` by default
+(`decider.ols_rank_tasks: [term.fits]`), D24 is not asked for those groups (recorded), CLM
+answers `term.fits` only in an audit run (`annotate --ols-rank-tasks none`), M4 goes probe-first;
+the closed choices keep F7. The M2 registration keeps G1's framings lock (`b432d32a7536…`), so
+`bench framing --decide --from bench/results/2026-10-03/x1.json` still replays, and a new
+`bench framing` or `bench run` is written unregistered. Next: M3 (the live proposed-only loop).
 
 ## Commands
 
@@ -26,6 +38,7 @@ uv run mesa-clm doctor [--quick] [--serve] [--json] # pins, locks, stores, host;
 uv run mesa-clm framings --check                    # framing keys match framings.lock.json (--update-lock after a deliberate edit)
 MESA_CLM_OLS__FIXTURES=replay MESA_CLM_OLS__FIXTURES_DIR=tests/fixtures/ols \
   uv run mesa-clm --provenance duckdb:////tmp/p.duckdb annotate --card tests/fixtures/cards/DP1.10003.001.brd_countdata.md --provider fake --out /tmp/run.json
+#   term.fits groups: ols_rank by default (K1, DESIGN A1); --ols-rank-tasks none asks CLM too (an audit run)
 uv run mesa-clm explain --run-id <id|prefix>        # owner = --actor ($USER); review --run-id (TTY) | review --pick G=KEY|none --decline G
 uv run mesa-clm feedback --group-id G --action pick|reject|decline [--option-key KEY|none]  # TTY: via=cli curator; no TTY: via=tool agent_pick (A2)
 uv run mesa-clm provenance migrate|export --run-id R --out DIR|import PATH|prune [--dry-run]
@@ -106,6 +119,12 @@ mesa-clm writes under `~/.mesa/clm` is owner-only (0700/0600) whatever the umask
 - **Two phases (D10, D28).** `annotate` decides and proposes (policy `auto` stored as
   `accepted`, `accepted_by=policy`); `apply` writes. While uncalibrated, steps rank-and-cap;
   the degraded `ols_rank` method proposes and never autos.
+- **X1's outcome (A1, D24, D28).** `column.ontology_fits` is asked with F9 on `clm-latest`;
+  `term.fits` is K1: `ols_rank` decides its groups by default (`decider.ols_rank_tasks`), D24 is
+  not asked for them (no `p_fit`; the group records it), its zero_shot/calibrated tiers are
+  audit-only (`--ols-rank-tasks none`) until a probe is promoted, M4 goes probe-first. The closed
+  choices are untouched by A1. The committed M2 results are never edited or re-run; the
+  registration keeps G1's framings lock.
 - **Sidecar and history (D11, D12, D13).** Per-host DuckDB opened per operation under a flock;
   the plugin always spools (`mesa-spool/1`); `direct` is CLI-only and needs the whole lock set
   free; one snapshot per (run, project); never an empty `record_changes`.
@@ -183,7 +202,8 @@ the decision rules, nesting, `decide_from_json`), `bench/cells.py` (the zero_sho
 cells, the one producer of citable `<task>.<tier>.<A1>` cells), `bench/x2.py`,
 `bench/registered.py` (the registered snapshot, counts, B/seed/alpha, framings lock, model
 fingerprints, AnyJev dump), `bench/run.py` (the M2
-verbs), `learn/calibrate.py` (weighted Platt, temperature) **M2 (pre-run)** · `apply.py`,
+verbs), `learn/calibrate.py` (weighted Platt, temperature) **M2** (registered run
+`bench/results/2026-10-03/`; A1: `framings.ACTIVE`, `decider.ols_rank_tasks`) · `apply.py`,
 `revert.py`, `irods_io.py`, `history/` (two-phase apply, revert, backends, spool, recorder, lock
 set) M3 · `learn/{linear,fit}.py`, `artifacts.py`,
 `learn/teacher.py` M4 · `bench/e2e.py` M4 · `adapters/neon.py` M6 ·
@@ -211,7 +231,12 @@ scripts, units) and never import `mesa_clm`.
   output with the snapshot's silver labels and no M2 verb runs on the registered snapshot; the M2
   tests run on synthetic labels only (from the snapshot they read its identity and state columns,
   rows whose label-bearing columns were replaced first, and its label digest).
-  `tests/unit/test_m2_plan_constants.py` holds the plan's Appendix B to the code.
+  `tests/unit/test_m2_plan_constants.py` holds the plan's Appendix B to the code. Since the
+  registered run (2026-10-03) one test also replays the committed `x1.json` from its files
+  (`test_bench_registered.py`); the synthetic registrations stand in the checkout's framings lock.
+  The pipeline test helpers (`tests/fakes/pipeline.py` `config()`) are audit configurations
+  (`decider.ols_rank_tasks: []`, CLM on `term.fits`); `shipped_config()` and
+  `tests/unit/test_k1_default.py` cover the shipped K1 default.
 - No token, key or password is ever logged, printed, hashed into a fingerprint or committed;
   secrets resolve through `env|file|keyring|auto`.
 
