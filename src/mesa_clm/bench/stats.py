@@ -11,7 +11,10 @@ the paired versions resample the same cards for both arms so the difference is p
 bootstrap of Δm (positive = A better) is > 0; (ii) A beats B on at least ⌈0.8·m_c⌉ of the m_c
 held-out cards with at least 10 evaluable items; fewer than 4 such cards is
 ``insufficient_clusters``. "A ≽ B within δ" (non-inferiority) is a cluster lower bound > −δ.
-Effect floors (AUROC ≥ 0.60, ECE ≤ 0.08) are always paired with one of these.
+Effect floors (AUROC ≥ 0.60, ECE ≤ 0.08) are always paired with one of these. When B is the
+mean over K scorings of the same items (X1's within-card shuffles), :func:`rule_r_auroc_mean`
+computes both conditions on Δ = AUROC(A) − mean_k AUROC(B_k), exactly, through the Mann-Whitney
+pair kernel averaged over the K scorings (:func:`pair_kernel`, :func:`kernel_auroc`).
 
 **Clopper-Pearson** (plan §4.7): a numeric ``auto`` must sit at or above ``threshold_cp[risk]``,
 the smallest statistic ``t`` whose pooled held-out set ``{stat ≥ t}`` has at least 30 items and a
@@ -371,6 +374,18 @@ def card_sign_test(
         if math.isnan(va) or math.isnan(vb):
             continue  # the metric is undefined on this card (AUROC with one class)
         per_card[card] = improvement(metric, va, vb)
+    return sign_verdict(per_card, fraction=fraction, min_clusters=min_clusters)
+
+
+def sign_verdict(
+    per_card: dict[str, float],
+    *,
+    fraction: float = SIGN_FRACTION,
+    min_clusters: int = MIN_CLUSTERS,
+) -> SignTest:
+    """Rule R (ii) from the Δm of every counting card (positive = A better): a strict
+    improvement is a win, A needs ⌈fraction·m_c⌉ wins, fewer than ``min_clusters`` counting
+    cards is ``insufficient_clusters``."""
     m_c = len(per_card)
     wins = sum(1 for d in per_card.values() if d > 0)
     needed = math.ceil(fraction * m_c)
@@ -378,6 +393,19 @@ def card_sign_test(
         return SignTest(m_c, wins, needed, False, "insufficient_clusters", per_card)
     passed = wins >= needed
     return SignTest(m_c, wins, needed, passed, "passed" if passed else "sign_test_failed", per_card)
+
+
+def rule_r_reason(sign: SignTest, lower_bound: float) -> str:
+    """The first failing condition of rule R, in the order the verdict reports it:
+    ``insufficient_clusters``, ``bootstrap_lower_bound_not_positive``, ``sign_test_failed``, or
+    ``passed``."""
+    if sign.reason == "insufficient_clusters":
+        return "insufficient_clusters"
+    if not (lower_bound > 0):
+        return "bootstrap_lower_bound_not_positive"
+    if not sign.passed:
+        return "sign_test_failed"
+    return "passed"
 
 
 @dataclass(frozen=True)
@@ -423,15 +451,230 @@ def rule_r(
         metric, probs_a, probs_b, labels, clusters, B=B, seed=seed, alpha=alpha, weights=weights
     )
     sign = card_sign_test(metric, probs_a, probs_b, labels, clusters)
-    if sign.reason == "insufficient_clusters":
-        reason = "insufficient_clusters"
-    elif not (ci.lower > 0):
-        reason = "bootstrap_lower_bound_not_positive"
-    elif not sign.passed:
-        reason = "sign_test_failed"
-    else:
-        reason = "passed"
+    reason = rule_r_reason(sign, ci.lower)
     return RuleR(metric, ci.point, ci.lower, ci, sign, reason == "passed", reason)
+
+
+# -- AUROC of a raw score (X1) ---------------------------------------------------------------------
+
+
+def score_matrix(scores: npt.ArrayLike) -> FloatArray:
+    """``[n, 2]`` with ``scores`` in column 0 and their negation in column 1: the shape the AUROC
+    paths of :func:`metric_value`, :func:`weighted_metric`, :func:`paired_bootstrap` and
+    :func:`card_sign_test` read, which look only at column 0 for ``auroc``. For a raw score such
+    as X1's ``s_c`` (DESIGN X1), whose sigmoid rounds to exactly 1.0 in float64 above about 37 and
+    would add ties the score does not have. Column 1 is not a probability: never pass the matrix
+    to another metric."""
+    s = np.asarray(scores, dtype=float)
+    if s.ndim != 1:
+        raise ValueError("scores must be a 1-d array")
+    out: FloatArray = np.column_stack([s, -s])
+    return out
+
+
+def auroc_ci(
+    scores: npt.ArrayLike,
+    labels: Sequence[int] | npt.ArrayLike,
+    clusters: Sequence[str],
+    *,
+    B: int = DEFAULT_B,
+    seed: int = DEFAULT_SEED,
+    alpha: float = DEFAULT_ALPHA,
+    weights: FloatArray | None = None,
+) -> BootstrapCI:
+    """The card-cluster bootstrap interval of the AUROC of a raw score for the positive class
+    (index 0): :func:`metric_ci` with metric ``auroc`` on :func:`score_matrix`. ``weights``
+    (``[B, n]`` multiplicities from :func:`bootstrap_weights` for these clusters) lets several
+    scores of the same items share one resample, as in :func:`paired_bootstrap`; the result is
+    identical to drawing it here with the same ``B`` and ``seed``."""
+    p = score_matrix(scores)
+    y = _labels(labels, len(p))
+    if len(clusters) != len(p):
+        raise ValueError("clusters must have one entry per item")
+    w = bootstrap_weights(clusters, B=B, seed=seed) if weights is None else weights
+    if w.shape != (B, len(p)):
+        raise ValueError(f"weights must be [B, n] = {(B, len(p))}, got {w.shape}")
+    values = weighted_metric("auroc", p, y, w)
+    lower, upper, n_valid = _quantiles(values, alpha)
+    return BootstrapCI(
+        point=metric_value("auroc", p, y),
+        lower=lower,
+        upper=upper,
+        B=B,
+        seed=seed,
+        alpha=alpha,
+        n_clusters=len(set(clusters)),
+        n_valid=n_valid,
+    )
+
+
+def rule_r_auroc(
+    scores_a: npt.ArrayLike,
+    scores_b: npt.ArrayLike,
+    labels: Sequence[int] | npt.ArrayLike,
+    clusters: Sequence[str],
+    *,
+    B: int = DEFAULT_B,
+    seed: int = DEFAULT_SEED,
+    alpha: float = DEFAULT_ALPHA,
+    weights: FloatArray | None = None,
+) -> RuleR:
+    """Rule R "A ≻ B on AUROC" for two raw scores of the same items (X1's ΔAUROC(real −
+    shuffle)): :func:`rule_r` with metric ``auroc`` on :func:`score_matrix` of each, so a card
+    counts for the sign test when it holds at least 10 items and both classes."""
+    return rule_r(
+        "auroc",
+        score_matrix(scores_a),
+        score_matrix(scores_b),
+        labels,
+        clusters,
+        B=B,
+        seed=seed,
+        alpha=alpha,
+        weights=weights,
+    )
+
+
+# -- the mean AUROC over several scorings of the same items (X1's within-card shuffle) ----------------
+
+
+def _rows(scores: npt.ArrayLike, n: int | None = None) -> FloatArray:
+    s = np.asarray(scores, dtype=float)
+    if s.ndim == 1:
+        s = s[None, :]
+    if s.ndim != 2 or s.shape[0] == 0 or (n is not None and s.shape[1] != n):
+        raise ValueError("score rows must be a non-empty [K, n] array over the same items")
+    if not np.all(np.isfinite(s)):
+        raise ValueError("score rows must be finite")
+    return s
+
+
+def pair_kernel(scores: npt.ArrayLike, positive: npt.ArrayLike) -> FloatArray:
+    """``[P, N]``: for every (positive ``i``, negative ``j``) pair, the mean over the ``K`` rows
+    of ``scores`` (``[K, n]``, or one ``[n]`` row) of ``H(s_i − s_j)``, with ``H`` 1 above 0, ½
+    at 0, 0 below: the Mann-Whitney kernel. The AUROC of a row is the mean of its kernel over
+    the pairs, so the mean of the ``K`` rows' AUROCs over any weighted set of items is the
+    weighted mean of this one matrix (:func:`kernel_auroc`), exactly."""
+    pos = np.asarray(positive, dtype=bool)
+    s = _rows(scores, len(pos))
+    p_idx, n_idx = np.flatnonzero(pos), np.flatnonzero(~pos)
+    acc = np.zeros((len(p_idx), len(n_idx)), dtype=float)
+    for row in s:
+        d = row[p_idx][:, None] - row[n_idx][None, :]
+        acc += (d > 0) + 0.5 * (d == 0)
+    out: FloatArray = acc / len(s)
+    return out
+
+
+def kernel_auroc(kernel: FloatArray, positive: npt.ArrayLike, w: FloatArray) -> FloatArray:
+    """The AUROC that ``kernel`` (:func:`pair_kernel`) gives under each row of item
+    multiplicities ``w`` (``[B, n]``): Σ w_i w_j k_ij / (W_pos · W_neg); ``nan`` where a row has
+    no positive or no negative mass (as :func:`weighted_metric`)."""
+    pos = np.asarray(positive, dtype=bool)
+    wp, wn = w[:, pos], w[:, ~pos]
+    num = np.einsum("bp,pn,bn->b", wp, kernel, wn)
+    den = wp.sum(axis=1) * wn.sum(axis=1)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        out: FloatArray = np.where(den > 0, num / np.where(den > 0, den, 1.0), np.nan)
+    return out
+
+
+def _kernel_point(kernel: FloatArray) -> float:
+    return float(kernel.mean()) if kernel.size else math.nan
+
+
+def mean_auroc_ci(
+    scores: npt.ArrayLike,
+    labels: Sequence[int] | npt.ArrayLike,
+    clusters: Sequence[str],
+    *,
+    B: int = DEFAULT_B,
+    seed: int = DEFAULT_SEED,
+    alpha: float = DEFAULT_ALPHA,
+    weights: FloatArray | None = None,
+) -> BootstrapCI:
+    """The card-cluster bootstrap interval of the mean AUROC (positive class index 0) of the
+    ``K`` score rows of ``scores`` (``[K, n]``): in each replicate, the mean over the rows of
+    their AUROC on the same resampled cards. With one row it equals :func:`auroc_ci`."""
+    y = _labels(labels, np.asarray(scores).shape[-1])
+    pos = y == 0
+    kernel = pair_kernel(scores, pos)
+    if len(clusters) != len(y):
+        raise ValueError("clusters must have one entry per item")
+    w = bootstrap_weights(clusters, B=B, seed=seed) if weights is None else weights
+    if w.shape != (B, len(y)):
+        raise ValueError(f"weights must be [B, n] = {(B, len(y))}, got {w.shape}")
+    lower, upper, n_valid = _quantiles(kernel_auroc(kernel, pos, w), alpha)
+    return BootstrapCI(
+        point=_kernel_point(kernel),
+        lower=lower,
+        upper=upper,
+        B=B,
+        seed=seed,
+        alpha=alpha,
+        n_clusters=len(set(clusters)),
+        n_valid=n_valid,
+    )
+
+
+def rule_r_auroc_mean(
+    scores_a: npt.ArrayLike,
+    scores_b: npt.ArrayLike,
+    labels: Sequence[int] | npt.ArrayLike,
+    clusters: Sequence[str],
+    *,
+    B: int = DEFAULT_B,
+    seed: int = DEFAULT_SEED,
+    alpha: float = DEFAULT_ALPHA,
+    weights: FloatArray | None = None,
+    min_items: int = SIGN_MIN_ITEMS,
+    fraction: float = SIGN_FRACTION,
+    min_clusters: int = MIN_CLUSTERS,
+) -> RuleR:
+    """Rule R "A ≻ B on AUROC" where B is the **mean AUROC of K scorings** of the same items
+    (``scores_b`` ``[K, n]``; X1's ΔAUROC(real − shuffle) with K within-card shuffles,
+    ``design/m2-analysis-plan.md`` §5.4): (i) the card-cluster paired bootstrap of
+    Δ = AUROC(A) − mean_k AUROC(B_k), both on the same resampled cards in every replicate, has a
+    one-sided lower bound > 0; (ii) Δ restricted
+    to a card is > 0 on ⌈fraction·m_c⌉ of the m_c cards with at least ``min_items`` items and
+    both classes. With ``K = 1`` it is :func:`rule_r_auroc` (to rounding)."""
+    y = _labels(labels, np.asarray(scores_a).shape[-1])
+    pos = y == 0
+    a = _rows(scores_a, len(y))
+    if a.shape[0] != 1:
+        raise ValueError("scores_a must be one [n] score")
+    b = _rows(scores_b, len(y))
+    if len(clusters) != len(y):
+        raise ValueError("clusters must have one entry per item")
+    diff = pair_kernel(a, pos) - pair_kernel(b, pos)
+    w = bootstrap_weights(clusters, B=B, seed=seed) if weights is None else weights
+    if w.shape != (B, len(y)):
+        raise ValueError(f"weights must be [B, n] = {(B, len(y))}, got {w.shape}")
+    lower, upper, n_valid = _quantiles(kernel_auroc(diff, pos, w), alpha)
+    ci = BootstrapCI(
+        point=_kernel_point(diff),
+        lower=lower,
+        upper=upper,
+        B=B,
+        seed=seed,
+        alpha=alpha,
+        n_clusters=len(set(clusters)),
+        n_valid=n_valid,
+    )
+    groups = np.asarray(clusters)
+    p_idx, n_idx = np.flatnonzero(pos), np.flatnonzero(~pos)
+    per_card: dict[str, float] = {}
+    for card in sorted(set(clusters)):
+        on = groups == card
+        if int(on.sum()) < min_items:
+            continue
+        rows, cols = np.flatnonzero(on[p_idx]), np.flatnonzero(on[n_idx])
+        if len(rows) == 0 or len(cols) == 0:
+            continue  # AUROC is undefined on a card with one class
+        per_card[card] = float(diff[np.ix_(rows, cols)].mean())
+    sign = sign_verdict(per_card, fraction=fraction, min_clusters=min_clusters)
+    reason = rule_r_reason(sign, ci.lower)
+    return RuleR("auroc", ci.point, ci.lower, ci, sign, reason == "passed", reason)
 
 
 @dataclass(frozen=True)

@@ -1,4 +1,4 @@
-# RESEARCH.md — verified facts (2026-09-29, M1 additions 2026-10-01)
+# RESEARCH.md — verified facts (2026-09-29, M1 additions 2026-10-01, M2 results 2026-10-03)
 
 Every fact names where it was verified: a URL, a commit, a `file:line`, or the command that was
 run. Every section carries a `stale_after`: upstream CLM facts expire on 2026-12-31 (the project
@@ -804,6 +804,167 @@ will move when it lands.
   (`bench/results/2026-09-29/baselines.json`) report lookup_prob ECE 0.131 (annotate), 0.401
   (aspect), 0.152 (ontology_fits), 0.070 (term.fits), 0.142 (value_kind); accuracy, NLL, AUROC,
   the novel-key and LOPO blocks are unchanged.
+
+## M2 results (registered run, 2026-10-03; `stale_after: 2027-03-31`)
+
+The registered M2 run: plan §14 run once on sparky-1 from the pre-run commit `76c890f`, outputs
+committed as produced in `eea525d` (DESIGN, implementation notes (M2), "M2 registered run", with
+every file's sha256 and the protocol times; the decisions are DESIGN A1). Files are under
+`bench/results/2026-10-03/`, and `file#/pointer` is a JSON pointer into that file. The run is the
+registered one (`x1.json#/x1/registered` true, `#/x1/deviations` empty): the snapshot
+`bench/snapshots/2026-09-29.parquet`, term.fits 285 items (86 Yes / 199 No, 143 targets),
+column.ontology_fits 190 (76 / 114, 60 targets), 7 cards (`x1.json#/x1/tasks/<task>/n`,
+`class_counts`, `n_targets`, `cards`). Silver labels are four-model agreement, not truth. Every
+interval `[lower, upper]` is the pair of one-sided 95% card-cluster bootstrap bounds (B = 2000,
+seed 0), a 90% interval; "cards won" is rule R's sign test (cards with ≥ 10 items; 6 of 7 needed).
+
+**X1, per arm** (`x1.json#/x1/tasks/<task>/arms/<arm>`: `auroc`, `shuffle/auroc`, `shuffle/rule_r`,
+`qualified`, `failed`, `loco/nll`). AUROC is of the raw score `s`; the shuffle comparator is the
+mean AUROC of 200 within-card derangements; rule (1) needs the AUROC lower bound > 0.5 ("bound"),
+AUROC ≥ 0.60 ("floor") and ΔAUROC ≻ 0 under rule R ("shuffle"). term.fits
+(`#/x1/tasks/neon_term_fits/arms`):
+
+| arm | AUROC(s) [bounds] | shuffle mean AUROC | ΔAUROC (lower bound; cards won) | rule (1) | LOCO-Platt NLL |
+|---|---|---|---|---|---|
+| F1@clm-latest | 0.629 [0.579, 0.675] | — | — | control | 0.6038 |
+| F1@clm-raw | 0.436 [0.407, 0.471] | — | — | control | 0.6178 |
+| F4@clm-latest | 0.497 [0.406, 0.572] | 0.472 | +0.0256 (−0.0112; 5) | fails: bound, floor, shuffle | 0.6285 |
+| F4@clm-raw | 0.458 [0.413, 0.505] | 0.444 | +0.0136 (+0.0008; 6), passes | fails: bound, floor | 0.6227 |
+| F7@clm-latest | 0.511 [0.482, 0.544] | 0.563 | −0.0521 (−0.0765; 0) | fails: bound, floor, shuffle | 0.6213 |
+| F7@clm-raw | 0.494 [0.428, 0.549] | 0.480 | +0.0135 (−0.0241; 3) | fails: bound, floor, shuffle | 0.6235 |
+| F9@clm-latest | 0.557 [0.512, 0.596] | 0.519 | +0.0375 (+0.0112; 5) | fails: floor, shuffle | 0.6187 |
+| F9@clm-raw | 0.539 [0.495, 0.592] | 0.494 | +0.0448 (+0.0145; 5) | fails: bound, floor, shuffle | 0.6192 |
+
+column.ontology_fits (`#/x1/tasks/neon_ontology_fits/arms`):
+
+| arm | AUROC(s) [bounds] | shuffle mean AUROC | ΔAUROC (lower bound; cards won) | rule (1) | LOCO-Platt NLL |
+|---|---|---|---|---|---|
+| F1@clm-latest | 0.595 [0.528, 0.663] | — | — | control | 0.6821 |
+| F1@clm-raw | 0.470 [0.414, 0.514] | — | — | control | 0.6850 |
+| F4@clm-latest | 0.611 [0.529, 0.677] | 0.538 | +0.0731 (+0.0531; 7), passes | qualifies | 0.6656 |
+| F4@clm-raw | 0.501 [0.399, 0.614] | 0.545 | −0.0448 (−0.0596; 0) | fails: bound, floor, shuffle | 0.6935 |
+| F7@clm-latest | 0.693 [0.611, 0.762] | 0.608 | +0.0849 (+0.0478; 7), passes | qualifies | 0.6331 |
+| F7@clm-raw | 0.592 [0.546, 0.637] | 0.579 | +0.0128 (−0.0386; 4) | fails: floor, shuffle | 0.6879 |
+| F9@clm-latest | 0.751 [0.697, 0.805] | 0.622 | +0.1288 (+0.0898; 7), passes | qualifies | 0.6021 |
+| F9@clm-raw | 0.745 [0.700, 0.804] | 0.646 | +0.0987 (+0.0729; 7), passes | qualifies | 0.6183 |
+
+- **Decisions** (`#/x1/tasks/<task>/decision`, `a1`): term.fits **K1**, no arm qualifying on
+  either model, the best AUROC 0.557 (F9@clm-latest) under the 0.60 floor; every nested fold's
+  inner outcome is K1 as well (`#/x1/tasks/neon_term_fits/nested/fold_choices`; the best nested
+  AUROC is 0.571). column.ontology_fits **F9@clm-latest**: eligible F4, F7, F9 on clm-latest and
+  F9 on clm-raw (`#/x1/tasks/neon_ontology_fits/decision/step4/eligible`); rule (2) F9 has the
+  lowest NLL among the clm-latest arms (`decision/step2`); rule (3) F9@clm-raw ≻ F9@clm-latest
+  fails, Δ −0.0162, lower bound −0.1069, 2 cards won (`decision/comparisons/0`); rule (4) does not
+  fire (`decision/step4/d3_amendment_recommended` false; the nearest, F1@clm-latest ≻
+  F4@clm-latest, lower bound −0.0549, 3 cards won: `decision/comparisons/1`); 7 of 7 nested folds
+  chose F9@clm-latest (`#/x1/tasks/neon_ontology_fits/nested/fold_choices`).
+- **Candidate-only probe** (report-only; the PR #13 recipe on the candidate vectors alone,
+  `#/x1/tasks/<task>/candidate_probe`): term.fits AUROC **0.808** [0.765, 0.858], NLL 0.850,
+  accuracy 0.804; column.ontology_fits AUROC **0.816** [0.758, 0.873], NLL 0.458, accuracy 0.747.
+- **Cost and latency** (report-only): encoder tokens per target F9 100.3 / 85.9, F7 483.9 / 481.7,
+  F4 498.2 / 495.8, F1 1,166.1 / 1,707.1 (term.fits / ontology_fits,
+  `#/x1/tasks/<task>/decision/tokens_per_target`). The timing run's p50 per target
+  (`#/x1/tasks/<task>/arms/<arm>/diagnostics/latency`): ontology_fits F9@clm-latest 12.2 ms (91.6
+  ms on a target's first ask, 11.6 ms on its second, whose texts are cached), F7@clm-latest 13.2 ms
+  (133.9 / 11.8); term.fits F9@clm-latest 56.4 ms (138.9 / 18.2), F7@clm-latest 68.8 ms (205.8 /
+  17.6).
+- **Collapse diagnostic** (raw / projected mean pairwise cosine of distinct contexts,
+  `#/x1/tasks/<task>/collapse`): term.fits F7 0.831 / 0.677, F9 0.945 / 0.749, F4 0.990 / 0.932,
+  F1 0.992 / 0.959; ontology_fits F7 0.949 / 0.767, F9 0.939 / 0.727, F4 0.994 / 0.950, F1 0.991 /
+  0.946; the F7, F9 and F1 values equal the M1 spike's to 4 dp
+  (`bench/results/2026-10-01/collapse_spike.json`). F9's
+  context names the product and the column, not the table: 101 distinct F9 contexts for 143
+  term.fits targets and 45 for 60 ontology_fits targets (`collapse/F9/n`); 22 Yes/No pairs of
+  term.fits items and 7 of ontology_fits in different tables have bit-identical F9 scores
+  (`x1_items.parquet`, F9 rows, the same under both models).
+- **Monte Carlo sensitivity** (report-only; rerun 2026-10-03 with the repository's code on the
+  committed items file, nothing written: `uv run python` with `mesa_clm.bench.framing`, `items =
+  read_items("bench/results/2026-10-03/x1_items.parquet")`, then for each shuffle seed s = 0–5
+  `ev = ItemEvidence(items[task], shuffle_seed=s)`, `ev.shuffle(arm)` (the per-card Δ is its rule
+  R's `sign.per_card`), `decide(ev)` and `nested_selection(items[task], shuffle_seed=s)`):
+  term.fits F9@clm-raw's shuffle verdict (5 cards won, 6 needed) hinges on one card,
+  brd_countdata, whose Δ is −0.0026 at seed 0 and ranges from −0.0039 to +0.0003 over shuffle
+  seeds 0–5 (6 cards won, the verdict passing, at seeds 3 and 5); the arm fails the bound and the
+  floor in any case. In ontology_fits' nested fold without brd_countdata, F7@clm-raw becomes
+  eligible at shuffle seed 2 only (AUROC 0.6052, lower bound 0.5589); that fold's choice stays
+  F9@clm-latest. No full-run or nested decision moves at any of the six seeds.
+
+**The nested column.ontology_fits cells** (`tiers.json#/cells/neon_ontology_fits.<tier>.F9`;
+`selection: nested`, `pre_registered: true`, `exploratory: false`, `fold_choices` 7 of 7
+F9@clm-latest; the `@full` cells equal them):
+
+| tier | acc | NLL | ECE | AUROC [bounds] | novel keys (n 99: 33 / 66): acc, AUROC (lower bound), NLL vs lookup_prob | beats_lookup_novel | threshold_cp 0.05 / 0.10 |
+|---|---|---|---|---|---|---|---|
+| zero_shot | 0.489 | 2.624 | 0.464 | 0.751 [0.697, 0.805] | 0.434, 0.725 (0.597), 2.846 vs 0.653 | false: NLL rule R, Δ −2.193, lower bound −2.496, 0 of 4 cards | null / null |
+| calibrated | 0.642 | 0.602 | 0.123 | 0.732 [0.673, 0.802] | 0.657, 0.709 (0.584), 0.594 vs 0.653 | false: NLL rule R, Δ +0.0582, lower bound −0.0463, 4 of 4 cards | null / null |
+
+Pointers: `metrics`, `baselines/novel_key`, `baselines/novel_key_lookup`, `baselines/beats_detail`
+of each cell. The calibrated cell's per-fold Platt slopes are 0.211–0.324, none inverted
+(`diagnostics/per_fold`); fitted without the label weights it gives NLL 0.599 and ECE 0.094
+(`diagnostics/sensitivity_unweighted`, report-only). The paired no-model controls on the same
+folds: majority 0.600, lookup 0.800 (lookup NLL 0.522) (`baselines`); the unpaired
+leave-one-product-out control (task-level, its 2 product folds over all 190 items, analysis plan
+§9.9): 0.721 (`baselines/lopo`). The **term.fits audit cells** (K1: `neon_term_fits.<tier>.F7`,
+F7@clm-latest, `selection: none`, `pre_registered: false`, `exploratory: true`): zero_shot
+accuracy 0.495, NLL 2.047, ECE 0.374, AUROC 0.511 [0.482, 0.544]; calibrated accuracy 0.698, NLL
+0.621, ECE 0.105, AUROC 0.457 [0.435, 0.491], one fold inverted (bet_sorting, a = −0.0026);
+`beats_lookup_novel` false in both (novel-key AUROC lower bound 0.468 and 0.396); majority 0.698,
+lookup 0.772.
+
+**The closed choices** (F7@clm-latest, `pre_registered: true`, `selection: none`, not citable in
+M2; `tiers.json#/cells/<task>.<tier>.F7`): column.annotate zero_shot accuracy **0.357** against
+majority **0.643** (n 98, NLL 3.971, ECE 0.620, AUROC 0.498 [0.401, 0.588]); column.aspect zero_shot
+**0.050** against **0.300** (n 60, NLL 5.918, ECE 0.705); avu.value_kind zero_shot **0.324**
+against **0.478** (n 278, NLL 1.987, ECE 0.274) and calibrated 0.324 (NLL 1.399, ECE 0.129;
+temperature 7.62–25.99 per fold). The lookup scores 0.796, 0.550 and 0.680 on the same items.
+column.annotate's and column.aspect's calibrated cells are empty: no fold trains on 100 items
+(aspect 47–55, every fold `below_floor`; annotate 77–92, recorded as the 30/5 guard in 6 folds and
+`below_floor` in bet_fielddata; `skipped_folds`). The `@clm-raw` cells (exploratory): annotate
+0.347 (NLL 1.070), aspect 0.200 (2.251), value_kind 0.392 (1.406; calibrated 0.392, 1.343).
+
+**X2** (`x2.json#/cells/<task>.baseline.<spec>`; baselines, never servable or cited):
+
+| cell | acc | AUROC [bounds] | NLL | ECE | novel-key AUROC (lower bound) | beats_lookup_novel |
+|---|---|---|---|---|---|---|
+| neon_term_fits.baseline.lookup_prob | 0.754 (lookup 0.772) | 0.622 [0.591, 0.663] | 0.555 | 0.070 | 0.424 | — |
+| neon_term_fits.baseline.pr13@S1 | 0.723 | 0.709 [0.643, 0.771] | 1.460 | 0.215 | 0.636 (0.556) | false |
+| neon_term_fits.baseline.pr13@S1ns | 0.747 | 0.786 [0.738, 0.839] | 1.019 | 0.184 | 0.757 (0.714) | false |
+| neon_term_fits.baseline.anyjev_l2 | 0.765 | 0.782 [0.743, 0.833] | 0.499 | 0.058 | 0.783 (0.729) | true |
+| neon_ontology_fits.baseline.lookup_prob | 0.805 (lookup 0.800) | 0.818 [0.772, 0.870] | 0.522 | 0.152 | 0.396 | — |
+| neon_ontology_fits.baseline.pr13@S1 | 0.821 | 0.884 [0.842, 0.927] | 0.791 | 0.131 | 0.834 (0.720) | false |
+| neon_ontology_fits.baseline.pr13@S1ns | 0.821 | 0.905 [0.869, 0.941] | 0.568 | 0.137 | 0.848 (0.759) | false |
+| neon_ontology_fits.baseline.anyjev_l2 | 0.837 | 0.908 [0.884, 0.940] | 0.375 | 0.078 | 0.875 (0.802) | true |
+
+The PR #13 replica fails `beats_lookup_novel` on its NLL half (`baselines/beats_detail`); every
+fold converged (`diagnostics/per_fold`). The AnyJev L2 cells join all 285 and 190 items by D1
+identity with no label or card difference (`diagnostics/join`). The five recomputed M0 controls
+equal `bench/results/2026-09-29/baselines.json` field for field (`x2.json#/notes/2`).
+
+**Recomputation from the repository** (2026-10-03, on the committed files, nothing written).
+`mesa-clm bench framing --decide --from bench/results/2026-10-03/x1.json` replays and recomputes
+the X1 file (§14.5, 17:41:13Z, and 18:19:14Z after DESIGN A1's lock rotation). scikit-learn's
+`roc_auc_score` on each arm's `s` with the positives of `framing.read_items` over
+`x1_items.parquet` equals `x1.json#/x1/tasks/<task>/arms/<arm>/auroc/point` for all 16 arms to
+1.1e-16. With `mesa_clm.bench.framing`, `decide(ItemEvidence(items[task], seed=b))` and
+`nested_selection(items[task], seed=b)` for every bootstrap seed b = 1–200 give each task's
+registered full-run outcome and all 14 fold choices (`#/x1/tasks/<task>/decision`,
+`nested/fold_choices`; seed 0 reproduces them too): no decision changes.
+
+**Independent recomputation** (reported by the two post-run reviews; not reproducible from the
+repository: their own code, in scratch directories outside it, with mesa-clm's label-free manifest
+supplying the item texts): X1's 16 arms reproduce (pooled AUROC exactly, the bootstrap bounds
+identically, the shuffle comparator to 3.3e-15, LOCO-Platt NLL to 2.3e-11, the `p_loco` column to
+5.9e-10), all 14 nested decisions are identical, and over 200 other bootstrap seeds the full-run
+and nested decisions never change; every tier and X2 cell reproduces (1,923 comparisons, 0
+failures, largest deviation 1.2e-12).
+
+**What K2 will compare (M4).** K2, frozen at G1, judges each task's best servable tier on nested
+cells: auto-eligible needs `beats_lookup_novel`, paired non-inferiority to AnyJev L2 on the full
+item set (Δacc cluster lower bound > −0.02 with the card-sign condition) and ECE ≤ 0.08 with a
+cluster upper bound ≤ 0.12; proposer-only needs `beats_lookup_novel` alone; otherwise the tier is
+killed and proposals use `ols_rank`. The AnyJev side is the per-item `x2.json` cells
+`<task>.baseline.anyjev_l2` (285 and 190 items, fully joined). Under K1, term.fits enters M4
+through probe cells first; column.ontology_fits through its F9 tiers and probes.
 
 ## Contradictions found during exploration and how they were settled
 

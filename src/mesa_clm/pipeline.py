@@ -54,6 +54,17 @@ transaction (D11), a failed run with status ``failed``.
 OLS top-1 as ``proposed``, no numbers, never ``auto``. The same happens for every group of a
 task in ``ols_rank_tasks`` (K1/K2(c)) or for all rank_fit tasks when the tier is ``ols_rank``.
 Anchor-won groups are recorded as ``abstain`` (``anchor_won``) and stay pending for review.
+The run is ``degraded`` when CLM did not answer (an unavailable or truncated record) or the tier
+is ``ols_rank``; a task in ``ols_rank_tasks`` is decided that way by design and degrades nothing.
+
+**K1 for term.fits (DESIGN A1).** X1's registered run found no qualifying arm for ``term.fits``,
+so ``ols_rank_tasks`` defaults to ``decider.ols_rank_tasks`` = ``["term.fits"]``: every Q4, Q5
+and Q6 group is decided by ``ols_rank`` and CLM is asked about ``term.fits`` only when the
+caller names an empty set (an audit run; ``annotate --ols-rank-tasks none``). Q4b (D24) needs
+``p_fit``, which an ``ols_rank`` record does not have, so it is never asked for an ``ols_rank``
+group; when it would have been (specificity on, a proposed winner with OLS children) the group's
+``search_json`` records ``specificity: {asked: false, reason: no_p_fit_ols_rank}`` and the
+proposal's rationale says so. ``column.ontology_fits`` (Q3) is asked with its A1 framing, F9.
 """
 
 from __future__ import annotations
@@ -126,6 +137,7 @@ __all__ = [
     "MAX_CHILDREN",
     "MAX_TAXON_AVUS",
     "ONTOLOGY_KEEP",
+    "SPECIFICITY_NOT_ASKED",
     "TIERS",
     "AnnotationRun",
     "Annotator",
@@ -151,6 +163,10 @@ MAX_CHILDREN: Final[int] = 10
 TIERS: Final[tuple[str, ...]] = ("auto", "zero_shot", "calibrated", "probe", "head", "ols_rank")
 ANNOTATE_YES: Final[str] = "Yes"
 _PROPOSING: Final[frozenset[str]] = frozenset({"auto", "proposed"})
+# What a term group decided by ols_rank records where D24 would have refined its winner (a
+# proposed winner with OLS children): the refinement needs p_fit, which ols_rank never has.
+SPECIFICITY_NOT_ASKED: Final[dict[str, Any]] = {"asked": False, "reason": "no_p_fit_ols_rank"}
+SPECIFICITY_NOT_ASKED_NOTE: Final[str] = "specificity (D24) not asked: ols_rank has no p_fit"
 
 _TargetScope = Literal["column", "site", "dataset"]
 
@@ -222,8 +238,10 @@ class AnnotationRun:
     scope, column_name, site_code, ontology_id}``; ``group_id`` is ``None`` for a column without
     an aspect). ``n_calls``/``input_tokens`` count the requests to clm-serve and the encoder
     tokens it reported, ``n_failed_calls`` those that got no answer; ``degraded`` is true when
-    any group fell back to ``ols_rank`` or a CLM answer was unavailable (D28). ``buffer`` holds
-    the rows (committed when a store was given)."""
+    a CLM answer was unavailable (its group fell back to ``ols_rank``) or the tier was
+    ``ols_rank`` (D28); ``ols_rank_tasks`` are the rank_fit tasks the run decided by ``ols_rank``
+    whatever CLM answered (``term.fits`` under K1, DESIGN A1). ``buffer`` holds the rows
+    (committed when a store was given)."""
 
     run_id: UUID
     owner: str
@@ -242,6 +260,7 @@ class AnnotationRun:
     clm_model: str = ""
     buffer: RunBuffer | None = None
     n_failed_calls: int = 0
+    ols_rank_tasks: tuple[str, ...] = ()
 
     def to_dict(self) -> dict[str, Any]:
         """The ``mesa_clm_annotate`` output (plan §7.1) minus the tool's ``next_step``."""
@@ -259,6 +278,7 @@ class AnnotationRun:
             "input_tokens": self.input_tokens,
             "outcomes": dict(self.outcomes),
             "degraded": self.degraded,
+            "ols_rank_tasks": list(self.ols_rank_tasks),
             "seconds": self.seconds,
         }
 
@@ -582,8 +602,10 @@ class Annotator:
     the committed run. ``owner`` is the identity the run belongs to (D21; explain, feedback and
     apply check it) and ``actor`` who asked for it. ``tier`` is a :data:`TIERS` value (default
     ``cfg.decider.tier``); ``ols_rank`` sends every rank_fit task to the degraded method, and
-    ``ols_rank_tasks`` does so per task (K1/K2(c)). ``second_opinion`` is an optional Claude
-    provider asked about proposed winners; it never decides (D22).
+    ``ols_rank_tasks`` does so per task (K1/K2(c); default ``cfg.decider.ols_rank_tasks``,
+    ``term.fits`` under DESIGN A1; an empty collection asks CLM for every task, an audit run).
+    ``second_opinion`` is an optional Claude provider asked about proposed winners; it never
+    decides (D22).
     """
 
     def __init__(
@@ -599,7 +621,7 @@ class Annotator:
         actor: str | None = None,
         second_opinion: DecisionProvider | None = None,
         tier: str | None = None,
-        ols_rank_tasks: Collection[str] = (),
+        ols_rank_tasks: Collection[str] | None = None,
         encoder_model: str | None = None,
     ) -> None:
         if not owner or not owner.strip():
@@ -607,7 +629,8 @@ class Annotator:
         chosen = tier or cfg.decider.tier
         if chosen not in TIERS:
             raise ValueError(f"unknown tier {chosen!r}; expected one of {TIERS}")
-        degraded_tasks = frozenset(ols_rank_tasks) | (
+        by_design = cfg.decider.ols_rank_tasks if ols_rank_tasks is None else ols_rank_tasks
+        degraded_tasks = frozenset(by_design) | (
             RANK_FIT_TASKS if chosen == "ols_rank" else frozenset()
         )
         unknown = degraded_tasks - RANK_FIT_TASKS
@@ -776,6 +799,7 @@ class _Pass:
             fingerprint={**self.fp.as_dict(), "framings_lock_sha": self.run_row.framings_lock_sha},
             clm_model=self.a.provider.model,
             buffer=self.buffer,
+            ols_rank_tasks=tuple(sorted(self.a.ols_rank_tasks)),
         )
 
     def _fail(self) -> None:
@@ -827,6 +851,13 @@ class _Pass:
             if r.method == "unavailable":
                 self.degraded = True
         return records
+
+    def _note_fallback(self, record: DecisionRecord | None) -> None:
+        """A group is about to be decided by ``ols_rank``: the run is ``degraded`` when CLM did
+        not answer it (``record`` unavailable or truncated) or the tier is ``ols_rank``, not when
+        its task is in ``ols_rank_tasks`` by design (K1, DESIGN A1)."""
+        if record is not None or self.a.tier == "ols_rank":
+            self.degraded = True
 
     def _rule(
         self,
@@ -1050,7 +1081,7 @@ class _Pass:
                     column_name=col.name,
                     group_id=group_id,
                 ).decision_id
-            self.degraded = True
+            self._note_fallback(record)
             cands = fr.ontology_candidates(allowed)
             record = ols_rank_record(framing, state, cands, self.fp)
             ols_ranks: list[int | None] | None = [*range(1, len(cands) + 1), None]
@@ -1277,7 +1308,7 @@ class _Pass:
             if record is not None:
                 _, o, why = self.rec.verdict(record)
                 parent = self.rec.record(record, outcome=o, reason=why, **common).decision_id
-            self.degraded = True
+            self._note_fallback(record)
             record = ols_rank_record(framing, g.state, fcands, self.fp)
         _, outcome, reason = self.rec.verdict(record)
         margin = group_margin(record)
@@ -1285,11 +1316,26 @@ class _Pass:
         row = self.rec.record(
             record, outcome=outcome, reason=reason, parent_decision_id=parent, **common
         )
+        proposing = outcome in _PROPOSING and record.answer_index >= 0 and not record.anchor_won
+        search_json: dict[str, Any] = {
+            **g.log,
+            "candidates": [_candidate_json(c) for c in g.candidates],
+        }
+        # D24 needs p_fit; an ols_rank winner has none, so its refinement is never asked and
+        # the group says so where it would have been (DESIGN A1).
+        unrefined = (
+            proposing
+            and self.cfg.policy.specificity
+            and record.method not in CLM_METHODS
+            and g.candidates[record.answer_index].has_children
+        )
+        if unrefined:
+            search_json["specificity"] = dict(SPECIFICITY_NOT_ASKED)
         self.buffer.insert_group(
             self._group_row(
                 g,
                 group_id=g.group_id,
-                search_json={**g.log, "candidates": [_candidate_json(c) for c in g.candidates]},
+                search_json=search_json,
                 n_candidates=len(g.candidates),
                 outcome=outcome,
                 record=record,
@@ -1298,7 +1344,7 @@ class _Pass:
                 top_p_fit=_best_p_fit(record),
             )
         )
-        if outcome not in _PROPOSING or record.answer_index < 0 or record.anchor_won:
+        if not proposing:
             self._abstain(
                 reason or outcome,
                 task_id=TASK_TERM,
@@ -1310,6 +1356,8 @@ class _Pass:
             )
             return
         winner = self._proposal(g, row, record, record.answer_index, outcome)
+        if unrefined:
+            winner.rationale += f"; {SPECIFICITY_NOT_ASKED_NOTE}"
         props = [winner]
         for i in self._runner_ups(record, g.keep_top - 1):
             props.append(self._proposal(g, row, record, i, "proposed", runner_up=True))

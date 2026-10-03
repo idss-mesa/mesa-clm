@@ -46,7 +46,23 @@ def card(name: str) -> DatasetCard:
 
 def config(**env: str) -> Config:
     """The default configuration plus ``MESA_CLM_*`` overrides (``POLICY__PROFILE='dev'`` by
-    default), never the process environment."""
+    default), never the process environment.
+
+    ``DECIDER__OLS_RANK_TASKS='[]'`` by default: these helpers exercise every CLM step, the
+    ``term.fits`` groups (Q4-Q6, D24's refinement, the second opinion) included, as an audit run
+    does. The shipped default decides ``term.fits`` by ``ols_rank`` (K1, DESIGN A1); pass
+    ``DECIDER__OLS_RANK_TASKS=...`` (or use :func:`shipped_config`) to run it, as
+    ``tests/unit/test_k1_default.py`` does."""
+    base = {
+        "MESA_CLM_POLICY__PROFILE": "dev",
+        "MESA_CLM_OLS__FIXTURES": "replay",
+        "MESA_CLM_DECIDER__OLS_RANK_TASKS": "[]",
+    }
+    return load_config(env={**base, **{f"MESA_CLM_{k}": v for k, v in env.items()}})
+
+
+def shipped_config(**env: str) -> Config:
+    """:func:`config` with the shipped ``decider`` defaults (``ols_rank_tasks`` included)."""
     base = {"MESA_CLM_POLICY__PROFILE": "dev", "MESA_CLM_OLS__FIXTURES": "replay"}
     return load_config(env={**base, **{f"MESA_CLM_{k}": v for k, v in env.items()}})
 

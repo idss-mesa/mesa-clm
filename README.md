@@ -13,11 +13,14 @@ a provenance sidecar next to the AVU history kept by
 [mesa-ducklake](https://github.com/idss-mesa/mesa-ducklake). The core is a torch-free client;
 the encoder and `clm-serve` run as separate processes.
 
-Status: pre-alpha, milestone M1 (the serving stack on sparky-1 and the hermetic rank-first
-pipeline: `annotate`, `explain`, `review`, `feedback`, proposed-only). See `DESIGN.md` for the
-decisions (U1–U4, D0–D33, the pre-registered experiments), `RESEARCH.md` for the verified facts
-the design rests on, `design/plan-2026-09-28.md` for the plan, and `CLAUDE.md` for how to work
-here.
+Status: pre-alpha, milestone M2 done (2026-10-03). The registered framing experiment
+(`bench/results/2026-10-03/`) chose the F9 framing on `clm-latest` for `column.ontology_fits` and
+found no qualifying framing for `term.fits` (K1), so `term.fits` proposals are the OLS top-1
+(`ols_rank`) by default (DESIGN A1; every number in `RESEARCH.md`, "M2 results"). Everything is
+proposed-only. M1 delivered the serving stack on sparky-1 and the hermetic rank-first pipeline
+(`annotate`, `explain`, `review`, `feedback`). See `DESIGN.md` for the decisions (U1–U4, D0–D33,
+the pre-registered experiments, amendments A1–A5), `RESEARCH.md` for the verified facts the
+design rests on, `design/plan-2026-09-28.md` for the plan, and `CLAUDE.md` for how to work here.
 
 ## Why
 
@@ -70,15 +73,17 @@ uv run mesa-clm --provenance duckdb:////tmp/clm.duckdb review --run-id <id or pr
 uv run mesa-clm framings --check          # framing keys match framings.lock.json
 ```
 
-Answers given at an interactive terminal are curator labels; `review --pick` and `feedback` run
-without one (a script, an agent's shell) are recorded as an agent's answers at weight 0 and say
-so (DESIGN A2). On the serving host, `--provider clm` (the default) talks to the loopback encoder
-and clm-serve with the keys `mesa-clm serve keys --init` writes, `~/.mesa/clm/secrets/clm.key`
-and `encoder.key`, read by default (`MESA_CLM_CLM__API_KEY_FILE` and
+By default `term.fits` groups are decided by `ols_rank` (the OLS top-1, proposed-only; K1, DESIGN
+A1) and `column.ontology_fits` is asked with F9; `--ols-rank-tasks none` asks CLM for `term.fits`
+too, an audit run. Answers given at an interactive terminal are curator labels; `review --pick` and
+`feedback` run without one (a script, an agent's shell) are recorded as an agent's answers at weight
+0 and say so (DESIGN A2). On the serving host, `--provider clm` (the default) talks to the loopback
+encoder and clm-serve with the keys `mesa-clm serve keys --init` writes,
+`~/.mesa/clm/secrets/clm.key` and `encoder.key`, read by default (`MESA_CLM_CLM__API_KEY_FILE` and
 `MESA_CLM_ENCODER__API_KEY_FILE` name others); `mesa-clm doctor --serve` checks the stack first.
 `features build|export-npz|project|stats` keep the per-encoder feature cache, and `provenance
-migrate|export|import|prune` maintain the sidecar. `plan`, `apply`, `revert` and the
-`mesa_clm_*` MCP tools arrive with M3; `mesa-clm --help` lists what exists.
+migrate|export|import|prune` maintain the sidecar. `plan`, `apply`, `revert` and the `mesa_clm_*`
+MCP tools arrive with M3; `mesa-clm --help` lists what exists.
 
 ## Links
 

@@ -69,6 +69,9 @@ MiB = 1024 * 1024
 PlannerKind = Literal["static", "gateway", "claude"]
 # ``ols_rank`` is the degraded D28 method for every rank_fit task (proposed-only, never auto).
 Tier = Literal["auto", "zero_shot", "calibrated", "probe", "head", "ols_rank"]
+# The rank_fit tasks (``tasks.RANK_FIT_TASKS``, asserted equal by the tests): the only ones
+# ``ols_rank`` can decide (D28).
+RankFitTask = Literal["term.fits", "column.ontology_fits"]
 Profile = Literal["prod", "dev"]
 FixtureMode = Literal["off", "record", "replay", "auto"]
 HistoryBackend = Literal["direct", "spool", "none", "auto"]
@@ -190,15 +193,43 @@ class EncoderConfig(_KeyedSection):
         return (str(default), True) if default is not None else (None, False)
 
 
+def _k1_ols_rank_tasks() -> list[RankFitTask]:
+    """The shipped ``decider.ols_rank_tasks``: ``term.fits`` (K1, DESIGN A1)."""
+    return ["term.fits"]
+
+
 class DeciderConfig(_Section):
     """Which tier answers (D6): ``auto`` takes the best promoted artifact, else zero_shot;
-    ``ols_rank`` sends every rank_fit task to the degraded method (D28)."""
+    ``ols_rank`` sends every rank_fit task to the degraded method (D28). ``ols_rank_tasks``
+    names the rank_fit tasks decided by ``ols_rank`` whatever the tier: ``term.fits`` by default,
+    because X1 found no qualifying arm for it (K1, DESIGN A1); ``[]`` (or ``annotate
+    --ols-rank-tasks none``) asks CLM for ``term.fits`` too, which is an audit run."""
 
     tier: Tier = "auto"
     # `annotate --provider clm` with tier auto when clm-serve does not answer /health: False
     # refuses (decider_unavailable, the plugin's rule); True runs the degraded ols_rank method
     # instead (proposed-only, never auto; D28). An explicit CLM tier always refuses.
     ols_rank_fallback: bool = False
+    # The rank_fit tasks whose groups ols_rank decides (the OLS top-1 as proposed, probabilities
+    # null, never auto; D28). K1 (DESIGN A1): term.fits, whose zero_shot/calibrated tiers are
+    # audit-only until a probe is promoted (M4). A comma-separated string or "none" also works
+    # (MESA_CLM_DECIDER__OLS_RANK_TASKS).
+    ols_rank_tasks: list[RankFitTask] = Field(default_factory=_k1_ols_rank_tasks)
+
+    @field_validator("ols_rank_tasks", mode="before")
+    @classmethod
+    def _tasks_from_text(cls, value: Any) -> Any:
+        if isinstance(value, str):
+            text = value.strip()
+            if text.lower() in ("", "none", "[]"):
+                return []
+            return [part.strip() for part in text.split(",") if part.strip()]
+        return value
+
+    @field_validator("ols_rank_tasks")
+    @classmethod
+    def _tasks_once(cls, value: list[RankFitTask]) -> list[RankFitTask]:
+        return list(dict.fromkeys(value))
 
 
 class PlannerConfig(_KeyedSection):

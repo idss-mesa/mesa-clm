@@ -64,11 +64,11 @@ history, is the design record `design/plan-2026-09-28.md` (cited below as "plan 
 | D21 | Curator labels only from MRTR elicitation or the interactive CLI; a plain tool pick is `agent_pick` (weight 0, not fold-eligible); runs store `owner` and every follow-up checks it | accepted; amended by [A2](#a2-2026-09-29--amends-d21) |
 | D22 | The planner plans, never decides; Claude is a second opinion only, never `auto` | accepted |
 | D23 | Builders and `state_sha256` byte-identical to mesa-anyjev; contexts come from additive views that end with the target; `--max-model-len 4096` plus a client token guard | accepted; amended by [A4](#a4-2026-10-01--amends-d16-d23) |
-| D24 | Specificity: one rank over {parent, ≤10 children, anchor}; a child wins at `p_fit(child) ≥ p_fit(parent)+0.10`; unbenched, so proposed-only | accepted |
+| D24 | Specificity: one rank over {parent, ≤10 children, anchor}; a child wins at `p_fit(child) ≥ p_fit(parent)+0.10`; unbenched, so proposed-only | accepted; amended by [A1](#a1-2026-10-03--amends-d24-d28) |
 | D25 | `avu.keep` is a rule: exact-triple dedup, then a cap of 25 by `p_fit` | accepted |
 | D26 | MRTR state carries ids only (≤16 KiB) with a tamper guard; OLS and HTTP in `asyncio.to_thread`; `card_path` is CLI-only; iRODS card paths go through `assert_allowed`; parse errors carry line numbers, never content | accepted |
 | D27 | Pre-registration and nested selection: X1–X4, metrics and rule R committed before any run; every selection re-made inside each outer fold; full-data selections are `exploratory:true` | accepted |
-| D28 | Rank-and-cap while uncalibrated; degraded mode `method="ols_rank"` proposes the OLS top-1 per group as `proposed` (probs NULL, never auto) | accepted |
+| D28 | Rank-and-cap while uncalibrated; degraded mode `method="ols_rank"` proposes the OLS top-1 per group as `proposed` (probs NULL, never auto) | accepted; amended by [A1](#a1-2026-10-03--amends-d24-d28) |
 | D29 | Stream, not store: cards read into memory, runs exported to the project and pruned only once terminal, per-VM sidecars, artifacts and labels moved through the Data Store, secrets `env\|file\|keyring\|auto` | accepted |
 | D30 | Frozen label snapshots: the bench reads only `labels snapshot` output; cells record `labels_sha256`; curator labels on bench cards are tagged and excluded from pre-registered cells | accepted |
 | D31 | Reversibility: `mesa-clm revert` deletes exactly the written triples; neon replace mode backs up existing reps; the live-venv bump has a written rollback | accepted |
@@ -696,6 +696,154 @@ the plan's wording; none changes a decision (what D21's "interactive CLI" means 
   measured totals of the A5 recipe; it has **not** been sent, because sending it needs the user's
   go-ahead (plan §1). Until it is accepted the units stay not enabled at boot.
 
+## Implementation notes (M2)
+
+How M2 reads the frozen pre-registration where its text leaves room. None of these notes changes
+the frozen section below; each says what the code does and where the reading is written down.
+
+- **M2 analysis plan (pre-run).** Every frozen rule M2 runs (the LOCO folds and cells, rule R, the
+  lookup gate, the citation test's fields, X1, X2, X3's zero_shot and calibrated tiers, K1) is
+  read as one deterministic algorithm in `design/m2-analysis-plan.md`, committed and pushed with
+  its code (`src/mesa_clm/bench/{framing,cells,x2,registered,run,stats,results}.py`,
+  `learn/{calibrate,features,offline}.py`, `cli.py`, `scripts/x1_latency.py`) **before the first
+  run on the snapshot's labels**, so the commit shows every choice was made before a result
+  existed. Where the frozen text admits more than one reading the plan names each alternative and
+  why it was rejected (the more conservative reading wins; §0). The readings the three pre-commit
+  reviews changed, in short: ΔAUROC(real − shuffle) is the real AUROC minus the mean AUROC of 200
+  seeded within-card derangements (§5; the drafts' AUROC of the expected shuffled score was biased
+  against every arm); rule (2) is read literally, an F7 or F9 NLL winner stands and the token
+  tie-break applies only when the cacheability step leaves both (§7.5–§7.6); no calibrator is fitted
+  on fewer than 100 items, per fit (§6.3); Platt's targets are the hard labels and the temperature
+  bounds [1e-4, 1e4] (§6.4–§6.5); the candidate-only probe is a learned probe on the PR #13 recipe
+  (§7.11); the tier run (`tiers.json`) is the one producer of the citable-form
+  `<task>.<tier>.<A1>` cells, X1 (`x1.json`) chooses (§8.6); a run is *registered* only on the
+  registered snapshot (`bench/snapshots/2026-09-29.parquet`, both its hashes, the published counts)
+  with the registered configuration, and any other run is written with every cell
+  `pre_registered: false`, `exploratory: true` (§13). A finishing pass, still before any run, made
+  every producer apply the registration itself (X1, the tier cells and X2 write a call on other
+  labels or with other settings unregistered whatever its caller says, and refuse labels that claim
+  the registered snapshot but give other counts; §1.3, §13.2), added X2's report-only comparison of
+  the recomputed no-model controls with the M0 cells (§10.1) and a test that holds the plan's
+  Appendix B and §1.3 to the code (§0.2). A second review round (faithfulness and code), still
+  before any run, changed: the registration also pins the framings lock of G1 (`b432d32a7536…`),
+  each model's D5 fingerprint under the serving lock of G1 (`dd33f9fedbae…`; `clm_model_fp`
+  78be8c462b2e and 9f44b0301ee3) and, in X2's producer too, the AnyJev dump, and a run is
+  registered only when its item tables score exactly the configured grid and it covers the
+  registered tasks and tiers (§1.4-§1.5, §13); `bench framing --decide --from` re-derives the status
+  from the identity `x1.json` records, holds the numbers `x1.md` prints to the traces and to the
+  items file (the arm records, the arm cells' counts, metrics and per-item predictions, the
+  `p_loco` column, the probe's statistics, the published counts) and names what it cannot replay
+  (the arm cells' lookup controls and `beats_lookup_novel`, the probe's fits, the label-free
+  diagnostics; §12.6), and `bench run` recomputes X1 before it takes the outcome (§12.7, §14.6); the tier
+  cells keep X1's trace pointer (`x1_trace`, §9.5); the plan names the one-sided reading of
+  "cluster-LB" and labels every reported interval as the 90% interval it is (§4.2), keeps
+  "cluster-LB > 0.5" as the bound alone where the frozen MDE simulated rule R (§4.3, §9.9), corrects
+  what `lopo` and a nested cell's diagnostics cover (§9.9-§9.10) and says a fit that does not
+  converge is used as it is and flagged (§6.4, §6.5, §10.2); the timing run asks each target under
+  both models back to back, alternating which goes first, and records which asks found new texts
+  (§11.3). After the first run nothing in the plan or the code changes except by amendment with the
+  affected cells marked exploratory (§15).
+- **M2 pre-run disclosure: every look at labelled bench data from G1 to this commit.** Nothing in
+  this phase computed a quantity that combines a silver label with a model output (from the feature
+  store, clm-serve or anything else), and no M2 verb ran on the registered snapshot. What was read
+  or run on real data, all label-free or already published:
+  1. *Published counts*: the class counts, items per card (`per_fold_n`) and label-source counts of
+     `bench/results/2026-09-29/baselines.json`, and `mde.json`'s per-card class counts (both M0
+     files), to write the plan's floors, guards, weights and count check.
+  2. *The snapshot, label-free*: its column names, per-task counts, identity columns and
+     `state_json` (the manifests, the request builders, the AnyJev join test); the distinct targets
+     per card (5–25); how many identities have several rows or states (no label column read). The
+     hermetic suite now also reads, on every run: the snapshot's identity and state columns (the M2
+     CLI tests build a synthetic world on them, with generated labels; the timing script's test
+     builds requests from them for a stub that answers nothing), the snapshot's label-content digest
+     against the published `labels_content_sha256` (`tests/unit/test_bench_registered.py`; a hash,
+     no value), and the committed AnyJev dump's `state_json` (its identities equal the snapshot's,
+     `tests/unit/test_x2.py`). The label-free manifest tests now overwrite every label-bearing column
+     (label, index, weight, source, origin, actor, fold flags, ids) before comparing.
+  3. *The AnyJev L2 dump*, structure only (keys, item counts, the presence of `state_json`, the null
+     counts and lengths of its fields) and its `state_json`; no label or `p_yes` value was printed or
+     used.
+  4. *The feature store*: coverage and stats (1,563 X1/X2 texts, all embedded, 0 truncated); the
+     label-free `features build` of the 390 closed-choice texts
+     (`--tasks column.annotate,column.aspect,avu.value_kind --framings F7`, 2026-10-02T00:36:06Z to
+     00:37:00Z, 165,575 encoder tokens, 0 truncated) and `features project` (00:37:07Z), after which
+     the store holds 1,953 texts and vectors under the live recipe; the encoder token counts of the
+     F4/F7/F9 contexts per target (§7.6 quotes them). The pinned head's `exp(logit_scale)` (100.811)
+     was read from its export, and the committed collapse-spike reports were read.
+  5. *The three reviews* (faithfulness, statistics, integrity), the integration and the finishing
+     pass ran synthetic computations only (planted-signal worlds, fake stores, mutation runs of the
+     test suite in `/tmp` copies; the M2 CLI test world also runs `bench baselines`' code on its
+     generated labels), plus the label-free reads above; the integrity review verified that
+     `bench/results` is unchanged since G1 and that the feature store holds only the manifests'
+     texts. The duplicate-identity manifest test replaces every label-bearing column before it reads
+     its one snapshot row. ~~One synthetic X1 output left in `/tmp` (labels_sha256 `aaaa…`, cards
+     `DP0.0000k.001.synthetick`) was deleted.~~ *(Corrected after the run, 2026-10-03, by the
+     post-run integrity check:)* one synthetic X1 output in `/tmp` was deleted, but another with
+     that description remains (`/tmp/rev_m2/demo/out/2026-10-02/`: labels_sha256 `aaaa…`,
+     labels_content_sha256 `bbbb…`, cards `DP0.0000k.001.synthetick`), and so do about 95 other
+     X1-format files of the reviews and of test runs (pytest's temporary directories, the review
+     scratch directories); all are synthetic (label hashes `aaaa…`/`bbbb…` or generated content
+     `462967ff…`/`c2a2e677…`, fake encoder vectors and a random head), none carries the registered
+     label content `5c60a8a6…`. The second review round (faithfulness, code) and its
+     fixes did the same: synthetic worlds and mutation runs in `/tmp` copies of the checkout (which
+     hold the committed snapshot file, read there only as the hermetic suite reads it), the
+     registration's framings lock and fingerprints taken from the committed `framings.lock.json` and
+     `serving/serving.lock.json`, and label-free counts of the timing run's requests against a
+     text-keyed cache, before and after its order changed (requests built from the snapshot's
+     identity and state columns, a stub that answered nothing). Its new tests read the snapshot as before: the manifest of the closed
+     choices (with a request builder made to fail) and the timing script's requests, label-free.
+  6. *After this commit*, before the X1 run, the label-free timing run of the plan's §14.3 will ask
+     clm-serve 20 manifest targets per (task, framing), each under both models back to back,
+     discarding every answer; it is added here when it has run. *(Added after the run,
+     2026-10-03, by the post-run integrity check; it changes no cell.)* It ran once on `76c890f`,
+     17:28:14Z to 17:28:50Z (35.4 s, exit 0): 2 tasks × 4 framings × 20 targets × 2 models, every
+     answer discarded; `bench/results/2026-10-03/x1_latency.json` (sha256 `85e89397…`) holds
+     identity fields, wall-clock ms, the two flags per ask (`first`, `new_text`) and their
+     summaries only, no target id, option, answer or label. Just before it, at 17:28:09Z, a pre-flight `mesa-clm
+     doctor --serve` that the protocol did not name ran once (exit 0: 36 ok and the A3 drift
+     warning; no key in its output, which was deleted): label-free, it embedded the doctor's fixed
+     texts (the 20 encoder goldens, whose seventh is the F9 context of a bench target, G1 freeze
+     item 4) and asked the SRER golden question and the drift questions; the encoder journal
+     (`journalctl --user -u mesa-clm-encoder.service --utc`) shows, for the two, 295
+     `/v1/embeddings` requests from 17:28:09Z to 17:28:50Z: 294 answered and one refused with 401,
+     the doctor's request without the key (its 401 matrix). Between §14.4 and §14.5
+     `x1.md`, the report §14.4 had just written, was read; the decision was already made and
+     recorded, and §14.5 leaves nothing to choose. The integrity check found nothing else between
+     the commit and the run but `--help` calls.
+  Anything else done before the first run that reads labelled bench data or asks a bench item is
+  added here, in place, before that run.
+- **M2 registered run (post-run; added after the run, 2026-10-03).** The protocol of plan §14 ran
+  on the serving host from the pre-run commit `76c890f` (pushed with the branch at 17:27:39Z, PR
+  #4 opened at 17:27:41Z), each step once and with exit 0 (`.local/m2/run_protocol.log`, outside
+  the repository): §14.3 the timing run 17:28:14Z–17:28:50Z; §14.4 `bench framing --latency …
+  --decide` 17:28:55Z–17:29:43Z; §14.5 `bench framing --decide --from …/x1.json`
+  17:30:07Z–17:30:13Z; §14.6 `bench run --tiers zero_shot,calibrated --loco` 17:30:22Z–17:30:29Z;
+  §14.7 `bench x2` 17:30:36Z–17:31:23Z; §14.8 `bench table` 17:31:23Z–17:31:24Z. The outputs were
+  committed as produced in `eea525d` (17:31:40Z, pushed 17:31:44Z as a fast-forward; no code
+  changed between the two commits), and **the run was not repeated**: no `--force`, no second
+  attempt, no other results file (plan §14.9). The registered outputs under
+  `bench/results/2026-10-03/`, by sha256:
+  `x1_latency.json` `85e893978a16e068b3eb0d804b7270168eabebc4746b08ccac03b4c463bd3df4`;
+  `x1.json` `bbef6cc9dbf094abba8e0fcdc404e00f09da391ce43e97b4dab8440d2b3455b8`;
+  `x1_items.parquet` `b949664b42e3b6a55a4ecb7891a7f2531edc52b80e16b14b04e007256443d26f`;
+  `x1.md` `4e93238f330a47fefa66e6d5e7ecd36c84f5c202c4a123286db35b70b90e2e1c`;
+  `tiers.json` `42501a293f45eacdd5db70fc7ee6d28acd5d9c726bcf3b79e5f657ac52f8684d`;
+  `tiers.md` `379b100b658c4bf3ce9921aa7a1180ffc498686aa90abfd05bd7b2dae3e196ca`;
+  `x2.json` `76e07c34ddaed64e8987a2611c5af462457d7c398f49027533de3ea43cdb701d`;
+  `x2.md` `f26bbfa0392cc351b3a20a269869b4faf3c22816bdcea9bb945668c6ef4daa9d`;
+  `table.md` `288bc1de0ec43aeb70e8314eff3d02e4e5a5d641f23cbb45e42eb2d306d94063`.
+  X1's outcome is amendment [A1](#a1-2026-10-03--amends-d24-d28) and every number is in RESEARCH.md,
+  "M2 results (registered run)". After the commit, a post-run integrity check and two independent
+  recomputations worked in scratch directories (exploratory; nothing written to the repository), and
+  the replay was run again at 17:41:13Z and after A1's lock rotation (18:19:14Z), each time with the
+  results files' hashes unchanged. One reading of the analysis plan is inexact without changing a
+  number: §9.4 says the calibrated cells of `column.annotate` and `column.aspect` "list every fold
+  `below_floor`"; aspect's do (training sets of 47–55 items), while annotate's record the first
+  check that fails, the 30/5 guard in 6 folds and `below_floor` (81 items) only for `bet_fielddata`,
+  because `cells.tier_cell` checks the guard before the floor
+  (`tiers.json#/cells/neon_annotate.calibrated.F7/skipped_folds`). All 7 annotate training sets
+  (77–92 items) are below 100, so the cell is empty under either order.
+
 ## Pre-registration (G1)
 
 ### G1 freeze
@@ -1074,6 +1222,138 @@ evidence (results JSON or RESEARCH.md fact) and which cells, locks or artifacts 
 **A1 is reserved** for the production framing chosen by X1 (M2): the pre-registration and plan
 §8 refer to it by that number ("the A1 framing", "fold_choices agree with A1"), so amendments
 made before it take the numbers after it.
+
+### A1 (2026-10-03) — amends D24, D28
+
+**Decision.** The production framing of each X1 task is the full-run choice of X1's registered
+run, `bench/results/2026-10-03/x1.json` (`#/x1/registered` true, `#/x1/deviations` empty;
+the reserved amendment of plan §8's M2 exit gate and analysis plan §14.10). Pointers below are
+into that file unless another file is named.
+
+- **`column.ontology_fits` → F9 on `clm-latest`** (`#/x1/tasks/neon_ontology_fits/a1`). Rule (1)
+  qualified F4, F7 and F9 on `clm-latest` and F9 on `clm-raw`
+  (`#/x1/tasks/neon_ontology_fits/decision/step4/eligible`). Rule (2), read literally (analysis
+  plan §7.5), ranked the qualified `clm-latest` arms by pooled LOCO-Platt NLL, F9 0.6021, F7
+  0.6331, F4 0.6656 (`#/x1/tasks/neon_ontology_fits/decision/arms/<arm>/evidence/nll`), and an F9
+  winner stands: "F9 has the lowest LOCO-Platt NLL; no arm is more cacheable"
+  (`#/x1/tasks/neon_ontology_fits/decision/step2`). Rule (3) keeps `clm-latest`: F9@`clm-raw` ≻
+  F9@`clm-latest` on NLL fails both conditions, Δ −0.0162 with bootstrap lower bound −0.1069 and
+  2 of 7 cards against 6 needed (`#/x1/tasks/neon_ontology_fits/decision/step3`,
+  `#/x1/tasks/neon_ontology_fits/decision/comparisons/0`). The nesting agrees: every one of the 7
+  outer folds chose F9@`clm-latest` (`#/x1/tasks/neon_ontology_fits/nested/fold_choices`), above
+  the citation test's ≥ 5/7 (`bench/results/2026-10-03/tiers.json#/cells/neon_ontology_fits.calibrated.F9/diagnostics/fold_agreement_with_a1`:
+  7 of 7).
+- **`term.fits` → K1** (`#/x1/tasks/neon_term_fits/decision/outcome`;
+  `#/x1/tasks/neon_term_fits/a1` null). No F4, F7 or F9 arm qualified on either model: every one is
+  below the 0.60 AUROC floor (the best, F9@`clm-latest`, 0.557:
+  `#/x1/tasks/neon_term_fits/decision/arms/F9@clm-latest/evidence/auroc`), and every nested fold's
+  inner outcome is K1 too (`#/x1/tasks/neon_term_fits/nested/fold_choices`;
+  `#/x1/tasks/neon_term_fits/nested/skipped_folds`: `inner_k1` in all 7). The frozen criterion
+  applies as written: "**K1 no state signal (M2):** if no arm qualifies for a task on either model,
+  its zero_shot/calibrated tiers become audit-only; proposals use `ols_rank` (`proposed`, D28) until
+  a probe is promoted; M4 goes probe-first." For mesa-clm that means:
+  - every `term.fits` group (Q4, Q5, Q6) is decided by `ols_rank` by default: the shipped
+    `decider.ols_rank_tasks` is `[term.fits]` (the OLS top-1 per group as `proposed`,
+    probabilities null, never `auto`; D28). **D28 is amended**: `ols_rank` is no longer only the
+    degraded mode of an outage or a pivot named per call, but `term.fits`'s production method
+    until a probe is promoted; a run that uses it by design is not `degraded` (that flag now
+    means CLM did not answer, or tier `ols_rank`);
+  - **D24 is amended**: its refinement ranks by `p_fit`, which an `ols_rank` record does not
+    have, so it is never asked for an `ols_rank` group; where it would have been (specificity on,
+    a proposed winner with OLS children) the group's `search_json` records `specificity:
+    {asked: false, reason: no_p_fit_ols_rank}` and the proposal's rationale says so (the M1 code
+    already skipped it for `ols_rank` fallback groups, silently);
+  - CLM answers `term.fits` only in a run that asks for it, for audit: `annotate --ols-rank-tasks
+    none`, or `decider.ols_rank_tasks: []` (`MESA_CLM_DECIDER__OLS_RANK_TASKS='[]'`). Such a run
+    is recorded as it is (its `term.fits` decisions at level `zero_shot`, never `auto`, D6; its
+    output lists the tasks `ols_rank` decided); `term.fits`'s zero_shot and calibrated tiers are
+    audit-only, never the shipped default (K1 sets no end to that: its "until a probe is promoted"
+    bounds the `ols_rank` proposals);
+  - `term.fits` keeps F7 as its active framing, the framing of its audit records: the K1 audit
+    cells are `tiers.json`'s `neon_term_fits.zero_shot.F7` and `neon_term_fits.calibrated.F7`
+    (`selection: none`, `pre_registered: false`, `exploratory: true`; analysis plan §8.8);
+  - M4 goes probe-first for `term.fits`: X3's probe specs come before any further work on its
+    zero_shot or calibrated tiers. Its proposals leave `ols_rank` on the frozen terms only, with
+    no condition added here: when a probe is promoted (plan §5.5: `learn promote` needs a
+    pre-registered nested cell, new ≻ current on NLL and acc ≽ current within 0.01), and K2
+    settles the task in M4 as it settles every task (K2(c): a killed tier → `ols_rank`
+    proposals). Changing the shipped `decider.ols_rank_tasks` then is a changed decision, so it is
+    recorded by an amendment like any other (AGENTS.md, "Definition of done"); that is procedure,
+    not a condition of K1.
+- **Rule (4) did not fire.** On `column.ontology_fits` neither F1 arm beats every eligible arm on
+  NLL (`#/x1/tasks/neon_ontology_fits/decision/step4`: `d3_amendment_recommended: false`; the
+  nearest comparison, F1@`clm-latest` ≻ F4@`clm-latest`, has lower bound −0.0549 and 3 of 7
+  cards: `#/x1/tasks/neon_ontology_fits/decision/comparisons/1`); on `term.fits` it is not
+  evaluated (no eligible arm). D3 stands.
+- **The closed choices are unchanged.** X1 covers the two rank_fit tasks only, and no
+  pre-registered rule decides anything for `column.annotate`, `column.aspect` or
+  `avu.value_kind` from their tier cells: they keep F7 and their behaviour. Their measured cells
+  are recorded in RESEARCH.md, "M2 results (registered run)".
+
+**Why.** This is the outcome X1 was registered to produce (plan §8, M2: "**K1**; A1 amendment + lock
+rotation"; analysis plan §9.5 and §15: A1 "is the outcome X1 was registered to produce, not a change
+to these cells' pre-registration"). It changes no pre-registered rule and no analysis-plan reading:
+K1 applies as written, and the `term.fits` bullets above say what its words mean for mesa-clm's
+production configuration without adding a condition to them (the amendment they name for a later
+change of the shipped default is the register's procedure for any changed decision). Nor does it
+change a committed number, flag or cell; what it changes is the production configuration (the
+active framing, the decider's default and, with it, D24 and D28) and, through the framings lock,
+the registration status a new X1 or tier run would get (below). The run was made once
+(implementation notes (M2), "M2 registered run").
+
+**Evidence.** `bench/results/2026-10-03/x1.json` (sha256 `bbef6cc9…`) with its items file
+`x1_items.parquet` (`b949664b…`), `tiers.json` and `x2.json` (the hashes and the protocol times are
+in implementation notes (M2)); the facts, each with its pointer, are RESEARCH.md, "M2 results
+(registered run)". `uv run mesa-clm bench framing --decide --from bench/results/2026-10-03/x1.json`
+replays every decision from the JSON and recomputes it from the items file ("the pre-registered run;
+every decision replays and recomputes"), at §14.5, again at 17:41:13Z and after this rotation
+(18:19:14Z), the results files unchanged. Two independent recomputations made after the outputs were
+committed (their own code, outside the repository; mesa-clm's label-free manifest supplied the item
+texts) agree with every number they recomputed: X1's 16 arms (pooled AUROC exactly, the
+card-bootstrap bounds identically, the shuffle comparator to 3.3e-15, LOCO-Platt NLL to 2.3e-11),
+its 14 nested decisions, and every tier and X2 cell (1,923 comparisons, largest deviation 1.2e-12);
+RESEARCH.md, "M2 results", keeps them as the reviews reported them and names what the repository
+reproduces itself. Neither decision depends on the bootstrap seed: over 200 other seeds (1–200,
+rerun with the repository's `framing.decide` and `framing.nested_selection` on the committed items
+file) the full-run and nested decisions are identical, and term.fits' K1 rests on the 0.60 floor,
+which involves no resampling (the best nested arm reaches 0.5708:
+`#/x1/tasks/neon_term_fits/nested/folds/DP1.10022.001.bet_archivepooling/decision/arms/F9@clm-latest/evidence/auroc`).
+The feature store the run read is named by its stamp (`#/x1/store`: `encoder_fp` c3b3d5e1a283, 1,953
+texts and vectors, the vector recipe `ed486dcd…`), which does not bind the vectors' content; here it
+is corroborated by the configured `features.dir` (no override; the store unmodified since 2026-10-01
+18:37 MDT) and by the collapse diagnostics of F7, F9 and F1, which equal the M1 spike's to 4 dp
+(`#/x1/tasks/<task>/collapse` against `bench/results/2026-10-01/collapse_spike.json`). A later
+registered run should also record a digest of the vectors it reads.
+
+**What F9 means for production.** F9's context names the product and the column, not the table,
+so one column in two tables of a product gets one context and the same scores: on the snapshot
+the 60 `column.ontology_fits` targets have 45 distinct F9 contexts and the 143 `term.fits`
+targets 101 (`#/x1/tasks/neon_ontology_fits/collapse/F9/n`, `#/x1/tasks/neon_term_fits/collapse/F9/n`),
+and 7 Yes/No pairs of `column.ontology_fits` items (22 of `term.fits`) in different tables have
+bit-identical F9 scores while their silver labels disagree (`x1_items.parquet`, F9 rows; every
+AUROC counts such a tie one half). F9 answers alike for such columns; the registered cells
+include that.
+
+**Rotations.** `framings.lock.json`: `column.ontology_fits` `active_framing` F7 → **F9** (F9's
+`active` true, F7's false); `term.fits` stays F7, and the closed choices F7. `lock_sha`
+`b432d32a7536…` → **`7c93cc3e0ff6…`**. No `question_key` rotates (`active` is not part of it, D1):
+`column.ontology_fits` decisions, features and artifacts are now keyed by F9's `c95785008b523fd0`
+instead of F7's `8e8c77ee40c3eacb` (`#/x1/question_keys`), and `term.fits` audit records keep F7's
+`a686a06aab14497a`. No `task_key`, label, `encoder_fp` (c3b3d5e1a283), `clm_model_fp` (78be8c462b2e
+`clm-latest`, 9f44b0301ee3 `clm-raw`), head, `schema_sha256` or `serving_lock_sha` changes. The
+configuration gains `decider.ols_rank_tasks` (default `[term.fits]`), so every run's `config_sha256`
+changes. The registration keeps G1's lock (`bench.registered.FRAMINGS_LOCK_SHA` `b432d32a…`,
+`#/x1/framings_lock_sha`): the committed `x1.json` stays the registered run and still replays,
+because the replay compares the lock it records with the registration, not with the checkout; G1's
+lock is today's framings with every active framing F7 (`framings.lock_sha({task: "F7", …})`,
+`tests/unit/test_bench_registered.py`). A new `bench framing` or `bench run` invocation runs under
+the rotated lock and is written unregistered (analysis plan §13.2; X2 reads no framing and does not
+check the lock), and `bench run` refuses to take X1's outcome from `2026-10-03/x1.json` (§12.7: the
+framings lock must be the tier run's own); the M2 run is not repeated (§14.9). No committed cell
+changes or becomes exploratory. Tests: `tests/unit/test_framings.py` (the active framings, no key
+moved by the rotation), `tests/unit/test_bench_registered.py`, `tests/unit/test_k1_default.py`
+(term.fits proposals are `ols_rank` by default, D24 not asked and recorded, Q3 asked with F9, the
+audit run, the CLI).
 
 ### A2 (2026-09-29) — amends D21
 
@@ -1495,7 +1775,8 @@ baselines and MDE, labels snapshot → M1 two tracks: A serving on sparky-1 (enc
 clm-serve, keys, lock, doctor, collapse spike, features, fallback parity) and B the hermetic
 pipeline (framings and lock, render, `_honest`, fake transport, rank-first pipeline, sidecar,
 service); gate G1 freezes D0–D32 and the pre-registration → M2 evidence (X1, X2, zero_shot and
-calibrated cells; K1; amendment A1) → M3 live proposed-only loop (apply, revert, history,
+calibrated cells; K1; amendment A1; run 2026-10-03, [A1](#a1-2026-10-03--amends-d24-d28): F9 for
+`column.ontology_fits`, K1 for `term.fits`) → M3 live proposed-only loop (apply, revert, history,
 tools, smoke; tag v0.1.0a1) → M4 learned tiers (X3, X4, artifacts, citations, audits; K2) → M5
 release 0.1.0 → M6 neon adapter (0.2.0) → M7 head tier (K3) → M8 scale-out and evidence-gated
 auto.

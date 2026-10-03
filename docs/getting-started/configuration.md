@@ -7,8 +7,8 @@ tags:
   - configuration
   - environment
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T18:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -50,7 +50,7 @@ snippet of the file (a YAML syntax error names the file, line and column).
 |---|---|
 | `clm` | The clm-serve URL (`http://127.0.0.1:8700`), key (default file `~/.mesa/clm/secrets/clm.key`), model (`clm-latest`, `clm-raw` or a promoted head), `allow_remote` (needs https). |
 | `encoder` | The vLLM pooling URL (`http://127.0.0.1:8090`), key (default file `~/.mesa/clm/secrets/encoder.key`), `max_len` (4096, the server's window; clients truncate at 4,095), and `tokenizer_json` (the pinned Qwen3 `tokenizer.json`, counted by the `tokenize` extra when the encoder has no `/tokenize`; unset, the token guard over-counts with `ceil(chars / 2)`). |
-| `decider` | `tier`: `auto` (the best promoted artifact, else `zero_shot`), `zero_shot`, `calibrated`, `probe`, `head`, or `ols_rank` (the degraded OLS top-1 method for every candidate group, proposed-only, DESIGN D28); `ols_rank_fallback` (default `false`): whether `annotate --provider clm` at tier `auto` runs `ols_rank` when clm-serve does not answer instead of refusing. Requests always use temperature 1; calibration is client-side. |
+| `decider` | `tier`: `auto` (the best promoted artifact, else `zero_shot`), `zero_shot`, `calibrated`, `probe`, `head`, or `ols_rank` (the degraded OLS top-1 method for every candidate group, proposed-only, DESIGN D28); `ols_rank_fallback` (default `false`): whether `annotate --provider clm` at tier `auto` runs `ols_rank` when clm-serve does not answer instead of refusing; `ols_rank_tasks` (default `[term.fits]`, DESIGN A1's K1): the candidate-group tasks `ols_rank` decides whatever the tier (a YAML list, or `MESA_CLM_DECIDER__OLS_RANK_TASKS` as a list, a comma-separated string or `none`); `[]` asks CLM about `term.fits` too, an audit run. Requests always use temperature 1; calibration is client-side. |
 | `planner` | The reasoning model that only plans: `static` (default in 0.1.0), `claude`, `gateway`. |
 | `claude` | Credentials profile and model for the planner and the second opinion. |
 | `policy` | Profile (`prod` needs `calibrated` for auto-writes and an audit; `dev` allows `--history none`), thresholds file (`policy_defaults.yaml`). |

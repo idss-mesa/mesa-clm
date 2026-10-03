@@ -13,8 +13,8 @@ tags:
   - configuration
   - environment
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T18:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -56,7 +56,7 @@ snippet of the file (a YAML syntax error names the file, line and column).
 |---|---|
 | `clm` | The clm-serve URL (`http://127.0.0.1:8700`), key (default file `~/.mesa/clm/secrets/clm.key`), model (`clm-latest`, `clm-raw` or a promoted head), `allow_remote` (needs https). |
 | `encoder` | The vLLM pooling URL (`http://127.0.0.1:8090`), key (default file `~/.mesa/clm/secrets/encoder.key`), `max_len` (4096, the server's window; clients truncate at 4,095), and `tokenizer_json` (the pinned Qwen3 `tokenizer.json`, counted by the `tokenize` extra when the encoder has no `/tokenize`; unset, the token guard over-counts with `ceil(chars / 2)`). |
-| `decider` | `tier`: `auto` (the best promoted artifact, else `zero_shot`), `zero_shot`, `calibrated`, `probe`, `head`, or `ols_rank` (the degraded OLS top-1 method for every candidate group, proposed-only, DESIGN D28); `ols_rank_fallback` (default `false`): whether `annotate --provider clm` at tier `auto` runs `ols_rank` when clm-serve does not answer instead of refusing. Requests always use temperature 1; calibration is client-side. |
+| `decider` | `tier`: `auto` (the best promoted artifact, else `zero_shot`), `zero_shot`, `calibrated`, `probe`, `head`, or `ols_rank` (the degraded OLS top-1 method for every candidate group, proposed-only, DESIGN D28); `ols_rank_fallback` (default `false`): whether `annotate --provider clm` at tier `auto` runs `ols_rank` when clm-serve does not answer instead of refusing; `ols_rank_tasks` (default `[term.fits]`, DESIGN A1's K1): the candidate-group tasks `ols_rank` decides whatever the tier (a YAML list, or `MESA_CLM_DECIDER__OLS_RANK_TASKS` as a list, a comma-separated string or `none`); `[]` asks CLM about `term.fits` too, an audit run. Requests always use temperature 1; calibration is client-side. |
 | `planner` | The reasoning model that only plans: `static` (default in 0.1.0), `claude`, `gateway`. |
 | `claude` | Credentials profile and model for the planner and the second opinion. |
 | `policy` | Profile (`prod` needs `calibrated` for auto-writes and an audit; `dev` allows `--history none`), thresholds file (`policy_defaults.yaml`). |
@@ -82,8 +82,8 @@ tags:
   - getting-started
   - install
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T18:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -139,7 +139,7 @@ owner-only, directories 0700 and files 0600, whatever the umask.
 |---|---|
 | `doctor [--quick] [--serve] [--json]` | What this host can run (below). `--quick` skips the vendored-file hashing and, outside serve mode, the serving-lock verification; in serve mode it keeps the light probes and skips the slow ones unless `--serve` is given. `--serve` forces every live serving probe; `--json` prints `{ok, summary, checks[]}`. |
 | `framings --check \| --update-lock [--lock PATH]` | The framing keys against `framings.lock.json` (DESIGN D1): `--check` exits 1 on drift (CI runs it); `--update-lock` rewrites the lock after a deliberate framing change, which rotates that framing's `question_key`. |
-| `annotate --card PATH [--provider clm\|fake] [--planner static\|gateway\|claude] [--tier auto\|zero_shot\|calibrated\|probe\|head\|ols_rank] [--owner O] [--out FILE\|-] [--eval-result] [--fake-seed N]` | Decide one dataset card (a local file; CLI only, DESIGN D26) and record the run in the sidecar. Prints a summary (run id, proposals, abstentions by reason, decisions, CLM calls, input tokens, seconds, fingerprint) and the next step; `--out` writes the run as JSON (`-` for stdout), `--eval-result` the neon-avu-eval result shape instead. Every outcome is proposed-only: the shipped policy has `auto: null` everywhere. |
+| `annotate --card PATH [--provider clm\|fake] [--planner static\|gateway\|claude] [--tier auto\|zero_shot\|calibrated\|probe\|head\|ols_rank] [--ols-rank-tasks TASKS\|none] [--owner O] [--out FILE\|-] [--eval-result] [--fake-seed N]` | Decide one dataset card (a local file; CLI only, DESIGN D26) and record the run in the sidecar. Prints a summary (run id, proposals, abstentions by reason, decisions, CLM calls, input tokens, seconds, fingerprint, the tasks `ols_rank` decided) and the next step; `--out` writes the run as JSON (`-` for stdout), `--eval-result` the neon-avu-eval result shape instead. `term.fits` groups are decided by `ols_rank` by default (`decider.ols_rank_tasks`, K1 in DESIGN A1); `--ols-rank-tasks none` asks CLM about them too, an audit run. Every outcome is proposed-only: the shipped policy has `auto: null` everywhere. |
 | `explain --run-id ID \| --irods-path P [--limit N]` | A run read back from the sidecar: slim decisions, the top three options per group, links and the groups waiting for a reviewer. Run ids may be given as a unique prefix (at least 4 hex digits). |
 | `review --run-id ID [--pick GROUP=OPTION_KEY\|none]... [--decline GROUP]...` | Answer a run's pending groups. Without `--pick`/`--decline` it is interactive and needs a terminal: each group's candidates with `p_fit` and the anchor, then a number picks, `0` or `n` is "none of these", `d` declines, `s` (or Enter) skips, `q` (or end of input) quits; its answers are curator labels (`via=cli`, DESIGN A2). The non-interactive form answers pending groups only, each once per call, and checks every answer before recording any; at a terminal its answers are curator labels, without one (a script, a pipe, an agent's shell) they are recorded like a plain tool call (`via=tool`: `agent_pick` at weight 0, never fold-eligible) and the verb says so on stderr. A decline keeps only an override row. A curator's answer settles a group; an agent's leaves it pending for a curator, whose answer replaces it. |
 | `feedback --group-id G --action pick\|reject\|decline [--option-key KEY\|none]` | One answer for any group of your runs (a full id or a unique prefix); `pick` needs `--option-key` (`none` is "none of these"), `reject` is "none of these". At a terminal `via=cli`, otherwise `via=tool` as above. |
@@ -313,8 +313,8 @@ tags:
   - annotate
   - review
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T19:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -357,8 +357,12 @@ Mind the slashes in a DuckDB DSN: the path starts after `duckdb:///`, so
 `duckdb:///x.duckdb` is `x.duckdb` in the working directory and `duckdb:////tmp/x.duckdb` (four
 slashes) is the absolute `/tmp/x.duckdb`. Without `--provenance` or the variable the sidecar is
 `~/.mesa/clm/provenance.duckdb`. Without `MESA_CLM_OLS__FIXTURES` the default (`off`) queries the
-live EMBL-EBI OLS. `--fake-seed` picks the fake head; seed 5 answers "Yes" to enough columns for
-every pipeline step to run on the fixture cards (the default seed 0 annotates few columns).
+live EMBL-EBI OLS. `--fake-seed` picks the fake head; seed 5 answers "Yes" to enough columns that
+every step asked of the provider runs on the fixture cards (the default seed 0 annotates few
+columns). Under the shipped default (K1, DESIGN A1) the `term.fits` steps are not among them:
+`ols_rank` decides Q4–Q6 and the specificity refinement Q4b (D24) is not asked, so add
+`--ols-rank-tasks none` (an audit run) for the provider to answer the `term.fits` steps and Q4b
+too.
 
 `annotate` prints a summary:
 
@@ -373,11 +377,17 @@ every pipeline step to run on the fixture cards (the default seed 0 annotates fe
 * `fingerprint`: `encoder_fp`, `clm_model_fp` and the first characters of `serving_lock_sha`,
   the D5 bundle stamped on every decision (the fake has its own, with route `fake`, so a fake
   run can never pass for a real one);
+* `ols_rank tasks: term.fits`: since DESIGN A1 the `term.fits` groups (the column terms, the site
+  biomes, the taxon) are decided by `ols_rank` by default, because the registered framing experiment
+  found no qualifying framing for that task (K1); their proposals are the OLS top-1 of each group,
+  with no `p_fit`, and the column-to-ontology questions (Q3) are asked with the A1 framing F9.
+  `--ols-rank-tasks none` asks the provider about `term.fits` too: an audit run, which the line then
+  says;
 * the provider note and `next: mesa-clm review --run-id <run_id>`.
 
 `--out run.json` holds the full run: every proposal with its attribute, value, unit, CURIE,
 `p_fit`, level (`zero_shot` for CLM, `none` for `ols_rank`), calibration, method and rationale,
-plus the abstentions. `--out -` prints it instead, and `--eval-result` writes the neon-avu-eval
+plus the abstentions and `ols_rank_tasks`. `--out -` prints it instead, and `--eval-result` writes the neon-avu-eval
 result shape so its scoring scripts run unchanged.
 
 ### Read the run back
@@ -399,7 +409,8 @@ uv run mesa-clm review --run-id <prefix>
 Interactive, and it needs a terminal. For each group that waits for a reviewer (term groups
 that are proposed, escalated to a human, or whose anchor won, and groups only an agent has
 answered so far) it shows the target, aspect and ontology, then the offered candidates best
-`p_fit` first, numbered, and `0. none of these (the anchor)`. Answer with a number to accept
+`p_fit` first (in OLS order for an `ols_rank` group), numbered, and `0. none of these (the
+anchor)`. Answer with a number to accept
 that candidate, `0` or `n` for none of these, `d` to decline (you saw it but answer nothing),
 `s` or Enter to skip, `q` (or end of input) to quit. Each answer is recorded with `via=cli`: a
 pick writes curator labels (the pick, and implicit negatives for the other offered candidates),
@@ -455,9 +466,9 @@ MESA_CLM_OLS__FIXTURES=replay MESA_CLM_OLS__FIXTURES_DIR=tests/fixtures/ols-srer
 ```
 
 The live example uses a **non-bench** card (plan §9's smoke card, with its recorded OLS
-responses): until the pre-registered M2 cells exist, no live annotate run looks at the seven
-bench cards (DESIGN, "G1 freeze"). For other cards, live OLS is used with `ols.fixtures` `auto`
-or `record`.
+responses): until the pre-registered M2 cells existed (`bench/results/2026-10-03/`), no live
+annotate run looked at the seven bench cards (DESIGN, "G1 freeze"), and they stay the bench's
+held-out cards. For other cards, live OLS is used with `ols.fixtures` `auto` or `record`.
 
 `--tier zero_shot` asks CLM's released head (`clm.model`, default `clm-latest`) and records
 level `zero_shot`, calibration `uncalibrated`: `p_fit = σ(s_c)` with `s_c` the log-odds of a
@@ -491,7 +502,7 @@ the same way against either provider's runs.
 
 ---
 title: "Decision model"
-description: "How mesa-clm asks CLM: one rank per candidate group with a fixed abstain anchor, set-independent scores, the Q1-Q8 pipeline, contexts that end with the target, framings and the two keys."
+description: "How mesa-clm asks CLM: one rank per candidate group with a fixed abstain anchor, set-independent scores, the Q1-Q8 pipeline, contexts that end with the target, framings and the two keys, and what the M2 framing experiment changed (F9 for column.ontology_fits; term.fits proposals by ols_rank under K1)."
 type: Guide
 tags:
   - concepts
@@ -499,8 +510,8 @@ tags:
   - clm
   - framings
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T18:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -539,22 +550,35 @@ the shape mesa-anyjev used, survives only as the control arm F1 of the framing e
 anchor, and `confidence = max(probs)` is computed locally (DESIGN D7). Requests always use
 temperature 1; calibration is client-side.
 
-## Pipeline (milestone M1)
+## Pipeline (milestone M1; defaults since amendment A1)
 
 Every context view ends with the target, because last-token pooling weights the tail
-(DESIGN D23). The default framing is F7 (state-only context) until the framing experiment
-chooses A1.
+(DESIGN D23). Until amendment A1 every task was asked with F7, the state-only context. A1
+(2026-10-03) records the registered framing experiment X1 (`bench/results/2026-10-03/x1.json`):
+
+* `column.ontology_fits` (Q3) is asked with **F9** on `clm-latest`, the query-shaped context
+  "NEON dataset {title}. Column {name}: {description} ({unit}). {aspect} ontology term:"; its
+  decisions are keyed by F9's `question_key` (`c95785008b523fd0`);
+* `term.fits` had no qualifying framing on either model (**K1**): its groups (Q4, Q5, Q6) are
+  decided by `ols_rank` by default (the OLS top-1 as `proposed`, no probabilities, never `auto`;
+  DESIGN D28), Q4b is not asked for them because it ranks by `p_fit`, and CLM is asked about
+  `term.fits` only in an audit run (`annotate --ols-rank-tasks none`); `term.fits` keeps F7 as its
+  framing for those audit records;
+* the closed choices (Q1, Q2, Q7) keep F7: no pre-registered rule covers them.
+
+The numbers behind A1 are in RESEARCH.md, "M2 results (registered run)", and on
+[Learning and bench](learning-and-bench.md).
 
 | Step | Task | Shape | Context view | Candidates |
 |---|---|---|---|---|
 | Plan | (the planner) | — | — | which ontologies, columns and queries; hints only |
 | Q1 | `column.annotate` | choice K=2 | `{card_header, column}` | `ANNOTATE_OPTIONS`; identifiers are a rule |
 | Q2 | `column.aspect` | choice K=8 | same text as Q1 | `ASPECT_OPTIONS`; top-1 if proposed, else top-2 |
-| Q3 | `column.ontology_fits` | rank_fit 12 + anchor | same text as Q1 | registry `option_text`, masked by aspect after scoring |
+| Q3 | `column.ontology_fits` | rank_fit 12 + anchor | F9 (A1): `NEON dataset {title}. Column {name}: {description} ({unit}). {aspect} ontology term:` | registry `option_text`, masked by aspect after scoring |
 | S | candidates | OLS | — | `search_candidates` ≤12, fixed `unit_candidate` |
-| Q4 | `term.fits` | rank_fit ≤12 + anchor | `target_state = {card_header, scope, aspect, column|site}` | `"{label}: {description[:300]}"` |
-| Q4b | `term.fits` (specificity) | rank_fit | same | {parent, ≤10 children, anchor}; a child wins at `p_fit +0.10`, proposed-only (DESIGN D24) |
-| Q5 / Q6 | `term.fits` | rank_fit | `{card_header, site}` / `{card_header}` | ENVO biome descendants / NCBITaxon |
+| Q4 | `term.fits` | rank_fit ≤12 + anchor; by default `ols_rank` (K1, A1) | `target_state = {card_header, scope, aspect, column|site}` | `"{label}: {description[:300]}"` |
+| Q4b | `term.fits` (specificity) | rank_fit; not asked for an `ols_rank` group (A1) | same | {parent, ≤10 children, anchor}; a child wins at `p_fit +0.10`, proposed-only (DESIGN D24) |
+| Q5 / Q6 | `term.fits` | rank_fit; by default `ols_rank` (K1, A1) | `{card_header, site}` / `{card_header}` | ENVO biome descendants / NCBITaxon |
 | Q7 | `avu.value_kind` | choice K=4 | `value_kind_state` | `VALUE_KINDS`, deterministic pre-rules first |
 | Q8 | rule | — | — | exact-triple dedup, cap 25 by `p_fit` (DESIGN D25) |
 
@@ -566,7 +590,13 @@ out-ranks the anchor, and at most as `proposed`. Q8 drops (exact duplicates, ove
 AVU that cannot be built) reject their groups and are listed with their reason among the
 abstentions. While a task is uncalibrated, steps prune by top-k only; when CLM is down or a
 tier is killed, the degraded method `ols_rank` proposes the OLS top-1 per group as `proposed`,
-never `auto` (DESIGN D28); `decider.tier: ols_rank` selects it for every candidate group.
+never `auto` (DESIGN D28); `decider.tier: ols_rank` selects it for every candidate group, and
+`decider.ols_rank_tasks` per task: `[term.fits]` by default (K1, DESIGN A1), `[]` (or `annotate
+--ols-rank-tasks none`) for an audit run that asks CLM about `term.fits` too. Under `ols_rank`
+the second taxon of Q6 is not kept (only the top-1 is proposed), and where Q4b would have refined
+a proposed winner with OLS children the group records `specificity: {asked: false, reason:
+no_p_fit_ols_rank}` and the proposal's rationale says so. A run is marked `degraded` only when
+CLM did not answer or the tier is `ols_rank`, not for the tasks `ols_rank` decides by design.
 
 Each CLM question is stored as one `decisions` row with one `decision_options` row per candidate
 and one for the anchor (`s_c`, `p_fit`, rank, masked), and each candidate group as a
@@ -596,15 +626,19 @@ view and template, instructions, candidate template, anchor text, options, mask 
 version, `schema_sha256`) and keys decisions, features and artifacts (DESIGN D1).
 The target identity includes the aspect the target was asked under, so a label on (column,
 CURIE, aspect) does not carry over to the same column and CURIE under another aspect; this is
-intended. `framings.lock.json` pins both keys; `mesa-clm framings --check` fails CI on drift. Framings in
-the experiment grid: F1 (noul control), F4 (Choice + anchor with a task sentence), F7
-(state-only target context), F9 (a query-shaped sentence ending in "ontology term:").
+intended. `framings.lock.json` pins both keys and each task's `active_framing`; `mesa-clm
+framings --check` fails CI on drift. Framings in the experiment grid: F1 (noul control), F4
+(Choice + anchor with a task sentence), F7 (state-only target context), F9 (a query-shaped
+sentence ending in "ontology term:"). A1 moved `column.ontology_fits`' active framing from F7 to
+F9, which rotated the lock's `lock_sha` and no `question_key` (whether a framing is active is not
+part of its key). F9's context names the product and the column, not the table, so the same
+column in two tables of one product gets the same context and the same answer.
 
 ---8<--- https://idss-mesa.github.io/mesa-clm/concepts/learning-and-bench/
 
 ---
 title: "Learning and bench"
-description: "Where mesa-clm's labels come from and how they are identified and frozen, the feature cache, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, and the pre-registered experiments X1-X4 with the AnyJev baseline numbers."
+description: "Where mesa-clm's labels come from and how they are identified and frozen, the feature cache, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, the pre-registered experiments X1-X4 with the AnyJev baseline numbers, how M2's analysis plan runs X1, the tier cells and X2 (committed before any result), and the registered M2 results (term.fits K1; F9 for column.ontology_fits)."
 type: Guide
 tags:
   - concepts
@@ -613,8 +647,8 @@ tags:
   - labels
   - calibration
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T19:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -643,6 +677,14 @@ sources:
   - id: features-build
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/bench/results/2026-10-01/features_build.json"
     title: "mesa-clm feature store build under encoder_fp c3b3d5e1a283, 2026-10-01"
+    author: "team:idss-mesa"
+  - id: m2-plan
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/m2-analysis-plan.md"
+    title: "mesa-clm M2 analysis plan (pre-run): X1, the zero_shot and calibrated tiers, X2"
+    author: "team:idss-mesa"
+  - id: m2-results
+    resource: "https://github.com/idss-mesa/mesa-clm/tree/main/bench/results/2026-10-03"
+    title: "mesa-clm M2 registered run, 2026-10-03 (x1.json, tiers.json, x2.json, table.md)"
     author: "team:idss-mesa"
 status: draft
 stale_after: "2027-03-31T00:00:00Z"
@@ -775,6 +817,149 @@ Kill and pivot criteria K0–K4 are fixed with them: no state signal makes a tas
 audit-only and its proposals `ols_rank`; a task earns auto-eligibility only by beating the
 lookup on novel keys and matching AnyJev L2 in a paired test with ECE at most 0.08.
 
+## Milestone M2: the analysis plan (pre-run)
+
+`design/m2-analysis-plan.md` reads every frozen rule M2 runs as one deterministic algorithm,
+names each alternative reading with the reason it was rejected (the more conservative one wins),
+and lists every constant; it and its code were committed and pushed **before** the first run on
+the snapshot's labels, so the commit shows every choice preceded the results (DESIGN,
+"Implementation notes (M2)", with the pre-run disclosure of every label-free look). After the
+first run it changes only by amendment, with the affected cells marked exploratory.
+
+**Inputs.** Only the registered snapshot `bench/snapshots/2026-09-29.parquet`: `bench framing`,
+`bench run` and `bench x2` refuse any other file by its sha256 and its label content, never write a
+snapshot, load its rows into a scratch label store (the per-host sidecar is never read) and check
+every task's items, class counts, items per card and `min_weight` against the counts M0
+published, before any statistic. Every run records its configuration; anything but the
+registered one (both X1 tasks, F1/F4/F7/F9 on `clm-latest` and `clm-raw` with every one of the 16
+arms scored, the full run and the nesting, B = 2000, seed 0, α = 0.05, 200 shuffle draws; the
+framings lock of G1 and each model's fingerprint under the serving lock of G1; for X2 the
+registered AnyJev dump) is written with every cell `pre_registered: false`, `exploratory: true`,
+and no verb takes an option for B, the seed or α. The producers check this themselves, so a library
+call under another lock, fingerprint or dump is unregistered too.
+
+### How X1 decides
+
+Each arm (a framing on a model) scores the same items offline from the feature cache:
+`s = scale·(zs·zc − zs·za)` for F4, F7 and F9, the noul logit difference for the F1 control.
+**Rule (1)** qualifies an F4/F7/F9 arm when the AUROC of `s` has a card-cluster lower bound above
+0.5 and is at least 0.60, and its ΔAUROC against the **within-card state shuffle** passes rule R:
+the shuffle gives every target the context of another target of its own card, the comparator is
+the mean AUROC of 200 seeded derangements, and both rule R conditions are computed on that
+difference (the drafts' AUROC of an averaged score was biased against every arm and was replaced
+before any run). If nothing qualifies on either model the outcome is **K1** (the task's CLM tiers
+become audit-only, proposals use `ols_rank`, M4 goes probe-first). Otherwise **rule (2)** ranks
+the qualified arms of `clm-latest` (of `clm-raw` when `clm-latest` has none) by the pooled NLL of
+leave-one-card-out Platt (weighted, 30/5 guards, no fit on fewer than 100 items): an F7 or F9
+winner stands; an F4 winner yields to a more cacheable qualified arm it does not beat under rule
+R, and between F7 and F9 the lower NLL wins only if it beats the other under rule R, else the one
+with fewer encoder tokens per target, then F7. **Rule (3)** keeps `clm-latest` unless `clm-raw`
+beats it on NLL at that framing; **rule (4)** only recommends an amendment reopening D3 when F1
+beats every eligible arm, never adopts it; rule (6) is withdrawn. The learned candidate-only probe
+(the PR #13 recipe on the candidate vectors), the mean-context score, the collapse diagnostic,
+calls and tokens per target and the p50 latency of a label-free timing run are reported, never
+read by a rule. `bench framing --decide --from x1.json` replays every decision from the JSON
+(each rule R verdict against its own numbers and the run's bootstrap settings, the arm records,
+cells and fold choices against the traces, each cell's metrics against its own per-item
+predictions) and recomputes the decisions, the arm records, the `p_loco` column, the cells'
+predictions and the probe's statistics from `x1_items.parquet`; the arm cells' lookup controls and
+`beats_lookup_novel` need the items' states and are report-only. "Cluster-LB" is the one-sided
+95% bound of the card bootstrap, so every interval `[lower, upper]` the reports print is a 90%
+interval, and they say so. The timing run asks each drawn target under both models back to back,
+alternating which goes first, and flags each ask that sent a text the run had not sent before
+(clm-serve's embedder cache is shared by both models).
+
+### Nested selection
+
+For each held-out card the whole decision is made again on the other six cards only (their
+shuffles, their folds, their bootstraps); `fold_choices` records each fold's arm. A fold whose
+inner outcome is K1 or undecidable chooses no arm and is skipped in both tiers. The full-data
+choice is the production choice A1 (an amendment records it); a citable cell needs at least 5 of 7
+folds to agree with A1 on framing **and** model.
+
+### The tier cells and X2
+
+`bench run --tiers zero_shot,calibrated --loco` writes `tiers.json`, the one producer of the
+citable-form `<task>.<tier>.<A1>` cells: fold *c* is scored (and at `calibrated` fitted) with fold
+*c*'s own arm, X1's outcome taken only from a registered `x1.json` that replays, recomputes and
+names the same labels, framings lock and model fingerprints; each fold's `fold_choices` entry keeps
+X1's pointer to its inner trace (`x1_trace`) and the file's note names `x1.json` by sha256. `zero_shot` is `σ(s_c)` or CLM's softmax;
+`calibrated` is weighted Platt with hard targets on `s_c` or the logit difference, temperature
+(T in [1e-4, 1e4]) at K > 2, with the unweighted fit reported beside it. `…@full` (A1 in every
+fold) is exploratory; without an A1 the default F7@`clm-latest` is reported for audit only; the
+closed choices are F7@`clm-latest` (not citable in M2) with `@clm-raw` reported. Every cell carries
+the frozen fields, the lookup controls on its own folds, `beats_lookup_novel` with both of its
+conditions and the reason when it fails, and its per-item predictions. `bench x2` writes the M0
+controls (with a note on whether they equal the published M0 cells), the PR #13 replica (unweighted,
+float32 vectors) and AnyJev L2 joined by D1 identity; X2 gates nothing.
+
+## Milestone M2: the registered results (2026-10-03)
+
+The run protocol (plan §14) ran once on the serving host, each step once, after the plan and its
+code were pushed: the label-free timing run, `bench framing --decide`, the replay, `bench run`,
+`bench x2`, `bench table`. Every output was committed as produced under
+`bench/results/2026-10-03/` (`x1_latency.json`, `x1.json`, `x1_items.parquet`, `x1.md`,
+`tiers.json`, `tiers.md`, `x2.json`, `x2.md`, `table.md`); the run is the registered one
+(`x1.json#/x1/registered`), and `bench framing --decide --from` replays and recomputes it from the
+files. DESIGN.md records the outcome as amendment A1 and RESEARCH.md ("M2 results") holds every
+number with its JSON pointer; the main ones follow. Intervals are the pair of one-sided 95% card
+bootstrap bounds (a 90% interval); silver labels are agreement between models, not truth.
+
+**X1** (`x1.json#/x1/tasks/<task>/arms/<arm>`; AUROC of the raw score, rule (1) needs a lower
+bound above 0.5, AUROC at least 0.60 and a ΔAUROC over the within-card shuffle that passes rule R):
+
+| arm | term.fits AUROC | rule (1) | ontology_fits AUROC | rule (1) | ontology_fits LOCO-Platt NLL |
+|---|---|---|---|---|---|
+| F4@clm-latest | 0.497 [0.406, 0.572] | fails | 0.611 [0.529, 0.677] | qualifies | 0.666 |
+| F4@clm-raw | 0.458 [0.413, 0.505] | fails | 0.501 [0.399, 0.614] | fails | 0.693 |
+| F7@clm-latest | 0.511 [0.482, 0.544] | fails | 0.693 [0.611, 0.762] | qualifies | 0.633 |
+| F7@clm-raw | 0.494 [0.428, 0.549] | fails | 0.592 [0.546, 0.637] | fails | 0.688 |
+| F9@clm-latest | 0.557 [0.512, 0.596] | fails | 0.751 [0.697, 0.805] | qualifies | 0.602 |
+| F9@clm-raw | 0.539 [0.495, 0.592] | fails | 0.745 [0.700, 0.804] | qualifies | 0.618 |
+
+* **term.fits: K1.** No arm qualifies on either model (every one is under the 0.60 floor), and
+  every nested fold's inner outcome is K1 too (`x1.json#/x1/tasks/neon_term_fits/decision`,
+  `nested/fold_choices`). As the pre-registered K1 says, its zero_shot and calibrated tiers are
+  audit-only, its proposals use `ols_rank`, and M4 goes probe-first.
+* **column.ontology_fits: F9 on `clm-latest`.** Rule (2) ranks the qualified `clm-latest` arms by
+  NLL (F9 lowest), rule (3) keeps `clm-latest` (`clm-raw` does not beat it at F9 under rule R),
+  rule (4) does not fire (no D3 amendment), and all 7 nested folds choose F9@`clm-latest`
+  (`x1.json#/x1/tasks/neon_ontology_fits/decision`, `a1`, `nested/fold_choices`).
+* The candidate-only probe (report-only, the PR #13 recipe on the candidate vectors alone) reaches
+  AUROC 0.808 [0.765, 0.858] on term.fits and 0.816 [0.758, 0.873] on ontology_fits
+  (`x1.json#/x1/tasks/<task>/candidate_probe`).
+
+**The tier cells** (`tiers.json`). The citable-form nested cells of column.ontology_fits
+(`neon_ontology_fits.<tier>.F9`, 7 of 7 folds agreeing with A1): zero_shot accuracy 0.489, NLL
+2.624, ECE 0.464, AUROC 0.751 [0.697, 0.805]; calibrated accuracy 0.642, NLL 0.602, ECE 0.123,
+AUROC 0.732 [0.673, 0.802]. Neither has `beats_lookup_novel`: on the 99 novel-key items the
+AUROC lower bound passes (0.597 and 0.584) but the NLL comparison with `lookup_prob` (NLL 0.653)
+does not pass rule R (zero shot NLL 2.846; calibrated NLL 0.594, the bootstrap lower bound of the
+difference −0.046), and neither cell has a
+Clopper–Pearson threshold at 5% or 10% risk (`baselines/beats_detail`, `metrics/threshold_cp`).
+The term.fits audit cells (F7@`clm-latest`, not pre-registered under K1): zero_shot accuracy 0.495,
+AUROC 0.511; calibrated accuracy 0.698 (majority 0.698), AUROC 0.457. The closed choices
+(F7@`clm-latest`) score below their majority rates at zero shot: column.annotate 0.357 against
+0.643, column.aspect 0.050 against 0.300, avu.value_kind 0.324 against 0.478 (calibrated 0.324);
+the calibrated cells of annotate and aspect are empty because no fold trains on 100 items.
+
+**X2** (`x2.json`, baselines that gate nothing):
+
+| cell | acc | AUROC | NLL | ECE | beats_lookup_novel |
+|---|---|---|---|---|---|
+| `neon_term_fits.baseline.pr13@S1` | 0.723 | 0.709 [0.643, 0.771] | 1.460 | 0.215 | false |
+| `neon_term_fits.baseline.pr13@S1ns` | 0.747 | 0.786 [0.738, 0.839] | 1.019 | 0.184 | false |
+| `neon_term_fits.baseline.anyjev_l2` | 0.765 | 0.782 [0.743, 0.833] | 0.499 | 0.058 | true |
+| `neon_ontology_fits.baseline.pr13@S1` | 0.821 | 0.884 [0.842, 0.927] | 0.791 | 0.131 | false |
+| `neon_ontology_fits.baseline.pr13@S1ns` | 0.821 | 0.905 [0.869, 0.941] | 0.568 | 0.137 | false |
+| `neon_ontology_fits.baseline.anyjev_l2` | 0.837 | 0.908 [0.884, 0.940] | 0.375 | 0.078 | true |
+
+The recomputed no-model controls equal M0's cells field for field (`x2.json#/notes/2`), and the
+AnyJev L2 cells join all 285 and 190 items. Two independent recomputations after the run agree with
+every number they recomputed (RESEARCH.md, which also names what the repository reproduces itself:
+the replay, and X1's decisions under 200 other bootstrap seeds). What A1 changes in the pipeline is on
+[Decision model](decision-model.md): Q3 asks F9, term.fits groups are `ols_rank` by default.
+
 ## Baseline numbers
 
 From mesa-anyjev's `bench/results/2026-09-25/Qwen__Qwen3-8B.hf.json` (Qwen/Qwen3-8B bf16,
@@ -801,8 +986,8 @@ leave-one-product-out 0.723 / 0.721 / 0.724 / 0.350 / 0.543; novel-key subsets o
 B=2000, seed 0) puts the minimum detectable effect under rule R at AUROC 0.625 on term.fits
 (0.675 on its novel keys), 0.650 on ontology_fits (0.750 on novel keys, with four counting
 cards) and 0.700 on annotate, whose novel-key population has one counting card and therefore
-cannot pass rule R at any effect. Model cells (X1, X2) follow in milestone M2, and every cell
-names its results JSON here.
+cannot pass rule R at any effect. The model cells of milestone M2 (X1, the tier cells, X2) are
+above, each named by its results file.
 
 ---8<--- https://idss-mesa.github.io/mesa-clm/concepts/provenance/
 
@@ -1126,8 +1311,8 @@ tags:
   - calibration
   - policy
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T18:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -1174,6 +1359,17 @@ by the degraded method, the OLS top-1 as `proposed` with no probabilities (DESIG
 the closed choices (annotate, aspect, value kind) are still asked. The pipeline also falls back
 to `ols_rank` per group when a CLM answer is unavailable or the context was truncated, and the
 run is marked `degraded`.
+
+`decider.ols_rank_tasks` (`MESA_CLM_DECIDER__OLS_RANK_TASKS`, or `annotate --ols-rank-tasks`)
+names the candidate-group tasks that `ols_rank` decides whatever the tier. Its shipped default is
+`[term.fits]`: the pre-registered framing experiment found no qualifying framing for `term.fits`
+on either model, so its kill criterion K1 ("no state signal") makes that task's zero_shot and
+calibrated tiers audit-only, with `ols_rank` proposals until a probe is promoted (DESIGN A1;
+`bench/results/2026-10-03/x1.json`). Those groups get no probabilities and no specificity
+refinement (it ranks by `p_fit`; the group records that it was not asked), and the run is not
+marked `degraded` for them. An audit run asks CLM about `term.fits` anyway: `--ols-rank-tasks
+none` or `decider.ols_rank_tasks: []`; its `term.fits` decisions are `zero_shot`, never `auto`.
+`column.ontology_fits` is asked with its A1 framing (F9).
 
 When `annotate --provider clm` finds clm-serve not answering before it starts, tier `auto` runs
 `ols_rank` for the whole card only if `decider.ols_rank_fallback` is `true`
@@ -1230,8 +1426,8 @@ tags:
   - develop
   - architecture
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T18:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -1321,9 +1517,9 @@ a batch all or nothing.
 |---|---|
 | M0 | `config.py`, `secrets.py`; `cards.py`, `states.py`, `registry.py`; `tasks.py`, `identity.py`; `policy_defaults.py` + `policy_defaults.yaml`; `ols.py`, `avu.py`, `ols_closure.py`; `planner/`; `provenance/labels.py`; `learn/labels.py`; `bench/_metrics.py` (vendored), `bench/{stats,results,baselines,mde,metrics}.py`, `bench/tasks/`; `health.py` (pins, versions, plugin API, policy, stores); `mcp_tools/` (entry-point stub); `cli.py` (`labels`, `bench`, `doctor`); `_vendor/clm/` |
 | M1 | `framings.py`, `render.py`, `framings.lock.json`; `vocab.py`; `perms.py`; `clm/{http,encoder,headproj,fingerprint,fake}.py`; `providers/{base,tiered,claude_provider,live}.py`; `pipeline.py`; `policy.py`; `provenance/{models,store,store_postgres,migrate,export}.py` and `migrations/0001_mesa_clm.sql`; `service.py`; `serving.py` (keys, units with the encoder's loopback socket proxy, the serving lock with its container recipe, its verification, the container's network namespace); `learn/features.py` (the feature store with float32 vectors and the lock's vector recipe, the X1/X2 manifest, the TextCache export) and `learn/offline.py` (offline scoring from cached vectors); `health.py` M1 checks (framings lock, schema sha256, sidecar schema, feature store, permissions, serving lock, host, `gpu_budget`, the serving reachability line and the serve-mode probes: the binds' owners, the encoder socket, the units against the rendering, the encoder network namespace, the headroom timer, the 401 matrix, goldens, long input, systemone parity, drift); `cli.py` M1 verbs (`framings`, `annotate`, `explain`, `review`, `feedback`, `provenance migrate\|export\|import\|prune`, `serve keys\|units\|lock`, `features build\|export-npz\|project\|stats`, `doctor --serve`); `serving/` (with the encoder's bearer guard `vllm_auth.py`, the route probe `vllm_routes.py` and the encoder's endpoint proxy `encoder_proxy.py`), `deploy/` (the serve-venv side, never importing `mesa_clm`); `net.py`'s port-owner check (keyed clients never send a key to another account's loopback socket); `scripts/` M1-A probes and records |
-| M2 | `bench/{run,framing}.py` |
+| M2 | `bench/{framing,cells,x2,registered,run}.py` (X1, the tier cells, X2, the registration, the verbs), `learn/calibrate.py` (weighted Platt, temperature); after the registered run, amendment A1: `framings.ACTIVE` (F9 for `column.ontology_fits`) and `decider.ols_rank_tasks` (`term.fits` decided by `ols_rank`, K1) |
 | M3 | `apply.py`, `revert.py`, `irods_io.py`, `history/`; the five `mesa_clm_*` tools in `mcp_tools/` |
-| M4 | `learn/{linear,calibrate,fit,teacher}.py`, `artifacts.py`, `bench/e2e.py`, audits |
+| M4 | `learn/{linear,fit,teacher}.py`, `artifacts.py`, `bench/e2e.py`, audits |
 | M6 | `adapters/neon.py` |
 | M7 | `learn/finetune.py`, `serving/finetune_preflight.py`, `serving/rescore_head.py` |
 
@@ -1362,14 +1558,14 @@ history, and refuses to overwrite non-CLM replicates without backing them up.
 
 ---
 title: "Testing"
-description: "How to run the hermetic mesa-clm test suite, what the fake CLM transport, the recorded OLS fixtures and the offline doctor cover, the vendored-file and parity checks, the M1 tests, and the opt-in live, engine, GPU, Postgres, end-to-end and neon tiers."
+description: "How to run the hermetic mesa-clm test suite, what the fake CLM transport, the recorded OLS fixtures and the offline doctor cover, the vendored-file and parity checks, the M1 tests, the M2 bench tests on synthetic labels only (and the plan-constants test), the tests of amendment A1 after the registered run, and the opt-in live, engine, GPU, Postgres, end-to-end and neon tiers."
 type: Guide
 tags:
   - develop
   - testing
 generated:
-  by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  by: "claude/opus-5.5"
+  at: "2026-10-03T18:30:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -1378,6 +1574,10 @@ sources:
   - id: plan
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/plan-2026-09-28.md"
     title: "mesa-clm implementation plan (v1.1, 2026-09-28)"
+    author: "team:idss-mesa"
+  - id: m2-plan
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/m2-analysis-plan.md"
+    title: "mesa-clm M2 analysis plan (pre-run)"
     author: "team:idss-mesa"
 status: draft
 stale_after: "2027-03-31T00:00:00Z"
@@ -1453,6 +1653,98 @@ throttled refusal logs, the backlog kept from the socket unit). `tests/unit/test
 also drives `serving units` with unit files under `tmp_path`, a scripted `systemctl --user show`
 and a fake `/proc/<pid>` (the old units, a stale unsandboxed proxy, a pending `daemon-reload`).
 
+## The M2 bench tests (pre-run)
+
+The M2 analysis code was written, reviewed and tested **before** the first run on the snapshot's
+labels (`design/m2-analysis-plan.md` §14), so its tests run on synthetic labels only: generated
+cards and labels with planted signal, fake feature stores, a random head exported under the lock's
+sha, and a stand-in registration (`mesa_clm.bench.registered.REGISTERED` monkeypatched with the
+synthetic snapshot's hashes and counts). No test combines a silver label with a model output.
+What they read from the committed snapshot is label-free: its identity and state columns (the M2
+CLI world and the timing script's requests), its label-content digest against the published one
+(`test_bench_registered`), and, in the manifest tests, rows whose every label-bearing column was
+replaced first.
+
+- `test_framing_x1`: weighted Platt; the 30/5 guards and the floor of 100 at its boundary; the
+  shuffle's seeded derangements, its mean-AUROC rule R against brute force over all 200 draws and
+  its null calibration (the drafts' comparator was biased); rules (1)–(5) one by one, rule (2)'s
+  literal reading and the F7/F9 tie; nesting and K1 folds, a fold's choice blind to its held-out
+  card; the registration (every run parameter is a deviation, any deviation writes every cell
+  unregistered, registered labels must give the published counts, another framings lock or model
+  fingerprint is a deviation, an item table that is not the configured grid is refused, a file
+  without a configured task or arm is refused); the replay's checks (each edit of a verdict, its
+  bootstrap settings, a cell's identity field, metrics, counts, novel-key block or diagnostics, an
+  arm record's AUROC, shuffle verdict or NLL, `a1`, `fold_choices`, `skipped_folds`, a nested
+  trace or the record's shape is refused) and the recompute from `x1_items.parquet` (an edited
+  sensitivity or mean-context record, `p_loco`, item, label or shuffle draw is refused); the
+  settings at every call site (each nested fold equals `decide` on an evidence built with the
+  literal registered settings, the intervals and rule R the statistics' own at seed 0, the shuffle
+  draws an independent rejection sampler and golden draws); the floor, the guards and the tokens
+  per target inside a nested fold, and an inner fold that pools nothing; the mean-AUROC rule R's
+  card eligibility and ties; the report-only controls' values; the learned candidate-only probe
+  equal to scikit-learn fold by fold, blind to weights and held-out labels.
+- `test_cells`: arm scores equal the offline scorer's; zero shot is `σ(s_c)`; the calibrated tier
+  recovers a planted Platt or temperature; a held-out card never sees its own labels; each fold is
+  scored by its own fold's arm, exactly; a guarded fold without an arm is accounted for in both
+  tiers; `beats_lookup_novel` fails when either of its two conditions fails (its rule R at seed
+  0); the label weights change the fit and the unweighted sensitivity ignores them; a tier run off
+  the registration (labels, settings, a fingerprint, the framings lock, a subset of tiers) is
+  unregistered; on cards interleaved in the bench's identity order every item's prediction, the
+  NLL, the sensitivity block and the raw-score AUROC equal a computation keyed by identity (rank_fit,
+  K = 2, K > 2); `n_saturated` and annotate's raw-score AUROC by value; X1's trace pointer kept in
+  `fold_choices`, a colliding selector key refused.
+- `test_x2` (the replica equals scikit-learn, unweighted, training rows only, also on
+  interleaved cards; the AnyJev join; another or no dump, no replica or another fingerprint
+  unregistered; probabilities outside [0, 1] refused, a card without a prediction skipped),
+  `test_calibrate`, `test_features_choice` (the closed-choice manifest; a request whose keys are not
+  the closed options refused), `test_x1_latency_script` (every drawn target's requests asked once
+  per model in the alternating order, the `first` and `new_text` flags, the sha256 draw order, a
+  request that does not render the manifest refused, no key written, every answer discarded),
+  `test_bench_registered` (the registration against the published files and the committed locks,
+  by digest and count).
+- `test_bench_m2_cli`: `bench framing`, `--decide --from`, `bench run`, `bench x2` and
+  `bench table` end to end on the synthetic world: the registered run and its replay, partial runs
+  written unregistered, another or a missing snapshot refused (none written), the published counts
+  and the scratch store checked, results never overwritten without `--force`, a tampered or
+  foreign `x1.json` refused (an items file edited behind the replay too: `bench run` recomputes),
+  `tiers.json`'s fold pointers resolving into `x1.json`, another AnyJev dump, a timing file about
+  other labels or another serving lock and a store of another vector recipe refused, an
+  unregistered run's own replay, X2's controls equal to what `bench baselines` publishes.
+- `test_m2_plan_constants`: parses the plan's Appendix B and §1.3 and fails when a value is not
+  the one the code applies or a name in the "where" column does not exist.
+
+Before the commit the suite was also checked by mutation (in `/tmp` copies, never the working
+tree): every property above was shown to fail on code with the corresponding bug (for example
+rule (2)'s drafts' reading, a fixed arm in the nested cell, a calibrator fitted on the held-out
+card, either half of `beats_lookup_novel` removed, a single shuffle draw, an unchecked deviation).
+A second review round mutated the code again and found paths no test guarded (the realignment of
+fold-pooled predictions, the seeds and settings inside the nesting, the inner-fold floor, the
+timing run's request order, several refusals); each fix above came with a test that fails on the
+reverted code or the reviewers' mutant.
+
+## After the registered run (DESIGN A1)
+
+The registered M2 run is committed (`bench/results/2026-10-03/`) and amendment A1 records its
+outcome; these tests hold the code to it:
+
+- `test_bench_registered` replays and recomputes the committed `x1.json` from its own files (no
+  feature store, no label store) under the rotated framings lock, and checks that the registration
+  keeps G1's lock, which is today's framings with every task's active framing F7.
+- `test_framings`: the active framings are A1's (F9 for `column.ontology_fits`, F7 elsewhere) and
+  the rotation moved no `question_key`.
+- `test_k1_default` (the fake provider): under the shipped defaults every `term.fits` decision and
+  proposal is `ols_rank` (no probabilities, proposed, never auto), no D24 refinement is asked and
+  the groups that would have had one record it, the run is not `degraded`, Q3 is asked with F9
+  (its `question_key` and context hash), an audit run (`decider.ols_rank_tasks: []` or
+  `--ols-rank-tasks none`) asks CLM about `term.fits` again, and the CLI prints and writes the
+  tasks `ols_rank` decided.
+
+The pipeline helpers (`tests/fakes/pipeline.py` `config()`) are audit configurations
+(`decider.ols_rank_tasks: []`), so `test_pipeline_fake`, `test_service` and the review tests keep
+exercising CLM's `term.fits` path (specificity, the second opinion, runner-ups);
+`shipped_config()` gives the shipped defaults. The synthetic M2 registrations stand in the
+checkout's framings lock.
+
 ## Key tests
 
 Vendored hashes; `test_anyjev_parity` (state shas, task keys and AVUs equal mesa-anyjev's);
@@ -1494,7 +1786,8 @@ TextCache format, offline scores equal to the fake's `/v1/systemone`);
 `test_provenance_bulk_insert` (the JSON bulk insert writes exactly the rows the per-row path
 wrote on real fake runs, hostile strings stay data, failed casts raise, non-finite floats fall
 back to `executemany`, and seven fake runs commit within a loose time bound); the encoder's
-`tokenizer_json` from the configuration in `test_clm_encoder`. From M3: `test_apply_anonymous_rejected`,
+`tokenizer_json` from the configuration in `test_clm_encoder`. From M2: the bench tests and the A1
+tests above. From M3: `test_apply_anonymous_rejected`,
 `test_apply_crash_retry`, `test_revert`, `test_history_spool_recorder` (two VMs, dedup,
 quarantine), `test_mcp_conformance`. From
 M4: `test_policy_citations`, `test_loco_leakage`, `test_nested_selection`, `test_rule_r`,
@@ -1575,6 +1868,12 @@ third-party component and its hash.
 ---8<--- https://idss-mesa.github.io/mesa-clm/log/
 
 # Directory Update Log
+
+## 2026-10-03
+
+* **Update**: after the registered M2 run, [Learning and bench](concepts/learning-and-bench.md) gains "Milestone M2: the registered results (2026-10-03)": X1 per arm on both tasks (`term.fits` K1, no arm qualifying; `column.ontology_fits` F9 on `clm-latest`, chosen in 7 of 7 nested folds), the candidate-only probe, the nested `column.ontology_fits` cells and the `term.fits` audit cells, the closed choices against their majority rates, and X2, every number naming its file under `bench/results/2026-10-03/` (the independent recomputations agree with every number they recomputed). [Decision model](concepts/decision-model.md) describes amendment A1: Q3 asked with F9, `term.fits` groups decided by `ols_rank` by default with Q4b not asked for them, `--ols-rank-tasks none` for an audit run, and the lock rotation that moved no `question_key`. [Tiers and policy](concepts/tiers-and-policy.md), [Configuration](getting-started/configuration.md), [Install](getting-started/install.md) and [Quickstart](getting-started/quickstart.md) document `decider.ols_rank_tasks` and `annotate --ols-rank-tasks` (the quickstart's fake run reaches the `term.fits` steps and Q4b only with `--ols-rank-tasks none`); [Testing](develop/testing.md) and [Architecture](develop/architecture.md) the A1 tests and the M2 modules; the home page status moves to M2. `llms.txt` and `llms-full.txt` regenerated.
+* **Update**: [Learning and bench](concepts/learning-and-bench.md) and [Testing](develop/testing.md) for the second pre-run review of the M2 analysis plan: the registration also pins the framings lock, each model's fingerprint and X2's dump, and a run is registered only on the grid it evaluated; `--decide --from` holds every reported number to its trace and the items file (and names what it cannot replay); `bench run` recomputes X1 first; the reported AUROC intervals are labelled as the 90% intervals they are; the timing run alternates which model it asks first. The testing page lists the new tests and the second mutation round. `llms.txt` and `llms-full.txt` regenerated.
+* **Update**: [Learning and bench](concepts/learning-and-bench.md) gains "Milestone M2: the analysis plan (pre-run)" from `design/m2-analysis-plan.md`, committed before any M2 result: the registered snapshot and configuration (anything else written unregistered), how X1 decides (rule (1) with the within-card shuffle against the mean AUROC of 200 seeded derangements, K1, rule (2) read literally, rules (3) and (4), the report-only controls, the replay and recompute from the files), nested selection, the zero_shot and calibrated cells (`tiers.json`, the one producer of citable cells), X2, and the planned results files (none exist yet). [Testing](develop/testing.md) describes the M2 bench tests on synthetic labels only, what they read from the snapshot (identity and state columns, the label digest), `test_m2_plan_constants` and the mutation checks run before the commit. `llms.txt` and `llms-full.txt` regenerated.
 
 ## 2026-10-01
 

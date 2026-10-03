@@ -7,10 +7,24 @@ It is the standalone successor-sibling of mesa-anyjev: the generic layers are po
 logprob readout is replaced by a torch-free HTTP client for a vLLM pooling encoder plus a
 patched `clm-serve`. Python 3.11+, hatchling `src/` layout, package `mesa_clm`, console script
 `mesa-clm`, MCP tools `mesa_clm_*`. House style follows `idss-mesa/mesa-anyjev` (and through
-it `neon-mcp`). `DESIGN.md` records every decision (U1–U4, D0–D33, the M1 implementation notes,
-the pre-registration frozen at G1 = the M1 merge commit, amendments from A2; A1 is reserved for
-the X1 framing) and `RESEARCH.md` the verified facts; read both before changing behaviour. The full plan is
-`design/plan-2026-09-28.md`.
+it `neon-mcp`). `DESIGN.md` records every decision (U1–U4, D0–D33, the M1 and M2 implementation notes with
+M2's pre-run disclosure and post-run record, the pre-registration frozen at G1 = the M1 merge
+commit, amendments A1–A5; A1 is X1's registered outcome) and `RESEARCH.md` the verified facts
+(the M2 results with their JSON pointers included); read both before changing behaviour. The full
+plan is `design/plan-2026-09-28.md`; how M2 reads the frozen rules (X1, the tier cells, X2, every
+constant) is `design/m2-analysis-plan.md`, committed before any M2 result and changed after the
+first run only by amendment.
+
+**Current state (2026-10-03): M2 done, on `feat/m2-evidence` (draft PR #4).** The registered run
+(plan §14, once; outputs committed as produced in `bench/results/2026-10-03/`, never edited)
+decided, and DESIGN **A1** records: `column.ontology_fits` → **F9 on `clm-latest`**
+(`framings.ACTIVE`, `framings.lock.json` rotated, lock_sha `7c93cc3e0ff6…`; no question_key
+moved); `term.fits` → **K1** (no arm qualified): its proposals are `ols_rank` by default
+(`decider.ols_rank_tasks: [term.fits]`), D24 is not asked for those groups (recorded), CLM
+answers `term.fits` only in an audit run (`annotate --ols-rank-tasks none`), M4 goes probe-first;
+the closed choices keep F7. The M2 registration keeps G1's framings lock (`b432d32a7536…`), so
+`bench framing --decide --from bench/results/2026-10-03/x1.json` still replays, and a new
+`bench framing` or `bench run` is written unregistered. Next: M3 (the live proposed-only loop).
 
 ## Commands
 
@@ -24,12 +38,19 @@ uv run mesa-clm doctor [--quick] [--serve] [--json] # pins, locks, stores, host;
 uv run mesa-clm framings --check                    # framing keys match framings.lock.json (--update-lock after a deliberate edit)
 MESA_CLM_OLS__FIXTURES=replay MESA_CLM_OLS__FIXTURES_DIR=tests/fixtures/ols \
   uv run mesa-clm --provenance duckdb:////tmp/p.duckdb annotate --card tests/fixtures/cards/DP1.10003.001.brd_countdata.md --provider fake --out /tmp/run.json
+#   term.fits groups: ols_rank by default (K1, DESIGN A1); --ols-rank-tasks none asks CLM too (an audit run)
 uv run mesa-clm explain --run-id <id|prefix>        # owner = --actor ($USER); review --run-id (TTY) | review --pick G=KEY|none --decline G
 uv run mesa-clm feedback --group-id G --action pick|reject|decline [--option-key KEY|none]  # TTY: via=cli curator; no TTY: via=tool agent_pick (A2)
 uv run mesa-clm provenance migrate|export --run-id R --out DIR|import PATH|prune [--dry-run]
 uv run mesa-clm serve keys --init|--rotate | serve units | serve lock --check   # never prints a key
 uv run mesa-clm features build --snapshot bench/snapshots/2026-09-29.parquet | export-npz --out DIR | project | stats [--json]
 uv run python scripts/doctor_record.py --out bench/results/<date>/doctor_serve.json   # doctor --serve as a results file
+uv run python scripts/x1_latency.py --out bench/results/<date>/x1_latency.json   # X1's p50: label-free live timing, answers discarded
+uv run mesa-clm bench framing --date <date> --latency bench/results/<date>/x1_latency.json --decide   # X1: x1.json, x1_items.parquet, x1.md
+uv run mesa-clm bench framing --decide --from bench/results/<date>/x1.json   # replay + recompute X1 from the files alone
+uv run mesa-clm bench run --tiers zero_shot,calibrated --loco --date <date>   # tier cells of all five tasks (tiers.json)
+uv run mesa-clm bench x2 --date <date>                # X2: M0 controls, PR #13 replica, AnyJev L2 (x2.json)
+uv run mesa-clm bench table --date <date> [--out bench/results/<date>/table.md]   # every row names file#cell
 MESA_CLM_LIVE=1 uv run pytest -q -m live            # real EMBL-EBI OLS: fixture recording and closure only
 MESA_CLM_ENGINE=1 uv run pytest -q -m engine        # real encoder :8090 + clm-serve :8700 (doctor --serve, non-bench annotate, offline vs /v1/systemone and /v1/rank)
 MESA_CLM_CLM_SRC=~/.mesa/clm/serve/CLM/src uvx --with fastapi --with httpx --with numpy --with requests \
@@ -47,7 +68,17 @@ Bench sequence (plan §9; verbs land milestone by milestone, `mesa-clm --help` l
 ingest-neon-eval|import-anyjev|snapshot|stats`, `bench baselines` (lookup_prob, novel-key, LOPO)
 and `bench mde`, both stamped with the `labels_sha256` of `bench/snapshots/<date>.parquet`
 (written from the store when missing, refused when the store has changed since; DESIGN D30), and
-`doctor`. M1 adds `framings`, `annotate` (`--provider clm|fake`, `--tier
+`doctor`. M2 (pre-run) adds `bench framing|run|x2|table`: they read only the registered
+snapshot (`bench/snapshots/2026-09-29.parquet`, refused by both hashes and the published counts,
+never written), take B, the seed and alpha from the registration (no option for them), write any
+other invocation with every cell `pre_registered: false, exploratory: true` (the producers also
+hold the framings lock, each model's fingerprint, X2's AnyJev dump and the evaluated grid to the
+registration), and replace no results file without `--force`; `bench run` replays and recomputes
+its `x1.json` before using it. **M2 run protocol** (plan §14; once each, nothing run on real
+labels before the plan and code are pushed, outputs committed as produced): `x1_latency.py` →
+`bench framing --latency … --decide` → `bench framing --decide --from x1.json` → `bench run --tiers
+zero_shot,calibrated --loco` → `bench x2` → `bench table --out …`. M1 adds `framings`, `annotate`
+(`--provider clm|fake`, `--tier
 auto|zero_shot|…|ols_rank`; clm-serve down at tier auto runs `ols_rank` only with
 `decider.ols_rank_fallback: true`, otherwise exit 1), `explain`, `review`, `feedback`,
 `provenance migrate|export|import|prune`, `serve keys|units|lock` and `features
@@ -88,6 +119,12 @@ mesa-clm writes under `~/.mesa/clm` is owner-only (0700/0600) whatever the umask
 - **Two phases (D10, D28).** `annotate` decides and proposes (policy `auto` stored as
   `accepted`, `accepted_by=policy`); `apply` writes. While uncalibrated, steps rank-and-cap;
   the degraded `ols_rank` method proposes and never autos.
+- **X1's outcome (A1, D24, D28).** `column.ontology_fits` is asked with F9 on `clm-latest`;
+  `term.fits` is K1: `ols_rank` decides its groups by default (`decider.ols_rank_tasks`), D24 is
+  not asked for them (no `p_fit`; the group records it), its zero_shot/calibrated tiers are
+  audit-only (`--ols-rank-tasks none`) until a probe is promoted, M4 goes probe-first. The closed
+  choices are untouched by A1. The committed M2 results are never edited or re-run; the
+  registration keeps G1's framings lock.
 - **Sidecar and history (D11, D12, D13).** Per-host DuckDB opened per operation under a flock;
   the plugin always spools (`mesa-spool/1`); `direct` is CLI-only and needs the whole lock set
   free; one snapshot per (run, project); never an empty `record_changes`.
@@ -160,10 +197,16 @@ verification, the container's network namespace) **M1** · `learn/features.py`
 (`FeatureStore`: float32 vectors, the lock's vector recipe and `lock_sha` stamped, format 2; the
 X1/X2 manifest, `builder_ordered`, TextCache npz export) and `learn/offline.py` (offline
 rank_fit/noul scoring from the cached float32 vectors; `scripts/x1_crosscheck.py` checks it
-against clm-serve) **M1** · `apply.py`,
+against clm-serve) **M1** · `bench/framing.py` (X1: scores, the within-card shuffle, LOCO-Platt,
+the decision rules, nesting, `decide_from_json`), `bench/cells.py` (the zero_shot and calibrated
+cells, the one producer of citable `<task>.<tier>.<A1>` cells), `bench/x2.py`,
+`bench/registered.py` (the registered snapshot, counts, B/seed/alpha, framings lock, model
+fingerprints, AnyJev dump), `bench/run.py` (the M2
+verbs), `learn/calibrate.py` (weighted Platt, temperature) **M2** (registered run
+`bench/results/2026-10-03/`; A1: `framings.ACTIVE`, `decider.ols_rank_tasks`) · `apply.py`,
 `revert.py`, `irods_io.py`, `history/` (two-phase apply, revert, backends, spool, recorder, lock
-set) M3 · `learn/{linear,calibrate,fit}.py`, `artifacts.py`,
-`learn/teacher.py` M4 · `bench/{run,framing,e2e}.py` M2–M4 · `adapters/neon.py` M6 ·
+set) M3 · `learn/{linear,fit}.py`, `artifacts.py`,
+`learn/teacher.py` M4 · `bench/e2e.py` M4 · `adapters/neon.py` M6 ·
 `learn/finetune.py` M7. `serving/` and `deploy/` hold the serve-venv side (patches, encoder
 scripts, units) and never import `mesa_clm`.
 
@@ -184,6 +227,16 @@ scripts, units) and never import `mesa_clm`.
   the hashes.
 - Every number in docs or tables names the results JSON it came from (AnyJev ground rule 1);
   numbers marked *to reproduce* in RESEARCH.md are not cited until the bench reproduces them.
+- M2 pre-commitment: until the analysis plan and its code are pushed, nothing combines a model
+  output with the snapshot's silver labels and no M2 verb runs on the registered snapshot; the M2
+  tests run on synthetic labels only (from the snapshot they read its identity and state columns,
+  rows whose label-bearing columns were replaced first, and its label digest).
+  `tests/unit/test_m2_plan_constants.py` holds the plan's Appendix B to the code. Since the
+  registered run (2026-10-03) one test also replays the committed `x1.json` from its files
+  (`test_bench_registered.py`); the synthetic registrations stand in the checkout's framings lock.
+  The pipeline test helpers (`tests/fakes/pipeline.py` `config()`) are audit configurations
+  (`decider.ols_rank_tasks: []`, CLM on `term.fits`); `shipped_config()` and
+  `tests/unit/test_k1_default.py` cover the shipped K1 default.
 - No token, key or password is ever logged, printed, hashed into a fingerprint or committed;
   secrets resolve through `env|file|keyring|auto`.
 
