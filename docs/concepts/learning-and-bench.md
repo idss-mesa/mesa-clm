@@ -10,7 +10,7 @@ tags:
   - calibration
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T19:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -303,7 +303,15 @@ The term.fits audit cells (F7@`clm-latest`, not pre-registered under K1): zero_s
 AUROC 0.511; calibrated accuracy 0.698 (majority 0.698), AUROC 0.457. The closed choices
 (F7@`clm-latest`) score below their majority rates at zero shot: column.annotate 0.357 against
 0.643, column.aspect 0.050 against 0.300, avu.value_kind 0.324 against 0.478 (calibrated 0.324);
-the calibrated cells of annotate and aspect are empty because no fold trains on 100 items.
+the calibrated cells of annotate and aspect are empty because no fold trains on 100 items. After
+seeing these cells the user decided that serving answers the closed choices by deterministic rules
+and keeps CLM's answers to them for audit only (amendment A6, 2026-10-04; see
+[Decision model](decision-model.md)). That is a product-safety change, not a result: no
+pre-registered rule covers these tasks, no cell changes or is re-read, and the bench never counts
+the audit-only records (it reads label snapshots only). The aspect rule's lookup is M0's lookup
+over the registered snapshot's 60 `column.aspect` items, frozen into the package
+(`aspect_lookup.json`, rebuilt from the snapshot by a test); a run leaves out the annotated
+card's own items, so a leave-one-card-out end-to-end bench stays leave-one-card-out.
 
 **X2** (`x2.json`, baselines that gate nothing):
 

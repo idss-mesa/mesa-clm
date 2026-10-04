@@ -14,7 +14,7 @@ tags:
   - environment
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T18:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -56,7 +56,7 @@ snippet of the file (a YAML syntax error names the file, line and column).
 |---|---|
 | `clm` | The clm-serve URL (`http://127.0.0.1:8700`), key (default file `~/.mesa/clm/secrets/clm.key`), model (`clm-latest`, `clm-raw` or a promoted head), `allow_remote` (needs https). |
 | `encoder` | The vLLM pooling URL (`http://127.0.0.1:8090`), key (default file `~/.mesa/clm/secrets/encoder.key`), `max_len` (4096, the server's window; clients truncate at 4,095), and `tokenizer_json` (the pinned Qwen3 `tokenizer.json`, counted by the `tokenize` extra when the encoder has no `/tokenize`; unset, the token guard over-counts with `ceil(chars / 2)`). |
-| `decider` | `tier`: `auto` (the best promoted artifact, else `zero_shot`), `zero_shot`, `calibrated`, `probe`, `head`, or `ols_rank` (the degraded OLS top-1 method for every candidate group, proposed-only, DESIGN D28); `ols_rank_fallback` (default `false`): whether `annotate --provider clm` at tier `auto` runs `ols_rank` when clm-serve does not answer instead of refusing; `ols_rank_tasks` (default `[term.fits]`, DESIGN A1's K1): the candidate-group tasks `ols_rank` decides whatever the tier (a YAML list, or `MESA_CLM_DECIDER__OLS_RANK_TASKS` as a list, a comma-separated string or `none`); `[]` asks CLM about `term.fits` too, an audit run. Requests always use temperature 1; calibration is client-side. |
+| `decider` | `tier`: `auto` (the best promoted artifact, else `zero_shot`), `zero_shot`, `calibrated`, `probe`, `head`, or `ols_rank` (the degraded OLS top-1 method for every candidate group, proposed-only, DESIGN D28); `ols_rank_fallback` (default `false`): whether `annotate --provider clm` at tier `auto` runs `ols_rank` when clm-serve does not answer instead of refusing; `ols_rank_tasks` (default `[term.fits]`, DESIGN A1's K1): the candidate-group tasks `ols_rank` decides whatever the tier (a YAML list, or `MESA_CLM_DECIDER__OLS_RANK_TASKS` as a list, a comma-separated string or `none`); `[]` asks CLM about `term.fits` too, an audit run; `closed_choice` (default `rules`, DESIGN A6): who answers the closed choices, `rules` (every non-identifier column annotated whatever the planner says; aspects from the planner's hint and the M0 lookup over the packaged table frozen from the registered labels snapshot, else the first two in the lookup's prior order; value kind "the term label"; CLM's answers recorded audit-only) or `clm` (the M2 behaviour; `MESA_CLM_DECIDER__CLOSED_CHOICE`, `annotate --closed-choice`). Requests always use temperature 1; calibration is client-side. |
 | `planner` | The reasoning model that only plans: `static` (default in 0.1.0), `claude`, `gateway`. |
 | `claude` | Credentials profile and model for the planner and the second opinion. |
 | `policy` | Profile (`prod` needs `calibrated` for auto-writes and an audit; `dev` allows `--history none`), thresholds file (`policy_defaults.yaml`). |
@@ -83,7 +83,7 @@ tags:
   - install
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T18:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -139,7 +139,7 @@ owner-only, directories 0700 and files 0600, whatever the umask.
 |---|---|
 | `doctor [--quick] [--serve] [--json]` | What this host can run (below). `--quick` skips the vendored-file hashing and, outside serve mode, the serving-lock verification; in serve mode it keeps the light probes and skips the slow ones unless `--serve` is given. `--serve` forces every live serving probe; `--json` prints `{ok, summary, checks[]}`. |
 | `framings --check \| --update-lock [--lock PATH]` | The framing keys against `framings.lock.json` (DESIGN D1): `--check` exits 1 on drift (CI runs it); `--update-lock` rewrites the lock after a deliberate framing change, which rotates that framing's `question_key`. |
-| `annotate --card PATH [--provider clm\|fake] [--planner static\|gateway\|claude] [--tier auto\|zero_shot\|calibrated\|probe\|head\|ols_rank] [--ols-rank-tasks TASKS\|none] [--owner O] [--out FILE\|-] [--eval-result] [--fake-seed N]` | Decide one dataset card (a local file; CLI only, DESIGN D26) and record the run in the sidecar. Prints a summary (run id, proposals, abstentions by reason, decisions, CLM calls, input tokens, seconds, fingerprint, the tasks `ols_rank` decided) and the next step; `--out` writes the run as JSON (`-` for stdout), `--eval-result` the neon-avu-eval result shape instead. `term.fits` groups are decided by `ols_rank` by default (`decider.ols_rank_tasks`, K1 in DESIGN A1); `--ols-rank-tasks none` asks CLM about them too, an audit run. Every outcome is proposed-only: the shipped policy has `auto: null` everywhere. |
+| `annotate --card PATH [--provider clm\|fake] [--planner static\|gateway\|claude] [--tier auto\|zero_shot\|calibrated\|probe\|head\|ols_rank] [--ols-rank-tasks TASKS\|none] [--closed-choice rules\|clm] [--owner O] [--out FILE\|-] [--eval-result] [--fake-seed N]` | Decide one dataset card (a local file; CLI only, DESIGN D26) and record the run in the sidecar. Prints a summary (run id, proposals, abstentions by reason, decisions, CLM calls, input tokens, seconds, fingerprint, the tasks `ols_rank` decided, who answered the closed choices) and the next step; `--out` writes the run as JSON (`-` for stdout), `--eval-result` the neon-avu-eval result shape instead. `term.fits` groups are decided by `ols_rank` by default (`decider.ols_rank_tasks`, K1 in DESIGN A1); `--ols-rank-tasks none` asks CLM about them too, an audit run. The closed choices (annotate, aspect, value kind) are answered by rules by default (`decider.closed_choice: rules`, DESIGN A6): CLM's answers to them are recorded audit-only, and the aspect lookup reads the table shipped in the package (frozen from the registered labels snapshot; no sidecar is read); `--closed-choice clm` runs the M2 behaviour. Every outcome is proposed-only: the shipped policy has `auto: null` everywhere. |
 | `explain --run-id ID \| --irods-path P [--limit N]` | A run read back from the sidecar: slim decisions, the top three options per group, links and the groups waiting for a reviewer. Run ids may be given as a unique prefix (at least 4 hex digits). |
 | `review --run-id ID [--pick GROUP=OPTION_KEY\|none]... [--decline GROUP]...` | Answer a run's pending groups. Without `--pick`/`--decline` it is interactive and needs a terminal: each group's candidates with `p_fit` and the anchor, then a number picks, `0` or `n` is "none of these", `d` declines, `s` (or Enter) skips, `q` (or end of input) quits; its answers are curator labels (`via=cli`, DESIGN A2). The non-interactive form answers pending groups only, each once per call, and checks every answer before recording any; at a terminal its answers are curator labels, without one (a script, a pipe, an agent's shell) they are recorded like a plain tool call (`via=tool`: `agent_pick` at weight 0, never fold-eligible) and the verb says so on stderr. A decline keeps only an override row. A curator's answer settles a group; an agent's leaves it pending for a curator, whose answer replaces it. |
 | `feedback --group-id G --action pick\|reject\|decline [--option-key KEY\|none]` | One answer for any group of your runs (a full id or a unique prefix); `pick` needs `--option-key` (`none` is "none of these"), `reject` is "none of these". At a terminal `via=cli`, otherwise `via=tool` as above. |
@@ -192,7 +192,8 @@ answer:
   CLM tier (`zero_shot`, `calibrated`, …) always refuses;
 * `--tier ols_rank` (or `decider.tier: ols_rank`) never needs clm-serve for the candidate
   groups; the closed choices (annotate, aspect, value kind) are still asked and recorded
-  `unavailable` when it is down.
+  `unavailable` when it is down (audit-only under DESIGN A6's rules, which need no CLM answer:
+  every column keeps its aspects).
 
 A learned tier the provider cannot serve (`calibrated`, `probe`, `head` before M4/M7) is refused
 before any request. An OLS replay miss fails the run (exit 1): what was decided before it is
@@ -314,7 +315,7 @@ tags:
   - review
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T19:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -357,9 +358,12 @@ Mind the slashes in a DuckDB DSN: the path starts after `duckdb:///`, so
 `duckdb:///x.duckdb` is `x.duckdb` in the working directory and `duckdb:////tmp/x.duckdb` (four
 slashes) is the absolute `/tmp/x.duckdb`. Without `--provenance` or the variable the sidecar is
 `~/.mesa/clm/provenance.duckdb`. Without `MESA_CLM_OLS__FIXTURES` the default (`off`) queries the
-live EMBL-EBI OLS. `--fake-seed` picks the fake head; seed 5 answers "Yes" to enough columns that
-every step asked of the provider runs on the fixture cards (the default seed 0 annotates few
-columns). Under the shipped default (K1, DESIGN A1) the `term.fits` steps are not among them:
+live EMBL-EBI OLS. `--fake-seed` picks the fake head. Under the shipped closed-choice rules
+(DESIGN A6) every non-identifier column is annotated whatever the head answers, since its answers
+to the closed choices are recorded for audit only; under `--closed-choice clm` (the M2 behaviour)
+seed 5 answers "Yes" to enough columns that every step asked of the provider runs on the fixture
+cards, while the default seed 0 annotates few columns. Under the shipped default (K1, DESIGN A1)
+the `term.fits` steps are not among those the provider answers:
 `ols_rank` decides Q4–Q6 and the specificity refinement Q4b (D24) is not asked, so add
 `--ols-rank-tasks none` (an audit run) for the provider to answer the `term.fits` steps and Q4b
 too.
@@ -383,12 +387,22 @@ too.
   with no `p_fit`, and the column-to-ontology questions (Q3) are asked with the A1 framing F9.
   `--ols-rank-tasks none` asks the provider about `term.fits` too: an audit run, which the line then
   says;
+* `closed choices: rules`: since DESIGN A6 the closed choices are answered by rules (every
+  non-identifier column annotated; its aspects from the planner's hint and the M0 lookup over
+  the table shipped in the package, frozen from the registered labels snapshot, or else the
+  first two aspects in that lookup's prior order; the value kind "the term label"), and the
+  provider's answers to them are recorded audit-only (outcome `abstain`, reason
+  `audit_only_a6`; the line counts them). The fixture card is a bench card, so its own labels
+  are left out of the lookup and the other six cards' labels choose its columns' aspects
+  wherever they share a column name. `--closed-choice clm` runs the M2 behaviour, which the line
+  then says;
 * the provider note and `next: mesa-clm review --run-id <run_id>`.
 
 `--out run.json` holds the full run: every proposal with its attribute, value, unit, CURIE,
 `p_fit`, level (`zero_shot` for CLM, `none` for `ols_rank`), calibration, method and rationale,
-plus the abstentions and `ols_rank_tasks`. `--out -` prints it instead, and `--eval-result` writes the neon-avu-eval
-result shape so its scoring scripts run unchanged.
+plus the abstentions, `ols_rank_tasks`, `closed_choice` and `n_audit_only`. `--out -` prints it
+instead, and `--eval-result` writes the neon-avu-eval result shape so its scoring scripts run
+unchanged.
 
 ### Read the run back
 
@@ -492,8 +506,9 @@ pre-flight). When clm-serve does not answer,
 `annotate` refuses with exit 1 and says why. Run
 `--tier ols_rank` (the OLS top-1 of every candidate group, proposed-only, never auto; DESIGN
 D28) to decide the candidate groups without it (the column questions Q1, Q2 and Q7 still try
-CLM and are recorded as unavailable, so the run says `degraded` and columns without a planner
-aspect get no groups), or set `decider.ols_rank_fallback: true`
+CLM and are recorded as unavailable, audit-only under the default closed-choice rules, so the run
+says `degraded`; under those rules every column keeps its aspects, while under `--closed-choice
+clm` columns without a planner aspect get no groups), or set `decider.ols_rank_fallback: true`
 (`MESA_CLM_DECIDER__OLS_RANK_FALLBACK=true`) to let tier `auto` degrade to `ols_rank` on its
 own; an explicit CLM tier such as `zero_shot` always refuses. Review, feedback and export work
 the same way against either provider's runs.
@@ -502,7 +517,7 @@ the same way against either provider's runs.
 
 ---
 title: "Decision model"
-description: "How mesa-clm asks CLM: one rank per candidate group with a fixed abstain anchor, set-independent scores, the Q1-Q8 pipeline, contexts that end with the target, framings and the two keys, and what the M2 framing experiment changed (F9 for column.ontology_fits; term.fits proposals by ols_rank under K1)."
+description: "How mesa-clm asks CLM: one rank per candidate group with a fixed abstain anchor, set-independent scores, the Q1-Q8 pipeline, contexts that end with the target, framings and the two keys, what the M2 framing experiment changed (F9 for column.ontology_fits; term.fits proposals by ols_rank under K1), and what drives each step since amendment A6 (the closed choices Q1, Q2, Q7 by deterministic rules, CLM's answers to them audit-only)."
 type: Guide
 tags:
   - concepts
@@ -511,7 +526,7 @@ tags:
   - framings
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T18:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -569,17 +584,65 @@ Every context view ends with the target, because last-token pooling weights the 
 The numbers behind A1 are in RESEARCH.md, "M2 results (registered run)", and on
 [Learning and bench](learning-and-bench.md).
 
+## The closed choices by rule (amendment A6)
+
+The same registered run measured CLM's zero-shot answers to the closed choices below the
+majority class of their items: `column.annotate` accuracy 0.357 against 0.643, `column.aspect`
+0.050 against 0.300, `avu.value_kind` 0.324 against 0.478
+(`bench/results/2026-10-03/tiers.json`, cells `neon_annotate.zero_shot.F7`,
+`neon_aspect.zero_shot.F7`, `neon_value_kind.zero_shot.F7`). No pre-registered rule covers those
+tasks, and having seen the cells the user decided (2026-10-04) that they are answered by
+deterministic rules by default. Amendment A6 records that as a product-safety change of serving
+behaviour: it makes no scientific claim and touches neither the frozen pre-registration nor any
+cell. `decider.closed_choice` selects it (`rules`, the default; `clm` keeps the M2 behaviour for
+audits and tests; `annotate --closed-choice`). Under `rules` each step is driven by:
+
+| Step | What decides | Recorded as |
+|---|---|---|
+| Q1 | a column is annotated iff it is not an identifier, whatever the planner says (its `annotate=False` stays in the run's plan and decides nothing; an identifier stays out even with its `annotate=True`) | a `rule` record answering `Yes`, reason `a6_not_identifier`; identifiers are `No` rules as before |
+| Q2 | the planner's aspect hint, then the top two aspects of the M0 lookup (below), de-duplicated, `other` excluded: up to three; when that is empty, the fallback below | one `rule` record per aspect, reason `a6_aspect_hint`, `a6_aspect_lookup` or `a6_aspect_fallback`; the column's Q3 groups carry `search_json.a6` (the source of each aspect, the lookup's counts, the fallback's order) |
+| Q2 fallback | the registry's aspects in the order of the lookup's training prior (most labels first; aspects without labels after, in registry order), skipping `other`, any aspect with no ontology in play and `unit` for a column without a unit; the first two are kept. No CLM answer is read, so it works with `column.ontology_fits` decided by `ols_rank` or clm-serve down | `rule` records as above; Q3 then runs on the kept aspects like any other; a column is `no_aspect` only when no aspect has an ontology in play |
+| Q7 | the deterministic pre-rule first; where it leaves the kind open, "the term label" | a `rule` record, reason `a6_value_kind_label`, under the proposal's group |
+| Q3–Q6, Q4b, Q8 | unchanged (F9 for Q3, asked once per chosen aspect but `unit`; `ols_rank` for `term.fits` under K1) | as before |
+
+The **M0 lookup** is the no-model control the bench reports beside every cell: it counts how often
+each aspect labels a column of the same name on the other cards. Its items are frozen: the 60
+`column.aspect` items of the M0 bench task on the registered labels snapshot
+(`bench/snapshots/2026-09-29.parquet`), the ones behind the lookup's 0.550 on the aspect cell
+above, shipped in the package as `aspect_lookup.json` with its sha256 pinned in the code
+(`scripts/freeze_aspect_lookup.py` writes it; a test rebuilds it from the snapshot). Every host
+reads the same table and no sidecar is read, so the same card gets the same aspects everywhere.
+At annotate time the items of the card being annotated are left out, as the bench's
+leave-one-card-out lookup leaves them out; the two most frequent labels of the column's name win,
+a tie going to the label of the alphabetically first card. A name no other card carries
+contributes nothing and the fallback decides, in the order of the same lookup's prior (what the
+bench's lookup gives a key it has not seen). A run's `labels_sha256` names the snapshot. Two
+points are the implementation's reading of the decision, for the user to confirm: an unseen
+name goes to the fallback, and the fallback's order and its cap of two.
+
+**CLM still answers Q1, Q2 and Q7**, in the same requests as before (a column the planner
+excluded, which M2 never asked about, gets no audit question), and every such record is
+**audit-only**: stored with outcome `abstain` and reason `audit_only_a6` whatever the policy says,
+its probabilities kept as served. It decides nothing, makes no link and no label; `explain` lists
+it as a decision with that marker, and review, the pending groups and feedback never offer it
+(they offer a group's deciding record, which is never one). A run's summary and `--out` JSON give
+the mode (`closed_choice`) and the count (`n_audit_only`). Q1's rule and Q7's fallback answer the
+majority class of the cells above (`Yes`; "the term label"), which describes them; it is not a
+measurement of the rules on new cards.
+
+## The pipeline steps
+
 | Step | Task | Shape | Context view | Candidates |
 |---|---|---|---|---|
 | Plan | (the planner) | — | — | which ontologies, columns and queries; hints only |
-| Q1 | `column.annotate` | choice K=2 | `{card_header, column}` | `ANNOTATE_OPTIONS`; identifiers are a rule |
-| Q2 | `column.aspect` | choice K=8 | same text as Q1 | `ASPECT_OPTIONS`; top-1 if proposed, else top-2 |
+| Q1 | `column.annotate` | choice K=2; by default a rule, CLM audit-only (A6) | `{card_header, column}` | `ANNOTATE_OPTIONS`; identifiers are a rule |
+| Q2 | `column.aspect` | choice K=8; by default hint, lookup, else the prior-ordered fallback, CLM audit-only (A6) | same text as Q1 | `ASPECT_OPTIONS`; under `clm`: top-1 if proposed, else top-2 |
 | Q3 | `column.ontology_fits` | rank_fit 12 + anchor | F9 (A1): `NEON dataset {title}. Column {name}: {description} ({unit}). {aspect} ontology term:` | registry `option_text`, masked by aspect after scoring |
 | S | candidates | OLS | — | `search_candidates` ≤12, fixed `unit_candidate` |
 | Q4 | `term.fits` | rank_fit ≤12 + anchor; by default `ols_rank` (K1, A1) | `target_state = {card_header, scope, aspect, column|site}` | `"{label}: {description[:300]}"` |
 | Q4b | `term.fits` (specificity) | rank_fit; not asked for an `ols_rank` group (A1) | same | {parent, ≤10 children, anchor}; a child wins at `p_fit +0.10`, proposed-only (DESIGN D24) |
 | Q5 / Q6 | `term.fits` | rank_fit; by default `ols_rank` (K1, A1) | `{card_header, site}` / `{card_header}` | ENVO biome descendants / NCBITaxon |
-| Q7 | `avu.value_kind` | choice K=4 | `value_kind_state` | `VALUE_KINDS`, deterministic pre-rules first |
+| Q7 | `avu.value_kind` | choice K=4; by default the pre-rule, else "the term label", CLM audit-only (A6) | `value_kind_state` | `VALUE_KINDS`, deterministic pre-rules first |
 | Q8 | rule | — | — | exact-triple dedup, cap 25 by `p_fit` (DESIGN D25) |
 
 Questions sharing a context go in one request: Q1 and Q2 for a column share one, and every
@@ -648,7 +711,7 @@ tags:
   - calibration
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T19:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -941,7 +1004,15 @@ The term.fits audit cells (F7@`clm-latest`, not pre-registered under K1): zero_s
 AUROC 0.511; calibrated accuracy 0.698 (majority 0.698), AUROC 0.457. The closed choices
 (F7@`clm-latest`) score below their majority rates at zero shot: column.annotate 0.357 against
 0.643, column.aspect 0.050 against 0.300, avu.value_kind 0.324 against 0.478 (calibrated 0.324);
-the calibrated cells of annotate and aspect are empty because no fold trains on 100 items.
+the calibrated cells of annotate and aspect are empty because no fold trains on 100 items. After
+seeing these cells the user decided that serving answers the closed choices by deterministic rules
+and keeps CLM's answers to them for audit only (amendment A6, 2026-10-04; see
+[Decision model](decision-model.md)). That is a product-safety change, not a result: no
+pre-registered rule covers these tasks, no cell changes or is re-read, and the bench never counts
+the audit-only records (it reads label snapshots only). The aspect rule's lookup is M0's lookup
+over the registered snapshot's 60 `column.aspect` items, frozen into the package
+(`aspect_lookup.json`, rebuilt from the snapshot by a test); a run leaves out the annotated
+card's own items, so a leave-one-card-out end-to-end bench stays leave-one-card-out.
 
 **X2** (`x2.json`, baselines that gate nothing):
 
@@ -1304,7 +1375,7 @@ the tools return `decider_unavailable`; the bench is unaffected because features
 
 ---
 title: "Tiers and policy"
-description: "What level and calibration promise on a mesa-clm decision, the record invariants, and the rules that turn a decision into auto, proposed or abstain with a cited bench cell."
+description: "What level and calibration promise on a mesa-clm decision, the record invariants, the rules that turn a decision into auto, proposed or abstain with a cited bench cell, and what drives each step of a run today (ols_rank for term.fits under K1; the closed choices by rule, CLM's answers to them audit-only, under amendment A6)."
 type: Guide
 tags:
   - concepts
@@ -1312,7 +1383,7 @@ tags:
   - policy
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T18:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -1358,7 +1429,9 @@ with M7), or `ols_rank`: every candidate group (`term.fits`, `column.ontology_fi
 by the degraded method, the OLS top-1 as `proposed` with no probabilities (DESIGN D28), while
 the closed choices (annotate, aspect, value kind) are still asked. The pipeline also falls back
 to `ols_rank` per group when a CLM answer is unavailable or the context was truncated, and the
-run is marked `degraded`.
+run is marked `degraded`. Under the closed-choice rules (below) a column's aspects never depend
+on CLM, so under `ols_rank` (or with clm-serve down) every column keeps its aspects and its
+column-to-ontology groups are `ols_rank` too.
 
 `decider.ols_rank_tasks` (`MESA_CLM_DECIDER__OLS_RANK_TASKS`, or `annotate --ols-rank-tasks`)
 names the candidate-group tasks that `ols_rank` decides whatever the tier. Its shipped default is
@@ -1370,6 +1443,31 @@ refinement (it ranks by `p_fit`; the group records that it was not asked), and t
 marked `degraded` for them. An audit run asks CLM about `term.fits` anyway: `--ols-rank-tasks
 none` or `decider.ols_rank_tasks: []`; its `term.fits` decisions are `zero_shot`, never `auto`.
 `column.ontology_fits` is asked with its A1 framing (F9).
+
+`decider.closed_choice` (`MESA_CLM_DECIDER__CLOSED_CHOICE`, or `annotate --closed-choice`) says
+who answers the closed choices. Its shipped default is `rules` (DESIGN A6): M2's registered tier
+run measured CLM's zero-shot answers below the majority class on all three
+(`bench/results/2026-10-03/tiers.json`: `column.annotate` 0.357 against 0.643, `column.aspect`
+0.050 against 0.300, `avu.value_kind` 0.324 against 0.478), no pre-registered rule covers them,
+and the user chose deterministic fallbacks after seeing that, as a product-safety change that makes
+no scientific claim. `clm` keeps the M2 behaviour for audits and tests. What drives each step of a
+run with the shipped defaults:
+
+| Step | Driven by | Level of the deciding record |
+|---|---|---|
+| Q1 annotate | rule: every non-identifier column, whatever the planner says | `none` (`rule`) |
+| Q2 aspect | the planner's hint, then the top two of the M0 lookup over the packaged table frozen from the registered labels snapshot (the card held out), up to three; else the first two aspects in the lookup's prior order (`unit` only for a column with a unit); no CLM answer read | `none` (`rule`) |
+| Q3 ontology | CLM, F9 (A1), asked for each chosen aspect but `unit`; top two in-play ontologies kept whatever the outcome (D28) | `zero_shot` |
+| Q4–Q6 terms | `ols_rank`, the OLS top-1 (K1, A1) | `none` (`ols_rank`) |
+| Q4b specificity | not asked for an `ols_rank` group (A1) | — |
+| Q7 value kind | the pre-rule, else "the term label" | `none` (`rule`) |
+| Q8 keep | the rule: dedup, cap 25 (D25) | — |
+
+Under `rules` CLM's answers to Q1, Q2 and Q7 are still requested in the same calls and stored, but
+**audit-only**: outcome `abstain`, reason `audit_only_a6`, whatever the verdict below says (the
+verdict is still computed, so a misconfigured threshold still fails the run). They never decide
+anything, never become a link or a label, and are never offered for review; `outcomes` counts
+them under `abstain` and `n_audit_only` counts them alone.
 
 When `annotate --provider clm` finds clm-serve not answering before it starts, tier `auto` runs
 `ols_rank` for the whole card only if `decider.ols_rank_fallback` is `true`
@@ -1395,6 +1493,10 @@ for rank_fit questions and `confidence` for choices:
    and fingerprint-matched (below);
 3. **proposed** if the statistic clears `propose`;
 4. **abstain** otherwise. A group margin can only demote an auto.
+
+What a run stores is the verdict except where the pipeline settles a record itself: a moot record
+or a keep-rule drop is stored `rejected` (M1), and an audit-only closed-choice record `abstain`
+with `audit_only_a6` (DESIGN A6).
 
 Profiles: `prod` (`min_level_write: calibrated`, `auto_calibrations: [platt, temperature]`,
 `auto_requires_audit: true`, `allow_history_none: false`) and `dev` (`min_level_write:
@@ -1427,7 +1529,7 @@ tags:
   - architecture
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T18:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -1517,7 +1619,7 @@ a batch all or nothing.
 |---|---|
 | M0 | `config.py`, `secrets.py`; `cards.py`, `states.py`, `registry.py`; `tasks.py`, `identity.py`; `policy_defaults.py` + `policy_defaults.yaml`; `ols.py`, `avu.py`, `ols_closure.py`; `planner/`; `provenance/labels.py`; `learn/labels.py`; `bench/_metrics.py` (vendored), `bench/{stats,results,baselines,mde,metrics}.py`, `bench/tasks/`; `health.py` (pins, versions, plugin API, policy, stores); `mcp_tools/` (entry-point stub); `cli.py` (`labels`, `bench`, `doctor`); `_vendor/clm/` |
 | M1 | `framings.py`, `render.py`, `framings.lock.json`; `vocab.py`; `perms.py`; `clm/{http,encoder,headproj,fingerprint,fake}.py`; `providers/{base,tiered,claude_provider,live}.py`; `pipeline.py`; `policy.py`; `provenance/{models,store,store_postgres,migrate,export}.py` and `migrations/0001_mesa_clm.sql`; `service.py`; `serving.py` (keys, units with the encoder's loopback socket proxy, the serving lock with its container recipe, its verification, the container's network namespace); `learn/features.py` (the feature store with float32 vectors and the lock's vector recipe, the X1/X2 manifest, the TextCache export) and `learn/offline.py` (offline scoring from cached vectors); `health.py` M1 checks (framings lock, schema sha256, sidecar schema, feature store, permissions, serving lock, host, `gpu_budget`, the serving reachability line and the serve-mode probes: the binds' owners, the encoder socket, the units against the rendering, the encoder network namespace, the headroom timer, the 401 matrix, goldens, long input, systemone parity, drift); `cli.py` M1 verbs (`framings`, `annotate`, `explain`, `review`, `feedback`, `provenance migrate\|export\|import\|prune`, `serve keys\|units\|lock`, `features build\|export-npz\|project\|stats`, `doctor --serve`); `serving/` (with the encoder's bearer guard `vllm_auth.py`, the route probe `vllm_routes.py` and the encoder's endpoint proxy `encoder_proxy.py`), `deploy/` (the serve-venv side, never importing `mesa_clm`); `net.py`'s port-owner check (keyed clients never send a key to another account's loopback socket); `scripts/` M1-A probes and records |
-| M2 | `bench/{framing,cells,x2,registered,run}.py` (X1, the tier cells, X2, the registration, the verbs), `learn/calibrate.py` (weighted Platt, temperature); after the registered run, amendment A1: `framings.ACTIVE` (F9 for `column.ontology_fits`) and `decider.ols_rank_tasks` (`term.fits` decided by `ols_rank`, K1) |
+| M2 | `bench/{framing,cells,x2,registered,run}.py` (X1, the tier cells, X2, the registration, the verbs), `learn/calibrate.py` (weighted Platt, temperature); after the registered run, amendment A1: `framings.ACTIVE` (F9 for `column.ontology_fits`) and `decider.ols_rank_tasks` (`term.fits` decided by `ols_rank`, K1); amendment A6: `closed_choice.py`, `aspect_lookup.json` and `decider.closed_choice` (the closed choices by rule, CLM's answers audit-only; the aspect lookup reuses `bench.baselines.Lookup` over a table frozen from the registered snapshot by `scripts/freeze_aspect_lookup.py`) |
 | M3 | `apply.py`, `revert.py`, `irods_io.py`, `history/`; the five `mesa_clm_*` tools in `mcp_tools/` |
 | M4 | `learn/{linear,fit,teacher}.py`, `artifacts.py`, `bench/e2e.py`, audits |
 | M6 | `adapters/neon.py` |
@@ -1565,7 +1667,7 @@ tags:
   - testing
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T18:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -1738,12 +1840,32 @@ outcome; these tests hold the code to it:
   (its `question_key` and context hash), an audit run (`decider.ols_rank_tasks: []` or
   `--ols-rank-tasks none`) asks CLM about `term.fits` again, and the CLI prints and writes the
   tasks `ols_rank` decided.
+- `test_a6_closed_choice` (DESIGN A6, the fake provider): by default no CLM answer drives Q1, Q2
+  or Q7 (two runs whose closed-choice answers a test double pulls in opposite directions decide
+  the same records, groups, links and proposals, which the same skews change under
+  `closed_choice: clm`; two runs whose Q3 answers it pulls apart keep the same aspects); the rule
+  records and the audit-only records (`abstain`, `audit_only_a6`) carry their markers and never
+  make a link or a label; Q1 annotates every non-identifier column whatever the planner says; the
+  packaged aspect lookup table rebuilds byte for byte from the registered snapshot, its sha256 is
+  pinned and checked, and for every leave-one-card-out fold the lookup built from it is M0's
+  (it reads the snapshot's 60 `column.aspect` labels, which M0's lookup cell already read); the
+  hint and the lookup's top two are not capped, with M0's tie rule and the annotated card held
+  out; the fallback follows the lookup's prior, keeps two, never offers `unit` to a column
+  without a unit, needs no CLM answer (`ols_rank`, CLM down) and asks only the aspects with an
+  ontology the plan puts in play, the planner's ontology still appended; a sidecar file without
+  the schema; `clm` mode is the M2 behaviour; all seven fixture cards annotate in both modes under
+  the shipped decider with at most three Q3 questions per column; explain, the pending groups,
+  the offered candidates and feedback never offer an audit record; the CLI's `--closed-choice`
+  and `MESA_CLM_DECIDER__CLOSED_CHOICE`. `scripts/freeze_aspect_lookup.py --check` compares the
+  packaged table with one rebuilt from the snapshot.
 
 The pipeline helpers (`tests/fakes/pipeline.py` `config()`) are audit configurations
 (`decider.ols_rank_tasks: []`), so `test_pipeline_fake`, `test_service` and the review tests keep
 exercising CLM's `term.fits` path (specificity, the second opinion, runner-ups);
-`shipped_config()` gives the shipped defaults. The synthetic M2 registrations stand in the
-checkout's framings lock.
+`shipped_config()` gives the shipped defaults. Both keep the shipped `decider.closed_choice`
+(`rules`, DESIGN A6); `test_pipeline_fake` runs all seven cards under both modes, M2's assertions
+on Q1, Q2 and Q7 in `clm` mode. The synthetic M2 registrations stand in the checkout's framings
+lock.
 
 ## Key tests
 
@@ -1868,6 +1990,10 @@ third-party component and its hash.
 ---8<--- https://idss-mesa.github.io/mesa-clm/log/
 
 # Directory Update Log
+
+## 2026-10-04
+
+* **Update**: for amendment A6 (the user's decision after M2's results: the closed choices answered by deterministic rules, CLM's answers to them kept for audit only; product safety, not a scientific claim). [Decision model](concepts/decision-model.md) gains "The closed choices by rule (amendment A6)": the three `tiers.json` cells it follows from, what decides Q1 (every non-identifier column, whatever the planner says), Q2 (the planner's hint and the top two of the M0 lookup over the table frozen from the registered snapshot, the card held out; else the first two aspects in the lookup's prior order, never `unit` without a unit, no CLM answer read) and Q7, how each is recorded, the two readings left for the user to confirm, and the audit-only marker (`abstain`, `audit_only_a6`); the step table says what drives each step. [Tiers and policy](concepts/tiers-and-policy.md) documents `decider.closed_choice`, what drives each step of a run with the shipped defaults, and where a stored outcome is not the verdict. [Learning and bench](concepts/learning-and-bench.md) notes, after the closed-choice cells, that A6 changes serving and no cell, and that its lookup is M0's over the frozen snapshot items. [Configuration](getting-started/configuration.md), [Install](getting-started/install.md) and [Quickstart](getting-started/quickstart.md) document `decider.closed_choice` and `annotate --closed-choice`, the summary line and the `closed_choice` and `n_audit_only` keys of the `--out` JSON; [Testing](develop/testing.md) and [Architecture](develop/architecture.md) the A6 tests, `closed_choice.py`, `aspect_lookup.json` and `scripts/freeze_aspect_lookup.py`; the home page status mentions A6. `llms.txt` and `llms-full.txt` regenerated.
 
 ## 2026-10-03
 

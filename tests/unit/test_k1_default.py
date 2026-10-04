@@ -6,9 +6,9 @@ chose F9 on ``clm-latest`` for ``column.ontology_fits``. So, by default: every `
 probabilities null, never auto; D28), D24's refinement is not asked for those groups and the
 group records why, the run is not ``degraded`` by it, and CLM is asked about ``term.fits`` only
 in an explicitly requested audit run (``decider.ols_rank_tasks: []``, ``annotate
---ols-rank-tasks none``); ``column.ontology_fits`` (Q3) is asked with F9; the closed choices are
-unchanged. Hermetic: the fake provider (never evidence), OLS replayed from the fixtures, DuckDB
-under ``tmp_path``."""
+--ols-rank-tasks none``); ``column.ontology_fits`` (Q3) is asked with F9; the closed choices keep
+F7 (who answers them is DESIGN A6's, ``tests/unit/test_a6_closed_choice.py``). Hermetic: the fake
+provider (never evidence), OLS replayed from the fixtures, DuckDB under ``tmp_path``."""
 
 from __future__ import annotations
 
@@ -145,10 +145,15 @@ def test_d24_is_not_asked_for_ols_rank_groups_and_says_so(
     assert not any(g["escalated_from"] for g in groups)
     marked = {UUID(str(g["group_id"])) for g in groups if "specificity" in g["search_json"]}
     assert marked, "the fixture card must have a proposed winner with OLS children"
+    dropped = {a["group_id"] for a in run.abstained if a["reason"] in ("duplicate", "over_cap")}
     for g in groups:
         if UUID(str(g["group_id"])) in marked:
             assert g["search_json"]["specificity"] == SPECIFICITY_NOT_ASKED
-            assert g["method"] == "ols_rank" and g["outcome"] == "proposed"
+            assert g["method"] == "ols_rank"
+            # proposed, unless the keep rule dropped its proposal (D25: the group is rejected)
+            assert g["outcome"] == "proposed" or (
+                g["outcome"] == "rejected" and str(g["group_id"]) in dropped
+            )
     by_group = {p.group_id: p for p in run.proposals}
     for gid in marked:
         if gid in by_group:  # the keep rule may have dropped it (D25)

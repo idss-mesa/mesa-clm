@@ -22,9 +22,11 @@ It is developed by [idss-mesa](https://github.com/idss-mesa){target=_blank} at t
 of New Mexico and released under the MIT license. Status: pre-alpha, milestone M2 done (the
 registered framing experiment: `column.ontology_fits` is asked with the F9 framing, and
 `term.fits` proposals come from the OLS ranking because no framing qualified for it (K1);
-see [Learning and bench](concepts/learning-and-bench.md)), after M1's serving stack, rank-first
-annotate pipeline, sidecar and review verbs; proposed-only. Pages say which milestone delivers
-what they describe, and mark what is still planned.
+see [Learning and bench](concepts/learning-and-bench.md)), and, by the user's decision after
+those results (amendment A6), the closed choices answered by rules with CLM's answers kept for
+audit only (see [Decision model](concepts/decision-model.md)), after M1's serving stack,
+rank-first annotate pipeline, sidecar and review verbs; proposed-only. Pages say which milestone
+delivers what they describe, and mark what is still planned.
 
 ## Documentation
 

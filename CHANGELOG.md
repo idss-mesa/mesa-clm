@@ -8,6 +8,69 @@ All notable changes to the mesa-clm package. The format follows
 
 ## [Unreleased]
 
+### Changed (DESIGN A6: the closed choices by rule, 2026-10-04)
+
+- **The closed choices Q1, Q2 and Q7 are answered by deterministic rules by default**, CLM's
+  answers to them recorded audit-only. Decided by the user after M2's results had been seen
+  (`bench/results/2026-10-03/tiers.json`: CLM's zero-shot `column.annotate` 0.357 against majority
+  0.643, `column.aspect` 0.050 against 0.300, `avu.value_kind` 0.324 against 0.478; no
+  pre-registered rule covers these tasks) and recorded as amendment A6, a product-safety change of
+  serving behaviour that makes no scientific claim and touches neither the frozen
+  pre-registration nor any cell. New `decider.closed_choice: rules | clm` (default `rules`;
+  `MESA_CLM_DECIDER__CLOSED_CHOICE`; `annotate --closed-choice`; `Annotator(closed_choice=)`,
+  `DecisionService(closed_choice=)`); `clm` is the M2 behaviour, row for row (checked against
+  `81e4495` on 63 fake runs). Under `rules`:
+  - Q1: a column is annotated iff it is not an identifier, whatever the planner says (a `rule`
+    record, `Yes`, reason `a6_not_identifier`): a planner's `annotate=False` stays in the run's
+    `plan_json` and decides nothing, and an identifier stays out even when the planner says
+    `annotate=True`;
+  - Q2: the planner's aspect hint, then the top two aspects of the M0 lookup
+    (`bench.baselines.Lookup` and `lookup_key`), de-duplicated, `other` excluded, up to three
+    (`rule` records, reasons `a6_aspect_hint`, `a6_aspect_lookup`); else the fallback: the
+    registry's aspects in the order of the lookup's training prior, the first two that have an
+    ontology in play, `unit` only for a column with a unit (reason `a6_aspect_fallback`). No CLM
+    answer chooses an aspect: Q3 is asked only for the chosen aspects, as in M2, so at most three
+    times per column. The lookup counts a **table frozen from the registered snapshot**
+    (`src/mesa_clm/aspect_lookup.json`: the 60 items of M0's `neon_aspect` task; written by
+    `scripts/freeze_aspect_lookup.py`, sha256 pinned in `closed_choice.TABLE_SHA256`), the
+    annotated card's items held out; no sidecar is read, so every host chooses the same
+    aspects. A name no other card carries goes to the fallback. Each Q3 group records how its
+    column's aspects were chosen in `search_json.a6` (sources, the lookup's counts and Laplace
+    frequencies, the table's sha256, the fallback's order), and `runs.labels_sha256` names the
+    snapshot the table came from;
+  - Q7: the pre-rule, else "the term label" (a `rule` record, reason `a6_value_kind_label`);
+  - CLM is asked Q1, Q2 and Q7 in the same requests as in M2 and every such record is stored with
+    outcome `abstain` and reason `audit_only_a6` (no new vocabulary value, no migration); it
+    never decides, never makes a link or a label and is never offered for review.
+    `AnnotationRun.closed_choice` and `n_audit_only` (also in the `--out` JSON, both shapes) and
+    a summary line say which mode ran and how many records are audit-only; the doctor's `config`
+    line names `closed_choice`.
+- More columns reach the OLS search (every non-identifier column), each with at most three
+  aspects (two from the fallback); the OLS fixture closure already covered every such search. The
+  annotate latency measured in M1 predates A6 and is to be re-measured under `rules` before M3's
+  latency budget. Every run's `config_sha256` changes (the new field); no framing,
+  `question_key`, `task_key`, label, fingerprint, lock or cell changes. A6 marks two readings for
+  the user to confirm: a column name no other card carries goes to the fallback, and the
+  fallback's order and its cap of two.
+
+### Added (DESIGN A6)
+
+- `closed_choice.py` (the A6 constants, `candidate_aspects`, `fallback_aspects`, the frozen
+  `AspectTable` with `freeze_table`/`packaged_table`, `AspectLookup`, `is_audit_only`),
+  `aspect_lookup.json` (shipped in the wheel; NEON data CC BY 4.0, `THIRD_PARTY.md`) and
+  `scripts/freeze_aspect_lookup.py` (`--check` compares the packaged table with one rebuilt
+  from the snapshot). Tests: `test_a6_closed_choice` (no CLM answer drives Q1, Q2 or Q7: runs
+  whose closed-choice answers or whose Q3 answers are pulled in opposite directions decide the
+  same things; the rule and audit records and their markers; Q1 whatever the planner says; the
+  packaged table rebuilt from the snapshot byte for byte and, per fold, M0's own lookup; the hint
+  and the lookup's top two uncapped, with M0's ties and the card held out; the fallback in the
+  prior's order, capped at two, never `unit` without a unit, needing no CLM answer and bounded by
+  the plan's ontologies; a sidecar file without the schema; `clm` mode as M2; all fixture cards in
+  both modes; explain, review and feedback never offering an audit record; the CLI).
+  `test_pipeline_fake` runs all seven cards in both modes (M2's closed-choice assertions in `clm`
+  mode); `test_k1_default` and `test_cli_m1` no longer depend on how many term groups a run
+  searches.
+
 ### Added (milestone M2: the registered run)
 
 - `bench/results/2026-10-03/`: the registered M2 outputs, committed as produced by the protocol of

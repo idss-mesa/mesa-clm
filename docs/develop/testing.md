@@ -7,7 +7,7 @@ tags:
   - testing
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T18:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -180,12 +180,32 @@ outcome; these tests hold the code to it:
   (its `question_key` and context hash), an audit run (`decider.ols_rank_tasks: []` or
   `--ols-rank-tasks none`) asks CLM about `term.fits` again, and the CLI prints and writes the
   tasks `ols_rank` decided.
+- `test_a6_closed_choice` (DESIGN A6, the fake provider): by default no CLM answer drives Q1, Q2
+  or Q7 (two runs whose closed-choice answers a test double pulls in opposite directions decide
+  the same records, groups, links and proposals, which the same skews change under
+  `closed_choice: clm`; two runs whose Q3 answers it pulls apart keep the same aspects); the rule
+  records and the audit-only records (`abstain`, `audit_only_a6`) carry their markers and never
+  make a link or a label; Q1 annotates every non-identifier column whatever the planner says; the
+  packaged aspect lookup table rebuilds byte for byte from the registered snapshot, its sha256 is
+  pinned and checked, and for every leave-one-card-out fold the lookup built from it is M0's
+  (it reads the snapshot's 60 `column.aspect` labels, which M0's lookup cell already read); the
+  hint and the lookup's top two are not capped, with M0's tie rule and the annotated card held
+  out; the fallback follows the lookup's prior, keeps two, never offers `unit` to a column
+  without a unit, needs no CLM answer (`ols_rank`, CLM down) and asks only the aspects with an
+  ontology the plan puts in play, the planner's ontology still appended; a sidecar file without
+  the schema; `clm` mode is the M2 behaviour; all seven fixture cards annotate in both modes under
+  the shipped decider with at most three Q3 questions per column; explain, the pending groups,
+  the offered candidates and feedback never offer an audit record; the CLI's `--closed-choice`
+  and `MESA_CLM_DECIDER__CLOSED_CHOICE`. `scripts/freeze_aspect_lookup.py --check` compares the
+  packaged table with one rebuilt from the snapshot.
 
 The pipeline helpers (`tests/fakes/pipeline.py` `config()`) are audit configurations
 (`decider.ols_rank_tasks: []`), so `test_pipeline_fake`, `test_service` and the review tests keep
 exercising CLM's `term.fits` path (specificity, the second opinion, runner-ups);
-`shipped_config()` gives the shipped defaults. The synthetic M2 registrations stand in the
-checkout's framings lock.
+`shipped_config()` gives the shipped defaults. Both keep the shipped `decider.closed_choice`
+(`rules`, DESIGN A6); `test_pipeline_fake` runs all seven cards under both modes, M2's assertions
+on Q1, Q2 and Q7 in `clm` mode. The synthetic M2 registrations stand in the checkout's framings
+lock.
 
 ## Key tests
 

@@ -9,6 +9,11 @@ decision chain back to Q1; nothing autos; anchor-won groups abstain and stay pen
 rule dedups exact triples and caps by ``p_fit``; the value kind is decided for the proposal's own
 column (defect (b)); every row carries its identity and the D5 fingerprints; contexts come from
 the state builders only; the degraded ``ols_rank`` path proposes and never autos (D28).
+
+Every card runs under both ``decider.closed_choice`` modes (DESIGN A6): ``rules``, the default
+(Q1, Q2, Q7 by rule, CLM's answers audit-only), and ``clm``, the M2 behaviour, under which M2's
+assertions on Q1, Q2 and Q7 hold unchanged. ``tests/unit/test_a6_closed_choice.py`` covers A6's
+rules themselves.
 """
 
 from __future__ import annotations
@@ -26,6 +31,13 @@ from mesa_clm import __version__
 from mesa_clm import framings as fr
 from mesa_clm.avu import VALUE_KIND_COLUMN, build_avu, triple
 from mesa_clm.cards import is_identifier, load_card
+from mesa_clm.closed_choice import (
+    ANNOTATE_REASON,
+    ASPECT_REASONS,
+    AUDIT_ONLY_REASON,
+    CLOSED_CHOICE_TASKS,
+    is_audit_only,
+)
 from mesa_clm.config import config_sha256
 from mesa_clm.identity import target_sha256
 from mesa_clm.ols import OLSLayer, RecordingOLS, ReplayMiss
@@ -35,13 +47,14 @@ from mesa_clm.policy import Policy
 from mesa_clm.provenance.models import DecisionRow
 from mesa_clm.provenance.store import DuckDBStore
 from mesa_clm.providers import FakeProvider
-from mesa_clm.registry import ANCHOR_KEY, allowed_for_aspect
+from mesa_clm.registry import ANCHOR_KEY, ASPECT_OPTIONS, ASPECTS, allowed_for_aspect
 from mesa_clm.states import card_header, state_sha256
 from mesa_clm.tasks import RANK_FIT_TASKS, TASKS
 from tests.fakes.pipeline import (
     CARD_PATHS,
     FAKE_MODEL,
     FAKE_SEED,
+    MODES,
     RAW_MODEL,
     RAW_SEED,
     SERVICE_CARD,
@@ -56,6 +69,7 @@ from tests.fakes.pipeline import (
 )
 
 HEADS = [(FAKE_MODEL, FAKE_SEED), (RAW_MODEL, RAW_SEED)]
+BATCHES = [(model, seed, mode) for model, seed in HEADS for mode in MODES]
 # The state views a decision may carry (D23): column_state, target_state (column, site,
 # dataset) and value_kind_state; never a raw card.
 VIEWS = {
@@ -69,10 +83,12 @@ VIEWS = {
 
 @dataclass
 class Batch:
-    """Every fixture card annotated once under one fake head, committed to one store."""
+    """Every fixture card annotated once under one fake head and one closed-choice mode
+    (DESIGN A6), committed to one store."""
 
     model: str
     seed: int
+    mode: str
     store: DuckDBStore
     provider: FakeProvider
     runs: dict[str, AnnotationRun]
@@ -110,14 +126,15 @@ class Rows:
         ]
 
 
-@pytest.fixture(scope="module", params=HEADS, ids=[f"{m}-seed{s}" for m, s in HEADS])
+@pytest.fixture(scope="module", params=BATCHES, ids=[f"{m}-seed{s}-{c}" for m, s, c in BATCHES])
 def batch(request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPathFactory) -> Batch:
-    model, seed = request.param
+    """All seven fixture cards end to end (a ``ReplayMiss`` here is a closure bug)."""
+    model, seed, mode = request.param
     store = DuckDBStore(tmp_path_factory.mktemp("prov") / "prov.duckdb")
     provider = fake_provider(seed, model)
-    ann = annotator(store, provider=provider)
+    ann = annotator(store, provider=provider, cfg=config(DECIDER__CLOSED_CHOICE=mode))
     runs = {p.stem: ann.annotate(load_card(p)) for p in CARD_PATHS}
-    return Batch(model, seed, store, provider, runs)
+    return Batch(model, seed, mode, store, provider, runs)
 
 
 # -- the run ----------------------------------------------------------------------------------
@@ -125,8 +142,10 @@ def batch(request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPathFacto
 
 def test_every_card_commits_a_decided_run(batch: Batch) -> None:
     assert set(batch.runs) == {p.stem for p in CARD_PATHS}
-    cfg = config()
+    cfg = config(DECIDER__CLOSED_CHOICE=batch.mode)
     for name, run in batch.runs.items():
+        assert run.closed_choice == batch.mode == run.to_dict()["closed_choice"]
+        assert (run.n_audit_only > 0) is (batch.mode == "rules")
         rows = batch.rows(run)
         r = rows.run
         assert r["status"] == "decided" and r["owner"] == "alice" and r["card_name"] == name
@@ -189,20 +208,30 @@ def test_every_proposal_has_a_decision_chain(batch: Batch) -> None:
             if p.scope != "column":
                 continue
             n_column += 1
-            [q1] = rows.of_column(p.column_name, "column.annotate")
-            assert q1["answer"] == "Yes" and q1["method"] == "fake"
-            [q2] = rows.of_column(p.column_name, "column.aspect")
-            assert q2["outcome"] != "rejected"
+            q1s = rows.of_column(p.column_name, "column.annotate")
+            q2s = rows.of_column(p.column_name, "column.aspect")
+            if batch.mode == "clm":  # M2: CLM's Yes decided Q1, its aspect answer stood
+                [q1] = q1s
+                assert q1["answer"] == "Yes" and q1["method"] == "fake"
+                [q2] = q2s
+                assert q2["outcome"] != "rejected"
+            else:  # DESIGN A6: a rule decided, CLM's answers are audit-only
+                [q1] = [d for d in q1s if d["method"] == "rule"]
+                assert (q1["answer"], q1["reason"]) == ("Yes", ANNOTATE_REASON)
+                assert all(is_audit_only(d) for d in q1s + q2s if d["method"] == "fake")
+                option = ASPECT_OPTIONS[ASPECTS.index(p.aspect)]
+                assert any(d["method"] == "rule" and d["answer"] == option for d in q2s)
             q3 = rows.of_column(p.column_name, "column.ontology_fits")
-            if p.ontology_id == "uo":
-                assert any(d["method"] == "rule" and d["answer"] == "uo" for d in q3)
+            uo_rule = any(d["method"] == "rule" and d["answer"] == "uo" for d in q3)
+            kept = {
+                o
+                for d in q3
+                if d["group_id"]
+                for o in rows.groups[str(d["group_id"])]["search_json"]["kept"]
+            }
+            if p.ontology_id == "uo":  # unit is uo by rule in both modes (A6: never ranked)
+                assert uo_rule
             else:
-                kept = {
-                    o
-                    for d in q3
-                    if d["group_id"]
-                    for o in rows.groups[str(d["group_id"])]["search_json"]["kept"]
-                }
                 assert p.ontology_id in kept
     assert n_column > 0
 
@@ -284,12 +313,19 @@ def test_q1_and_q2_share_one_request_per_column(batch: Batch) -> None:
         rows = batch.rows(run)
         q1 = [d for d in rows.decisions.values() if d["task_id"] == "column.annotate"]
         asked = [d for d in q1 if d["method"] == "fake"]
-        q2 = [d for d in rows.decisions.values() if d["task_id"] == "column.aspect"]
+        # CLM's aspect answers (A6 adds rule records for the chosen aspects, never asked).
+        q2 = [
+            d
+            for d in rows.decisions.values()
+            if d["task_id"] == "column.aspect" and d["method"] == "fake"
+        ]
         assert len(q2) == len(asked)  # every asked column gets its aspect in the same call
         # The requests that carried Q1 and Q2 together have two questions.
         assert sum(1 for c in rows.calls if c["n_questions"] >= 2) >= len(asked)
         for d in q2:
-            if d["outcome"] == "rejected":
+            if batch.mode == "rules":  # DESIGN A6: kept for audit only
+                assert (d["outcome"], d["reason"]) == ("abstain", AUDIT_ONLY_REASON)
+            elif d["outcome"] == "rejected":
                 assert d["reason"] == "column_not_annotated"
                 [a] = rows.of_column(d["column_name"], "column.annotate")
                 assert a["answer"] == "No"
@@ -314,6 +350,8 @@ def test_q3_ranks_the_registry_masked_by_aspect_and_keeps_two(batch: Batch) -> N
                 expected = o["option_key"] not in allowed and o["option_key"] != ANCHOR_KEY
                 assert o["masked"] is expected
                 assert (o["prob"] == 0.0) if expected else (o["prob"] > 0.0)
+            # Every Q3 record is its group's deciding record, in both modes: A6 asks Q3 only
+            # for the aspects its rules chose, never to choose one.
             group = rows.groups[str(d["group_id"])]
             kept = group["search_json"]["kept"]
             in_play = sorted(
@@ -479,9 +517,11 @@ def _assert_ols_rank_rows(rows: Rows) -> None:
             DecisionRow.model_validate(d)
 
 
-def test_clm_down_degrades_to_ols_rank_proposals(tmp_path: Path) -> None:
+@pytest.mark.parametrize("mode", MODES)
+def test_clm_down_degrades_to_ols_rank_proposals(tmp_path: Path, mode: str) -> None:
     store = DuckDBStore(tmp_path / "prov.duckdb")
-    ann = annotator(store, provider=down_provider(), planner=AspectPlanner())
+    cfg = config(DECIDER__CLOSED_CHOICE=mode)
+    ann = annotator(store, provider=down_provider(), planner=AspectPlanner(), cfg=cfg)
     for name in (SERVICE_CARD, "DP1.10022.001.bet_sorting"):
         run = ann.annotate(card(name))
         rows = Rows(store, run.run_id)
@@ -495,6 +535,9 @@ def test_clm_down_degrades_to_ols_rank_proposals(tmp_path: Path) -> None:
         unavailable = [d for d in rows.decisions.values() if d["method"] == "unavailable"]
         assert unavailable
         for d in unavailable:
+            if mode == "rules" and d["task_id"] in CLOSED_CHOICE_TASKS:  # DESIGN A6: audit-only
+                assert (d["outcome"], d["reason"]) == ("abstain", AUDIT_ONLY_REASON)
+                continue
             assert d["outcome"] == "decider_unavailable" and d["reason"] == "decider_unavailable"
         # Every ols_rank rank of a group hangs under the CLM record that could not answer.
         for d in rows.decisions.values():
@@ -585,10 +628,15 @@ def test_a_failed_run_is_committed_as_failed(tmp_path: Path) -> None:
 
 
 def test_q1_leaving_a_column_out_makes_its_aspect_moot(tmp_path: Path) -> None:
-    """Seed 0 answers "No" to every column: the aspect asked in the same request is recorded
-    ``rejected`` (``column_not_annotated``) and no column group is searched."""
+    """Under the M2 behaviour (``closed_choice: clm``) seed 0 answers "No" to every column: the
+    aspect asked in the same request is recorded ``rejected`` (``column_not_annotated``) and no
+    column group is searched. (Under DESIGN A6's rules CLM's "No" decides nothing:
+    ``tests/unit/test_a6_closed_choice.py``.)"""
     store = DuckDBStore(tmp_path / "prov.duckdb")
-    run = annotator(store, provider=fake_provider(0, FAKE_MODEL)).annotate(card(SERVICE_CARD))
+    cfg = config(DECIDER__CLOSED_CHOICE="clm")
+    run = annotator(store, provider=fake_provider(0, FAKE_MODEL), cfg=cfg).annotate(
+        card(SERVICE_CARD)
+    )
     rows = Rows(store, run.run_id)
     q2 = [d for d in rows.decisions.values() if d["task_id"] == "column.aspect"]
     assert q2 and all(
@@ -628,33 +676,68 @@ def test_the_unit_aspect_searches_uo_by_rule(tmp_path: Path) -> None:
             assert p.value_kind == "the term label" and p.avu["unit"] == p.candidate.curie
 
 
-def test_a_planner_can_leave_a_column_out(tmp_path: Path) -> None:
+@pytest.mark.parametrize("mode", MODES)
+def test_a_planner_can_leave_a_column_out(tmp_path: Path, mode: str) -> None:
+    """Under the M2 behaviour a planner's ``annotate=False`` leaves a column out (a ``planner``
+    rule, never sent to CLM). Under DESIGN A6's rules every non-identifier column is annotated
+    whatever the planner says: a ``Yes`` rule, and still no CLM question (M2 never sent one)."""
     store = DuckDBStore(tmp_path / "prov.duckdb")
     planner = HintPlanner(lambda col: {"annotate": False} if col.name == "detectionMethod" else {})
-    run = annotator(store, planner=planner).annotate(card(SERVICE_CARD))
+    cfg = config(DECIDER__CLOSED_CHOICE=mode)
+    run = annotator(store, planner=planner, cfg=cfg).annotate(card(SERVICE_CARD))
     mine = [
         d
         for d in Rows(store, run.run_id).decisions.values()
         if d["column_name"] == "detectionMethod"
     ]
-    [d] = mine
-    assert (d["method"], d["model"], d["answer"], d["reason"]) == (
+    if mode == "clm":
+        [d] = mine
+        assert (d["method"], d["model"], d["answer"], d["reason"]) == (
+            "rule",
+            "planner",
+            "No",
+            "planner_annotate_false",
+        )
+        return
+    [q1] = [d for d in mine if d["task_id"] == "column.annotate"]
+    assert (q1["method"], q1["model"], q1["answer"], q1["reason"]) == (
         "rule",
-        "planner",
-        "No",
-        "planner_annotate_false",
+        "rule",
+        "Yes",
+        ANNOTATE_REASON,
     )
+    q1q2 = [d for d in mine if d["task_id"] in ("column.annotate", "column.aspect")]
+    assert not [d for d in q1q2 if d["method"] == "fake"]  # M2 never asked: no audit record
+    assert [d for d in q1q2 if d["task_id"] == "column.aspect" and d["method"] == "rule"]
 
 
-def test_clm_down_without_any_aspect_still_proposes(tmp_path: Path) -> None:
-    """No CLM and no planner aspects: every column is reported ``no_aspect``, and the sites and
-    the dataset taxon still get ``ols_rank`` proposals (D28: always something)."""
+@pytest.mark.parametrize("mode", MODES)
+def test_clm_down_without_any_aspect_still_proposes(tmp_path: Path, mode: str) -> None:
+    """No CLM and no planner aspects. Under the M2 behaviour every column is reported
+    ``no_aspect``, and the sites and the dataset taxon still get ``ols_rank`` proposals (D28:
+    always something). Under DESIGN A6's rules no CLM answer is needed for an aspect: every
+    column keeps the lookup's or the fallback's aspects and its groups are ``ols_rank``."""
     store = DuckDBStore(tmp_path / "prov.duckdb")
-    run = annotator(store, provider=down_provider()).annotate(card(SERVICE_CARD))
+    cfg = config(DECIDER__CLOSED_CHOICE=mode)
+    run = annotator(store, provider=down_provider(), cfg=cfg).annotate(card(SERVICE_CARD))
     live = [c for c in run.card.columns if not is_identifier(c)]
     no_aspect = [a for a in run.abstained if a["reason"] == "no_aspect"]
-    assert {a["column_name"] for a in no_aspect} == {c.name for c in live}
-    assert all(a["group_id"] is None for a in no_aspect)
-    assert run.proposals and {p.scope for p in run.proposals} <= {"site", "dataset"}
-    assert all(p.method == "ols_rank" for p in run.proposals)
-    _assert_ols_rank_rows(Rows(store, run.run_id))
+    assert run.proposals and all(p.method == "ols_rank" for p in run.proposals)
+    rows = Rows(store, run.run_id)
+    _assert_ols_rank_rows(rows)
+    if mode == "clm":
+        assert {a["column_name"] for a in no_aspect} == {c.name for c in live}
+        assert all(a["group_id"] is None for a in no_aspect)
+        assert {p.scope for p in run.proposals} <= {"site", "dataset"}
+        return
+    assert not no_aspect and run.degraded
+    for col in live:
+        aspects = [
+            d["reason"]
+            for d in rows.decisions.values()
+            if d["task_id"] == "column.aspect"
+            and d["column_name"] == col.name
+            and d["method"] == "rule"
+        ]
+        assert aspects and set(aspects) <= {ASPECT_REASONS["lookup"], ASPECT_REASONS["fallback"]}
+    assert "column" in {p.scope for p in run.proposals}

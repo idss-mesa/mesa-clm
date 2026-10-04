@@ -1,10 +1,24 @@
-"""The decide phase: ``Annotator.annotate(card) -> AnnotationRun`` (DESIGN D2, D10, D22-D25, D28;
-plan §4.2).
+"""The decide phase: ``Annotator.annotate(card) -> AnnotationRun`` (DESIGN D2, D10, D22-D25, D28,
+A1, A6; plan §4.2).
 
 Nothing here writes iRODS or the MESA history: annotate decides, proposes and records, and
 ``apply`` (M3) later writes only what is already accepted (D10). Ported from mesa-anyjev
 ``pipeline.py`` (``6159281``; DESIGN U1) with the AnyJev logprob readout replaced by rank-first
-CLM questions. The steps, per card:
+CLM questions.
+
+**The closed choices by rule (DESIGN A6, the default).** Under ``decider.closed_choice: rules``
+Q1, Q2 and Q7 are answered by deterministic rules (:mod:`mesa_clm.closed_choice`): a column is
+annotated iff it is not an identifier, whatever the planner says (a ``rule`` record, ``Yes``);
+its aspects are the planner's hint, then the top two of the M0 lookup over the frozen table
+(the card held out), up to three, else the fallback: the registry's aspects in the order of the
+lookup's training prior, the first two (``other`` never, ``unit`` only for a column with a
+unit); a value kind the pre-rule leaves open is "the term label" (a ``rule`` record). No CLM
+answer chooses an aspect: Q3 is asked only for the aspects chosen, as below. CLM is still asked
+Q1, Q2 and Q7 in the same requests as below, and those records are stored audit-only (outcome
+``abstain``, reason ``audit_only_a6``): they decide nothing and make no link. The run row's
+``labels_sha256`` names the snapshot the table was frozen from. ``closed_choice: clm`` runs the
+M2 behaviour the steps below describe. The steps, per card (Q1, Q2 and Q7 as ``clm`` asks and
+uses them):
 
 * **Q1 ``column.annotate``** (choice K=2 over ``registry.ANNOTATE_OPTIONS``). Identifier columns
   (``cards.is_identifier``) and columns the planner marks ``annotate=False`` get ``rule`` rows
@@ -72,7 +86,7 @@ from __future__ import annotations
 import logging
 import time
 from collections import Counter
-from collections.abc import Callable, Collection, Iterator, Sequence
+from collections.abc import Callable, Collection, Iterator, Mapping, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from typing import Any, Final, Literal
@@ -91,6 +105,19 @@ from mesa_clm.avu import (
 )
 from mesa_clm.cards import ColumnInfo, DatasetCard, SiteInfo, is_identifier
 from mesa_clm.clm.fingerprint import Fingerprint
+from mesa_clm.closed_choice import (
+    ANNOTATE_REASON,
+    ASPECT_MODELS,
+    ASPECT_REASONS,
+    AUDIT_ONLY_REASON,
+    CLOSED_CHOICE_MODES,
+    VALUE_KIND_REASON,
+    AspectLookup,
+    AspectSource,
+    AspectTable,
+    candidate_aspects,
+    packaged_table,
+)
 from mesa_clm.config import Config, config_sha256
 from mesa_clm.ols import OLS_ERRORS, Candidate, OLSLayer
 from mesa_clm.planner.base import ColumnHint, Planner, PlanResult
@@ -126,7 +153,7 @@ from mesa_clm.providers.base import (
     sha256_text,
 )
 from mesa_clm.providers.tiered import CLM_COMMIT, DecisionRequest, ols_rank_record
-from mesa_clm.registry import ASPECTS, ONTOLOGY_REGISTRY, allowed_for_aspect
+from mesa_clm.registry import ASPECT_OPTIONS, ASPECTS, ONTOLOGY_REGISTRY, allowed_for_aspect
 from mesa_clm.states import column_state, target_state, value_kind_state
 from mesa_clm.tasks import RANK_FIT_TASKS, Scope
 from mesa_clm.vocab import Calibration, Level, Method, Outcome
@@ -240,8 +267,10 @@ class AnnotationRun:
     tokens it reported, ``n_failed_calls`` those that got no answer; ``degraded`` is true when
     a CLM answer was unavailable (its group fell back to ``ols_rank``) or the tier was
     ``ols_rank`` (D28); ``ols_rank_tasks`` are the rank_fit tasks the run decided by ``ols_rank``
-    whatever CLM answered (``term.fits`` under K1, DESIGN A1). ``buffer`` holds the rows
-    (committed when a store was given)."""
+    whatever CLM answered (``term.fits`` under K1, DESIGN A1). ``closed_choice`` says who
+    answered Q1, Q2 and Q7 (``rules`` or ``clm``, DESIGN A6) and ``n_audit_only`` counts the CLM
+    records kept for audit only (``outcomes`` counts them under ``abstain``). ``buffer`` holds
+    the rows (committed when a store was given)."""
 
     run_id: UUID
     owner: str
@@ -261,6 +290,8 @@ class AnnotationRun:
     buffer: RunBuffer | None = None
     n_failed_calls: int = 0
     ols_rank_tasks: tuple[str, ...] = ()
+    closed_choice: str = "rules"
+    n_audit_only: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         """The ``mesa_clm_annotate`` output (plan §7.1) minus the tool's ``next_step``."""
@@ -279,6 +310,8 @@ class AnnotationRun:
             "outcomes": dict(self.outcomes),
             "degraded": self.degraded,
             "ols_rank_tasks": list(self.ols_rank_tasks),
+            "closed_choice": self.closed_choice,
+            "n_audit_only": self.n_audit_only,
             "seconds": self.seconds,
         }
 
@@ -592,6 +625,31 @@ class _Group:
         return self.site.code if self.site is not None else None
 
 
+@dataclass
+class _ColumnAspects:
+    """An annotated column under DESIGN A6 on its way to Q3: its aspects with the source of
+    each (``hint``, ``lookup``, ``fallback``), the lookup's evidence for it, and the fallback's
+    order and choice when the fallback chose them."""
+
+    column: ColumnInfo
+    aspects: list[str]
+    sources: dict[str, AspectSource]
+    lookup: dict[str, Any]
+    fallback: dict[str, Any] | None = None
+
+    def a6(self, aspect: str) -> dict[str, Any]:
+        """``search_json["a6"]`` of the column's Q3 group for ``aspect``: how the column's
+        aspects were chosen."""
+        return {
+            "closed_choice": "rules",
+            "aspect_source": self.sources[aspect],
+            "aspects": list(self.aspects),
+            "sources": [self.sources[a] for a in self.aspects],
+            "lookup": self.lookup,
+            "fallback": self.fallback,
+        }
+
+
 class Annotator:
     """The collaborators of one annotate call; :meth:`annotate` runs one card.
 
@@ -604,6 +662,10 @@ class Annotator:
     ``cfg.decider.tier``); ``ols_rank`` sends every rank_fit task to the degraded method, and
     ``ols_rank_tasks`` does so per task (K1/K2(c); default ``cfg.decider.ols_rank_tasks``,
     ``term.fits`` under DESIGN A1; an empty collection asks CLM for every task, an audit run).
+    ``closed_choice`` (default ``cfg.decider.closed_choice``) is ``rules`` (DESIGN A6: Q1, Q2
+    and Q7 by rule, CLM's answers audit-only) or ``clm`` (the M2 behaviour); ``aspect_table`` is
+    the lookup table Q2 reads under ``rules`` (default the packaged, sha256-pinned one; tests
+    pass their own).
     ``second_opinion`` is an optional Claude provider asked about proposed winners; it never
     decides (D22).
     """
@@ -623,12 +685,19 @@ class Annotator:
         tier: str | None = None,
         ols_rank_tasks: Collection[str] | None = None,
         encoder_model: str | None = None,
+        closed_choice: str | None = None,
+        aspect_table: AspectTable | None = None,
     ) -> None:
         if not owner or not owner.strip():
             raise ValueError("a run needs an owner (D21)")
         chosen = tier or cfg.decider.tier
         if chosen not in TIERS:
             raise ValueError(f"unknown tier {chosen!r}; expected one of {TIERS}")
+        mode = closed_choice or cfg.decider.closed_choice
+        if mode not in CLOSED_CHOICE_MODES:
+            raise ValueError(
+                f"unknown closed_choice {mode!r}; expected one of {CLOSED_CHOICE_MODES} (DESIGN A6)"
+            )
         by_design = cfg.decider.ols_rank_tasks if ols_rank_tasks is None else ols_rank_tasks
         degraded_tasks = frozenset(by_design) | (
             RANK_FIT_TASKS if chosen == "ols_rank" else frozenset()
@@ -650,6 +719,14 @@ class Annotator:
         self.clm_tier: str | None = None if chosen in ("auto", "ols_rank") else chosen
         self.ols_rank_tasks: frozenset[str] = degraded_tasks
         self.encoder_model = encoder_model
+        self.closed_choice: str = mode
+        # DESIGN A6: the frozen M0 lookup table Q2 reads under ``rules`` (checked against its
+        # pinned sha256 here, before any run); ``clm`` reads none.
+        self.aspect_table: AspectTable | None = (
+            (aspect_table if aspect_table is not None else packaged_table())
+            if mode == "rules"
+            else None
+        )
 
     def annotate(self, card: DatasetCard) -> AnnotationRun:
         """Decide one card (module docstring) and commit its rows to the store."""
@@ -673,6 +750,15 @@ class _Pass:
         )
         self.fp: Fingerprint = ann.provider.fingerprint
         self.framing = {t: fr.active_framing(t) for t in fr.FRAMINGS}
+        # DESIGN A6: whether rules answer the closed choices, the CLM records kept for audit, and
+        # the M0 lookup with this card's items left out (leave-one-card-out, as in M0)
+        self.rules = ann.closed_choice == "rules"
+        self.n_audit = 0
+        self.lookup: AspectLookup | None = (
+            AspectLookup.for_card(ann.aspect_table, card.name)
+            if self.rules and ann.aspect_table is not None
+            else None
+        )
         self.run_row = self._run_row()
         self.buffer = RunBuffer(self.run_row)
         self.rec = _Recorder(self.buffer, ann.policy)
@@ -712,6 +798,8 @@ class _Pass:
             serving_lock_sha=self.fp.serving_lock_sha,
             framings_lock_sha=fr.lock_sha(),
             artifacts_version=getattr(artifacts, "version", None),
+            # DESIGN A6: the labels snapshot the Q2 lookup table was frozen from (rules only)
+            labels_sha256=(self.lookup.table.labels_sha256 or None) if self.lookup else None,
             mesa_clm_version=__version__,
             policy_profile=a.policy.profile.name,
             config_sha256=config_sha256(a.cfg),
@@ -742,8 +830,14 @@ class _Pass:
     def run(self) -> AnnotationRun:
         try:
             with self._collect_calls():
-                columns = self._columns()
-                picks = self._ontologies(columns)
+                if self.rules:
+                    columns = self._columns_rules()
+                    picks = self._ontologies(
+                        [(c.column, c.aspects) for c in columns],
+                        {c.column.name: c for c in columns},
+                    )
+                else:
+                    picks = self._ontologies(self._columns())
                 groups = self._term_groups(picks)
                 self._rank_groups(groups)
                 self._value_kinds()
@@ -800,6 +894,8 @@ class _Pass:
             clm_model=self.a.provider.model,
             buffer=self.buffer,
             ols_rank_tasks=tuple(sorted(self.a.ols_rank_tasks)),
+            closed_choice=self.a.closed_choice,
+            n_audit_only=self.n_audit,
         )
 
     def _fail(self) -> None:
@@ -870,6 +966,8 @@ class _Pass:
         column_name: str | None = None,
         candidates: Sequence[fr.CandidateLike] | None = None,
         model: str = "rule",
+        group_id: UUID | None = None,
+        parent_decision_id: UUID | None = None,
     ) -> DecisionRow:
         rec = rule_record(
             self.framing[task_id],
@@ -882,7 +980,38 @@ class _Pass:
         )
         _, outcome, _ = self.rec.verdict(rec)  # 'rule': a rule needs no thresholds
         return self.rec.record(
-            rec, scope=scope, outcome=outcome, reason=reason, column_name=column_name
+            rec,
+            scope=scope,
+            outcome=outcome,
+            reason=reason,
+            column_name=column_name,
+            group_id=group_id,
+            parent_decision_id=parent_decision_id,
+        )
+
+    def _audit(
+        self,
+        record: DecisionRecord,
+        *,
+        scope: Scope,
+        column_name: str | None = None,
+        group_id: UUID | None = None,
+        parent_decision_id: UUID | None = None,
+    ) -> DecisionRow:
+        """Store a CLM answer to a closed choice for audit only (DESIGN A6): the policy still
+        judges it (a misconfigured threshold still fails the run), but it is stored as
+        ``abstain`` with reason ``audit_only_a6`` whatever the verdict, decides nothing and
+        makes no link."""
+        self.rec.verdict(record)
+        self.n_audit += 1
+        return self.rec.record(
+            record,
+            scope=scope,
+            outcome="abstain",
+            reason=AUDIT_ONLY_REASON,
+            column_name=column_name,
+            group_id=group_id,
+            parent_decision_id=parent_decision_id,
         )
 
     def _abstain(
@@ -994,12 +1123,108 @@ class _Pass:
             chosen.append(hint.aspect)
         return [a for a in chosen if a != "other"]
 
+    # -- Q1 + Q2 by rule (DESIGN A6) ------------------------------------------------------------
+
+    def _columns_rules(self) -> list[_ColumnAspects]:
+        """Q1 and Q2 under ``closed_choice: rules`` (DESIGN A6): a column is annotated iff it
+        is not an identifier, whatever the planner says (a ``rule`` record, ``Yes``; the plan
+        stays in ``runs.plan_json``); its aspects are the planner's hint and the lookup's top two
+        (:func:`~mesa_clm.closed_choice.candidate_aspects`), else the fallback
+        (:meth:`~mesa_clm.closed_choice.AspectLookup.fallback`), each a ``rule`` record; a column
+        left without one is ``no_aspect``. No CLM answer is read. CLM is still asked Q1 and Q2
+        for exactly the columns M2 sent it (one request per column, as M2: not an identifier and
+        not excluded by the planner, or an identifier the planner marked ``annotate=True``), and
+        those records are stored audit-only."""
+        lookup = self.lookup
+        if lookup is None:  # Annotator always gives a rules pass its table
+            raise RuntimeError("closed_choice rules needs the aspect lookup table (DESIGN A6)")
+        annotated: list[ColumnInfo] = []
+        asked: list[ColumnInfo] = []  # the columns M2 sent CLM, asked again for audit only
+        for col in self.card.columns:
+            hint = self.plan.columns.get(col.name)
+            state = column_state(self.card, col)
+            if is_identifier(col):
+                self._rule(
+                    TASK_ANNOTATE,
+                    state,
+                    "No",
+                    scope="column",
+                    reason="is_identifier",
+                    column_name=col.name,
+                )
+                if hint and hint.annotate is True:
+                    asked.append(col)
+                continue
+            self._rule(
+                TASK_ANNOTATE,
+                state,
+                ANNOTATE_YES,
+                scope="column",
+                reason=ANNOTATE_REASON,
+                column_name=col.name,
+            )
+            annotated.append(col)
+            if not (hint and hint.annotate is False):
+                asked.append(col)
+        requests: list[DecisionRequest] = []
+        for col in asked:
+            state = column_state(self.card, col)
+            requests.append(DecisionRequest(self.framing[TASK_ANNOTATE], state))
+            requests.append(DecisionRequest(self.framing[TASK_ASPECT], state))
+        records = self._decide(requests)
+        for i, col in enumerate(asked):
+            self._audit(records[2 * i], scope="column", column_name=col.name)
+            self._audit(records[2 * i + 1], scope="column", column_name=col.name)
+        out: list[_ColumnAspects] = []
+        for col in annotated:
+            hint = self.plan.columns.get(col.name)
+            state = column_state(self.card, col)
+            chosen = candidate_aspects(hint.aspect if hint else None, lookup.top(state))
+            fallback: dict[str, Any] | None = None
+            if not chosen:
+                kept, fallback = lookup.fallback(in_play=self.in_play, has_unit=bool(col.unit))
+                chosen = [(aspect, "fallback") for aspect in kept]
+            for aspect, source in chosen:
+                self._aspect_rule(col, aspect, source)
+            if not chosen:
+                self._abstain(
+                    "no_aspect", task_id=TASK_ASPECT, scope="column", column_name=col.name
+                )
+                continue
+            out.append(
+                _ColumnAspects(
+                    col,
+                    [aspect for aspect, _ in chosen],
+                    dict(chosen),
+                    lookup.evidence(state),
+                    fallback,
+                )
+            )
+        return out
+
+    def _aspect_rule(self, col: ColumnInfo, aspect: str, source: AspectSource) -> None:
+        """A chosen aspect as a ``column.aspect`` ``rule`` record whose reason (and ``model``)
+        says where it came from (DESIGN A6)."""
+        self._rule(
+            TASK_ASPECT,
+            column_state(self.card, col),
+            ASPECT_OPTIONS[ASPECTS.index(aspect)],
+            scope="column",
+            reason=ASPECT_REASONS[source],
+            column_name=col.name,
+            model=ASPECT_MODELS[source],
+        )
+
     # -- Q3 ---------------------------------------------------------------------------------
 
     def _ontologies(
-        self, columns: Sequence[tuple[ColumnInfo, list[str]]]
+        self,
+        columns: Sequence[tuple[ColumnInfo, list[str]]],
+        a6: Mapping[str, _ColumnAspects] | None = None,
     ) -> list[tuple[ColumnInfo, str, str]]:
-        """Q3: ``(column, ontology, aspect)`` for every group S will search, in column order."""
+        """Q3: ``(column, ontology, aspect)`` for every group S will search, in column order.
+        ``a6`` (``closed_choice: rules``, DESIGN A6) gives each column's aspect choice, which its
+        Q3 groups record in ``search_json.a6``; the questions are M2's either way."""
         framing = self.framing[TASK_ONTOLOGY]
         registry = fr.ontology_candidates()
         picks: dict[str, list[tuple[str, str]]] = {}
@@ -1039,7 +1264,8 @@ class _Pass:
                 )
             )
         for (col, aspect, allowed), record in zip(pending, records, strict=True):
-            for ont in self._rank_ontologies(col, aspect, allowed, record):
+            extra = {"a6": a6[col.name].a6(aspect)} if a6 is not None else None
+            for ont in self._rank_ontologies(col, aspect, allowed, record, extra):
                 self._add_pick(picks[col.name], ont, aspect)
         out: list[tuple[ColumnInfo, str, str]] = []
         for col, aspects in columns:
@@ -1061,9 +1287,11 @@ class _Pass:
         aspect: str,
         allowed: frozenset[str],
         record: DecisionRecord | None,
+        extra: dict[str, Any] | None = None,
     ) -> list[str]:
         """One Q3 group: record the rank (or its ``ols_rank`` fallback) and return the two
-        in-play ontologies it keeps."""
+        in-play ontologies it keeps. ``extra`` joins the group's ``search_json`` (DESIGN A6
+        records there how the column's aspects were chosen)."""
         framing = self.framing[TASK_ONTOLOGY]
         state = target_state(self.card, "column", aspect, column=col)
         group_id = uuid4()
@@ -1119,6 +1347,7 @@ class _Pass:
                     "allowed": sorted(allowed),
                     "kept": kept,
                     "rule": "rank_and_cap_top2",
+                    **(extra or {}),
                 },
                 n_candidates=len(allowed),
                 winner_decision_id=row.decision_id,
@@ -1560,7 +1789,9 @@ class _Pass:
 
     def _value_kinds(self) -> None:
         """Q7 and the AVUs. Every value kind is decided for the proposal's own column
-        (defect (b))."""
+        (defect (b)). Under ``closed_choice: rules`` (DESIGN A6) a value kind the pre-rule
+        leaves open is "the term label", a ``rule`` record; CLM is asked the same questions as
+        under ``clm`` and its records are stored audit-only."""
         framing = self.framing[TASK_VALUE_KIND]
         ask: list[tuple[Proposal, dict[str, Any]]] = []
         for prop in self.proposals:
@@ -1573,7 +1804,28 @@ class _Pass:
                 (prop, value_kind_state(self.card, pcol, prop.candidate.as_state(), prop.aspect))
             )
         records = self._decide([DecisionRequest(framing, state) for _, state in ask])
-        for (prop, _), record in zip(ask, records, strict=True):
+        for (prop, state), record in zip(ask, records, strict=True):
+            if self.rules:
+                row = self._rule(
+                    TASK_VALUE_KIND,
+                    state,
+                    VALUE_KIND_LABEL,
+                    scope="avu",
+                    reason=VALUE_KIND_REASON,
+                    column_name=prop.column_name,
+                    group_id=prop.group_id,
+                    parent_decision_id=prop.decision_id,
+                )
+                self._audit(
+                    record,
+                    scope="avu",
+                    column_name=prop.column_name,
+                    group_id=prop.group_id,
+                    parent_decision_id=prop.decision_id,
+                )
+                prop.value_kind_decision_id = row.decision_id
+                prop.value_kind = VALUE_KIND_LABEL
+                continue
             _, outcome, reason = self.rec.verdict(record)
             row = self.rec.record(
                 record,

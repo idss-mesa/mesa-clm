@@ -9,7 +9,7 @@ tags:
   - review
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T19:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -52,9 +52,12 @@ Mind the slashes in a DuckDB DSN: the path starts after `duckdb:///`, so
 `duckdb:///x.duckdb` is `x.duckdb` in the working directory and `duckdb:////tmp/x.duckdb` (four
 slashes) is the absolute `/tmp/x.duckdb`. Without `--provenance` or the variable the sidecar is
 `~/.mesa/clm/provenance.duckdb`. Without `MESA_CLM_OLS__FIXTURES` the default (`off`) queries the
-live EMBL-EBI OLS. `--fake-seed` picks the fake head; seed 5 answers "Yes" to enough columns that
-every step asked of the provider runs on the fixture cards (the default seed 0 annotates few
-columns). Under the shipped default (K1, DESIGN A1) the `term.fits` steps are not among them:
+live EMBL-EBI OLS. `--fake-seed` picks the fake head. Under the shipped closed-choice rules
+(DESIGN A6) every non-identifier column is annotated whatever the head answers, since its answers
+to the closed choices are recorded for audit only; under `--closed-choice clm` (the M2 behaviour)
+seed 5 answers "Yes" to enough columns that every step asked of the provider runs on the fixture
+cards, while the default seed 0 annotates few columns. Under the shipped default (K1, DESIGN A1)
+the `term.fits` steps are not among those the provider answers:
 `ols_rank` decides Q4–Q6 and the specificity refinement Q4b (D24) is not asked, so add
 `--ols-rank-tasks none` (an audit run) for the provider to answer the `term.fits` steps and Q4b
 too.
@@ -78,12 +81,22 @@ too.
   with no `p_fit`, and the column-to-ontology questions (Q3) are asked with the A1 framing F9.
   `--ols-rank-tasks none` asks the provider about `term.fits` too: an audit run, which the line then
   says;
+* `closed choices: rules`: since DESIGN A6 the closed choices are answered by rules (every
+  non-identifier column annotated; its aspects from the planner's hint and the M0 lookup over
+  the table shipped in the package, frozen from the registered labels snapshot, or else the
+  first two aspects in that lookup's prior order; the value kind "the term label"), and the
+  provider's answers to them are recorded audit-only (outcome `abstain`, reason
+  `audit_only_a6`; the line counts them). The fixture card is a bench card, so its own labels
+  are left out of the lookup and the other six cards' labels choose its columns' aspects
+  wherever they share a column name. `--closed-choice clm` runs the M2 behaviour, which the line
+  then says;
 * the provider note and `next: mesa-clm review --run-id <run_id>`.
 
 `--out run.json` holds the full run: every proposal with its attribute, value, unit, CURIE,
 `p_fit`, level (`zero_shot` for CLM, `none` for `ols_rank`), calibration, method and rationale,
-plus the abstentions and `ols_rank_tasks`. `--out -` prints it instead, and `--eval-result` writes the neon-avu-eval
-result shape so its scoring scripts run unchanged.
+plus the abstentions, `ols_rank_tasks`, `closed_choice` and `n_audit_only`. `--out -` prints it
+instead, and `--eval-result` writes the neon-avu-eval result shape so its scoring scripts run
+unchanged.
 
 ### Read the run back
 
@@ -187,8 +200,9 @@ pre-flight). When clm-serve does not answer,
 `annotate` refuses with exit 1 and says why. Run
 `--tier ols_rank` (the OLS top-1 of every candidate group, proposed-only, never auto; DESIGN
 D28) to decide the candidate groups without it (the column questions Q1, Q2 and Q7 still try
-CLM and are recorded as unavailable, so the run says `degraded` and columns without a planner
-aspect get no groups), or set `decider.ols_rank_fallback: true`
+CLM and are recorded as unavailable, audit-only under the default closed-choice rules, so the run
+says `degraded`; under those rules every column keeps its aspects, while under `--closed-choice
+clm` columns without a planner aspect get no groups), or set `decider.ols_rank_fallback: true`
 (`MESA_CLM_DECIDER__OLS_RANK_FALLBACK=true`) to let tier `auto` degrade to `ols_rank` on its
 own; an explicit CLM tier such as `zero_shot` always refuses. Review, feedback and export work
 the same way against either provider's runs.

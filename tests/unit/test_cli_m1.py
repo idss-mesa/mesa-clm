@@ -634,9 +634,13 @@ def test_feedback_answers_a_group_the_pipeline_rejected(
         for g in _store(env).groups(UUID(run["run_id"]))
         if g["task_id"] == "term.fits" and g["outcome"] == "rejected"
     ]
-    assert len(rejected) == 2 and not _store(env).overrides(UUID(run["run_id"]))
+    # Rejected by the keep rule (no refinement) and refinements that did not replace a parent;
+    # how many depends on how many column groups the run searched (DESIGN A6 searches more).
+    keeps = [g for g in rejected if not g.get("escalated_from")]
+    refinements = [g for g in rejected if g.get("escalated_from")]
+    assert keeps and refinements and not _store(env).overrides(UUID(run["run_id"]))
     _terminal(monkeypatch, True)
-    keep, refinement = sorted(rejected, key=lambda g: bool(g.get("escalated_from")))
+    keep, refinement = keeps[0], refinements[0]
     gid = str(keep["group_id"])
     key = _offered(env, gid)[0]
     assert main(["feedback", "--group-id", gid, "--action", "pick", "--option-key", key]) == 0

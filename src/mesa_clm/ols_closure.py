@@ -40,6 +40,14 @@ Q5  Site environment: ``biome_candidates(queries)`` = ``search_term_descendants(
 Q6  Dataset taxon: ``search_candidates(taxon_q[:3], "ncbitaxon")`` when the plan or
     ``taxon_queries`` yields any and ``ncbitaxon`` is in play.
 
+Under DESIGN A6's closed-choice rules (``decider.closed_choice: rules``, the default) the pipeline
+searches every non-identifier column whatever the planner says, never an identifier column (even
+with a planner's ``annotate=True``), and at most three aspects of ``ASPECTS`` per column (the
+planner's hint and the lookup's top two, or the fallback's two), each with the ontologies Q3 keeps
+for it; ``closed_choice: clm`` searches as above. Under the static planner, which excludes only
+identifiers, both are subsets of this closure; a planner that excludes a non-identifier column
+adds that column's searches under ``rules`` (an LLM planner's run searches live OLS).
+
 ``get_term`` is never called by the pipeline (only by label ingestion and the ``UNIT_TABLE``
 test), so it is not part of this closure. ``ThrottledOLS`` is the polite, retrying client the
 recording script wraps around mesa-mcp's ``OLSClient``; ``RecordingOLS`` itself does not persist

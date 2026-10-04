@@ -42,6 +42,12 @@ Ported from mesa-anyjev ``service.py`` (``6159281``; DESIGN U1). Changes against
 * **Reads from the sidecar only (D26).** :meth:`candidates_for_group` rebuilds the offered set
   (every in-play option of the group's deciding record, the anchor included, best ``p_fit``
   first) from ``decision_options``; a resumed elicitation never trusts client state.
+* **Audit-only records (DESIGN A6).** A ``rules`` run stores CLM's answers to the closed choices
+  with outcome ``abstain`` and reason ``audit_only_a6``. None is ever a group's deciding record
+  (Q1 and Q2 records have no group; a Q7 record hangs under a term group whose
+  ``winner_decision_id`` is the term rank), so the offered candidates, the pending groups and a
+  pick's labels never come from one; :meth:`explain` lists them as decisions with that outcome
+  and reason.
 
 The decider lock serialises annotate calls (the provider's token cache and counters are not
 thread-safe); a caller that cannot take it within ``policy.max_wait_s`` gets
@@ -427,7 +433,9 @@ class DecisionService:
     curator rows on the fixed bench cards whatever their tag); ``ols_rank_tasks`` sends those
     rank_fit tasks to the degraded method (D28; default ``cfg.decider.ols_rank_tasks``,
     ``term.fits`` under K1, DESIGN A1; an empty collection asks CLM for every task, an audit
-    run); ``claude_client`` is handed to the second-opinion provider (a fake in tests)."""
+    run); ``closed_choice`` says who answers Q1, Q2 and Q7 (default
+    ``cfg.decider.closed_choice``: ``rules``, DESIGN A6, CLM's answers audit-only; ``clm`` for the
+    M2 behaviour); ``claude_client`` is handed to the second-opinion provider (a fake in tests)."""
 
     def __init__(
         self,
@@ -441,6 +449,7 @@ class DecisionService:
         bench_cards: Collection[str] | None = None,
         ols_rank_tasks: Collection[str] | None = None,
         claude_client: Any | None = None,
+        closed_choice: str | None = None,
     ) -> None:
         self.cfg = cfg
         self.provider = provider
@@ -456,6 +465,7 @@ class DecisionService:
         )
         self._claude_client = claude_client
         self._second_opinion: DecisionProvider | None = None
+        self.closed_choice = closed_choice
 
     @classmethod
     def from_config(
@@ -530,6 +540,7 @@ class DecisionService:
                 second_opinion=self.second_opinion_provider(second_opinion),
                 tier=tier,
                 ols_rank_tasks=self.ols_rank_tasks,
+                closed_choice=self.closed_choice,
             ).annotate(card)
         finally:
             self.lock.release()

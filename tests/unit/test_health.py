@@ -95,6 +95,7 @@ def test_doctor_is_green_on_this_checkout(tmp_path: Path) -> None:
     assert [c.name for c in rep.checks] == M0_CHECKS
     by = _by_name(rep)
     assert by["config"].detail.startswith("sha256 ") and "planner=static" in by["config"].detail
+    assert "closed_choice=rules" in by["config"].detail  # DESIGN A6's default, named
     assert by["vendored files"].detail == "4 files match vendored.sha256"
     assert f"@ {PINNED_COMMITS['mesa-mcp'][:7]} (pinned)" in by["mesa-mcp"].detail
     assert f"@ {PINNED_COMMITS['mesa-ducklake'][:7]} (pinned)" in by["mesa-ducklake"].detail
