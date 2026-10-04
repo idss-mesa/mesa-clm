@@ -68,7 +68,7 @@ history, is the design record `design/plan-2026-09-28.md` (cited below as "plan 
 | D25 | `avu.keep` is a rule: exact-triple dedup, then a cap of 25 by `p_fit` | accepted |
 | D26 | MRTR state carries ids only (≤16 KiB) with a tamper guard; OLS and HTTP in `asyncio.to_thread`; `card_path` is CLI-only; iRODS card paths go through `assert_allowed`; parse errors carry line numbers, never content | accepted |
 | D27 | Pre-registration and nested selection: X1–X4, metrics and rule R committed before any run; every selection re-made inside each outer fold; full-data selections are `exploratory:true` | accepted |
-| D28 | Rank-and-cap while uncalibrated; degraded mode `method="ols_rank"` proposes the OLS top-1 per group as `proposed` (probs NULL, never auto) | accepted; amended by [A1](#a1-2026-10-03--amends-d24-d28) |
+| D28 | Rank-and-cap while uncalibrated; degraded mode `method="ols_rank"` proposes the OLS top-1 per group as `proposed` (probs NULL, never auto) | accepted; amended by [A1](#a1-2026-10-03--amends-d24-d28), [A6](#a6-2026-10-04--amends-d28-a1-and-plan-42-q1-q2-q7) |
 | D29 | Stream, not store: cards read into memory, runs exported to the project and pruned only once terminal, per-VM sidecars, artifacts and labels moved through the Data Store, secrets `env\|file\|keyring\|auto` | accepted |
 | D30 | Frozen label snapshots: the bench reads only `labels snapshot` output; cells record `labels_sha256`; curator labels on bench cards are tagged and excluded from pre-registered cells | accepted |
 | D31 | Reversibility: `mesa-clm revert` deletes exactly the written triples; neon replace mode backs up existing reps; the live-venv bump has a written rollback | accepted |
@@ -1766,6 +1766,234 @@ new connection only; a port taken after the check gets no byte; the planner and 
 raw client checking each connection). Nothing rotates: the clients are not in the lock, and
 neither the proxy nor the units changed.
 
+### A6 (2026-10-04) — amends D28, A1 and plan §4.2 Q1, Q2, Q7
+
+**Decision (the user's, 2026-10-04, made after M2's results had been seen).** By default the
+three closed choices are answered by deterministic rules, and CLM's answers to them are kept for
+audit only. The user chose, verbatim: "Deterministic fallbacks: Q1: annotate every
+non-identifier column (rule); Q2: the planner's aspect hint plus top-2 by the M0 lookup, else all
+registry-allowed aspects capped; Q7: the existing pre-rule then 'the term label'. CLM still runs
+for audit. Recorded as an amendment made after M2's results (product safety, not a scientific
+claim)." A6 is a product-safety change of serving behaviour and **makes no scientific claim**: it
+does not say that the rules or the lookup answer better than CLM on any card, nor that CLM has no
+signal on these tasks, and no cell is read as evidence for the rules. It **does not touch the
+frozen pre-registration (G1) or any cell**: no file under `bench/results/`, no `pre_registered`
+or `exploratory` flag, no framing, `question_key`, `task_key`, label, fingerprint or lock changes,
+and the M2 run is not repeated. `decider.closed_choice` selects the behaviour: `rules` (the
+default, below) or `clm`, the M2 behaviour exactly (no A6 rule record, no audit marker, no
+lookup table read), kept reachable for audits and tests (`MESA_CLM_DECIDER__CLOSED_CHOICE`,
+`annotate --closed-choice rules|clm`, `Annotator(closed_choice=)`,
+`DecisionService(closed_choice=)`). Where the decision's words leave room, the reading below is
+the implementation's and is marked **(reading, confirmed by the user on 2026-10-04)**: the user
+kept both readings as written when asked; each can be changed later by amendment without
+touching anything else in A6. Under `rules`:
+
+- **Q1 `column.annotate`.** A column is annotated iff it is not `cards.is_identifier`, whatever
+  the planner says. A planner's `annotate=False` no longer keeps a non-identifier column out: it
+  stays in the run's `plan_json` and decides nothing (under `clm` it is still M2's
+  `planner_annotate_false` rule). A planner's `annotate=True` does not bring an identifier in: in
+  M2 it only sent the column to CLM, whose answer no longer decides. Each annotated column gets a
+  `rule` record answering `Yes` (`method` `rule`, `model` `rule`, `level` `none`, `calibration`
+  `none`, `probs` NULL, outcome `rule`, reason `a6_not_identifier`); an identifier keeps M2's
+  `No` rule (reason `is_identifier`).
+- **Q2 `column.aspect`.** For an annotated column the aspects are, in this order, the planner's
+  aspect hint for the column (if any) and the M0 lookup's top two (below), de-duplicated (the
+  first source kept), `other` excluded: up to three aspects, as M2's CLM top two plus the
+  planner's aspect. The decision caps only the fallback. The hint and the looked-up aspects
+  are taken as given, `unit` included, as M2 took the planner's and CLM's (on the seven fixture
+  cards every looked-up `unit` falls on a column with a unit). Each chosen aspect is a
+  `column.aspect` `rule` record answering that aspect's option, reason `a6_aspect_hint` (model
+  `planner`) or `a6_aspect_lookup` (model `lookup`); when the list is empty the fallback
+  decides (below; reason `a6_aspect_fallback`, model `rule`). **No CLM answer chooses an
+  aspect**: Q3 is asked only for the aspects chosen here, as M2 asked it for its aspects (F9, or
+  `ols_rank`; `unit` is `uo` by rule; the two best in-play ontologies kept; the planner's
+  ontology appended under the column's first aspect), so a column asks Q3 at most three times
+  and a fallback column at most twice. A column left without an aspect (only when no aspect has
+  an ontology in play, below) is reported `no_aspect`, as M2 reported one. How a column's
+  aspects were chosen is on its rows: the reason of each `column.aspect` rule record, and
+  `search_json.a6` of each of its Q3 groups (`aspect_source`, the column's aspects and their
+  sources, the lookup's evidence, the fallback's order and choice).
+  - **The lookup** is the M0 control (`mesa_clm.bench.baselines`: `lookup_key` and `Lookup`,
+    plan §5.4) over a table frozen once from the registered snapshot.
+    `src/mesa_clm/aspect_lookup.json` holds the 60 items of M0's `neon_aspect` bench task on
+    `bench/snapshots/2026-09-29.parquet` (labels_sha256 `aafd18f8…`, labels_content_sha256
+    `5c60a8a6…`; `column.aspect` at the policy's `min_weight` 0.6 with `fold_only`, D9, D30):
+    card, column name and silver aspect.
+    These are the rows behind M0's lookup on the very cell the decision cites
+    (`tiers.json#/cells/neon_aspect.zero_shot.F7/baselines/lookup_acc` 0.550, n 60; M0's
+    `bench/results/2026-09-29/baselines.json#/cells/neon_aspect.baseline.lookup_prob`).
+    `scripts/freeze_aspect_lookup.py` writes the file through `closed_choice.freeze_table`, which
+    refuses any snapshot but the registered one and checks M0's published counts. The file ships
+    in the package; its sha256 (`12a38e76…`) is pinned in `closed_choice.TABLE_SHA256` and checked
+    before any run, and a test rebuilds it from the snapshot byte for byte. Every host reads this
+    table and no host's sidecar is read, so under one plan every host chooses the same aspects
+    for a card.
+    (The first build of A6 read the host's label store instead. That store holds no
+    `column.aspect` labels on the serving host, so the lookup the decision names never answered
+    there; review found this, and the frozen table replaces that read.) At annotate time the
+    items of the card being annotated are left out, as M0's leave-one-card-out lookup leaves
+    them out: a card never copies its own labels, so a bench card's silver labels never reach its
+    own run, and an end-to-end leave-one-card-out bench (M4) stays leave-one-card-out. M0's
+    `Lookup` then counts the remaining items; for every fold of the registered task this is
+    M0's own lookup, with the same counts in the same order and the same prior (tested). The key
+    is `(column.aspect, column, <column name>, '')`. The top two labels are those with the most
+    rows, and a tie goes to the label of the alphabetically first card (M0's
+    `Counter.most_common` over card-ordered rows). **A column name no other card carries
+    contributes no aspect (reading, confirmed by the user on 2026-10-04).** M0's lookup would predict the
+    training majority for such a key, and `lookup_prob` would give the training prior (28 of
+    M0's 60 items had such a key: `…/baselines/novel_key/n`). A6 reads "top-2 by the M0 lookup"
+    as the key's own top two, so the decision's "else" covers such a column as well as one whose
+    looked-up labels are all `other`. The fallback then orders the aspects by that same training
+    prior.
+  - **The fallback** ("else all registry-allowed aspects capped"; reading, confirmed by the
+    user on 2026-10-04). It takes the aspects of `registry.ASPECTS` except `other` that have an ontology in
+    play (`allowed_for_aspect(aspect) ∩ in_play`), `unit` only for a column with a unit
+    (`col.unit`; for a column without one, S would search UO for the literal word "unit"). They
+    are ordered by the lookup's training prior (M0's `Lookup.prior` without the annotated card:
+    most rows first, a tie to the label first seen in card order, as M0's `majority`; the aspects
+    without rows follow in registry order), and the first **two** are kept. It reads no CLM
+    answer and needs none, so it also chooses aspects when `column.ontology_fits` is decided by
+    `ols_rank` or clm-serve is down; Q3 then runs on those aspects like any other. On the frozen
+    table the prior starts with `method` (18 rows; 13 to 17 once a bench card's own items are
+    left out), followed by `taxon` (12) or, for four of the seven bench cards, `measurement`, so
+    a fallback column gets `method` and one of those two. The decision says "capped" but names
+    neither the number nor the order: two is the lookup's own number, and the order is what M0
+    gives a key it has not seen. Registry order, or reporting such a column `no_aspect`, would be
+    the alternatives. (The first build of A6 asked Q3 once for every aspect and kept the two with
+    the best zero-shot `p_fit`. Review found that this let CLM's uncalibrated `p_fit`, compared
+    across seven aspect contexts, choose the aspects, a use of F9 no registered result covers,
+    and that it offered `unit` to columns without a unit. The deterministic order replaces it.)
+- **Q7 `avu.value_kind`.** `avu.pre_rule_value_kind` first, as before (no record). Where it
+  returns `None`, exactly the proposals M2 asked CLM about, the value kind is "the term label"
+  (`registry.VALUE_KINDS[0]`): a `rule` record (reason `a6_value_kind_label`) under the
+  proposal's group, with the proposal's decision as its parent, as the CLM record was.
+- **CLM still answers Q1, Q2 and Q7, in the same requests as in M2.** Q1 and Q2 are asked
+  together for exactly the columns M2 sent: every non-identifier column the planner did not
+  mark `annotate=False`, plus an identifier column the planner marked `annotate=True`. A
+  non-identifier column the planner excluded is annotated without an audit record, since M2
+  never asked about it. Q7 is asked for every proposal the pre-rule leaves open. Every such
+  record is **audit-only**: stored with outcome `abstain` and reason `audit_only_a6` whatever the
+  policy's verdict, with its numbers kept as served. The verdict is still computed, so a
+  misconfigured threshold still fails the run. An audit-only record never decides whether a
+  column is annotated, which aspect is used or which value kind is built, and never makes a link
+  or a label. The vocabulary and the sidecar schema are unchanged (no migration): `abstain` is
+  an existing outcome and `decisions.reason` is free text. `explain` lists these records as
+  decisions with that outcome and reason. `review`, the pending groups and `feedback` offer only
+  a group's deciding record, which is never one of them: a Q1 or Q2 record has no group, and a
+  Q7 record hangs under a term group whose `winner_decision_id` is never it. The bench never
+  counts them: it reads only frozen label snapshots (D30), and the one producer of labels from a
+  run, a pick on a group, labels that group's deciding record. `AnnotationRun.n_audit_only`
+  (also in the `--out` JSON) counts them, and `outcomes` counts them under `abstain`. An audit
+  question CLM could not answer is marked audit-only too, and the run is still `degraded` (CLM
+  did not answer, A1).
+- **What a run records of the lookup.** In a `rules` run `runs.labels_sha256` (the existing
+  column for the label snapshot in force) names the snapshot the table was frozen from
+  (`aafd18f8…`); under `clm` it stays NULL, as in M2. Each Q3 group's `search_json.a6.lookup`
+  holds the key, the counts and their Laplace(α=1) frequencies, the top two, the card held out,
+  the number of items counted and the table's sha256. A column with no Q3 group (its only aspect
+  `unit`, decided `uo` by rule, or aspects with no ontology in play) carries no copy of its
+  counts. They still follow from the table (pinned by its sha256), the run's card and the
+  column's name, since every host reads the same table.
+- **What it amends.** **D28**: rank-and-cap no longer prunes Q1 and Q2 by CLM's top-k (Q1 by its
+  top-1 `Yes`, Q2 by its top-1 when proposed, else top-2); it still prunes Q3's ontologies to the
+  top two, and `ols_rank` is unchanged. **A1**: its bullet "The closed choices are unchanged …
+  they keep F7 and their behaviour" now holds for their framing only (F7 stays, for the audit
+  records and the rule records alike). **Plan §4.2**: the rows Q1, Q2 and Q7 are replaced by the
+  rules above. Q1's identifier rule and Q7's pre-rule and fallback "the term label" are kept,
+  with no CLM answer between them and the result. Q1's planner rule no longer decides. Row Q3 is
+  unchanged: it is asked per chosen aspect, as in M2.
+- **Unchanged.** Everything else is M2's: the identifier rule, Q3 for every chosen aspect, S,
+  Q4–Q6 and Q4b, K1's `ols_rank` for `term.fits` (A1), Q8 (D25) and the policy (plan §4.7: a
+  record's verdict is unchanged; only what is stored for an audit record is overridden, as M2
+  already stored a moot aspect and the keep rule's drops as `rejected`). D10 holds: annotate
+  decides, proposes and records, apply writes only what was accepted, and an audit record makes
+  no link. D22 holds as M2 read it: the planner's aspect hint, appended to CLM's aspects in M2,
+  now comes first, recorded as a rule (model `planner`, level `none`), and never yields a
+  probability or an `auto`. **D15 stands**, read as it is written, about learned models: no
+  calibrator, probe or head is fitted or promoted at serving time. The lookup is M0's no-model
+  count table, counted at annotate time from items frozen offline, and nothing in a sidecar is
+  read or written for it. K1 is not invoked: it concerns X1's two rank_fit tasks, and A6 only
+  borrows its word "audit-only".
+
+**Why.** In M2's registered tier run, CLM's zero-shot answers to the closed choices are worse
+than answering each task's majority class on the same items:
+`bench/results/2026-10-03/tiers.json#/cells/neon_annotate.zero_shot.F7` accuracy **0.357**
+against majority **0.643** (`/metrics/acc`, `/baselines/majority_acc`; n 98),
+`#/cells/neon_aspect.zero_shot.F7` **0.050** against **0.300** (n 60) and
+`#/cells/neon_value_kind.zero_shot.F7` **0.324** against **0.478** (n 278); RESEARCH.md, "M2
+results (registered run)". Under M2 those answers decide which columns are annotated, which
+aspects are searched and which value an AVU carries. No pre-registered rule covers these tasks
+(X1 and K1 concern the two rank_fit tasks; A1: "no pre-registered rule decides anything for
+`column.annotate`, `column.aspect` or `avu.value_kind` from their tier cells"), so the frozen
+criteria give no instruction, and A1 kept their behaviour. Having seen the cells, the user chose
+the deterministic fallbacks above. Q1's rule and Q7's fallback coincide with the majority class
+of those cells (`Yes`, 63 of 98; "the term label", 133 of 278: `/counts/class_counts`), which
+the user had seen. Q2's lookup is the control whose accuracy the same aspect cell reports
+(0.550). No cell is re-read or changed, and nothing is claimed about the rules' accuracy on any
+card. Because A6 was decided after the results were seen, it is recorded as an amendment made
+after M2's results, and no claim rests on it.
+
+**What it changes in a run.** Every non-identifier column reaches S and Q4 (in M2, only the
+columns CLM answered `Yes` did). The only exception is a column whose aspects have no ontology
+in play. A column has at most three aspects (two from the fallback), each with at most two
+ontologies, plus the planner's ontology as in M2. The OLS fixture closure already covers every
+such column under every aspect (`ols_closure.enumerate_groups`), so the hermetic suite needs no
+new fixture. A column-scoped AVU carries the term label unless the pre-rule says otherwise:
+annotate no longer proposes "the column name" or "the most frequent data value". Which aspects
+a run searches no longer depends on the host's sidecar. **Cost, and the M3 latency budget.** A
+`rules` run asks CLM about more than an M2 run whose CLM answered `No`: every non-identifier
+column gets Q3 for each chosen aspect but `unit` (at most three), S, Q4 and a Q7 audit question
+for each open proposal. `bench/results/2026-10-01/annotate_latency.json` (M1: 9 to 26 CLM calls per
+card, cold p50 3.34 s with live OLS) was measured before A6 and no longer describes the default
+pipeline. It must be re-measured under `closed_choice: rules`, with live OLS, before the annotate
+latency budget is fixed by amendment before M3 (plan §8, M3).
+
+**Evidence and rotations.** The three cells above and the user's decision. No framing,
+`question_key`, `task_key`, label, fingerprint, serving or framings lock, and no cell rotates;
+no sidecar migration. New: the package file `src/mesa_clm/aspect_lookup.json` (NEON data CC BY
+4.0, attributed in `THIRD_PARTY.md`) and its pinned sha256; `runs.labels_sha256` is set in a
+`rules` run. Every run's `config_sha256` changes (the new `decider.closed_choice`). Building and
+testing the table reads the snapshot's 60 `column.aspect` silver labels, the items M0's lookup
+cell already read, and combines them with no model output.
+
+Tests: `tests/unit/test_a6_closed_choice.py` covers:
+- no CLM answer drives Q1, Q2 or Q7: runs whose closed-choice answers a test double pulls in
+  opposite directions decide the same records, groups, links and proposals (the same pulls
+  change them under `clm`), and runs whose Q3 answers it pulls apart keep the same aspects;
+- the rule and audit records and their markers;
+- Q1 whatever the planner says, both ways;
+- the packaged table: rebuilt from the snapshot byte for byte, its sha256 pinned and checked,
+  and per fold the lookup M0 computed;
+- the hint and the lookup's top two uncapped, with M0's ties and the annotated card held out;
+- the fallback in the prior's order, capped at two, never `unit` without a unit, needing no CLM
+  answer (`ols_rank`, CLM down), and bounded by the ontologies the plan puts in play, the
+  planner's ontology appended as in M2;
+- a sidecar file without the schema;
+- `clm` mode as M2;
+- all seven fixture cards end to end in both modes under the shipped decider, with zero
+  `ReplayMiss` and at most three Q3 questions per column;
+- explain, the pending groups, the offered candidates and feedback never offering an audit
+  record;
+- the CLI.
+
+Other tests: `tests/unit/test_pipeline_fake.py` runs all seven cards in both modes, with M2's
+closed-choice assertions in `clm` mode, a planner's exclusion in both modes and CLM down in both
+modes. `tests/unit/test_k1_default.py` and `tests/unit/test_cli_m1.py` no longer depend on how
+many term groups a run searches, and `tests/unit/test_config.py` checks that the example files
+document the new field.
+
+Checks outside the repository, before the commit:
+- 63 fake runs under `closed_choice: clm` gave rows identical field for field to `81e4495`. They
+  covered the seven fixture cards under three fake heads, each in the audit and the shipped
+  configuration, plus the CLM-down, CLM-down-with-hints and `ols_rank` paths: 4,114 decisions
+  and 401 proposals. This is not committed as a test, because the fake's floating-point detail
+  may differ across platforms.
+- For each review finding about behaviour, one test failed on the reviewed build and passes on
+  this one: the uncapped hint and lookup, the lookup answering on a host without labels, the
+  planner's exclusion, the unseen key, the fallback without Q3 `p_fit`, `runs.labels_sha256`, Q3
+  never choosing an aspect, `unit` without a unit, the bare sidecar file, and the Q3 count per
+  column.
+
 ## Plan (summary; the full plan is `design/plan-2026-09-28.md`)
 
 Milestones, each a `feat/mN-*` branch merged by PR after `scripts/wait_for_checks.sh`:
@@ -1776,7 +2004,11 @@ clm-serve, keys, lock, doctor, collapse spike, features, fallback parity) and B 
 pipeline (framings and lock, render, `_honest`, fake transport, rank-first pipeline, sidecar,
 service); gate G1 freezes D0–D32 and the pre-registration → M2 evidence (X1, X2, zero_shot and
 calibrated cells; K1; amendment A1; run 2026-10-03, [A1](#a1-2026-10-03--amends-d24-d28): F9 for
-`column.ontology_fits`, K1 for `term.fits`) → M3 live proposed-only loop (apply, revert, history,
-tools, smoke; tag v0.1.0a1) → M4 learned tiers (X3, X4, artifacts, citations, audits; K2) → M5
-release 0.1.0 → M6 neon adapter (0.2.0) → M7 head tier (K3) → M8 scale-out and evidence-gated
-auto.
+`column.ontology_fits`, K1 for `term.fits`; then, by the user's decision after the results,
+[A6](#a6-2026-10-04--amends-d28-a1-and-plan-42-q1-q2-q7): the closed choices Q1, Q2, Q7 by
+deterministic rules, CLM's answers to them audit-only) → M3 live proposed-only loop (apply,
+revert, history, tools, smoke; tag v0.1.0a1; the annotate latency budget that plan §8 fixes by
+amendment before M3 comes from a re-measurement under A6's `closed_choice: rules`, because
+`bench/results/2026-10-01/annotate_latency.json` predates A6) → M4 learned tiers (X3, X4,
+artifacts, citations, audits; K2) → M5 release 0.1.0 → M6 neon adapter (0.2.0) → M7 head tier
+(K3) → M8 scale-out and evidence-gated auto.

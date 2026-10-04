@@ -30,6 +30,9 @@ ROOT = Path(__file__).resolve().parents[1]
 CARDS_DIR = ROOT / "fixtures" / "cards"
 OLS_DIR = ROOT / "fixtures" / "ols"
 CARD_PATHS = sorted(CARDS_DIR.glob("*.md"))
+# ``decider.closed_choice`` (DESIGN A6): ``rules`` is the shipped default, ``clm`` the M2
+# behaviour. :func:`config` keeps the shipped default; pass ``DECIDER__CLOSED_CHOICE='clm'``.
+MODES = ("rules", "clm")
 
 # Fake heads that exercise every pipeline step on the fixture cards (see the module docstring).
 FAKE_SEED = 5
@@ -52,7 +55,8 @@ def config(**env: str) -> Config:
     ``term.fits`` groups (Q4-Q6, D24's refinement, the second opinion) included, as an audit run
     does. The shipped default decides ``term.fits`` by ``ols_rank`` (K1, DESIGN A1); pass
     ``DECIDER__OLS_RANK_TASKS=...`` (or use :func:`shipped_config`) to run it, as
-    ``tests/unit/test_k1_default.py`` does."""
+    ``tests/unit/test_k1_default.py`` does. The closed choices keep the shipped
+    ``decider.closed_choice`` (``rules``, DESIGN A6); ``DECIDER__CLOSED_CHOICE='clm'`` runs M2's."""
     base = {
         "MESA_CLM_POLICY__PROFILE": "dev",
         "MESA_CLM_OLS__FIXTURES": "replay",

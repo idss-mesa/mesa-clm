@@ -27,6 +27,7 @@ decider:
   tier: auto                           # auto | zero_shot | calibrated | probe | head | ols_rank (D6, D28)
   ols_rank_fallback: false             # annotate --provider clm, tier auto, clm-serve down: true runs ols_rank
   ols_rank_tasks: [term.fits]          # K1 (DESIGN A1): term.fits proposals are the OLS top-1; [] asks CLM (audit)
+  closed_choice: rules                 # DESIGN A6: Q1, Q2, Q7 by rule, CLM's answers audit-only; clm = the M2 behaviour
 planner:                               # plans, never decides (D22)
   kind: static                         # static | gateway | claude
   gateway_base_url: http://127.0.0.1:8000   # loopback tunnel to the CARC LiteLLM gateway; no /v1

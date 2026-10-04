@@ -1,6 +1,6 @@
 ---
 title: "Decision model"
-description: "How mesa-clm asks CLM: one rank per candidate group with a fixed abstain anchor, set-independent scores, the Q1-Q8 pipeline, contexts that end with the target, framings and the two keys, and what the M2 framing experiment changed (F9 for column.ontology_fits; term.fits proposals by ols_rank under K1)."
+description: "How mesa-clm asks CLM: one rank per candidate group with a fixed abstain anchor, set-independent scores, the Q1-Q8 pipeline, contexts that end with the target, framings and the two keys, what the M2 framing experiment changed (F9 for column.ontology_fits; term.fits proposals by ols_rank under K1), and what drives each step since amendment A6 (the closed choices Q1, Q2, Q7 by deterministic rules, CLM's answers to them audit-only)."
 type: Guide
 tags:
   - concepts
@@ -9,7 +9,7 @@ tags:
   - framings
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T18:30:00Z"
+  at: "2026-10-04T19:42:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -67,17 +67,65 @@ Every context view ends with the target, because last-token pooling weights the 
 The numbers behind A1 are in RESEARCH.md, "M2 results (registered run)", and on
 [Learning and bench](learning-and-bench.md).
 
+## The closed choices by rule (amendment A6)
+
+The same registered run measured CLM's zero-shot answers to the closed choices below the
+majority class of their items: `column.annotate` accuracy 0.357 against 0.643, `column.aspect`
+0.050 against 0.300, `avu.value_kind` 0.324 against 0.478
+(`bench/results/2026-10-03/tiers.json`, cells `neon_annotate.zero_shot.F7`,
+`neon_aspect.zero_shot.F7`, `neon_value_kind.zero_shot.F7`). No pre-registered rule covers those
+tasks, and having seen the cells the user decided (2026-10-04) that they are answered by
+deterministic rules by default. Amendment A6 records that as a product-safety change of serving
+behaviour: it makes no scientific claim and touches neither the frozen pre-registration nor any
+cell. `decider.closed_choice` selects it (`rules`, the default; `clm` keeps the M2 behaviour for
+audits and tests; `annotate --closed-choice`). Under `rules` each step is driven by:
+
+| Step | What decides | Recorded as |
+|---|---|---|
+| Q1 | a column is annotated iff it is not an identifier, whatever the planner says (its `annotate=False` stays in the run's plan and decides nothing; an identifier stays out even with its `annotate=True`) | a `rule` record answering `Yes`, reason `a6_not_identifier`; identifiers are `No` rules as before |
+| Q2 | the planner's aspect hint, then the top two aspects of the M0 lookup (below), de-duplicated, `other` excluded: up to three; when that is empty, the fallback below | one `rule` record per aspect, reason `a6_aspect_hint`, `a6_aspect_lookup` or `a6_aspect_fallback`; the column's Q3 groups carry `search_json.a6` (the source of each aspect, the lookup's counts, the fallback's order) |
+| Q2 fallback | the registry's aspects in the order of the lookup's training prior (most labels first; aspects without labels after, in registry order), skipping `other`, any aspect with no ontology in play and `unit` for a column without a unit; the first two are kept. No CLM answer is read, so it works with `column.ontology_fits` decided by `ols_rank` or clm-serve down | `rule` records as above; Q3 then runs on the kept aspects like any other; a column is `no_aspect` only when no aspect has an ontology in play |
+| Q7 | the deterministic pre-rule first; where it leaves the kind open, "the term label" | a `rule` record, reason `a6_value_kind_label`, under the proposal's group |
+| Q3–Q6, Q4b, Q8 | unchanged (F9 for Q3, asked once per chosen aspect but `unit`; `ols_rank` for `term.fits` under K1) | as before |
+
+The **M0 lookup** is the no-model control the bench reports beside every cell: it counts how often
+each aspect labels a column of the same name on the other cards. Its items are frozen: the 60
+`column.aspect` items of the M0 bench task on the registered labels snapshot
+(`bench/snapshots/2026-09-29.parquet`), the ones behind the lookup's 0.550 on the aspect cell
+above, shipped in the package as `aspect_lookup.json` with its sha256 pinned in the code
+(`scripts/freeze_aspect_lookup.py` writes it; a test rebuilds it from the snapshot). Every host
+reads the same table and no sidecar is read, so the same card gets the same aspects everywhere.
+At annotate time the items of the card being annotated are left out, as the bench's
+leave-one-card-out lookup leaves them out; the two most frequent labels of the column's name win,
+a tie going to the label of the alphabetically first card. A name no other card carries
+contributes nothing and the fallback decides, in the order of the same lookup's prior (what the
+bench's lookup gives a key it has not seen). A run's `labels_sha256` names the snapshot. Two
+points are the implementation's reading of the decision, which the user confirmed on 2026-10-04:
+an unseen name goes to the fallback, and the fallback's order and its cap of two.
+
+**CLM still answers Q1, Q2 and Q7**, in the same requests as before (a column the planner
+excluded, which M2 never asked about, gets no audit question), and every such record is
+**audit-only**: stored with outcome `abstain` and reason `audit_only_a6` whatever the policy says,
+its probabilities kept as served. It decides nothing, makes no link and no label; `explain` lists
+it as a decision with that marker, and review, the pending groups and feedback never offer it
+(they offer a group's deciding record, which is never one). A run's summary and `--out` JSON give
+the mode (`closed_choice`) and the count (`n_audit_only`). Q1's rule and Q7's fallback answer the
+majority class of the cells above (`Yes`; "the term label"), which describes them; it is not a
+measurement of the rules on new cards.
+
+## The pipeline steps
+
 | Step | Task | Shape | Context view | Candidates |
 |---|---|---|---|---|
 | Plan | (the planner) | — | — | which ontologies, columns and queries; hints only |
-| Q1 | `column.annotate` | choice K=2 | `{card_header, column}` | `ANNOTATE_OPTIONS`; identifiers are a rule |
-| Q2 | `column.aspect` | choice K=8 | same text as Q1 | `ASPECT_OPTIONS`; top-1 if proposed, else top-2 |
+| Q1 | `column.annotate` | choice K=2; by default a rule, CLM audit-only (A6) | `{card_header, column}` | `ANNOTATE_OPTIONS`; identifiers are a rule |
+| Q2 | `column.aspect` | choice K=8; by default hint, lookup, else the prior-ordered fallback, CLM audit-only (A6) | same text as Q1 | `ASPECT_OPTIONS`; under `clm`: top-1 if proposed, else top-2 |
 | Q3 | `column.ontology_fits` | rank_fit 12 + anchor | F9 (A1): `NEON dataset {title}. Column {name}: {description} ({unit}). {aspect} ontology term:` | registry `option_text`, masked by aspect after scoring |
 | S | candidates | OLS | — | `search_candidates` ≤12, fixed `unit_candidate` |
 | Q4 | `term.fits` | rank_fit ≤12 + anchor; by default `ols_rank` (K1, A1) | `target_state = {card_header, scope, aspect, column|site}` | `"{label}: {description[:300]}"` |
 | Q4b | `term.fits` (specificity) | rank_fit; not asked for an `ols_rank` group (A1) | same | {parent, ≤10 children, anchor}; a child wins at `p_fit +0.10`, proposed-only (DESIGN D24) |
 | Q5 / Q6 | `term.fits` | rank_fit; by default `ols_rank` (K1, A1) | `{card_header, site}` / `{card_header}` | ENVO biome descendants / NCBITaxon |
-| Q7 | `avu.value_kind` | choice K=4 | `value_kind_state` | `VALUE_KINDS`, deterministic pre-rules first |
+| Q7 | `avu.value_kind` | choice K=4; by default the pre-rule, else "the term label", CLM audit-only (A6) | `value_kind_state` | `VALUE_KINDS`, deterministic pre-rules first |
 | Q8 | rule | — | — | exact-triple dedup, cap 25 by `p_fit` (DESIGN D25) |
 
 Questions sharing a context go in one request: Q1 and Q2 for a column share one, and every

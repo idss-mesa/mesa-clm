@@ -72,6 +72,9 @@ Tier = Literal["auto", "zero_shot", "calibrated", "probe", "head", "ols_rank"]
 # The rank_fit tasks (``tasks.RANK_FIT_TASKS``, asserted equal by the tests): the only ones
 # ``ols_rank`` can decide (D28).
 RankFitTask = Literal["term.fits", "column.ontology_fits"]
+# Who answers the closed choices Q1, Q2, Q7 (DESIGN A6): ``rules`` (deterministic rules, CLM's
+# answers recorded audit-only; the default) or ``clm`` (the M2 behaviour, for audits and tests).
+ClosedChoice = Literal["rules", "clm"]
 Profile = Literal["prod", "dev"]
 FixtureMode = Literal["off", "record", "replay", "auto"]
 HistoryBackend = Literal["direct", "spool", "none", "auto"]
@@ -203,7 +206,10 @@ class DeciderConfig(_Section):
     ``ols_rank`` sends every rank_fit task to the degraded method (D28). ``ols_rank_tasks``
     names the rank_fit tasks decided by ``ols_rank`` whatever the tier: ``term.fits`` by default,
     because X1 found no qualifying arm for it (K1, DESIGN A1); ``[]`` (or ``annotate
-    --ols-rank-tasks none``) asks CLM for ``term.fits`` too, which is an audit run."""
+    --ols-rank-tasks none``) asks CLM for ``term.fits`` too, which is an audit run.
+    ``closed_choice`` says who answers the closed choices (DESIGN A6): ``rules`` by default
+    (Q1, Q2, Q7 by deterministic rules; CLM still asked, its answers recorded audit-only),
+    ``clm`` for the M2 behaviour (``annotate --closed-choice clm``)."""
 
     tier: Tier = "auto"
     # `annotate --provider clm` with tier auto when clm-serve does not answer /health: False
@@ -215,6 +221,14 @@ class DeciderConfig(_Section):
     # audit-only until a probe is promoted (M4). A comma-separated string or "none" also works
     # (MESA_CLM_DECIDER__OLS_RANK_TASKS).
     ols_rank_tasks: list[RankFitTask] = Field(default_factory=_k1_ols_rank_tasks)
+    # DESIGN A6 (2026-10-04, the user's decision after M2's results; product safety, not a
+    # scientific claim): rules answer Q1 (every non-identifier column, whatever the planner
+    # says), Q2 (the planner's aspect hint, then the top two of the M0 lookup over the packaged
+    # table frozen from the registered snapshot, the card held out; else the first two aspects in
+    # the lookup's prior order, unit only for a column with a unit; no CLM answer read) and Q7
+    # (the pre-rule, then "the term label"); CLM's answers to them are stored audit-only (abstain,
+    # audit_only_a6). "clm" keeps the M2 behaviour (MESA_CLM_DECIDER__CLOSED_CHOICE).
+    closed_choice: ClosedChoice = "rules"
 
     @field_validator("ols_rank_tasks", mode="before")
     @classmethod

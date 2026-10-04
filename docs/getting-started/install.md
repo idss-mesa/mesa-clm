@@ -7,7 +7,7 @@ tags:
   - install
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T18:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -63,7 +63,7 @@ owner-only, directories 0700 and files 0600, whatever the umask.
 |---|---|
 | `doctor [--quick] [--serve] [--json]` | What this host can run (below). `--quick` skips the vendored-file hashing and, outside serve mode, the serving-lock verification; in serve mode it keeps the light probes and skips the slow ones unless `--serve` is given. `--serve` forces every live serving probe; `--json` prints `{ok, summary, checks[]}`. |
 | `framings --check \| --update-lock [--lock PATH]` | The framing keys against `framings.lock.json` (DESIGN D1): `--check` exits 1 on drift (CI runs it); `--update-lock` rewrites the lock after a deliberate framing change, which rotates that framing's `question_key`. |
-| `annotate --card PATH [--provider clm\|fake] [--planner static\|gateway\|claude] [--tier auto\|zero_shot\|calibrated\|probe\|head\|ols_rank] [--ols-rank-tasks TASKS\|none] [--owner O] [--out FILE\|-] [--eval-result] [--fake-seed N]` | Decide one dataset card (a local file; CLI only, DESIGN D26) and record the run in the sidecar. Prints a summary (run id, proposals, abstentions by reason, decisions, CLM calls, input tokens, seconds, fingerprint, the tasks `ols_rank` decided) and the next step; `--out` writes the run as JSON (`-` for stdout), `--eval-result` the neon-avu-eval result shape instead. `term.fits` groups are decided by `ols_rank` by default (`decider.ols_rank_tasks`, K1 in DESIGN A1); `--ols-rank-tasks none` asks CLM about them too, an audit run. Every outcome is proposed-only: the shipped policy has `auto: null` everywhere. |
+| `annotate --card PATH [--provider clm\|fake] [--planner static\|gateway\|claude] [--tier auto\|zero_shot\|calibrated\|probe\|head\|ols_rank] [--ols-rank-tasks TASKS\|none] [--closed-choice rules\|clm] [--owner O] [--out FILE\|-] [--eval-result] [--fake-seed N]` | Decide one dataset card (a local file; CLI only, DESIGN D26) and record the run in the sidecar. Prints a summary (run id, proposals, abstentions by reason, decisions, CLM calls, input tokens, seconds, fingerprint, the tasks `ols_rank` decided, who answered the closed choices) and the next step; `--out` writes the run as JSON (`-` for stdout), `--eval-result` the neon-avu-eval result shape instead. `term.fits` groups are decided by `ols_rank` by default (`decider.ols_rank_tasks`, K1 in DESIGN A1); `--ols-rank-tasks none` asks CLM about them too, an audit run. The closed choices (annotate, aspect, value kind) are answered by rules by default (`decider.closed_choice: rules`, DESIGN A6): CLM's answers to them are recorded audit-only, and the aspect lookup reads the table shipped in the package (frozen from the registered labels snapshot; no sidecar is read); `--closed-choice clm` runs the M2 behaviour. Every outcome is proposed-only: the shipped policy has `auto: null` everywhere. |
 | `explain --run-id ID \| --irods-path P [--limit N]` | A run read back from the sidecar: slim decisions, the top three options per group, links and the groups waiting for a reviewer. Run ids may be given as a unique prefix (at least 4 hex digits). |
 | `review --run-id ID [--pick GROUP=OPTION_KEY\|none]... [--decline GROUP]...` | Answer a run's pending groups. Without `--pick`/`--decline` it is interactive and needs a terminal: each group's candidates with `p_fit` and the anchor, then a number picks, `0` or `n` is "none of these", `d` declines, `s` (or Enter) skips, `q` (or end of input) quits; its answers are curator labels (`via=cli`, DESIGN A2). The non-interactive form answers pending groups only, each once per call, and checks every answer before recording any; at a terminal its answers are curator labels, without one (a script, a pipe, an agent's shell) they are recorded like a plain tool call (`via=tool`: `agent_pick` at weight 0, never fold-eligible) and the verb says so on stderr. A decline keeps only an override row. A curator's answer settles a group; an agent's leaves it pending for a curator, whose answer replaces it. |
 | `feedback --group-id G --action pick\|reject\|decline [--option-key KEY\|none]` | One answer for any group of your runs (a full id or a unique prefix); `pick` needs `--option-key` (`none` is "none of these"), `reject` is "none of these". At a terminal `via=cli`, otherwise `via=tool` as above. |
@@ -116,7 +116,8 @@ answer:
   CLM tier (`zero_shot`, `calibrated`, …) always refuses;
 * `--tier ols_rank` (or `decider.tier: ols_rank`) never needs clm-serve for the candidate
   groups; the closed choices (annotate, aspect, value kind) are still asked and recorded
-  `unavailable` when it is down.
+  `unavailable` when it is down (audit-only under DESIGN A6's rules, which need no CLM answer:
+  every column keeps its aspects).
 
 A learned tier the provider cannot serve (`calibrated`, `probe`, `head` before M4/M7) is refused
 before any request. An OLS replay miss fails the run (exit 1): what was decided before it is

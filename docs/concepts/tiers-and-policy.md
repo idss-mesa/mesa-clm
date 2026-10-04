@@ -1,6 +1,6 @@
 ---
 title: "Tiers and policy"
-description: "What level and calibration promise on a mesa-clm decision, the record invariants, and the rules that turn a decision into auto, proposed or abstain with a cited bench cell."
+description: "What level and calibration promise on a mesa-clm decision, the record invariants, the rules that turn a decision into auto, proposed or abstain with a cited bench cell, and what drives each step of a run today (ols_rank for term.fits under K1; the closed choices by rule, CLM's answers to them audit-only, under amendment A6)."
 type: Guide
 tags:
   - concepts
@@ -8,7 +8,7 @@ tags:
   - policy
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-03T18:30:00Z"
+  at: "2026-10-04T18:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -54,7 +54,9 @@ with M7), or `ols_rank`: every candidate group (`term.fits`, `column.ontology_fi
 by the degraded method, the OLS top-1 as `proposed` with no probabilities (DESIGN D28), while
 the closed choices (annotate, aspect, value kind) are still asked. The pipeline also falls back
 to `ols_rank` per group when a CLM answer is unavailable or the context was truncated, and the
-run is marked `degraded`.
+run is marked `degraded`. Under the closed-choice rules (below) a column's aspects never depend
+on CLM, so under `ols_rank` (or with clm-serve down) every column keeps its aspects and its
+column-to-ontology groups are `ols_rank` too.
 
 `decider.ols_rank_tasks` (`MESA_CLM_DECIDER__OLS_RANK_TASKS`, or `annotate --ols-rank-tasks`)
 names the candidate-group tasks that `ols_rank` decides whatever the tier. Its shipped default is
@@ -66,6 +68,31 @@ refinement (it ranks by `p_fit`; the group records that it was not asked), and t
 marked `degraded` for them. An audit run asks CLM about `term.fits` anyway: `--ols-rank-tasks
 none` or `decider.ols_rank_tasks: []`; its `term.fits` decisions are `zero_shot`, never `auto`.
 `column.ontology_fits` is asked with its A1 framing (F9).
+
+`decider.closed_choice` (`MESA_CLM_DECIDER__CLOSED_CHOICE`, or `annotate --closed-choice`) says
+who answers the closed choices. Its shipped default is `rules` (DESIGN A6): M2's registered tier
+run measured CLM's zero-shot answers below the majority class on all three
+(`bench/results/2026-10-03/tiers.json`: `column.annotate` 0.357 against 0.643, `column.aspect`
+0.050 against 0.300, `avu.value_kind` 0.324 against 0.478), no pre-registered rule covers them,
+and the user chose deterministic fallbacks after seeing that, as a product-safety change that makes
+no scientific claim. `clm` keeps the M2 behaviour for audits and tests. What drives each step of a
+run with the shipped defaults:
+
+| Step | Driven by | Level of the deciding record |
+|---|---|---|
+| Q1 annotate | rule: every non-identifier column, whatever the planner says | `none` (`rule`) |
+| Q2 aspect | the planner's hint, then the top two of the M0 lookup over the packaged table frozen from the registered labels snapshot (the card held out), up to three; else the first two aspects in the lookup's prior order (`unit` only for a column with a unit); no CLM answer read | `none` (`rule`) |
+| Q3 ontology | CLM, F9 (A1), asked for each chosen aspect but `unit`; top two in-play ontologies kept whatever the outcome (D28) | `zero_shot` |
+| Q4–Q6 terms | `ols_rank`, the OLS top-1 (K1, A1) | `none` (`ols_rank`) |
+| Q4b specificity | not asked for an `ols_rank` group (A1) | — |
+| Q7 value kind | the pre-rule, else "the term label" | `none` (`rule`) |
+| Q8 keep | the rule: dedup, cap 25 (D25) | — |
+
+Under `rules` CLM's answers to Q1, Q2 and Q7 are still requested in the same calls and stored, but
+**audit-only**: outcome `abstain`, reason `audit_only_a6`, whatever the verdict below says (the
+verdict is still computed, so a misconfigured threshold still fails the run). They never decide
+anything, never become a link or a label, and are never offered for review; `outcomes` counts
+them under `abstain` and `n_audit_only` counts them alone.
 
 When `annotate --provider clm` finds clm-serve not answering before it starts, tier `auto` runs
 `ols_rank` for the whole card only if `decider.ols_rank_fallback` is `true`
@@ -91,6 +118,10 @@ for rank_fit questions and `confidence` for choices:
    and fingerprint-matched (below);
 3. **proposed** if the statistic clears `propose`;
 4. **abstain** otherwise. A group margin can only demote an auto.
+
+What a run stores is the verdict except where the pipeline settles a record itself: a moot record
+or a keep-rule drop is stored `rejected` (M1), and an audit-only closed-choice record `abstain`
+with `audit_only_a6` (DESIGN A6).
 
 Profiles: `prod` (`min_level_write: calibrated`, `auto_calibrations: [platt, temperature]`,
 `auto_requires_audit: true`, `allow_history_none: false`) and `dev` (`min_level_write:

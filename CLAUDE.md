@@ -9,22 +9,37 @@ patched `clm-serve`. Python 3.11+, hatchling `src/` layout, package `mesa_clm`, 
 `mesa-clm`, MCP tools `mesa_clm_*`. House style follows `idss-mesa/mesa-anyjev` (and through
 it `neon-mcp`). `DESIGN.md` records every decision (U1–U4, D0–D33, the M1 and M2 implementation notes with
 M2's pre-run disclosure and post-run record, the pre-registration frozen at G1 = the M1 merge
-commit, amendments A1–A5; A1 is X1's registered outcome) and `RESEARCH.md` the verified facts
+commit, amendments A1–A6; A1 is X1's registered outcome, A6 the user's decision on the closed
+choices after M2's results) and `RESEARCH.md` the verified facts
 (the M2 results with their JSON pointers included); read both before changing behaviour. The full
 plan is `design/plan-2026-09-28.md`; how M2 reads the frozen rules (X1, the tier cells, X2, every
 constant) is `design/m2-analysis-plan.md`, committed before any M2 result and changed after the
 first run only by amendment.
 
-**Current state (2026-10-03): M2 done, on `feat/m2-evidence` (draft PR #4).** The registered run
-(plan §14, once; outputs committed as produced in `bench/results/2026-10-03/`, never edited)
-decided, and DESIGN **A1** records: `column.ontology_fits` → **F9 on `clm-latest`**
-(`framings.ACTIVE`, `framings.lock.json` rotated, lock_sha `7c93cc3e0ff6…`; no question_key
-moved); `term.fits` → **K1** (no arm qualified): its proposals are `ols_rank` by default
-(`decider.ols_rank_tasks: [term.fits]`), D24 is not asked for those groups (recorded), CLM
-answers `term.fits` only in an audit run (`annotate --ols-rank-tasks none`), M4 goes probe-first;
-the closed choices keep F7. The M2 registration keeps G1's framings lock (`b432d32a7536…`), so
-`bench framing --decide --from bench/results/2026-10-03/x1.json` still replays, and a new
-`bench framing` or `bench run` is written unregistered. Next: M3 (the live proposed-only loop).
+**Current state (2026-10-04): M2 merged (PR #4, `81e4495`); amendment A6 on
+`feat/a6-closed-choice-fallbacks`.** The registered run (plan §14, once; outputs committed as
+produced in `bench/results/2026-10-03/`, never edited) decided, and DESIGN **A1** records:
+`column.ontology_fits` → **F9 on `clm-latest`** (`framings.ACTIVE`, `framings.lock.json`
+rotated, lock_sha `7c93cc3e0ff6…`; no question_key moved); `term.fits` → **K1** (no arm
+qualified): its proposals are `ols_rank` by default (`decider.ols_rank_tasks: [term.fits]`), D24
+is not asked for those groups (recorded), CLM answers `term.fits` only in an audit run (`annotate
+--ols-rank-tasks none`), M4 goes probe-first; the closed choices keep F7. The M2 registration
+keeps G1's framings lock (`b432d32a7536…`), so `bench framing --decide --from
+bench/results/2026-10-03/x1.json` still replays, and a new `bench framing` or `bench run` is
+written unregistered. **A6** (2026-10-04, the user's decision after seeing M2's closed-choice cells
+below their majority class; product safety, not a scientific claim, no cell touched): by default
+(`decider.closed_choice: rules`) Q1 annotates every non-identifier column whatever the planner
+says, Q2 takes the planner's aspect hint, then the top two of the M0 lookup over the packaged
+table `src/mesa_clm/aspect_lookup.json` (frozen from the registered snapshot by
+`scripts/freeze_aspect_lookup.py`, sha256 pinned in `closed_choice.TABLE_SHA256`; the card's own
+items held out; no sidecar read), else the first two aspects in the lookup's prior order (`unit`
+only for a column with a unit; no CLM answer chooses an aspect), and Q7 is the pre-rule, else
+"the term label"; CLM still answers Q1, Q2 and Q7 in the same requests and those records are
+audit-only (outcome `abstain`, reason `audit_only_a6`: no link, no label, never offered);
+`--closed-choice clm` is the M2 behaviour. The user confirmed A6's two readings on 2026-10-04 (an
+unseen column name goes to the fallback; the fallback's order and cap of two), and the annotate
+latency budget for M3 must be re-measured under `rules`. Next: M3 (the live proposed-only
+loop).
 
 ## Commands
 
@@ -39,6 +54,8 @@ uv run mesa-clm framings --check                    # framing keys match framing
 MESA_CLM_OLS__FIXTURES=replay MESA_CLM_OLS__FIXTURES_DIR=tests/fixtures/ols \
   uv run mesa-clm --provenance duckdb:////tmp/p.duckdb annotate --card tests/fixtures/cards/DP1.10003.001.brd_countdata.md --provider fake --out /tmp/run.json
 #   term.fits groups: ols_rank by default (K1, DESIGN A1); --ols-rank-tasks none asks CLM too (an audit run)
+#   closed choices Q1/Q2/Q7: rules by default, CLM's answers audit-only (DESIGN A6); --closed-choice clm = M2
+uv run python scripts/freeze_aspect_lookup.py --check   # A6's packaged aspect lookup table vs the registered snapshot
 uv run mesa-clm explain --run-id <id|prefix>        # owner = --actor ($USER); review --run-id (TTY) | review --pick G=KEY|none --decline G
 uv run mesa-clm feedback --group-id G --action pick|reject|decline [--option-key KEY|none]  # TTY: via=cli curator; no TTY: via=tool agent_pick (A2)
 uv run mesa-clm provenance migrate|export --run-id R --out DIR|import PATH|prune [--dry-run]
@@ -125,6 +142,14 @@ mesa-clm writes under `~/.mesa/clm` is owner-only (0700/0600) whatever the umask
   audit-only (`--ols-rank-tasks none`) until a probe is promoted, M4 goes probe-first. The closed
   choices are untouched by A1. The committed M2 results are never edited or re-run; the
   registration keeps G1's framings lock.
+- **The closed choices by rule (A6, D28).** `decider.closed_choice: rules` (default): Q1, Q2 and
+  Q7 are deterministic rules (`closed_choice.py`), CLM's answers to them are stored audit-only
+  (`abstain`, `audit_only_a6`) and never decide, link, label or get offered; the Q2 lookup is
+  M0's over the frozen, sha256-pinned `aspect_lookup.json` (the registered snapshot's 60
+  `column.aspect` items, the card held out; regenerate only with `scripts/freeze_aspect_lookup.py`
+  and update `TABLE_SHA256`), its fallback the prior order capped at two; `runs.labels_sha256`
+  names the snapshot in a `rules` run; `clm` keeps the M2 behaviour for audits and tests. A
+  product-safety decision of the user, not a scientific claim: changing it again is an amendment.
 - **Sidecar and history (D11, D12, D13).** Per-host DuckDB opened per operation under a flock;
   the plugin always spools (`mesa-spool/1`); `direct` is CLI-only and needs the whole lock set
   free; one snapshot per (run, project); never an empty `record_changes`.
@@ -187,7 +212,10 @@ routing, `DeciderRefused`, second opinion; `live.clm_provider` builds the real p
 serving lock the host runs and refuses a lock that contradicts the schema or the checkout,
 `live.preflight` the keyed pre-flight, `live.encoder_problems` the encoder against the lock,
 `live.container_check` the running container against the lock's recipe)
-**M1** · `pipeline.py` (`Annotator.annotate` Q1–Q8) **M1** · `policy.py` (`outcome()`, `masked()`) **M1** ·
+**M1** · `pipeline.py` (`Annotator.annotate` Q1–Q8) **M1** · `closed_choice.py` (DESIGN A6: the
+closed choices by rule, the frozen aspect lookup table and M0's lookup over it, the fallback
+order, the audit-only marker; `aspect_lookup.json` beside it) **A6** · `policy.py` (`outcome()`,
+`masked()`) **M1** ·
 `provenance/{models,store,store_postgres,migrate,export}.py` (sidecar `mesa_clm`, migrations
 including `LABELS_DDL`, export/import/prune; `store.bulk_insert` binds one JSON value per chunk
 because DuckDB 1.5.6 probes `import pandas` per bound value) **M1** · `service.py`
@@ -236,7 +264,10 @@ scripts, units) and never import `mesa_clm`.
   (`test_bench_registered.py`); the synthetic registrations stand in the checkout's framings lock.
   The pipeline test helpers (`tests/fakes/pipeline.py` `config()`) are audit configurations
   (`decider.ols_rank_tasks: []`, CLM on `term.fits`); `shipped_config()` and
-  `tests/unit/test_k1_default.py` cover the shipped K1 default.
+  `tests/unit/test_k1_default.py` cover the shipped K1 default. Both keep the shipped
+  `decider.closed_choice: rules` (A6); `test_pipeline_fake` runs all seven cards in both modes
+  (M2's closed-choice assertions in `clm` mode) and `tests/unit/test_a6_closed_choice.py` covers
+  the rules, the audit-only marker, the frozen table (rebuilt from the snapshot) and the lookup.
 - No token, key or password is ever logged, printed, hashed into a fingerprint or committed;
   secrets resolve through `env|file|keyring|auto`.
 

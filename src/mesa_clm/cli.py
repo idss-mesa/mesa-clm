@@ -63,8 +63,19 @@ decides its groups (Q4, Q5, Q6) by ``ols_rank`` by default (``decider.ols_rank_t
 top-1 per group, proposed-only, never auto, D28; the D24 refinement needs ``p_fit`` and is not
 asked, which the group records). ``--ols-rank-tasks none`` (or ``decider.ols_rank_tasks: []``)
 asks CLM for ``term.fits`` too: an audit run, whose ``term.fits`` tiers K1 makes audit-only.
-``column.ontology_fits`` (Q3) is asked with its A1 framing F9; the closed choices are unchanged.
+``column.ontology_fits`` (Q3) is asked with its A1 framing F9.
 The summary and the ``--out`` JSON name the tasks ``ols_rank`` decided (``ols_rank_tasks``).
+
+**The closed choices by rule (DESIGN A6).** By default (``decider.closed_choice: rules``)
+``annotate`` answers Q1, Q2 and Q7 by deterministic rules: every non-identifier column is
+annotated whatever the planner says; its aspects are the planner's hint and the top two of the
+M0 lookup over the packaged table frozen from the registered snapshot (no sidecar is read; the
+card's own items held out), else the first two aspects in the lookup's prior order (``unit``
+only for a column with a unit), with no CLM answer read; and an open value kind is "the term
+label". CLM is still asked those questions and its answers are recorded audit-only (outcome
+``abstain``, reason ``audit_only_a6``). ``--closed-choice clm`` runs the M2 behaviour. The
+summary and the ``--out`` JSON name the mode (``closed_choice``) and count the audit-only
+records (``n_audit_only``).
 
 ``bench baselines`` and ``bench mde`` stamp their cells with the ``labels_sha256`` of a frozen
 snapshot (DESIGN D30): ``--snapshot PATH`` names one written by ``labels snapshot``, otherwise
@@ -108,6 +119,7 @@ from pydantic import ValidationError
 
 from mesa_clm import __version__
 from mesa_clm.config import (
+    ClosedChoice,
     Config,
     ConfigError,
     Tier,
@@ -718,6 +730,16 @@ def _ols_rank_note(tasks: Sequence[str], tier: str) -> str:
     )
 
 
+def _closed_choice_note(mode: str, n_audit_only: int) -> str:
+    """The summary line naming who answered the closed choices (DESIGN A6)."""
+    if mode == "rules":
+        return (
+            "closed choices: rules (Q1, Q2, Q7 by rule, DESIGN A6; CLM's answers recorded "
+            f"audit-only: {n_audit_only})"
+        )
+    return "closed choices: clm (the M2 behaviour; DESIGN A6's default is rules)"
+
+
 def _check_tier(provider: Any, tier: str, skip: Sequence[str] = ()) -> None:
     """Refuse an explicit learned tier the provider cannot serve before any request is spent;
     the tasks ``ols_rank`` decides (``skip``) never ask it."""
@@ -743,11 +765,16 @@ def _cmd_annotate(args: argparse.Namespace, cfg: Config) -> int:
     owner = args.owner or args.actor
     tier = args.tier or cfg.decider.tier
     ols_rank_tasks = _ols_rank_tasks(args, cfg)
+    closed_choice = args.closed_choice or cfg.decider.closed_choice
     provider, tier, notes, close = _annotate_provider(cfg, args, tier)
     try:
         _check_tier(provider, tier, ols_rank_tasks)
         svc = DecisionService.from_config(
-            cfg, provider, planner_kind=args.planner, ols_rank_tasks=ols_rank_tasks
+            cfg,
+            provider,
+            planner_kind=args.planner,
+            ols_rank_tasks=ols_rank_tasks,
+            closed_choice=closed_choice,
         )
         try:
             run = svc.annotate(card, args.actor, owner=owner, tier=tier)
@@ -770,11 +797,14 @@ def _cmd_annotate(args: argparse.Namespace, cfg: Config) -> int:
     finally:
         close()
     out = run.to_eval_result() if args.eval_result else run.to_dict()
-    # Whether the encoder recipe was verified, and which tasks ols_rank decided by design (K1,
-    # DESIGN A1), travel with either shape (the run row records neither until M3); an extra key
-    # leaves neon-avu-eval's scoring unchanged.
+    # Whether the encoder recipe was verified, which tasks ols_rank decided by design (K1,
+    # DESIGN A1) and who answered the closed choices (DESIGN A6) travel with either shape (the
+    # run row records none of them until M3); an extra key leaves neon-avu-eval's scoring
+    # unchanged.
     out["preflight"] = notes
     out["ols_rank_tasks"] = list(run.ols_rank_tasks)
+    out["closed_choice"] = run.closed_choice
+    out["n_audit_only"] = run.n_audit_only
     if not args.eval_result:
         out["tier"] = tier
         out["next_step"] = f"mesa-clm review --run-id {run.run_id}"
@@ -809,6 +839,7 @@ def _cmd_annotate(args: argparse.Namespace, cfg: Config) -> int:
         f"  fingerprint: encoder_fp {fp.get('encoder_fp')} clm_model_fp {fp.get('clm_model_fp')} "
         f"serving_lock_sha {str(fp.get('serving_lock_sha'))[:12]}",
         f"  {_ols_rank_note(run.ols_rank_tasks, tier)}",
+        f"  {_closed_choice_note(run.closed_choice, run.n_audit_only)}",
         *(f"  {n}" for n in notes),
     ]
     if args.out and args.out != "-":
@@ -1655,6 +1686,12 @@ def _m1_parsers(sub: Any, common: argparse.ArgumentParser) -> None:
         help="comma-separated rank_fit tasks decided by ols_rank (OLS top-1, proposed-only, D28); "
         "default: decider.ols_rank_tasks (term.fits: K1, DESIGN A1); 'none' asks CLM for "
         "term.fits too, an audit run",
+    )
+    an.add_argument(
+        "--closed-choice",
+        choices=get_args(ClosedChoice),
+        help="who answers Q1, Q2, Q7: rules (CLM's answers recorded audit-only, DESIGN A6) or "
+        "clm (the M2 behaviour); default: decider.closed_choice (rules)",
     )
     an.add_argument("--owner", help="who the run belongs to (default: --actor)")
     an.add_argument("--out", help="write the run as JSON to this file ('-': stdout)")

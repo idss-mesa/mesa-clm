@@ -281,7 +281,8 @@ def _config_check(cfg: Config, rep: HealthReport) -> None:
         "config",
         "ok",
         f"sha256 {config_sha256(cfg)[:12]}; profile={cfg.policy.profile} tier={cfg.decider.tier} "
-        f"planner={cfg.planner.kind} secrets={cfg.secrets} vm_id={cfg.vm_id}",
+        f"closed_choice={cfg.decider.closed_choice} planner={cfg.planner.kind} "
+        f"secrets={cfg.secrets} vm_id={cfg.vm_id}",
     )
 
 
