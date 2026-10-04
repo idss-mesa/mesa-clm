@@ -36,7 +36,7 @@ items held out; no sidecar read), else the first two aspects in the lookup's pri
 only for a column with a unit; no CLM answer chooses an aspect), and Q7 is the pre-rule, else
 "the term label"; CLM still answers Q1, Q2 and Q7 in the same requests and those records are
 audit-only (outcome `abstain`, reason `audit_only_a6`: no link, no label, never offered);
-`--closed-choice clm` is the M2 behaviour. A6 marks two readings for the user to confirm (an
+`--closed-choice clm` is the M2 behaviour. The user confirmed A6's two readings on 2026-10-04 (an
 unseen column name goes to the fallback; the fallback's order and cap of two), and the annotate
 latency budget for M3 must be re-measured under `rules`. Next: M3 (the live proposed-only
 loop).

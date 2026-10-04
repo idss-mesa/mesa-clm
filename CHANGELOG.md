@@ -49,9 +49,9 @@ All notable changes to the mesa-clm package. The format follows
   aspects (two from the fallback); the OLS fixture closure already covered every such search. The
   annotate latency measured in M1 predates A6 and is to be re-measured under `rules` before M3's
   latency budget. Every run's `config_sha256` changes (the new field); no framing,
-  `question_key`, `task_key`, label, fingerprint, lock or cell changes. A6 marks two readings for
-  the user to confirm: a column name no other card carries goes to the fallback, and the
-  fallback's order and its cap of two.
+  `question_key`, `task_key`, label, fingerprint, lock or cell changes. A6's two readings were
+  confirmed by the user on 2026-10-04: a column name no other card carries goes to the fallback,
+  and the fallback's order and its cap of two.
 
 ### Added (DESIGN A6)
 

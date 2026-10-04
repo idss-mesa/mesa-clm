@@ -9,7 +9,7 @@ tags:
   - framings
 generated:
   by: "claude/opus-5.5"
-  at: "2026-10-04T18:00:00Z"
+  at: "2026-10-04T19:42:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -100,8 +100,8 @@ leave-one-card-out lookup leaves them out; the two most frequent labels of the c
 a tie going to the label of the alphabetically first card. A name no other card carries
 contributes nothing and the fallback decides, in the order of the same lookup's prior (what the
 bench's lookup gives a key it has not seen). A run's `labels_sha256` names the snapshot. Two
-points are the implementation's reading of the decision, for the user to confirm: an unseen
-name goes to the fallback, and the fallback's order and its cap of two.
+points are the implementation's reading of the decision, which the user confirmed on 2026-10-04:
+an unseen name goes to the fallback, and the fallback's order and its cap of two.
 
 **CLM still answers Q1, Q2 and Q7**, in the same requests as before (a column the planner
 excluded, which M2 never asked about, gets no audit question), and every such record is

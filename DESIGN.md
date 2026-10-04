@@ -1784,8 +1784,9 @@ default, below) or `clm`, the M2 behaviour exactly (no A6 rule record, no audit 
 lookup table read), kept reachable for audits and tests (`MESA_CLM_DECIDER__CLOSED_CHOICE`,
 `annotate --closed-choice rules|clm`, `Annotator(closed_choice=)`,
 `DecisionService(closed_choice=)`). Where the decision's words leave room, the reading below is
-the implementation's and is marked **(reading, for the user to confirm)**; each can be changed
-without touching anything else in A6. Under `rules`:
+the implementation's and is marked **(reading, confirmed by the user on 2026-10-04)**: the user
+kept both readings as written when asked; each can be changed later by amendment without
+touching anything else in A6. Under `rules`:
 
 - **Q1 `column.annotate`.** A column is annotated iff it is not `cards.is_identifier`, whatever
   the planner says. A planner's `annotate=False` no longer keeps a non-identifier column out: it
@@ -1838,14 +1839,14 @@ without touching anything else in A6. Under `rules`:
     is `(column.aspect, column, <column name>, '')`. The top two labels are those with the most
     rows, and a tie goes to the label of the alphabetically first card (M0's
     `Counter.most_common` over card-ordered rows). **A column name no other card carries
-    contributes no aspect (reading, for the user to confirm).** M0's lookup would predict the
+    contributes no aspect (reading, confirmed by the user on 2026-10-04).** M0's lookup would predict the
     training majority for such a key, and `lookup_prob` would give the training prior (28 of
     M0's 60 items had such a key: `…/baselines/novel_key/n`). A6 reads "top-2 by the M0 lookup"
     as the key's own top two, so the decision's "else" covers such a column as well as one whose
     looked-up labels are all `other`. The fallback then orders the aspects by that same training
     prior.
-  - **The fallback** ("else all registry-allowed aspects capped"; reading, for the user to
-    confirm). It takes the aspects of `registry.ASPECTS` except `other` that have an ontology in
+  - **The fallback** ("else all registry-allowed aspects capped"; reading, confirmed by the
+    user on 2026-10-04). It takes the aspects of `registry.ASPECTS` except `other` that have an ontology in
     play (`allowed_for_aspect(aspect) ∩ in_play`), `unit` only for a column with a unit
     (`col.unit`; for a column without one, S would search UO for the literal word "unit"). They
     are ordered by the lookup's training prior (M0's `Lookup.prior` without the annotated card:
