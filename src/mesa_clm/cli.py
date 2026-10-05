@@ -2307,7 +2307,7 @@ def _learn_fit(args: argparse.Namespace, cfg: Config) -> int:
             }
             scorers = sv.require_scorers()
             index = TextIndex.from_manifests(
-                manifest(inputs.snapshot, X1_TASKS, "F4,F7,F9"),
+                manifest(inputs.snapshot, X1_TASKS, bench_run.M4_FRAMINGS),
                 manifest(inputs.snapshot, CHOICE_TASKS, "F7"),
             )
             tasks = {
