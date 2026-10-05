@@ -1,6 +1,6 @@
 ---
 title: "Decision model"
-description: "How mesa-clm asks CLM: one rank per candidate group with a fixed abstain anchor, set-independent scores, the Q1-Q8 pipeline, contexts that end with the target, framings and the two keys, what the M2 framing experiment changed (F9 for column.ontology_fits; term.fits proposals by ols_rank under K1), and what drives each step since amendment A6 (the closed choices Q1, Q2, Q7 by deterministic rules, CLM's answers to them audit-only)."
+description: "How mesa-clm asks CLM: one rank per candidate group with a fixed abstain anchor, set-independent scores, the Q1-Q8 pipeline, contexts that end with the target, framings and the two keys, what the M2 framing experiment changed (F9 for column.ontology_fits; term.fits proposals by ols_rank under K1), and what drives each step since amendment A6 (the closed choices Q1, Q2, Q7 by deterministic rules, CLM's answers to them audit-only) and A8 (the aspect fallback for a column the lookup has not seen, by its dtype and unit, never taxon)."
 type: Guide
 tags:
   - concepts
@@ -94,8 +94,8 @@ audits and tests; `annotate --closed-choice`). Under `rules` each step is driven
 | Step | What decides | Recorded as |
 |---|---|---|
 | Q1 | a column is annotated iff it is not an identifier, whatever the planner says (its `annotate=False` stays in the run's plan and decides nothing; an identifier stays out even with its `annotate=True`) | a `rule` record answering `Yes`, reason `a6_not_identifier`; identifiers are `No` rules as before |
-| Q2 | the planner's aspect hint, then the top two aspects of the M0 lookup (below), de-duplicated, `other` excluded: up to three; when that is empty, the fallback below | one `rule` record per aspect, reason `a6_aspect_hint`, `a6_aspect_lookup` or `a6_aspect_fallback`; the column's Q3 groups carry `search_json.a6` (the source of each aspect, the lookup's counts, the fallback's order) |
-| Q2 fallback | the registry's aspects in the order of the lookup's training prior (most labels first; aspects without labels after, in registry order), skipping `other`, any aspect with no ontology in play and `unit` for a column without a unit; the first two are kept. No CLM answer is read, so it works with `column.ontology_fits` decided by `ols_rank` or clm-serve down | `rule` records as above; Q3 then runs on the kept aspects like any other; a column is `no_aspect` only when no aspect has an ontology in play |
+| Q2 | the planner's aspect hint, then the top two aspects of the M0 lookup (below), de-duplicated, `other` excluded: up to three; when that is empty, the fallback below | one `rule` record per aspect, reason `a6_aspect_hint`, `a6_aspect_lookup` or `a6_aspect_fallback`; the column's Q3 groups carry `search_json.a6` (the source of each aspect, the lookup's counts, the fallback's record: `rule: "a8"`, its `reason`, the prior order, the order considered, what was kept) |
+| Q2 fallback (amendment A8, 2026-10-05) | for a column the lookup has not seen: a **numeric** column (the card's dtype is `real`, `integer`, `unsigned integer`, …) **or a column with a unit** gets `measurement` first, then `unit` when it has a unit, else the next aspect of the lookup's training prior (most labels first; aspects without labels after, in registry order) that is neither `taxon` nor `other`; a **string** column keeps the prior order with `taxon` removed. In both cases `other` is skipped, so is any aspect with no ontology in play and `unit` for a column without a unit, and the first two are kept; `taxon` never comes from the fallback (the hint and the lookup still give it). No CLM answer is read, so it works with `column.ontology_fits` decided by `ols_rank` or clm-serve down | `rule` records as above (reason `a6_aspect_fallback`); `search_json.a6.fallback` carries `rule: "a8"` and `reason` `unit`, `numeric` or `string`; Q3 then runs on the kept aspects like any other; a column is `no_aspect` only when no aspect has an ontology in play |
 | Q7 | the deterministic pre-rule first; where it leaves the kind open, "the term label" | a `rule` record, reason `a6_value_kind_label`, under the proposal's group |
 | Q3–Q6, Q4b, Q8 | unchanged (F9 for Q3, asked once per chosen aspect but `unit`; `ols_rank` for `term.fits` under K1) | as before |
 
@@ -109,10 +109,27 @@ reads the same table and no sidecar is read, so the same card gets the same aspe
 At annotate time the items of the card being annotated are left out, as the bench's
 leave-one-card-out lookup leaves them out; the two most frequent labels of the column's name win,
 a tie going to the label of the alphabetically first card. A name no other card carries
-contributes nothing and the fallback decides, in the order of the same lookup's prior (what the
-bench's lookup gives a key it has not seen). A run's `labels_sha256` names the snapshot. Two
+contributes nothing and the fallback decides. A run's `labels_sha256` names the snapshot. Two
 points are the implementation's reading of the decision, which the user confirmed on 2026-10-04:
 an unseen name goes to the fallback, and the fallback's order and its cap of two.
+
+**Amendment A8 (2026-10-05) changes the fallback only.** Under A6 the fallback took the first two
+aspects of the lookup's prior order, and that prior comes from the bench's bird and beetle
+tables: on seven non-bench SRER runs (A7's appended note) it gave the `term.fits` column groups
+`method` 53, `taxon` 44 and `measurement` 1 times, 25 of the 44 `taxon` to numeric or
+unit-bearing columns (`archiveMass` in grams searched NCBITaxon for `gram` and proposed twelve
+organisms). The user's decision: the fallback reads the card's column grammar instead. A numeric
+column (dtype `real`, `integer`, `unsigned integer`, …) or a column with a unit gets `measurement`
+first, then `unit` when it has a unit, else the next aspect of the prior that is neither `taxon`
+nor `other`; a string column keeps the prior order with `taxon` removed; the cap of two, the
+in-play filter and "`unit` only for a column with a unit" stay. `taxon` never comes from the
+fallback; it still comes from the planner's hint or the lookup, which are unchanged, as is every
+seen column. A fallback column's Q3 groups record `search_json.a6.fallback` with `rule: "a8"` and
+`reason` (`unit`, `numeric` or `string`), so a run shows which rule produced its aspects; the
+audit-only CLM records are untouched. On the fixture cards (bench cards, most columns seen) the
+unseen numeric or unit-bearing columns move from `method, taxon` to `measurement, unit` (or
+`measurement, method` without a unit) and the unseen string columns from `method, taxon` to
+`method, environment` or `method, measurement`, by card.
 
 **CLM still answers Q1, Q2 and Q7**, in the same requests as before (a column the planner
 excluded, which M2 never asked about, gets no audit question), and every such record is
@@ -130,7 +147,7 @@ measurement of the rules on new cards.
 |---|---|---|---|---|
 | Plan | (the planner) | — | — | which ontologies, columns and queries; hints only |
 | Q1 | `column.annotate` | choice K=2; by default a rule, CLM audit-only (A6) | `{card_header, column}` | `ANNOTATE_OPTIONS`; identifiers are a rule |
-| Q2 | `column.aspect` | choice K=8; by default hint, lookup, else the prior-ordered fallback, CLM audit-only (A6) | same text as Q1 | `ASPECT_OPTIONS`; under `clm`: top-1 if proposed, else top-2 |
+| Q2 | `column.aspect` | choice K=8; by default hint, lookup, else the fallback by dtype and unit, never `taxon` (A6, A8), CLM audit-only | same text as Q1 | `ASPECT_OPTIONS`; under `clm`: top-1 if proposed, else top-2 |
 | Q3 | `column.ontology_fits` | rank_fit 12 + anchor | F9 (A1): `NEON dataset {title}. Column {name}: {description} ({unit}). {aspect} ontology term:` | registry `option_text`, masked by aspect after scoring |
 | S | candidates | OLS | — | `search_candidates` ≤12, fixed `unit_candidate` |
 | Q4 | `term.fits` | rank_fit ≤12 + anchor; by default `ols_rank` (K1, A1), the promoted probe where `CURRENT.json` holds one (A7) | `target_state = {card_header, scope, aspect, column|site}` | `"{label}: {description[:300]}"` |

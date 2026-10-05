@@ -180,3 +180,36 @@ def is_identifier(col: ColumnInfo) -> bool:
         return True
     profile = col.profile.lower()
     return profile.startswith("all blank") or "not profiled" in profile
+
+
+# The grammar's numeric dtypes, normalised by :func:`is_numeric_dtype` (lower case, no spaces or
+# underscores): NEON's variables files write ``real``, ``integer``, ``unsigned integer`` and
+# ``signed integer``; the generic names are kept so a card from another adapter counts the same
+# way. ``dateTime``, ``date``, ``string`` and ``uri`` are not numeric.
+NUMERIC_DTYPES: frozenset[str] = frozenset(
+    {
+        "real",
+        "integer",
+        "unsignedinteger",
+        "signedinteger",
+        "int",
+        "bigint",
+        "smallint",
+        "float",
+        "double",
+        "decimal",
+        "numeric",
+        "number",
+    }
+)
+
+
+def is_numeric_dtype(dtype: str) -> bool:
+    """Whether a card's ``dtype`` names a numeric kind (:data:`NUMERIC_DTYPES`, compared without
+    case, spaces or underscores: ``unsigned integer`` and ``unsignedInteger`` both count)."""
+    return "".join(dtype.lower().split()).replace("_", "") in NUMERIC_DTYPES
+
+
+def is_numeric(col: ColumnInfo) -> bool:
+    """Whether a column is numeric by its dtype (DESIGN A8 reads this for Q2's fallback)."""
+    return is_numeric_dtype(col.dtype)

@@ -14,10 +14,17 @@ Under ``rules`` the pipeline (:mod:`mesa_clm.pipeline`) applies, per column and 
   whatever the planner says (a ``rule`` record answering ``Yes``, :data:`ANNOTATE_REASON`).
 * **Q2 ``column.aspect``**: :func:`candidate_aspects`, the planner's aspect hint followed by the
   :class:`AspectLookup`'s top two, de-duplicated, ``other`` excluded (up to three aspects); when
-  that is empty, :func:`fallback_aspects`: the registry's aspects in the order of the lookup's
-  training prior, capped at :data:`FALLBACK_CAP` (:data:`FALLBACK_RULE`). Each chosen aspect is a
-  ``rule`` record whose reason (:data:`ASPECT_REASONS`) says where it came from. No CLM answer is
-  read: Q3 is asked only for the aspects chosen here, as in M2.
+  that is empty, :func:`fallback_aspects` (DESIGN A8, amending A6's fallback only): a numeric
+  column or a column with a unit gets ``measurement`` first, then ``unit`` when it has a unit,
+  else the next aspect of the lookup's training prior that is neither ``taxon`` nor ``other``;
+  a string column keeps the prior order with ``taxon`` removed; capped at :data:`FALLBACK_CAP`
+  (:data:`FALLBACK_RULE`). ``taxon`` never comes from the fallback (A7's note: on seven non-bench
+  SRER runs A6's prior-ordered fallback gave ``taxon`` to 25 numeric or unit-bearing columns,
+  because the prior comes from the bench's bird and beetle tables); it can still come from the
+  hint or the lookup. Each chosen aspect is a ``rule`` record whose reason
+  (:data:`ASPECT_REASONS`) says where it came from, and a fallback column's Q3 groups record
+  ``search_json.a6.fallback`` with ``rule: "a8"`` and the reason (:data:`FALLBACK_REASONS`). No
+  CLM answer is read: Q3 is asked only for the aspects chosen here, as in M2.
 * **Q7 ``avu.value_kind``**: ``avu.pre_rule_value_kind`` first, else "the term label" as a
   ``rule`` record (:data:`VALUE_KIND_REASON`).
 
@@ -64,6 +71,8 @@ __all__ = [
     "CLOSED_CHOICE_MODES",
     "CLOSED_CHOICE_TASKS",
     "FALLBACK_CAP",
+    "FALLBACK_MARKER",
+    "FALLBACK_REASONS",
     "FALLBACK_RULE",
     "LOOKUP_TOP",
     "TABLE_FORMAT",
@@ -77,6 +86,8 @@ __all__ = [
     "AspectTableError",
     "candidate_aspects",
     "fallback_aspects",
+    "fallback_order",
+    "fallback_reason",
     "freeze_table",
     "is_audit_only",
     "packaged_table",
@@ -112,15 +123,27 @@ ASPECT_MODELS: Final[dict[str, str]] = {"hint": "planner", "lookup": "lookup", "
 # Q2's numbers. The lookup gives its top two (the decision's "top-2"); the hint and the lookup
 # together are not capped (up to three aspects, as M2's top two plus the planner's aspect). The
 # fallback keeps two: the decision says "capped" and names no number, so two is the
-# implementation's reading (DESIGN A6), the lookup's own number.
+# implementation's reading (DESIGN A6), the lookup's own number; A8 keeps the cap.
 LOOKUP_TOP: Final[int] = 2
 FALLBACK_CAP: Final[int] = 2
+# The fallback's rule (DESIGN A8, 2026-10-05, amending A6's fallback only; the user's decision
+# after A7's note). Recorded in every fallback column's ``search_json.a6.fallback`` as
+# ``rule_text``, beside the marker ``rule: "a8"`` and the ``reason`` (FALLBACK_REASONS).
+FALLBACK_MARKER: Final[str] = "a8"
 FALLBACK_RULE: Final[str] = (
-    "the first two of registry.ASPECTS in the order of the lookup's training prior (most rows "
+    "for a column the lookup has not seen: (a) a numeric column (the card's dtype is a numeric "
+    "kind: real, integer, unsigned integer, ...) or a column with a unit gets measurement first, "
+    "then unit when it has a unit, else the next aspect of the lookup's training prior (most rows "
     "first, a tie to the label seen first in card order; aspects without rows after, in registry "
-    "order), skipping other, an aspect with no ontology in play, and unit for a column without a "
-    "unit; no CLM answer is read"
+    "order) that is neither taxon nor other; (b) a string (non-numeric) column without a unit "
+    "keeps the prior order with taxon removed; in both cases skipping other, an aspect with no "
+    "ontology in play, and unit for a column without a unit; the first two are kept; taxon never "
+    "comes from the fallback (the hint or the lookup may still give it); no CLM answer is read"
 )
+# Why a column took branch (a) or (b) of FALLBACK_RULE: ``unit`` (it has a unit, whatever its
+# dtype), ``numeric`` (a numeric dtype, no unit) or ``string`` (neither).
+FallbackReason = Literal["numeric", "unit", "string"]
+FALLBACK_REASONS: Final[tuple[str, ...]] = get_args(FallbackReason)
 
 # The frozen table (module docstring).
 TABLE_FORMAT: Final[str] = "mesa-clm/aspect-lookup/1"
@@ -157,18 +180,39 @@ def candidate_aspects(hint: str | None, looked_up: Sequence[str]) -> list[tuple[
     return out
 
 
+def fallback_reason(*, has_unit: bool, numeric: bool) -> FallbackReason:
+    """Which branch of :data:`FALLBACK_RULE` a column takes: ``unit`` for a column with a unit
+    (whatever its dtype), ``numeric`` for a numeric column without one, else ``string``."""
+    if has_unit:
+        return "unit"
+    return "numeric" if numeric else "string"
+
+
+def fallback_order(order: Sequence[str], *, has_unit: bool, numeric: bool) -> list[str]:
+    """The aspects the fallback considers, in order (DESIGN A8), before the filters of
+    :func:`fallback_aspects`: for a numeric or unit-bearing column ``measurement``, ``unit``,
+    then ``order`` (the lookup's prior order) without ``taxon``, ``other`` and the two already
+    placed; for a string column ``order`` without ``taxon``."""
+    if has_unit or numeric:
+        head = ["measurement", "unit"]
+        return head + [a for a in order if a not in head and a not in ("taxon", "other")]
+    return [a for a in order if a != "taxon"]
+
+
 def fallback_aspects(
-    order: Sequence[str], *, in_play: Collection[str], has_unit: bool
+    order: Sequence[str], *, in_play: Collection[str], has_unit: bool, numeric: bool
 ) -> list[str]:
-    """The fallback's aspects (:data:`FALLBACK_RULE`): the first :data:`FALLBACK_CAP` aspects of
-    ``order`` (the lookup's prior order, :meth:`AspectLookup.prior_order`) that are not
-    ``other``, have an ontology in play (``allowed_for_aspect(aspect) & in_play``) and are not
-    ``unit`` for a column without a unit (``has_unit``: the column's ``unit``; S would otherwise
-    search UO for the literal word "unit"). Empty when no aspect qualifies."""
+    """The fallback's aspects (:data:`FALLBACK_RULE`, DESIGN A8): the first :data:`FALLBACK_CAP`
+    of :func:`fallback_order` over ``order`` (the lookup's prior order,
+    :meth:`AspectLookup.prior_order`; ``has_unit``: the column's ``unit``, ``numeric``:
+    :func:`mesa_clm.cards.is_numeric`) that are not ``other``, have an ontology in play
+    (``allowed_for_aspect(aspect) & in_play``) and are not ``unit`` for a column without a unit
+    (S would otherwise search UO for the literal word "unit"). ``taxon`` is never among them.
+    Empty when no aspect qualifies."""
     play = frozenset(in_play)
     out: list[str] = []
-    for aspect in order:
-        if aspect in out or aspect not in ASPECTS or aspect == "other":
+    for aspect in fallback_order(order, has_unit=has_unit, numeric=numeric):
+        if aspect in out or aspect not in ASPECTS or aspect in ("other", "taxon"):
             continue
         if aspect == "unit" and not has_unit:
             continue
@@ -426,16 +470,24 @@ class AspectLookup:
         }
 
     def fallback(
-        self, *, in_play: Collection[str], has_unit: bool
+        self, *, in_play: Collection[str], has_unit: bool, numeric: bool
     ) -> tuple[list[str], dict[str, Any]]:
         """The fallback's aspects for a column (:func:`fallback_aspects` over
-        :meth:`prior_order`) and what its Q3 groups record of it (``search_json.a6.fallback``)."""
+        :meth:`prior_order`; DESIGN A8) and what its Q3 groups record of it
+        (``search_json.a6.fallback``): the marker ``rule: "a8"``, the ``reason`` (``numeric``,
+        ``unit`` or ``string``), the rule's text, the cap, the prior order with its counts, the
+        order the rule considered, the column's unit and dtype facts, and what was kept."""
         order = self.prior_order()
-        kept = fallback_aspects([a for a, _ in order], in_play=in_play, has_unit=has_unit)
+        prior = [a for a, _ in order]
+        kept = fallback_aspects(prior, in_play=in_play, has_unit=has_unit, numeric=numeric)
         return kept, {
-            "rule": FALLBACK_RULE,
+            "rule": FALLBACK_MARKER,
+            "reason": fallback_reason(has_unit=has_unit, numeric=numeric),
+            "rule_text": FALLBACK_RULE,
             "cap": FALLBACK_CAP,
             "order": [[aspect, n] for aspect, n in order],
+            "considered": fallback_order(prior, has_unit=has_unit, numeric=numeric),
             "has_unit": has_unit,
+            "numeric": numeric,
             "kept": list(kept),
         }

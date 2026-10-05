@@ -194,7 +194,10 @@ def test_the_ols_rank_tier_overrides_the_promoted_probe(tmp_path: Path) -> None:
     assert run.probe_tasks == () and run.to_dict()["probe_tasks"] == []
     rows = _rows(store, run)
     for task_id in RANK_FIT_TASKS:
-        assert {d["method"] for d in rows["by_task"][task_id]} == {"ols_rank"}
+        # The unit aspect's UO answer is M2's rule record (``unit_aspect``), never a tier's; since
+        # DESIGN A8 the fallback gives the card's unit-bearing numeric columns that aspect.
+        methods = {d["method"] for d in rows["by_task"][task_id] if d["reason"] != "unit_aspect"}
+        assert methods == {"ols_rank"}, task_id
     assert all(p.method == "ols_rank" and p.p_fit is None for p in run.proposals)
 
 

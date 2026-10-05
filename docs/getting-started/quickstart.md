@@ -84,7 +84,9 @@ too.
 * `closed choices: rules`: since DESIGN A6 the closed choices are answered by rules (every
   non-identifier column annotated; its aspects from the planner's hint and the M0 lookup over
   the table shipped in the package, frozen from the registered labels snapshot, or else the
-  first two aspects in that lookup's prior order; the value kind "the term label"), and the
+  fallback of DESIGN A8 for a column that table has not seen: `measurement` then `unit` for a
+  numeric or unit-bearing column, the lookup's prior order without `taxon` for a string column,
+  two kept; the value kind "the term label"), and the
   provider's answers to them are recorded audit-only (outcome `abstain`, reason
   `audit_only_a6`; the line counts them). The fixture card is a bench card, so its own labels
   are left out of the lookup and the other six cards' labels choose its columns' aspects

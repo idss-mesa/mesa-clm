@@ -2264,6 +2264,48 @@ conservative ones and are named with their alternatives. The production change �
 probe deciding a task that `ols_rank_tasks` names — is implemented with the amendment
 (`pipeline`, `providers/tiered.py`, tests), and `learn promote` is run once after it.
 
+### A8 (2026-10-05) — amends A6 (the Q2 fallback for a column the lookup has not seen)
+
+**What changed.** The user's decision after the first look at the M4 audit sample (A7's
+appended note). A6's Q2 rule is unchanged where the planner names an aspect or the frozen lookup
+has seen the column (the hint, then the lookup's top two); what changes is the **fallback** for a
+column the lookup has never seen, which under A6 was the first two aspects of the lookup's prior
+order — `method 18, taxon 12, measurement 11, environment 10, unit 6, data_type 3, location 0,
+other 0` on a non-bench card, the counts of the registered snapshot's 60 `column.aspect` items
+from the bird and beetle tables — so that every unseen column, whatever it held, was asked
+`[method, taxon]`. Under A8 the fallback reads the column: a **numeric column** (the card's
+dtype is a numeric kind) **or a column with a unit** gets `measurement` first, then `unit` when it
+has a unit, else the next aspect of the prior order that is neither `taxon` nor `other`
+(`[measurement, unit]` or `[measurement, method]` today); a **string column** keeps the prior
+order with `taxon` removed (`[method, measurement]` today). "Numeric" is `cards.is_numeric`: the
+dtype, lower-cased with spaces and underscores removed, is one of `cards.NUMERIC_DTYPES` (real,
+integer, unsigned integer, signed integer, int, bigint, smallint, float, double, decimal,
+numeric, number); the recorded reason is `unit` when the column has a unit, else `numeric` for a
+numeric dtype, else `string`. On the seven fixture cards and the SRER smoke card the fallback
+moves from `method 81 / taxon 53 / measurement 28` to `measurement 75 / method 54 / unit 27 /
+environment 6`, `taxon` 0; seen columns are unchanged (PR #10's report). `taxon` never comes from the
+fallback; it still comes from the planner's hint or from the lookup. The cap of two, `unit` only
+for a column with a unit, and the aspect's ontologies being in play all stand; the group's
+`search_json.a6` records which rule produced its aspects (`rule: a8` and the reason: `numeric`,
+`unit` or `string`). CLM's audit-only answers to Q2 are untouched. Implementation and tests:
+`closed_choice.fallback_aspects`, `tests/unit/test_a6_closed_choice.py`, `cards.is_numeric` (PR #10).
+
+**Evidence** (label-free, from the seven live SRER runs of 2026-10-05, the sidecar's
+`decision_groups`): the fallback gave the `term.fits` column groups `method` 53, `taxon` 44 and
+`measurement` 1 times; 25 of the 44 `taxon` assignments went to numeric or unit-bearing columns
+(`archiveMass` in grams, `corPres` in kilopascals, `staPresNumPts`, …), whose OLS searches then
+returned organisms (`gram` → *Colletotrichum graminicola* and eleven more) for the promoted
+probe to rank. No bench cell is touched: the lookup's items are the bench cards' columns, which
+the lookup *sees*, so the fallback never fires on a bench card except for a column absent from
+the other six cards' items.
+
+**Why.** A product-safety decision, like A6: a fallback that names organisms for a pressure or a
+mass column proposes nothing a curator could accept, and the prior order is the bench's, not the
+world's. Rejected: asking CLM (M2 showed its zero-shot aspect answers below the majority class,
+A6), a per-product aspect table (nothing frozen exists for other products), and leaving A6 as is
+until curator labels accrue (the audit that would produce them is deferred, A7). Changing it
+again is an amendment.
+
 ## Plan (summary; the full plan is `design/plan-2026-09-28.md`)
 
 Milestones, each a `feat/mN-*` branch merged by PR after `scripts/wait_for_checks.sh`:
