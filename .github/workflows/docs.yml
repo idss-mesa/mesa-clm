@@ -30,11 +30,32 @@ jobs:
           python scripts/gen_llms_txt.py
           git diff --exit-code docs/llms.txt docs/llms-full.txt
 
-  deploy:
+  # The strict site build runs on every PR as well, so a broken build fails the PR, not main.
+  build:
     needs: okf-conformance
+    runs-on: ubuntu-latest
+    concurrency:
+      group: docs-build-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: 3.x
+      - run: pip install zensical pyyaml
+      - run: zensical build --clean --strict
+      - run: python scripts/postbuild_agent_surface.py site
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  # Needs Pages enabled with source "GitHub Actions" (Settings -> Pages, an admin's step):
+  # GITHUB_TOKEN can deploy to a Pages site but never create one.
+  deploy:
+    needs: build
     if: github.event_name != 'pull_request'
     permissions:
-      contents: read
       pages: write
       id-token: write
     # One Pages deployment at a time, never cancelled midway (GitHub's Pages starter workflow).
@@ -46,18 +67,5 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/configure-pages@v6
-        with:
-          enablement: true
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
-        with:
-          python-version: 3.x
-      - run: pip install zensical pyyaml
-      - run: zensical build --clean --strict
-      - run: python scripts/postbuild_agent_surface.py site
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: site
       - uses: actions/deploy-pages@v5
         id: deployment

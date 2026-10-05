@@ -8,6 +8,13 @@ All notable changes to the mesa-clm package. The format follows
 
 ## [Unreleased]
 
+### Fixed (CI: documentation workflow)
+
+- `docs.yml`: every `main` deploy had failed at `actions/configure-pages` (no Pages site exists,
+  and `enablement: true` cannot create one with `GITHUB_TOKEN`). The strict `zensical` build now
+  runs in its own `build` job on pull requests too, and `deploy` only publishes the artifact;
+  enabling Pages (Settings → Pages → Source: GitHub Actions) is an admin's one-time step.
+
 ### Changed (DESIGN A7 note: the production audit is deferred)
 
 - The M4 production audit was not run (the curator cannot review by hand; D21 admits no other
