@@ -219,8 +219,13 @@ calibrated` or `--tier probe` needs a promoted artifact of that tier for every t
 `ols_rank` does not decide (`decider.ols_rank_tasks`), which `learn fit` then `learn promote`
 write (M4); `head` arrives with M7. Tier `auto` serves the best promoted tier per question key
 (a promoted probe, else a promoted calibrator, else `zero_shot`); an artifact a version holds
-but `CURRENT.json` does not promote is never served. An OLS replay miss fails the run (exit 1):
-what was decided before it is committed with status `failed`.
+but `CURRENT.json` does not promote is never served. `learn promote --version 1 --task
+term.fits --tier probe` (run once on the serving host after DESIGN A7) changes what `term.fits`
+gets at tier `auto`: its groups are decided by the promoted probe at level `probe`
+(proposed-only, the specificity refinement asked) instead of `ols_rank`, and the summary and
+the `--out` JSON name it under `probe_tasks`; a host without that `CURRENT.json` keeps the K1
+`ols_rank` proposals. An OLS replay miss fails the run (exit 1): what was decided before it is
+committed with status `failed`.
 
 The M0 bench sequence, as run for `bench/results/2026-09-29/`: `labels ingest-neon-eval
 --eval-root tests/fixtures/neon-avu-eval` → `labels snapshot --out
@@ -605,6 +610,17 @@ Every context view ends with the target, because last-token pooling weights the 
   framing for those audit records;
 * the closed choices (Q1, Q2, Q7) keep F7: no pre-registered rule covers them.
 
+Amendment **A7** (2026-10-05, after the registered M4 run) adds the production rule for a
+promoted probe: a task in `decider.ols_rank_tasks` is decided by `ols_rank` *unless the provider
+resolves a promoted probe for its active framing* (`CURRENT.json`), in which case the probe
+decides it at level `probe`, proposed-only. For `term.fits` (K2(b), the version-1 `pair512.v1`
+probe promoted on the serving host) that means: Q4, Q5 and Q6 are the probe's calibrated ranks
+there (`p_fit` per candidate, `probs` their odds against the anchor, never `auto`), Q4b is asked
+again for those groups (D24 amended back, since the record carries `p_fit`), the run names the
+task under `probe_tasks` and `ols_rank_tasks` lists only what `ols_rank` actually decided. A host
+without the promoted artifact keeps K1 exactly as above. `column.ontology_fits` (K2(c)) keeps
+its zero-shot F9 proposals; the closed choices keep A6's rules.
+
 The numbers behind A1 are in RESEARCH.md, "M2 results (registered run)", and on
 [Learning and bench](learning-and-bench.md).
 
@@ -663,9 +679,9 @@ measurement of the rules on new cards.
 | Q2 | `column.aspect` | choice K=8; by default hint, lookup, else the prior-ordered fallback, CLM audit-only (A6) | same text as Q1 | `ASPECT_OPTIONS`; under `clm`: top-1 if proposed, else top-2 |
 | Q3 | `column.ontology_fits` | rank_fit 12 + anchor | F9 (A1): `NEON dataset {title}. Column {name}: {description} ({unit}). {aspect} ontology term:` | registry `option_text`, masked by aspect after scoring |
 | S | candidates | OLS | — | `search_candidates` ≤12, fixed `unit_candidate` |
-| Q4 | `term.fits` | rank_fit ≤12 + anchor; by default `ols_rank` (K1, A1) | `target_state = {card_header, scope, aspect, column|site}` | `"{label}: {description[:300]}"` |
-| Q4b | `term.fits` (specificity) | rank_fit; not asked for an `ols_rank` group (A1) | same | {parent, ≤10 children, anchor}; a child wins at `p_fit +0.10`, proposed-only (DESIGN D24) |
-| Q5 / Q6 | `term.fits` | rank_fit; by default `ols_rank` (K1, A1) | `{card_header, site}` / `{card_header}` | ENVO biome descendants / NCBITaxon |
+| Q4 | `term.fits` | rank_fit ≤12 + anchor; by default `ols_rank` (K1, A1), the promoted probe where `CURRENT.json` holds one (A7) | `target_state = {card_header, scope, aspect, column|site}` | `"{label}: {description[:300]}"` |
+| Q4b | `term.fits` (specificity) | rank_fit; not asked for an `ols_rank` group (A1), asked for a probe group (A7) | same | {parent, ≤10 children, anchor}; a child wins at `p_fit +0.10`, proposed-only (DESIGN D24) |
+| Q5 / Q6 | `term.fits` | rank_fit; by default `ols_rank` (K1, A1), the promoted probe where `CURRENT.json` holds one (A7) | `{card_header, site}` / `{card_header}` | ENVO biome descendants / NCBITaxon |
 | Q7 | `avu.value_kind` | choice K=4; by default the pre-rule, else "the term label", CLM audit-only (A6) | `value_kind_state` | `VALUE_KINDS`, deterministic pre-rules first |
 | Q8 | rule | — | — | exact-triple dedup, cap 25 by `p_fit` (DESIGN D25) |
 
@@ -683,7 +699,10 @@ never `auto` (DESIGN D28); `decider.tier: ols_rank` selects it for every candida
 the second taxon of Q6 is not kept (only the top-1 is proposed), and where Q4b would have refined
 a proposed winner with OLS children the group records `specificity: {asked: false, reason:
 no_p_fit_ols_rank}` and the proposal's rationale says so. A run is marked `degraded` only when
-CLM did not answer or the tier is `ols_rank`, not for the tasks `ols_rank` decides by design.
+CLM did not answer or the tier is `ols_rank`, not for the tasks `ols_rank` decides by design,
+nor for a task a promoted probe decides instead (A7: at tier `auto` or `probe` the provider's
+`resolve_tier` for the task's active framing is `probe`, the probe decides at level `probe`, Q4b
+is asked, and the run's `probe_tasks` names it; `--tier ols_rank` overrides the probe).
 
 Each CLM question is stored as one `decisions` row with one `decision_options` row per candidate
 and one for the anchor (`s_c`, `p_fit`, rank, masked), and each candidate group as a
@@ -1073,9 +1092,9 @@ rejected (the more conservative one wins: the one that admits less, cites less o
 less), every constant in its Appendix B and held to the code by
 `tests/unit/test_m4_plan_constants.py`. It and its code are committed and pushed **before the
 first M4 run on the snapshot's labels**; until then the code ran on synthetic data only and
-nothing combined a model output with a silver label. **No M4 result exists yet**: this section
-says what the verbs will do, not what they found, and the results files it names are planned.
-After the first run the plan changes only by amendment, with the affected cells marked
+nothing combined a model output with a silver label. This section says what the verbs do as
+the plan reads them; the registered run and its outcome are under "M4 results" at the end of
+it. After the first run the plan changes only by amendment, with the affected cells marked
 exploratory; the amendment that records K2's verdicts, X4's decision and the promotions (A7) is
 the planned consequence of the run, not such a change.
 
@@ -1341,6 +1360,38 @@ the fitters have no randomness, ties go to the first configuration in declared o
 bootstrap uses B = 2000 and seed 0, and two runs of a producer on the same inputs are
 byte-identical (tested on synthetic worlds); a discrete outcome that flips under another
 platform's last-bit differences is recorded as a discrepancy, never silently re-derived.
+
+### M4 results (2026-10-04; DESIGN A7)
+
+The run protocol ran once on the serving host and its outputs are committed as produced under
+`bench/results/2026-10-04/` (`x3.json`, `k2.json`, `x4.json`, their `.md`, `table.md`,
+`artifacts_v1/`); DESIGN A7 records the consequences and RESEARCH.md ("M4 results") every number.
+**`term.fits`: K2(b), the probe is promoted.** Its best servable tier is the nested probe cell
+`x3.json#neon_term_fits.probe.F7` (`pair512.v1` on `clm-latest`, logreg λ 1, Platt): accuracy
+0.754, NLL 0.485, ECE 0.079, AUROC 0.804 [0.749, 0.864]; `beats_lookup_novel` true (novel-key
+AUROC lower bound 0.753; NLL ≻ `lookup_prob` under rule R with lower bound 0.057); 6 of 7 folds
+chose the served configuration. K2(a) fails on its other three conditions (Δacc against AnyJev
+L2 −0.011 with cluster lower bound −0.053, the card-sign test 4 of 7 with 6 needed, ECE's
+cluster upper bound 0.129 > 0.12), so the verdict is (b), proposer-only: artifact version 1's
+`term.fits` probe (`a686a06aab14497a`) is promoted on the serving host, and a task
+`decider.ols_rank_tasks` names is now decided by a promoted probe where the provider resolves one
+([Tiers and policy](tiers-and-policy.md)). **`column.ontology_fits`: K2(c), nothing promoted.**
+The probe (`x3.json#neon_ontology_fits.probe.F9`: accuracy 0.821, NLL 0.404, ECE 0.061, AUROC
+0.892 [0.855, 0.933]) beats the calibrated F9 cell on NLL under rule R but `beats_lookup_novel`
+is false (the novel-key NLL bootstrap bound passes at 0.047, the card sign test fails; K2 also
+fails non-inferiority, Δacc −0.016 with lower bound −0.053, 2 of 7 cards, ECE's upper bound
+0.131); production keeps A1's zero-shot F9 proposals, and probe investment for the task pauses
+until ≥ 200 curator labels or CLM-35B. **The closed choices: K2(c) by construction** (nothing
+pools under the calibrator floor; `avu.value_kind`'s probe cell scores accuracy 0.655, NLL 0.859
+against the majority 0.478 and the lookup 0.680); A6's rules stand. **X4: teacher labels are not
+kept.** `on ≻ off` on novel-key NLL fails for both scorings at (0.5, 0.3): `term.fits` Δ +0.006
+(lower bound −0.062) on silver and +0.035 (−0.037) on silver-minus-Opus; `column.ontology_fits`
+−0.106 (−0.166) and −0.114 (`insufficient_clusters` on the 66 surviving novel-key items); the
+(0.3, 0.1) arm gives `term.fits` +0.035 (−0.008) / +0.047 (−0.013) and `column.ontology_fits`
+−0.070 (−0.126) / −0.102. Production fits use the registered snapshot only. **CLM's head adds
+signal**: `@latest` ≻ `@raw` on NLL under rule R for both rank_fit tasks (lower bounds 0.012 and
+0.026). No numeric `auto` exists (every probe cell's `threshold_cp` is null at both risks; 0.1.0
+ships proposed-only), and the production audit on the promoted `term.fits` probe is still to run.
 
 ## Baseline numbers
 
@@ -1837,6 +1888,24 @@ marked `degraded` for them. An audit run asks CLM about `term.fits` anyway: `--o
 none` or `decider.ols_rank_tasks: []`; its `term.fits` decisions are `zero_shot`, never `auto`.
 `column.ontology_fits` is asked with its A1 framing (F9).
 
+**A promoted probe lifts a task out of that set (DESIGN A7, 2026-10-05).** A task
+`decider.ols_rank_tasks` names is decided by `ols_rank` *unless the provider resolves a promoted
+probe for the task's active framing* (`CURRENT.json` promotes one for that exact `question_key`)
+and the tier is `auto` or `probe`: then the probe decides it at level `probe` (the calibrator's
+kind, `feature_spec` and `artifact_version` on every record; proposed-only, since every `auto`
+threshold is null and no probe cell has a `threshold_cp`), the specificity refinement is asked
+again for those groups (a probe record carries `p_fit`; D24 amended back), the run lists the task
+under `probe_tasks` instead of `ols_rank_tasks` (which names only what `ols_rank` actually
+decided), and the run is not `degraded`. The shipped default `[term.fits]` is unchanged: a host
+without the promoted artifact proposes by `ols_rank` as before, and CLM's zero-shot `term.fits`
+answers stay audit-only (an explicit `--tier zero_shot` or `calibrated` keeps K1). `--tier
+ols_rank` still sends every candidate group to `ols_rank`, and `decider.ols_rank_fallback` is
+unchanged: the encoder down under a promoted probe gives `unavailable` records, which fall back
+to `ols_rank` per group and mark the run `degraded`. The registered M4 run promoted the version-1
+`term.fits` probe (K2(b); `bench/results/2026-10-04/x3.json#neon_term_fits.probe.F7`) on the
+serving host, so there Q4–Q6 are decided by that probe; `column.ontology_fits` keeps its zero-shot
+F9 proposals (K2(c), nothing promoted) and the closed choices keep A6's rules.
+
 `decider.closed_choice` (`MESA_CLM_DECIDER__CLOSED_CHOICE`, or `annotate --closed-choice`) says
 who answers the closed choices. Its shipped default is `rules` (DESIGN A6): M2's registered tier
 run measured CLM's zero-shot answers below the majority class on all three
@@ -1851,8 +1920,8 @@ run with the shipped defaults:
 | Q1 annotate | rule: every non-identifier column, whatever the planner says | `none` (`rule`) |
 | Q2 aspect | the planner's hint, then the top two of the M0 lookup over the packaged table frozen from the registered labels snapshot (the card held out), up to three; else the first two aspects in the lookup's prior order (`unit` only for a column with a unit); no CLM answer read | `none` (`rule`) |
 | Q3 ontology | CLM, F9 (A1), asked for each chosen aspect but `unit`; top two in-play ontologies kept whatever the outcome (D28) | `zero_shot` |
-| Q4–Q6 terms | `ols_rank`, the OLS top-1 (K1, A1) | `none` (`ols_rank`) |
-| Q4b specificity | not asked for an `ols_rank` group (A1) | — |
+| Q4–Q6 terms | `ols_rank`, the OLS top-1 (K1, A1); on a host whose `CURRENT.json` promotes the `term.fits` probe, that probe (A7) | `none` (`ols_rank`), or `probe` |
+| Q4b specificity | not asked for an `ols_rank` group (A1); asked for a probe group (A7, D24) | — or `probe` |
 | Q7 value kind | the pre-rule, else "the term label" | `none` (`rule`) |
 | Q8 keep | the rule: dedup, cap 25 (D25) | — |
 
@@ -1974,6 +2043,10 @@ artifact, the new cell to beat the
 current one on NLL under rule R and to be non-inferior on accuracy within 0.01, both on the two
 cells' pooled items joined by identity (a partial join is refused); (iv) no head before M7.
 Nothing is written when a rule fails; a pass writes `CURRENT.json`. `learn fit` never promotes.
+After the registered M4 run (DESIGN A7) one promotion exists: `learn promote --version 1 --task
+term.fits --tier probe` on the serving host (K2(b) for `term.fits`), which is what makes the
+`term.fits` groups probe-decided there (above); `column.ontology_fits` (K2(c)) and the closed
+choices promote nothing.
 
 **Audits** (plan §4.7, §8). `audit sample` draws from the actor's annotate runs on **non-bench**
 cards (a bench card, or a card with silver labels in the store, refuses the whole sample: a
@@ -2559,6 +2632,10 @@ third-party component and its hash.
 ---8<--- https://idss-mesa.github.io/mesa-clm/log/
 
 # Directory Update Log
+
+## 2026-10-05
+
+* **Update**: for DESIGN amendment A7 (the consequences of the registered M4 run, `bench/results/2026-10-04/`): a task `decider.ols_rank_tasks` names is decided by `ols_rank` unless the provider resolves a promoted probe for its active framing, in which case the probe decides it at level `probe` (proposed-only, every `auto` null), D24's specificity refinement is asked again for those groups, the run names the task under `probe_tasks` and `ols_rank_tasks` lists only what `ols_rank` actually decided; `--tier ols_rank` still sends every candidate group to `ols_rank`, `decider.ols_rank_fallback` is unchanged, and a host without the promoted artifact keeps K1. [Tiers and policy](concepts/tiers-and-policy.md): the rule, the shipped-defaults table and the one promotion that exists (`learn promote --version 1 --task term.fits --tier probe`, K2(b)). [Decision model](concepts/decision-model.md): Q4–Q6 and Q4b under a promoted probe, `degraded` unchanged. [Install](getting-started/install.md): what `learn promote` changes for `term.fits` at tier `auto`. [Learning and bench](concepts/learning-and-bench.md) gains "M4 results (2026-10-04; DESIGN A7)" with the numbers A7 quotes from `x3.json`, `k2.json` and `x4.json` (`term.fits` K2(b), the probe promoted; `column.ontology_fits` K2(c), nothing promoted; the closed choices K2(c) by construction; X4 keeps no teacher labels; CLM's head adds signal; no numeric `auto`). `llms.txt` and `llms-full.txt` regenerated.
 
 ## 2026-10-04
 

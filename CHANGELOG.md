@@ -8,6 +8,43 @@ All notable changes to the mesa-clm package. The format follows
 
 ## [Unreleased]
 
+### Changed (DESIGN A7: the M4 outcomes, 2026-10-05)
+
+- A task in `decider.ols_rank_tasks` is decided by `ols_rank` unless the provider resolves a
+  promoted probe for it (`CURRENT.json`), in which case the probe decides at level `probe`,
+  proposed-only, and D24's specificity refinement is asked again for those groups (A7 amends A1,
+  D28, D24). The shipped default `[term.fits]` is unchanged; on the serving host the `term.fits`
+  probe of artifact version 1 is promoted (`learn promote --version 1 --task term.fits --tier
+  probe`; K2(b)). `column.ontology_fits`' probe (K2(c)), the closed choices' probes and every
+  calibrator stay unpromoted; production proposals for Q3 are unchanged (F9 zero-shot
+  rank-and-cap, A1/D28). X4 keeps no teacher labels. Every `auto` stays null. Only tier `auto`
+  or `probe` lifts a task out of `ols_rank_tasks`; the annotate output and summary list
+  `probe_tasks` beside `ols_rank_tasks`.
+- Tests no longer read the host's `~/.mesa/clm/artifacts` (`artifacts.dir` is redirected per
+  session in `tests/conftest.py`, as the serving home already was), so a host that has run
+  `learn promote` keeps the hermetic suite hermetic.
+
+### Added (milestone M4: the registered run)
+
+- `bench/results/2026-10-04/`: `x3.json`/`.md` (the probe cells of the five tasks), `k2.json`/`.md`
+  (verdicts: term.fits **b**, column.ontology_fits **c**, the closed choices **c**;
+  `head_adds_nothing` false for both rank_fit tasks), `x4.json`/`.md` (teacher ablation, keep =
+  false), `table.md`, `artifacts_v1/78be8c462b2e/` (version 1: three probes and the A1
+  calibrators), committed as produced; every number in RESEARCH.md "M4 results (registered run)",
+  the attempts and the protocol times in DESIGN "Implementation notes (M4)".
+- `bench/snapshots/2026-10-04-teacher.parquet` (the registered rows plus 435 teacher rows) and
+  `2026-10-04-minus-opus.parquet` (the silver rebuilt without claude-opus-5-5), pinned in
+  `bench.registered.REGISTERED_M4` with the teacher corpus hash and its neon-ducklake commit.
+
+### Fixed (milestone M4)
+
+- `learn/linear.py`: `prepare` falls back to the thin SVD from the Gram eigendecomposition (rank
+  cut on the eigenvalues) when LAPACK's divide-and-conquer SVD raises `LinAlgError`, seen once on
+  a stacked silver-plus-teacher design in the X4 run; the success path is unchanged (X3's cells
+  reproduce exactly).
+- `learn fit` indexes the manifest with the M4 framings (`F7,F9,X2`), so the joint specs a
+  full-data selection chooses find their texts.
+
 ### Added (milestone M4, pre-run: the analysis plan and its code, before any result)
 
 - `design/m4-analysis-plan.md`: the M4 analysis plan, every frozen rule M4 runs (X3's probe tier,

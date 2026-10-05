@@ -141,8 +141,13 @@ calibrated` or `--tier probe` needs a promoted artifact of that tier for every t
 `ols_rank` does not decide (`decider.ols_rank_tasks`), which `learn fit` then `learn promote`
 write (M4); `head` arrives with M7. Tier `auto` serves the best promoted tier per question key
 (a promoted probe, else a promoted calibrator, else `zero_shot`); an artifact a version holds
-but `CURRENT.json` does not promote is never served. An OLS replay miss fails the run (exit 1):
-what was decided before it is committed with status `failed`.
+but `CURRENT.json` does not promote is never served. `learn promote --version 1 --task
+term.fits --tier probe` (run once on the serving host after DESIGN A7) changes what `term.fits`
+gets at tier `auto`: its groups are decided by the promoted probe at level `probe`
+(proposed-only, the specificity refinement asked) instead of `ols_rank`, and the summary and
+the `--out` JSON name it under `probe_tasks`; a host without that `CURRENT.json` keeps the K1
+`ols_rank` proposals. An OLS replay miss fails the run (exit 1): what was decided before it is
+committed with status `failed`.
 
 The M0 bench sequence, as run for `bench/results/2026-09-29/`: `labels ingest-neon-eval
 --eval-root tests/fixtures/neon-avu-eval` → `labels snapshot --out

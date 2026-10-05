@@ -24,7 +24,17 @@ the pre-run disclosure); the teacher corpus and the two X4 snapshots are pinned 
 `bench.registered.REGISTERED_M4`; the run protocol is plan §12 (`bench x3` → `bench k2` →
 `bench x4` → `bench table`, outputs committed as produced, then `learn fit`, amendment A7 with
 K2's verdicts, `learn promote`, the curator's production audit); `bench e2e --loco` is
-second-wave. **No M4 result exists until that run.** The registered run of M2 (plan §14, once; outputs committed as
+second-wave. **The registered M4 run is done** (`bench/results/2026-10-04/`, `learn fit` v1
+committed as `artifacts_v1/`) and **A7** (2026-10-05) records it: K2's verdicts are
+`term.fits` **b**, `column.ontology_fits` **c**, the three closed choices **c** (by
+construction); the version-1 `term.fits` probe (`x3.json#neon_term_fits.probe.F7`) is promoted
+on the serving host and the production rule is: a task in `decider.ols_rank_tasks` is decided by
+`ols_rank` *unless the provider resolves a promoted probe for its active framing*, in which case
+the probe decides at level `probe`, proposed-only (every `auto` stays null), D24 asked again,
+the run's `probe_tasks` naming it and `ols_rank_tasks` listing only what `ols_rank` decided
+(`pipeline.Annotator`, `tests/unit/test_a7_promoted_probe.py`); X4 keeps no teacher labels
+(production fits use the registered snapshot only); the production audit of plan §8 is still to
+run. The registered run of M2 (plan §14, once; outputs committed as
 produced in `bench/results/2026-10-03/`, never edited) decided, and DESIGN **A1** records:
 `column.ontology_fits` → **F9 on `clm-latest`** (`framings.ACTIVE`, `framings.lock.json`
 rotated, lock_sha `7c93cc3e0ff6…`; no question_key moved); `term.fits` → **K1** (no arm
@@ -151,7 +161,13 @@ mesa-clm writes under `~/.mesa/clm` is owner-only (0700/0600) whatever the umask
   not asked for them (no `p_fit`; the group records it), its zero_shot/calibrated tiers are
   audit-only (`--ols-rank-tasks none`) until a probe is promoted, M4 goes probe-first. The closed
   choices are untouched by A1. The committed M2 results are never edited or re-run; the
-  registration keeps G1's framings lock.
+  registration keeps G1's framings lock. **A7** (2026-10-05, after the registered M4 run)
+  amends A1, D28 and D24: K2's verdicts are b/c/c/c/c (`term.fits`, `column.ontology_fits`,
+  the three closed choices), the version-1 `term.fits` probe is promoted, and a task in
+  `decider.ols_rank_tasks` is decided by `ols_rank` unless the provider resolves a promoted
+  probe for its active framing, in which case the probe decides at level `probe`, proposed-only
+  (every `auto` null), with D24 asked again; `--tier ols_rank` overrides it, the shipped default
+  `[term.fits]` is unchanged, X4 keeps no teacher labels.
 - **The closed choices by rule (A6, D28).** `decider.closed_choice: rules` (default): Q1, Q2 and
   Q7 are deterministic rules (`closed_choice.py`), CLM's answers to them are stored audit-only
   (`abstain`, `audit_only_a6`) and never decide, link, label or get offered; the Q2 lookup is

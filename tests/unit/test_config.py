@@ -31,7 +31,16 @@ from mesa_clm.config import (
 REPO = Path(__file__).resolve().parents[2]
 
 
-def test_defaults() -> None:
+@pytest.fixture
+def shipped_artifacts_dir(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The shipped default ``artifacts.dir``: the hermetic suite redirects it to an empty
+    per-test path (``tests/conftest.py``), which these two tests undo to see the shipped value."""
+    from mesa_clm import config
+
+    monkeypatch.setattr(config, "DEFAULT_ARTIFACTS_DIR", "~/.mesa/clm/artifacts")
+
+
+def test_defaults(shipped_artifacts_dir: None) -> None:
     cfg = load_config(env={})
     assert cfg.clm.base_url == "http://127.0.0.1:8700"
     assert cfg.clm.model == "clm-latest" and cfg.clm.allow_remote is False
@@ -380,7 +389,7 @@ COMMENTED_OUT: frozenset[tuple[str, str]] = frozenset(
 )
 
 
-def test_config_yaml_example_is_the_defaults() -> None:
+def test_config_yaml_example_is_the_defaults(shipped_artifacts_dir: None) -> None:
     example = REPO / "config.yaml.example"
     text = example.read_text(encoding="utf-8")
     loaded = yaml.safe_load(text)

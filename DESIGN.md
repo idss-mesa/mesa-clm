@@ -960,6 +960,46 @@ the frozen section below; each says what the code does and where the reading is 
   Anything else done before the first run that reads labelled bench data or asks a bench item is
   added here, in place, before that run.
 
+- **M4 registered run (post-run; added after the run, 2026-10-05).** The protocol of the M4 plan
+  §12 ran on the serving host from the pre-run commit `07caecf` (pushed 2026-10-05 03:55Z, PR #6
+  opened as a draft at that commit), logged in `.local/m4/run_protocol.log` (outside the
+  repository), UTC: §12.3 the label-free teacher feature build 03:55:24–03:56:14 (406 new texts,
+  106,010 encoder tokens, 49.6 s; `features project` to 03:56:17); §12.4 `bench x3` 03:56:28–
+  03:58:41, exit 0, every nested cell `pre_registered: true`; §12.5 `bench k2` 03:58:51–03:58:52,
+  exit 0; §12.6 `bench x4` **four attempts**: (1) 03:58:52–03:58:54 exit 1 before any
+  computation, three teacher texts had no vector because the §12.3 build named `F7,F9` while the
+  X4 index reads the joint `X2` texts too (a plan inexactness, §12.3; the build was repeated
+  label-free with `F7,F9,X2` at 03:59:19–04:01:41, 868 new texts, 467,572 tokens, 136.8 s); (2)
+  04:01:41–04:02:00 exit 1 in `linear.prepare`, numpy `LinAlgError: SVD did not converge` on a
+  stacked silver-plus-teacher design (every entry finite, checked label-free per spec); the
+  fallback `linear._thin_svd` was added (commit `034672e`: on that error only, the thin SVD from
+  the Gram eigendecomposition with the rank cut on the eigenvalues; the success path unchanged),
+  and a scratch recomputation of X3 with it (`.local/m4/x3_recompute`, nothing written to the
+  repository) reproduced all 20 committed X3 cells exactly (timing diagnostics excluded); (3)
+  04:11:42–04:14:49 exit 0 but every cell stamped unregistered for one reason: the optional
+  `--corpus-dir` compared the live corpus with the pin and neon-ducklake had rewritten every
+  generic file again at 2026-10-05 03:16Z (its commit `7288912`, "shared generic results record
+  the VM id only", hash `2d36342ac772…`); the corpus is pinned through the committed teacher
+  snapshot, so (4) 04:18:10 ran without the live-corpus check with `--force` replacing that
+  unregistered attempt (plan §12.8), exit 0, every cell `pre_registered: true`; §12.7 `bench
+  table` ran at 03:58:54 (before X4 existed, an ordering slip), 04:02:00, 04:14:49 and 04:18:10,
+  each later one with `--force`, the committed table being the last. The outputs were committed
+  as produced in `7a198b6` (04:18Z), **X3, K2 and the table never repeated with a changed number**
+  (X3 and K2 ran once each). §12.9 `learn fit` 04:18:52 exit 1 (its text index lacked the `X2`
+  joint rows the chosen `joint4096` specs read; `cli._learn_fit` now indexes `M4_FRAMINGS`) and
+  04:19:28–04:19:41 exit 0: version 1 under `clm-latest` (`78be8c462b2e`, lock `7c93cc3e`): three
+  probes (`term.fits` `pair512.v1` logreg λ 1, Platt; `column.ontology_fits` `pair512.v1` logreg
+  λ 0.1, Platt; `avu.value_kind` `choice.state.v1` logreg λ 1, temperature) and the A1
+  calibrators, nothing promoted, exported in `b92d762` as `bench/results/2026-10-04/artifacts_v1/`.
+  The registered outputs, by sha256: `x3.json` `dee0ad0edbde23cd…`, `x3.md` `164f0785239d301c…`,
+  `k2.json` `05c8531e526fd00b…`, `k2.md` `ecacdcaa30285f03…`, `x4.json` `068007307365d89e…`,
+  `x4.md` `680a11223c24aeae…`, `table.md` `a2a47340aebda71a…`, `artifacts_v1/78be8c462b2e/
+  manifest.json` `ae5f844269a8fa15…`. The outcomes are amendment
+  [A7](#a7-2026-10-05--amends-a1-d28-d24) and every number is in RESEARCH.md, "M4 results
+  (registered run)". Between the pre-run commit and the run nothing else read labelled bench
+  data but the label-free diagnostic of attempt (2) (finiteness and extrema of the silver and
+  teacher spec matrices, no label) and the verb summaries printed to the terminal.
+
 ## Pre-registration (G1)
 
 ### G1 freeze
@@ -2126,6 +2166,83 @@ fixed arms, M2 plan §9.5), A6 is a product-safety decision not a scientific cla
 `column.aspect` probe cell is calibrator-floor skipped by construction (M4 plan §0.4). They are
 recorded here and in the M4 pre-run disclosure so that the register's account of every look at
 labelled bench data is complete.
+
+### A7 (2026-10-05) — amends A1, D28, D24
+
+**What changed.** The registered M4 run (`bench/results/2026-10-04/`, implementation note "M4
+registered run") decided, by the frozen K2 and X4 rules as the M4 plan reads them, and this
+amendment records the consequences for the production configuration. Nothing here changes a
+frozen rule, a committed cell or a number.
+
+- **`term.fits`: K2(b), proposer-only; the probe is promoted.** The best servable tier is the
+  nested probe cell `x3.json#neon_term_fits.probe.F7` (`pair512.v1` on `clm-latest`, logreg λ 1,
+  Platt; accuracy 0.754, NLL 0.485, ECE 0.079, AUROC 0.804 [0.749, 0.864]; `beats_lookup_novel`
+  **true**: novel-key AUROC lower bound 0.753 and NLL ≻ `lookup_prob` under rule R with lower
+  bound 0.057; 6 of 7 folds chose the served configuration). K2(a) fails on all three other
+  conditions: Δacc against AnyJev L2 −0.011 with cluster lower bound −0.053, the literal card-sign
+  test 4 of 7 (6 needed), ECE's cluster upper bound 0.129 > 0.12. Under plan §5.5 and the M4
+  plan C1.8, artifact version 1's `term.fits` probe (`a686a06aab14497a`, cite that cell) is
+  promoted by `learn promote --version 1 --task term.fits --tier probe` on the serving host
+  (`CURRENT.json`); **A1 and D28 are amended** for the production rule: a task in
+  `decider.ols_rank_tasks` is decided by `ols_rank` **unless the provider resolves a promoted
+  probe for it**, in which case the probe decides at level `probe` (proposed-only: every `auto`
+  stays null, D6/D8; `threshold_cp` is `None` at both risks for every probe cell, so no numeric
+  `auto` could be cited anyway), and **D24 is amended** back for those groups: specificity is
+  asked again, since a probe record carries `p_fit`. The shipped default `decider.ols_rank_tasks:
+  [term.fits]` is unchanged, so a host without the promoted artifact proposes by `ols_rank` as
+  before (K1), and CLM's zero-shot `term.fits` answers stay audit-only. Rejected: changing the
+  shipped default to `[]` (a host without artifacts would then serve the K1 audit-only
+  zero_shot tier as proposals). Implementation readings (`pipeline.Annotator`, tests
+  `tests/unit/test_a7_promoted_probe.py`): only tier `auto` or `probe` lifts a task out of
+  `ols_rank_tasks` — an explicit `--tier zero_shot` or `calibrated` keeps it on `ols_rank`, since
+  those tiers cannot serve the probe and lifting it would turn K1's audit-only zero-shot answers
+  into proposals; `--tier ols_rank` sends every rank_fit task to `ols_rank` as before; the run
+  output lists `probe_tasks` (every rank_fit task a promoted probe decided) beside
+  `ols_rank_tasks` (what `ols_rank` actually decided), without a sidecar column. K2(c)'s
+  "investment pauses" does not apply; K3 (a head) is M7's.
+- **`column.ontology_fits`: K2(c); nothing promoted, production unchanged.** The best servable
+  tier is the probe (`x3.json#neon_ontology_fits.probe.F9`: accuracy 0.821, NLL 0.404, ECE
+  0.061, AUROC 0.892 [0.855, 0.933]; ≻ the calibrated F9 cell on NLL under rule R), but
+  `beats_lookup_novel` is **false**: the novel-key NLL rule R's bootstrap bound passes (0.047) and
+  its card sign test fails (K2 also fails non-inferiority, Δacc −0.016 with lower bound −0.053,
+  2 of 7 cards, and ECE's upper bound 0.131). Reading of K2(c)'s "tier killed → `ols_rank`
+  proposals": the killed tier is the probe, which is not promoted; the task keeps what A1 and D28
+  give it — F9 on `clm-latest`, zero-shot rank-and-cap proposals, uncalibrated, never `auto` —
+  because K2 judges the citable-form tiers only and never asked about the zero-shot tier, and a
+  Q3 "`ols_rank`" would have to be invented (the registry's aspect-allowed order), which the
+  frozen text does not name. Rejected: replacing the zero-shot proposals by the registry order
+  (a new no-model rule the pre-registration never defined; it would be the user's product
+  decision, as A6 was). Per K2(c), probe investment for this task pauses until ≥ 200 curator
+  labels or CLM-35B; the version-1 calibrated F9 artifact (cite
+  `tiers.json#neon_ontology_fits.calibrated.F9`, 7 of 7 folds) is likewise **not** promoted:
+  its K2 candidate lost to the probe on NLL, so it has no verdict of its own (M4 plan C1.8 rule
+  ii), and promoting a calibrated tier the probe beats would serve the worse model.
+- **The closed choices: K2(c) by construction**, as stated in advance (`column.annotate` and
+  `column.aspect` pool nothing under the 100-OOF calibrator floor; `avu.value_kind` has no AUROC:
+  its probe cell scores accuracy 0.655, NLL 0.859 against the majority 0.478 and the lookup
+  0.680). A6's rules stand; the version-1 `avu.value_kind` probe is not promoted.
+- **X4: teacher labels are not kept.** `on ≻ off` on novel-key NLL fails for both scorings at
+  (0.5, 0.3): `term.fits` Δ +0.006 (lower bound −0.062) on silver and +0.035 (−0.037) on
+  silver-minus-Opus; `column.ontology_fits` −0.106 (−0.166) and −0.114 (`insufficient_clusters`
+  on the 66 surviving novel-key items). The (0.3, 0.1) arm: `term.fits` +0.035 (−0.008) / +0.047
+  (−0.013); `column.ontology_fits` −0.070 (−0.126) / −0.102. Production fits (`learn fit`) use the
+  registered snapshot only, as version 1 does; the teacher corpus stays ingestible for a later
+  ablation (its rows are never fold-eligible).
+- **The clm-raw clause: CLM's head adds signal.** `head_adds_nothing` is false for both rank_fit
+  tasks: `@latest` ≻ `@raw` on NLL under rule R (lower bounds 0.012 and 0.026). The default stays
+  the encoder plus CLM's head; nothing is recorded against the head.
+- **No numeric `auto`, no audit yet.** 0.1.0 ships proposed-only whatever K2 says (plan §8); the
+  production audit of plan §8 M4 (≥ 100 proposals from ≥ 5 non-bench SRER cards, the curator's
+  review, `audit record`) runs on the promoted `term.fits` probe and is reported in RESEARCH.md
+  when done; its outcome changes nothing here (no `auto` exists to gate).
+
+**Why.** These are the outcomes the M4 run was registered to produce (M4 plan §12.10: "the
+consequences of K2 and of X4's decision are the integrator's amendment (A7)"); the readings above
+(the K1 fallback kept as the shipped default, the killed probe leaving Q3's zero-shot proposals
+in place, the calibrated F9 artifact not promoted behind the probe that beats it) are the
+conservative ones and are named with their alternatives. The production change — a promoted
+probe deciding a task that `ols_rank_tasks` names — is implemented with the amendment
+(`pipeline`, `providers/tiered.py`, tests), and `learn promote` is run once after it.
 
 ## Plan (summary; the full plan is `design/plan-2026-09-28.md`)
 

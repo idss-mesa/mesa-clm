@@ -65,6 +65,10 @@ asked, which the group records). ``--ols-rank-tasks none`` (or ``decider.ols_ran
 asks CLM for ``term.fits`` too: an audit run, whose ``term.fits`` tiers K1 makes audit-only.
 ``column.ontology_fits`` (Q3) is asked with its A1 framing F9.
 The summary and the ``--out`` JSON name the tasks ``ols_rank`` decided (``ols_rank_tasks``).
+**A promoted probe (DESIGN A7)** lifts a task out of that set: when ``CURRENT.json`` promotes a
+probe for the task's active framing and the tier is ``auto`` or ``probe``, the probe decides it
+at level ``probe`` (proposed-only, D24 asked again) and the summary and JSON name it under
+``probe_tasks``; ``--tier ols_rank`` still sends every candidate group to ``ols_rank``.
 
 **The closed choices by rule (DESIGN A6).** By default (``decider.closed_choice: rules``)
 ``annotate`` answers Q1, Q2 and Q7 by deterministic rules: every non-identifier column is
@@ -719,19 +723,28 @@ def _ols_rank_tasks(args: argparse.Namespace, cfg: Config) -> list[str]:
     return list(dict.fromkeys(names))
 
 
-def _ols_rank_note(tasks: Sequence[str], tier: str) -> str:
-    """The summary line naming what ``ols_rank`` decided by design (K1, DESIGN A1)."""
+def _ols_rank_note(tasks: Sequence[str], tier: str, probe_tasks: Sequence[str] = ()) -> str:
+    """The summary line naming what ``ols_rank`` decided by design (K1, DESIGN A1) and what a
+    promoted probe decided instead (DESIGN A7)."""
     if tier == "ols_rank":
         return "ols_rank: every candidate group (tier ols_rank, D28)"
+    probed = (
+        f"; promoted probe decides: {', '.join(sorted(probe_tasks))} (DESIGN A7: level probe, "
+        "proposed-only, D24 asked)"
+        if probe_tasks
+        else ""
+    )
     if "term.fits" in tasks:
         return (
             f"ols_rank tasks: {', '.join(sorted(tasks))} (term.fits: K1, DESIGN A1; its "
-            "proposals are the OLS top-1, proposed-only, D28)"
+            f"proposals are the OLS top-1, proposed-only, D28){probed}"
         )
     shown = ", ".join(sorted(tasks)) or "none"
+    if "term.fits" in probe_tasks:
+        return f"ols_rank tasks: {shown}{probed}"
     return (
         f"ols_rank tasks: {shown}; term.fits asked of CLM: an audit run (K1 makes its "
-        "zero_shot/calibrated tiers audit-only, DESIGN A1)"
+        f"zero_shot/calibrated tiers audit-only, DESIGN A1){probed}"
     )
 
 
@@ -809,6 +822,7 @@ def _cmd_annotate(args: argparse.Namespace, cfg: Config) -> int:
     # unchanged.
     out["preflight"] = notes
     out["ols_rank_tasks"] = list(run.ols_rank_tasks)
+    out["probe_tasks"] = list(run.probe_tasks)  # DESIGN A7
     out["closed_choice"] = run.closed_choice
     out["n_audit_only"] = run.n_audit_only
     if not args.eval_result:
@@ -844,7 +858,7 @@ def _cmd_annotate(args: argparse.Namespace, cfg: Config) -> int:
         + (", ".join(f"{k}={v}" for k, v in _abstain_counts(run.abstained).items()) or "none"),
         f"  fingerprint: encoder_fp {fp.get('encoder_fp')} clm_model_fp {fp.get('clm_model_fp')} "
         f"serving_lock_sha {str(fp.get('serving_lock_sha'))[:12]}",
-        f"  {_ols_rank_note(run.ols_rank_tasks, tier)}",
+        f"  {_ols_rank_note(run.ols_rank_tasks, tier, run.probe_tasks)}",
         f"  {_closed_choice_note(run.closed_choice, run.n_audit_only)}",
         *(f"  {n}" for n in notes),
     ]

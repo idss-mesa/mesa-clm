@@ -73,6 +73,24 @@ marked `degraded` for them. An audit run asks CLM about `term.fits` anyway: `--o
 none` or `decider.ols_rank_tasks: []`; its `term.fits` decisions are `zero_shot`, never `auto`.
 `column.ontology_fits` is asked with its A1 framing (F9).
 
+**A promoted probe lifts a task out of that set (DESIGN A7, 2026-10-05).** A task
+`decider.ols_rank_tasks` names is decided by `ols_rank` *unless the provider resolves a promoted
+probe for the task's active framing* (`CURRENT.json` promotes one for that exact `question_key`)
+and the tier is `auto` or `probe`: then the probe decides it at level `probe` (the calibrator's
+kind, `feature_spec` and `artifact_version` on every record; proposed-only, since every `auto`
+threshold is null and no probe cell has a `threshold_cp`), the specificity refinement is asked
+again for those groups (a probe record carries `p_fit`; D24 amended back), the run lists the task
+under `probe_tasks` instead of `ols_rank_tasks` (which names only what `ols_rank` actually
+decided), and the run is not `degraded`. The shipped default `[term.fits]` is unchanged: a host
+without the promoted artifact proposes by `ols_rank` as before, and CLM's zero-shot `term.fits`
+answers stay audit-only (an explicit `--tier zero_shot` or `calibrated` keeps K1). `--tier
+ols_rank` still sends every candidate group to `ols_rank`, and `decider.ols_rank_fallback` is
+unchanged: the encoder down under a promoted probe gives `unavailable` records, which fall back
+to `ols_rank` per group and mark the run `degraded`. The registered M4 run promoted the version-1
+`term.fits` probe (K2(b); `bench/results/2026-10-04/x3.json#neon_term_fits.probe.F7`) on the
+serving host, so there Q4–Q6 are decided by that probe; `column.ontology_fits` keeps its zero-shot
+F9 proposals (K2(c), nothing promoted) and the closed choices keep A6's rules.
+
 `decider.closed_choice` (`MESA_CLM_DECIDER__CLOSED_CHOICE`, or `annotate --closed-choice`) says
 who answers the closed choices. Its shipped default is `rules` (DESIGN A6): M2's registered tier
 run measured CLM's zero-shot answers below the majority class on all three
@@ -87,8 +105,8 @@ run with the shipped defaults:
 | Q1 annotate | rule: every non-identifier column, whatever the planner says | `none` (`rule`) |
 | Q2 aspect | the planner's hint, then the top two of the M0 lookup over the packaged table frozen from the registered labels snapshot (the card held out), up to three; else the first two aspects in the lookup's prior order (`unit` only for a column with a unit); no CLM answer read | `none` (`rule`) |
 | Q3 ontology | CLM, F9 (A1), asked for each chosen aspect but `unit`; top two in-play ontologies kept whatever the outcome (D28) | `zero_shot` |
-| Q4–Q6 terms | `ols_rank`, the OLS top-1 (K1, A1) | `none` (`ols_rank`) |
-| Q4b specificity | not asked for an `ols_rank` group (A1) | — |
+| Q4–Q6 terms | `ols_rank`, the OLS top-1 (K1, A1); on a host whose `CURRENT.json` promotes the `term.fits` probe, that probe (A7) | `none` (`ols_rank`), or `probe` |
+| Q4b specificity | not asked for an `ols_rank` group (A1); asked for a probe group (A7, D24) | — or `probe` |
 | Q7 value kind | the pre-rule, else "the term label" | `none` (`rule`) |
 | Q8 keep | the rule: dedup, cap 25 (D25) | — |
 
@@ -210,6 +228,10 @@ artifact, the new cell to beat the
 current one on NLL under rule R and to be non-inferior on accuracy within 0.01, both on the two
 cells' pooled items joined by identity (a partial join is refused); (iv) no head before M7.
 Nothing is written when a rule fails; a pass writes `CURRENT.json`. `learn fit` never promotes.
+After the registered M4 run (DESIGN A7) one promotion exists: `learn promote --version 1 --task
+term.fits --tier probe` on the serving host (K2(b) for `term.fits`), which is what makes the
+`term.fits` groups probe-decided there (above); `column.ontology_fits` (K2(c)) and the closed
+choices promote nothing.
 
 **Audits** (plan §4.7, §8). `audit sample` draws from the actor's annotate runs on **non-bench**
 cards (a bench card, or a card with silver labels in the store, refuses the whole sample: a

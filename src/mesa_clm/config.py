@@ -295,11 +295,22 @@ class PolicyConfig(_Section):
     results_root: str | None = None
 
 
+# The default ``artifacts.dir``, read when a configuration is built (the hermetic test suite
+# points it at an empty per-test path, so this host's promoted ``CURRENT.json`` never reaches a
+# unit test; ``tests/conftest.py``).
+DEFAULT_ARTIFACTS_DIR = "~/.mesa/clm/artifacts"
+
+
+def _default_artifacts_dir() -> str:
+    return DEFAULT_ARTIFACTS_DIR
+
+
 class ArtifactsConfig(_Section):
     """The learned artifacts (plan §5.5, M4): ``<dir>/<encoder_fp>/<clm_model_fp>/<framings
-    lock sha8>/v<N>/`` plus ``CURRENT.json`` (what ``learn promote`` put in production)."""
+    lock sha8>/v<N>/`` plus ``CURRENT.json`` (what ``learn promote`` put in production);
+    ``dir`` defaults to :data:`DEFAULT_ARTIFACTS_DIR`."""
 
-    dir: str = "~/.mesa/clm/artifacts"
+    dir: str = Field(default_factory=_default_artifacts_dir)
     # Refuse fingerprint mismatches and stale question keys on load (§5.5, K4); False drops the
     # mismatched entries with a warning instead (never silently: the run notes say so).
     strict: bool = True

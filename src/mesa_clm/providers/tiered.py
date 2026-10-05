@@ -32,7 +32,12 @@ honest :class:`~mesa_clm.providers.base.DecisionRecord`:
   version is ``TierUnavailable``: serving requires ``learn promote``, plan §5.5). A bundle
   without one (``calibrators.json`` loaded directly, the M1 path) serves its calibrators as
   before. :meth:`TieredProvider.resolve_tier` is ``probe`` for a promoted probe, else
-  ``calibrated`` for a servable calibrator, else ``zero_shot``.
+  ``calibrated`` for a servable calibrator, else ``zero_shot``. The pipeline asks it with the
+  task's *active* framing's ``question_key`` (DESIGN A7): a task ``decider.ols_rank_tasks``
+  names is decided by ``ols_rank`` unless that answer is ``probe``, in which case the promoted
+  probe decides it. :class:`FakeProvider` takes the same ``artifacts`` bundle, so a synthetic
+  promoted probe (``tests/fakes/m4.synthetic_probe`` under ``fake_fingerprint``) exercises the
+  rule offline.
 * **The probe path.** The state text (``framings.context_text``) and the option texts (the
   wire criteria, the anchor last) go to the encoder (``EncoderClient.embed``) through a
   :class:`VectorCache` (an in-memory LRU, and the live feature store read-only when one is
@@ -1074,7 +1079,8 @@ class TieredProvider:
     def resolve_tier(self, question_key: str) -> Level:
         """The best tier servable for ``question_key``: ``probe`` when a promoted probe exists
         (``CURRENT.json``), else ``calibrated`` when a servable calibrator exists, else
-        ``zero_shot`` (heads land in M7)."""
+        ``zero_shot`` (heads land in M7). ``probe`` for a task's active framing is what lifts
+        that task out of ``decider.ols_rank_tasks`` (DESIGN A7, ``pipeline.Annotator``)."""
         if self._probe(question_key) is not None:
             return "probe"
         return "calibrated" if self._calibrator(question_key) is not None else "zero_shot"

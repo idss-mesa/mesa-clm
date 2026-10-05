@@ -748,7 +748,9 @@ class DecisionProvider(Protocol):
     and must be ``None`` for a closed choice. ``tier`` is ``None``/``"auto"`` (the best tier
     this provider can serve honestly for the framing's question key, :meth:`resolve_tier`) or
     an explicit tier; a tier the provider cannot serve raises :class:`TierUnavailable`.
-    ``fingerprint`` is stamped on every record (D5).
+    ``fingerprint`` is stamped on every record (D5). :meth:`resolve_tier` answers ``probe``
+    only for a question key a promoted probe serves; the pipeline asks it for each task's
+    active framing to let that probe decide a task ``decider.ols_rank_tasks`` names (DESIGN A7).
     """
 
     name: str

@@ -348,9 +348,9 @@ rejected (the more conservative one wins: the one that admits less, cites less o
 less), every constant in its Appendix B and held to the code by
 `tests/unit/test_m4_plan_constants.py`. It and its code are committed and pushed **before the
 first M4 run on the snapshot's labels**; until then the code ran on synthetic data only and
-nothing combined a model output with a silver label. **No M4 result exists yet**: this section
-says what the verbs will do, not what they found, and the results files it names are planned.
-After the first run the plan changes only by amendment, with the affected cells marked
+nothing combined a model output with a silver label. This section says what the verbs do as
+the plan reads them; the registered run and its outcome are under "M4 results" at the end of
+it. After the first run the plan changes only by amendment, with the affected cells marked
 exploratory; the amendment that records K2's verdicts, X4's decision and the promotions (A7) is
 the planned consequence of the run, not such a change.
 
@@ -616,6 +616,38 @@ the fitters have no randomness, ties go to the first configuration in declared o
 bootstrap uses B = 2000 and seed 0, and two runs of a producer on the same inputs are
 byte-identical (tested on synthetic worlds); a discrete outcome that flips under another
 platform's last-bit differences is recorded as a discrepancy, never silently re-derived.
+
+### M4 results (2026-10-04; DESIGN A7)
+
+The run protocol ran once on the serving host and its outputs are committed as produced under
+`bench/results/2026-10-04/` (`x3.json`, `k2.json`, `x4.json`, their `.md`, `table.md`,
+`artifacts_v1/`); DESIGN A7 records the consequences and RESEARCH.md ("M4 results") every number.
+**`term.fits`: K2(b), the probe is promoted.** Its best servable tier is the nested probe cell
+`x3.json#neon_term_fits.probe.F7` (`pair512.v1` on `clm-latest`, logreg λ 1, Platt): accuracy
+0.754, NLL 0.485, ECE 0.079, AUROC 0.804 [0.749, 0.864]; `beats_lookup_novel` true (novel-key
+AUROC lower bound 0.753; NLL ≻ `lookup_prob` under rule R with lower bound 0.057); 6 of 7 folds
+chose the served configuration. K2(a) fails on its other three conditions (Δacc against AnyJev
+L2 −0.011 with cluster lower bound −0.053, the card-sign test 4 of 7 with 6 needed, ECE's
+cluster upper bound 0.129 > 0.12), so the verdict is (b), proposer-only: artifact version 1's
+`term.fits` probe (`a686a06aab14497a`) is promoted on the serving host, and a task
+`decider.ols_rank_tasks` names is now decided by a promoted probe where the provider resolves one
+([Tiers and policy](tiers-and-policy.md)). **`column.ontology_fits`: K2(c), nothing promoted.**
+The probe (`x3.json#neon_ontology_fits.probe.F9`: accuracy 0.821, NLL 0.404, ECE 0.061, AUROC
+0.892 [0.855, 0.933]) beats the calibrated F9 cell on NLL under rule R but `beats_lookup_novel`
+is false (the novel-key NLL bootstrap bound passes at 0.047, the card sign test fails; K2 also
+fails non-inferiority, Δacc −0.016 with lower bound −0.053, 2 of 7 cards, ECE's upper bound
+0.131); production keeps A1's zero-shot F9 proposals, and probe investment for the task pauses
+until ≥ 200 curator labels or CLM-35B. **The closed choices: K2(c) by construction** (nothing
+pools under the calibrator floor; `avu.value_kind`'s probe cell scores accuracy 0.655, NLL 0.859
+against the majority 0.478 and the lookup 0.680); A6's rules stand. **X4: teacher labels are not
+kept.** `on ≻ off` on novel-key NLL fails for both scorings at (0.5, 0.3): `term.fits` Δ +0.006
+(lower bound −0.062) on silver and +0.035 (−0.037) on silver-minus-Opus; `column.ontology_fits`
+−0.106 (−0.166) and −0.114 (`insufficient_clusters` on the 66 surviving novel-key items); the
+(0.3, 0.1) arm gives `term.fits` +0.035 (−0.008) / +0.047 (−0.013) and `column.ontology_fits`
+−0.070 (−0.126) / −0.102. Production fits use the registered snapshot only. **CLM's head adds
+signal**: `@latest` ≻ `@raw` on NLL under rule R for both rank_fit tasks (lower bounds 0.012 and
+0.026). No numeric `auto` exists (every probe cell's `threshold_cp` is null at both risks; 0.1.0
+ships proposed-only), and the production audit on the promoted `term.fits` probe is still to run.
 
 ## Baseline numbers
 
