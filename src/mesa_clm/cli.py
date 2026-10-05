@@ -2510,6 +2510,7 @@ def _audit_sample(args: argparse.Namespace, cfg: Config) -> int:
     runs = _audit_runs(args, store, owner)
     if not runs:
         raise UsageError("no run to audit", EXIT_FAIL)
+    artifact_only = not bool(getattr(args, "all_tiers", False))
     try:
         pool, thresholds = audit.candidates(
             store,
@@ -2517,6 +2518,7 @@ def _audit_sample(args: argparse.Namespace, cfg: Config) -> int:
             policy=Policy.from_config(cfg.policy),
             results_root=_results_root(cfg),
             is_bench_card=svc.is_bench_card,
+            artifact_only=artifact_only,
         )
         sample = audit.build_sample(
             pool,
@@ -2524,6 +2526,7 @@ def _audit_sample(args: argparse.Namespace, cfg: Config) -> int:
             thresholds=thresholds,
             n=args.n,
             min_cards=args.min_cards,
+            artifact_only=artifact_only,
         )
     except audit.AuditError as exc:
         raise UsageError(str(exc), EXIT_FAIL) from exc
@@ -2534,6 +2537,7 @@ def _audit_sample(args: argparse.Namespace, cfg: Config) -> int:
                 "audit_id": sample.audit_id,
                 "file": str(args.out),
                 "n": len(sample.items),
+                "artifact_only": sample.artifact_only,
                 "strata": sample.strata,
                 "cards": sample.cards,
                 "runs": sample.runs,
@@ -2556,10 +2560,13 @@ def audit_review_interactive(
     save: Any,
 ) -> dict[str, int]:
     """Walk the sample's unreviewed items: show each decision through
-    ``DecisionService.explain`` (the slim decision and its group's top candidates), ask
-    ``c`` (correct), ``i`` (incorrect), ``s`` (skip) or ``q`` (quit), record the verdict and
-    its curator labels (``audit.labels_for_verdict``; origin ``audit:<audit_id>``) and call
-    ``save(sample)`` after every answer. ``ask``/``say`` are the terminal, injectable."""
+    ``DecisionService.explain`` (the run), the context a curator needs to judge it
+    (``audit.context_lines``: the scope and target, the column's description, dtype and unit,
+    the aspect, ontology and OLS queries of its group, the tier marked plainly), then its
+    group's candidates; ask ``c`` (correct), ``i`` (incorrect), ``s`` (skip) or ``q`` (quit),
+    record the verdict and its curator labels (``audit.labels_for_verdict``; origin
+    ``audit:<audit_id>``) and call ``save(sample)`` after every answer. ``ask``/``say`` are the
+    terminal, injectable."""
     from datetime import datetime
     from uuid import UUID
 
@@ -2589,6 +2596,9 @@ def audit_review_interactive(
             f"[{n}/{len(pending)}] {item.task_id} on {run.get('card_name')} ({item.stratum}, "
             f"{item.level}/{item.method}, outcome {item.outcome})"
         )
+        group = store.group(UUID(item.group_id)) if item.group_id else None
+        for line in audit.context_lines(decision, group):
+            say(line)
         say(f"  answer: {decision.get('answer') or '-'}  stat {_fmt_p(item.stat)}")
         if item.group_id:
             lines, _ = _candidate_lines(svc.candidates_for_group(UUID(item.group_id)))
@@ -2680,17 +2690,23 @@ def _audit_record(args: argparse.Namespace, cfg: Config) -> int:
     )
     for row in rows:
         store.insert_audit(row)
-    print(
-        _json_out(
-            {
-                "audit_id": sample.audit_id,
-                "reviewer": reviewer,
-                "rows": [r.model_dump(mode="json") for r in rows],
-                "skipped": skipped,
-                "summary": audit.summarize(sample),
-            }
+    summary = audit.summarize(sample)
+    out: dict[str, Any] = {
+        "audit_id": sample.audit_id,
+        "reviewer": reviewer,
+        "artifact_only": sample.artifact_only,
+        "rows": [r.model_dump(mode="json") for r in rows],
+        "skipped": skipped,
+        "summary": summary,
+    }
+    if not sample.artifact_only:
+        without = int(summary["reviewed_without_artifact"])
+        out["report_only"] = (
+            f"{without} of {summary['reviewed']} reviewed item(s) apply no artifact (zero_shot "
+            "or ols_rank; the sample was drawn with --all-tiers): report-only, they feed no "
+            "audits row"
         )
-    )
+    print(_json_out(out))
     return EXIT_OK
 
 
@@ -2784,9 +2800,20 @@ def _m4_serving_parsers(sub: Any, common: argparse.ArgumentParser) -> None:
     which = sa.add_mutually_exclusive_group(required=True)
     which.add_argument("--runs", help="comma-separated run ids (or prefixes) among your runs")
     which.add_argument("--since", help="every one of your runs since this ISO date")
+    sa.add_argument(
+        "--all-tiers",
+        action="store_true",
+        help="also sample decisions that apply no artifact (zero_shot, ols_rank) for the "
+        "report-only precision; by default only a promoted artifact's decisions are drawn "
+        "(only those can feed an audits row)",
+    )
     sa.add_argument("--out", required=True, help="the sample file to write")
     rv = au_sub.add_parser(
-        "review", parents=[common], help="review a sample at a terminal (curator labels, via=cli)"
+        "review",
+        parents=[common],
+        help="review a sample at a terminal (curator labels, via=cli): each decision with its "
+        "target, column description, dtype and unit, aspect, ontology, OLS queries and tier, "
+        "then its candidates",
     )
     rv.add_argument("--file", required=True, help="the sample file (updated as you answer)")
     rc = au_sub.add_parser(

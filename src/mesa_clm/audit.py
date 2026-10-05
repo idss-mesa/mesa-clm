@@ -8,15 +8,24 @@ in three strata of equal shares: **would-be-auto** (the policy statistic at or a
 cited cell's ``threshold_cp[risk]`` when the task cites a cell, else the top decile of the
 task's statistics in the pool), **proposed** (outcome ``proposed``, not would-be-auto; the
 ``ols_rank`` proposals of K1 among them) and **anchor-abstain** (outcome ``abstain`` with reason
-``anchor_won``). The draw is seeded (:data:`SAMPLE_SEED`) and must span at least ``min_cards``
-cards. The sample file (:data:`FORMAT`) holds ids only, no card content, and the reviewer's
-checklist (:data:`CHECKLIST`).
+``anchor_won``). By default the pool is the decisions that carry an ``artifact_version`` (the
+promoted artifacts' decisions: only those can feed an ``audits`` row, C4.3), and the top-decile
+rule is computed per task over that pool alone; ``--all-tiers`` (``artifact_only=False``) adds
+the ``zero_shot`` and ``ols_rank`` decisions for the report-only precision (a ``zero_shot``
+``p_fit`` is ``σ(s_c)``, uncalibrated, and saturates near 1, so its "top decile" says nothing).
+The draw is seeded (:data:`SAMPLE_SEED`) and must span at least ``min_cards`` cards. The sample
+file (:data:`FORMAT`) holds ids only, no card content, the sampling mode (``artifact_only``) and
+the reviewer's checklist (:data:`CHECKLIST`).
 
-``audit review --file`` (the CLI, at a terminal only, like ``review``) shows each decision and
-records ``correct`` or ``incorrect``: a curator label row (``curator`` via ``cli``, origin
-``audit:<audit_id>``, ``fold_eligible=false``, ``bench_card=false``) for the answered option of a
-rank_fit decision (Yes when correct, No when incorrect) or for a correct closed choice (an
-incorrect one names no true class, so it counts as an error without a label), written through
+``audit review --file`` (the CLI, at a terminal only, like ``review``) shows each decision with
+what a curator needs to judge it (:func:`context_lines`: the scope and target, the column's
+description, dtype and unit from the stored ``state_json``, the aspect and ontology the group
+searched and its OLS queries, for ``column.ontology_fits`` that the candidates are ontologies,
+and the tier marked plainly by :func:`tier_note`), then its candidates, and records ``correct``
+or ``incorrect``: a curator label row (``curator`` via ``cli``, origin ``audit:<audit_id>``,
+``fold_eligible=false``, ``bench_card=false``) for the answered option of a rank_fit decision
+(Yes when correct, No when incorrect) or for a correct closed choice (an incorrect one names no
+true class, so it counts as an error without a label), written through
 :func:`labels_for_verdict`.
 
 ``audit record --file`` writes one ``audits`` row per ``(task_key, artifact_version)`` among the
@@ -24,8 +33,10 @@ reviewed would-be-auto decisions (:func:`audit_rows`: ``n``, ``n_cards``, ``card
 ``n_errors``, ``cp95_upper = clopper_pearson_upper(n_errors, n)``, ``risk`` from the policy,
 ``passed`` = ``n >= 50 ∧ n_cards >= 3 ∧ cp95_upper <= 2·risk``, enforced by
 :class:`~mesa_clm.provenance.models.AuditRow` too). Decisions that apply no artifact
-(``zero_shot``, ``ols_rank``) get no row: an audit is of an artifact. The proposed-precision
-Clopper-Pearson interval is printed, report-only (:func:`summarize`).
+(``zero_shot``, ``ols_rank``) get no row: an audit is of an artifact; a sample drawn with
+``--all-tiers`` reports how many reviewed items had none (:func:`summarize`,
+``reviewed_without_artifact``). The proposed-precision Clopper-Pearson interval is printed,
+report-only (:func:`summarize`).
 """
 
 from __future__ import annotations
@@ -65,12 +76,14 @@ __all__ = [
     "audit_rows",
     "build_sample",
     "candidates",
+    "context_lines",
     "labels_for_verdict",
     "load_sample",
     "proposed_precision",
     "stratified_sample",
     "summarize",
     "threshold_for",
+    "tier_note",
     "write_sample",
 ]
 
@@ -146,6 +159,9 @@ class AuditSample(_Model):
     cards: list[str]
     strata: dict[str, int]
     thresholds: dict[str, float | None] = Field(default_factory=dict)
+    # The sampling mode: ``True`` (the default) draws only decisions that carry an
+    # ``artifact_version``; ``False`` (``--all-tiers``) draws every decision with a distribution.
+    artifact_only: bool = True
     items: list[AuditItem]
     checklist: list[str] = Field(default_factory=lambda: list(CHECKLIST))
     reviewer: str | None = None
@@ -199,11 +215,14 @@ def candidates(
     policy: Policy,
     results_root: str | Path,
     is_bench_card: Callable[[str], bool],
+    artifact_only: bool = True,
 ) -> tuple[list[AuditItem], dict[str, float | None]]:
     """Every decision of ``runs`` eligible for an audit, with its stratum (module docstring),
-    and the would-be-auto threshold applied per task (``None``: the top decile). A run on a
-    bench card is :class:`AuditError`; decisions without a distribution (rules, planners,
-    unavailable) are left out."""
+    and the would-be-auto threshold applied per task (``None``: the top decile, computed per
+    task over the returned pool). A run on a bench card is :class:`AuditError`; decisions
+    without a distribution (rules, planners, unavailable) are left out, and so are, by default
+    (``artifact_only``), decisions without an ``artifact_version`` (``zero_shot``,
+    ``ols_rank``): they can feed no ``audits`` row."""
     thresholds: dict[str, float | None] = {}
     rows: list[tuple[Mapping[str, Any], str]] = []
     for run in runs:
@@ -217,6 +236,8 @@ def candidates(
             if d.get("method") in _NO_DISTRIBUTION:
                 continue
             if d.get("task_id") not in TASKS:
+                continue
+            if artifact_only and not d.get("artifact_version"):
                 continue
             rows.append((d, card))
     stats_by_task: dict[str, list[float]] = {}
@@ -310,7 +331,17 @@ def build_sample(
     n: int = DEFAULT_N,
     min_cards: int = DEFAULT_MIN_CARDS,
     seed: int = SAMPLE_SEED,
+    artifact_only: bool = True,
 ) -> AuditSample:
+    """The sample file's content from a pool :func:`candidates` drew in the same mode
+    (``artifact_only`` is recorded, not applied here). An empty artifact-only pool names the
+    way out."""
+    if artifact_only and not pool:
+        raise AuditError(
+            "no artifact-backed decision to audit in these runs (only decisions of a promoted "
+            "artifact can feed an audits row); --all-tiers includes the zero_shot and ols_rank "
+            "decisions for the report-only precision"
+        )
     items = stratified_sample(pool, n=n, min_cards=min_cards, seed=seed)
     strata = {str(s): sum(1 for i in items if i.stratum == s) for s in STRATA}
     return AuditSample(
@@ -323,6 +354,7 @@ def build_sample(
         cards=sorted({i.card for i in items}),
         strata=strata,
         thresholds=dict(thresholds),
+        artifact_only=artifact_only,
         items=items,
     )
 
@@ -343,6 +375,93 @@ def load_sample(path: str | Path) -> AuditSample:
         raise AuditError(f"{p}: no such sample file") from None
     except (OSError, ValueError, ValidationError) as exc:  # JSON and UTF-8 errors are ValueErrors
         raise AuditError(f"{p}: not an audit sample ({type(exc).__name__})") from None
+
+
+# -- what the reviewer sees ------------------------------------------------------------------
+
+TASK_ONTOLOGY_FITS: Final = "column.ontology_fits"
+_ZERO_SHOT_RANK_NOTE: Final = "uncalibrated: p_fit is σ(s_c), saturates near 1"
+_ZERO_SHOT_CHOICE_NOTE: Final = "uncalibrated: confidence is the raw softmax maximum"
+
+
+def _text(value: Any) -> str:
+    text = str(value).strip() if value is not None else ""
+    return text or "-"
+
+
+def tier_note(decision: Mapping[str, Any]) -> str:
+    """The tier of a decision, marked plainly for a reviewer: ``probe/clm v1 (platt)`` for a
+    decision of a promoted artifact (level/method, the artifact version, the calibration);
+    ``zero_shot/clm (uncalibrated: p_fit is σ(s_c), saturates near 1)`` for a zero-shot
+    rank_fit (a choice names its raw softmax instead); ``ols_rank (degraded: OLS rank order,
+    no p_fit)`` for K1's fallback."""
+    level = _text(decision.get("level"))
+    method = _text(decision.get("method"))
+    if method == "ols_rank":
+        return "ols_rank (degraded: OLS rank order, no p_fit)"
+    version = decision.get("artifact_version")
+    if version:
+        return f"{level}/{method} {version} ({_text(decision.get('calibration'))})"
+    if level == "zero_shot":
+        note = (
+            _ZERO_SHOT_RANK_NOTE if decision.get("shape") == "rank_fit" else _ZERO_SHOT_CHOICE_NOTE
+        )
+        return f"{level}/{method} ({note})"
+    return f"{level}/{method} ({_text(decision.get('calibration'))}, no artifact)"
+
+
+def context_lines(decision: Mapping[str, Any], group: Mapping[str, Any] | None = None) -> list[str]:
+    """What a curator needs before the candidates (module docstring): the scope and target
+    (the column name, the site code or the dataset), the column's description, dtype and unit
+    from the decision's ``state_json`` (its ``column`` block; a site's name, domain and habitat
+    for a site), the aspect and ontology the group searched and its OLS ``queries`` (from the
+    group's ``search_json``; the unit table and a D24 refinement are named as such), for
+    ``column.ontology_fits`` the aspect and that the candidates are ontologies, and the tier
+    (:func:`tier_note`). Two-space indented lines, ready for the terminal."""
+    state: Mapping[str, Any] = decision.get("state_json") or {}
+    column: Mapping[str, Any] = state.get("column") or {}
+    site: Mapping[str, Any] = state.get("site") or {}
+    card: Mapping[str, Any] = state.get("card") or {}
+    scope = _text(decision.get("scope") or state.get("scope"))
+    column_name = decision.get("column_name") or column.get("name")
+    site_code = decision.get("site_code") or site.get("code")
+    lines: list[str] = []
+    if column_name:
+        lines.append(f"  target: column {column_name}  (scope {scope})")
+        lines.append(f"  description: {_text(column.get('description'))}")
+        lines.append(f"  dtype: {_text(column.get('dtype'))}  unit: {_text(column.get('unit'))}")
+    elif site_code:
+        lines.append(f"  target: site {site_code}  (scope {scope})")
+        lines.append(
+            f"  site: {_text(site.get('name'))}  domain: {_text(site.get('domain'))}  "
+            f"habitat: {_text(site.get('habitat'))}"
+        )
+    else:
+        lines.append(f"  target: dataset {_text(card.get('dataset'))}  (scope {scope})")
+        lines.append(f"  product: {_text(card.get('product_title'))}")
+    task_id = str(decision.get("task_id") or "")
+    search: Mapping[str, Any] = (group or {}).get("search_json") or {}
+    aspect = (group or {}).get("aspect") or state.get("aspect") or search.get("aspect")
+    if task_id == TASK_ONTOLOGY_FITS:
+        lines.append(
+            f"  aspect: {_text(aspect)}  (the candidates are ontologies of the registry, "
+            "not terms; the question is which ontology fits this column for the aspect)"
+        )
+    elif decision.get("shape") == "rank_fit":
+        ontology = (group or {}).get("ontology_id") or search.get("ontology_id")
+        lines.append(f"  aspect: {_text(aspect)}  ontology: {_text(ontology)}")
+        if search.get("specificity_of"):
+            lines.append(
+                f"  refines: {search['specificity_of']} (D24: the candidates are the winner "
+                "and its OLS children)"
+            )
+        queries = [str(q) for q in (search.get("queries") or []) if q]
+        if search.get("table"):
+            lines.append(f"  OLS queries: unit table lookup of {' | '.join(queries) or '-'}")
+        elif group is not None:
+            lines.append(f"  OLS queries: {' | '.join(queries) if queries else '-'}")
+    lines.append(f"  tier: {tier_note(decision)}")
+    return lines
 
 
 # -- verdicts --------------------------------------------------------------------------------
@@ -448,7 +567,9 @@ def summarize(sample: AuditSample) -> dict[str, Any]:
         g["cards"].add(i.card)
     return {
         "audit_id": sample.audit_id,
+        "artifact_only": sample.artifact_only,
         "reviewed": len(sample.reviewed),
+        "reviewed_without_artifact": sum(1 for i in sample.reviewed if not i.artifact_version),
         "strata": by_stratum,
         "would_be_auto": {
             k: {**g, "cards": sorted(g["cards"]), "n_cards": len(g["cards"])}

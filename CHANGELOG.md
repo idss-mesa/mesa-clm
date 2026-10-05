@@ -8,6 +8,28 @@ All notable changes to the mesa-clm package. The format follows
 
 ## [Unreleased]
 
+### Fixed (audit review)
+
+- `audit review` shows, before an item's candidates, what a curator needs to judge it from the
+  sidecar alone (`audit.context_lines`): the scope and target (column name, site code with name,
+  domain and habitat, or dataset), the column's description, dtype and unit from the decision's
+  `state_json`, the aspect and ontology the group searched and the OLS `queries` of its
+  `search_json` (the unit-table lookup and a D24 refinement named as such), for
+  `column.ontology_fits` the aspect and that the candidates are ontologies, and the tier marked
+  plainly (`audit.tier_note`: `probe/clm v1 (platt)` vs `zero_shot/clm (uncalibrated: p_fit is
+  σ(s_c), saturates near 1)` vs `ols_rank (degraded: OLS rank order, no p_fit)`). The first real
+  review showed only the task, card, stratum, tier and candidates, and the curator could not judge
+  correctness. The file format and the answer keys are unchanged.
+- `audit sample` draws by default only decisions that carry an `artifact_version` (the promoted
+  artifacts' decisions, the only ones that can feed an `audits` row, plan C4.3), computes the
+  would-be-auto top-decile rule per task over that pool alone, records the mode in the file
+  (`artifact_only: true|false`; an older file reads as `true`) and refuses a run set without an
+  artifact-backed decision naming the way out; `--all-tiers` includes the `zero_shot` and
+  `ols_rank` decisions for the report-only precision, and `audit record` then says how many
+  reviewed items had no artifact (`reviewed_without_artifact`, the `report_only` line). Before,
+  the sample held unpromoted zero-shot `column.ontology_fits` decisions with `p_fit` 1.000
+  everywhere and no `artifact_version`, which could never feed an `audits` row.
+
 ### Changed (DESIGN A7: the M4 outcomes, 2026-10-05)
 
 - A task in `decider.ols_rank_tasks` is decided by `ols_rank` unless the provider resolves a

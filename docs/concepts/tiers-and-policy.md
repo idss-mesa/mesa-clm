@@ -241,17 +241,37 @@ strata of equal shares: `would_be_auto` (the policy statistic, `p_fit` of the an
 rank_fit or `confidence` for a choice, at or above the task's cited cell's `threshold_cp[risk]`
 when the policy cites one, else at or above the top decile of the task's statistics in the
 pool), `proposed` and `anchor_abstain`; each stratum sorted by id and permuted with seed 0; the
-sample must span at least `--min-cards` cards (defaults 100 and 5). The file holds ids, task
-keys, strata, the statistic, the card names and the checklist, no card content. `audit review`
-needs a terminal, like `review` (its answers are curator labels, DESIGN A2): a rank_fit
-decision's answered CURIE gets `Yes` (correct) or `No` (incorrect), a correct closed choice gets
-its answer, an incorrect closed choice, an anchor answer or an abstain mints no label (no true
-class is named); every row is `curator` at weight 1.0, `fold_eligible=false`, `bench_card=false`,
-origin `audit:<audit_id>`. `audit record` writes one `audits` row per `(task_key,
-artifact_version)` among the reviewed would-be-auto decisions with `n`, `n_cards`, `n_errors`,
-`cp95_upper` (the one-sided 95% Clopper–Pearson bound on the error rate), the task's `risk` and
-`passed = n ≥ 50 ∧ n_cards ≥ 3 ∧ cp95_upper ≤ 2 × risk`, enforced by the row model itself;
-decisions that apply no artifact (`zero_shot`, `ols_rank`) get no row, since an audit is of an
-artifact version. The proposed-precision interval is printed per stratum, report-only. The
-production audit of plan §8 (at least five non-bench SRER cards under the promoted tiers) is part
-of the M4 run protocol and has not run.
+sample must span at least `--min-cards` cards (defaults 100 and 5). By default the pool is the
+decisions that carry an `artifact_version`, the promoted artifacts' decisions (on the serving
+host after DESIGN A7: the `term.fits` probe's), because only those can feed an `audits` row; the
+top-decile rule is computed per task over that pool alone, so an unpromoted tier's statistic (a
+zero-shot `p_fit` is σ(s_c), uncalibrated, and saturates near 1, 1.000 for every zero-shot
+`column.ontology_fits` decision of the first real review) sets no would-be-auto cut. `audit
+sample --all-tiers` adds the `zero_shot` and `ols_rank` decisions for the report-only precision,
+each task with its own decile. The file holds ids, task keys, strata, the statistic, the card
+names, the sampling mode (`artifact_only: true|false`) and the checklist, no card content; a file
+without the field reads as artifact-only. `audit review` needs a terminal, like `review` (its
+answers are curator labels, DESIGN A2). Before an item's candidates it shows what a curator
+needs to judge it, from the sidecar alone: the scope and target (the column name, the site code
+with its name, domain and habitat, or the dataset), the column's description, dtype and unit
+(the stored `state_json`'s `column` block), the aspect and ontology the group searched and the
+OLS queries it sent (the group's `search_json`; the unit-table lookup and a D24 refinement are
+named as such), for `column.ontology_fits` the aspect and that the candidates are ontologies of
+the registry, not terms, and the tier marked plainly: `probe/clm v1 (platt)` for a promoted
+artifact's decision, `zero_shot/clm (uncalibrated: p_fit is σ(s_c), saturates near 1)` for a
+zero-shot rank_fit, `ols_rank (degraded: OLS rank order, no p_fit)` for K1's fallback. The
+answers are unchanged: a rank_fit decision's answered CURIE gets `Yes` (correct) or `No`
+(incorrect), a correct closed choice gets its answer, an incorrect closed choice, an anchor
+answer or an abstain mints no label (no true class is named); every row is `curator` at weight
+1.0, `fold_eligible=false`, `bench_card=false`, origin `audit:<audit_id>`. `audit record` writes
+one `audits` row per `(task_key, artifact_version)` among the reviewed would-be-auto decisions
+with `n`, `n_cards`, `n_errors`, `cp95_upper` (the one-sided 95% Clopper–Pearson bound on the
+error rate), the task's `risk` and `passed = n ≥ 50 ∧ n_cards ≥ 3 ∧ cp95_upper ≤ 2 × risk`,
+enforced by the row model itself; decisions that apply no artifact (`zero_shot`, `ols_rank`) get
+no row, since an audit is of an artifact version, and a sample drawn with `--all-tiers` says how
+many reviewed items had none (`reviewed_without_artifact`, the `report_only` line). The
+proposed-precision interval is printed per stratum, report-only. The production audit of plan §8
+(at least five non-bench SRER cards under the promoted tiers) is part of the M4 run protocol and
+has not run; its first review pass (2026-10-05) found the two defects this paragraph now
+describes the fix of (the review showed no context; the default sample included unpromoted
+tiers).
