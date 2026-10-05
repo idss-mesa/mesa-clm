@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000051",
+  "ontology_id": "bco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "BCO:0000051",
+  "description": "A taxonomic inventory process that is restricted to plots, transects, or points, in which a person or group of people is comprehensively covering the entire area, usually with a well-described survey time or pace. The search is restricted to a defined and human-scale geospatial area (usually traversable within a time course of less than a day) within which there is an expectation of a comprehensive accounting of the taxonomic items of interest.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000051",
+  "isRoot": false,
+  "label": "restricted search taxonomic inventory process",
+  "ontologyId": "bco",
+  "synonyms": []
+ }
+}

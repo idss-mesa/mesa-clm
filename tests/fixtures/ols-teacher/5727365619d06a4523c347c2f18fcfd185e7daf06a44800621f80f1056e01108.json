@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001894",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001894",
+  "description": "An organismal quality inhering in a bearer by virtue of the bearer's physical expression of sexual characteristics.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001894",
+  "isRoot": false,
+  "label": "phenotypic sex",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

@@ -112,8 +112,8 @@ def test_help_lists_the_m0_verbs(capsys: pytest.CaptureFixture[str]) -> None:
     out = _out(capsys)
     assert "{labels,bench,doctor," in out and "--provenance" in out and "--actor" in out
     for verb, choices in (
-        ("labels", "{ingest-neon-eval,import-anyjev,snapshot,stats}"),
-        ("bench", "{baselines,mde,framing,run,x2,table}"),
+        ("labels", "{ingest-neon-eval,ingest-teacher,import-anyjev,snapshot,stats}"),
+        ("bench", "{baselines,mde,framing,run,x2,table,x3,k2,x4,e2e}"),
     ):
         with pytest.raises(SystemExit) as sub:
             main([verb, "--help"])

@@ -23,7 +23,7 @@ never imports `mesa_clm`.
    computed here; CLM's own field is only recorded as `clm_confidence`.
 4. **Thresholds cite nested LOCO cells.** A numeric write threshold names a pre-registered,
    nested-selection, fingerprint-matched leave-one-card-out cell that beats the lookup baseline
-   on novel keys and clears the Clopper–Pearson risk bound; `tests/test_policy_citations.py`
+   on novel keys and clears the Clopper–Pearson risk bound; `tests/unit/test_policy_citations.py`
    (from M4) refuses anything else. Selections made on the full data are `exploratory:true` and
    cannot be cited.
 5. **The planner never decides.** The planner (static, Claude, gateway) proposes ontologies,

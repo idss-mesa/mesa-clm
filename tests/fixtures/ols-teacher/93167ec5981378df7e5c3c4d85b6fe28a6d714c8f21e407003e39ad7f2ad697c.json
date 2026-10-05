@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000268",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000268",
+  "description": "Atmospheric water vapour is water vapour that is part of an atmosphere.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000268",
+  "isRoot": false,
+  "label": "atmospheric water vapour",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

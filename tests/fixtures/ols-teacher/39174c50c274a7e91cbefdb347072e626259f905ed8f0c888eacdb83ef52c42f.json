@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002767",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0002767",
+  "description": "A sequencing assay in which a DNA or RNA input molecule is amplified by PCR and the product sequenced.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002767",
+  "isRoot": false,
+  "label": "amplicon sequencing assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

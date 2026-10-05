@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001047",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001047",
+  "description": "A device that is used to measure the pH (acidity or alkalinity) of a liquid.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001047",
+  "isRoot": false,
+  "label": "pH meter",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

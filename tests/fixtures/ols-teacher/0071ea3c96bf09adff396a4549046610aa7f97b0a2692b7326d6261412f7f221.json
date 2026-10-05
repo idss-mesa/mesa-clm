@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001861",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001861",
+  "description": "An electromagnetic radiation process during which radiant energy with wavelengths in the visible, near-ultraviolet, or near-infrared spectra is realised.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001861",
+  "isRoot": false,
+  "label": "shortwave radiation",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

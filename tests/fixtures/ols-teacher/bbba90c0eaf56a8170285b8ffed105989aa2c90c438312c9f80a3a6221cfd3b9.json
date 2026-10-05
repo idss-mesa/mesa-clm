@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000628",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000628",
+  "description": "Leaf litter is dead plant material, such as leaves, bark, needles, and twigs, that has fallen to the ground.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000628",
+  "isRoot": false,
+  "label": "plant litter",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

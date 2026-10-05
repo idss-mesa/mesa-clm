@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001086",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001086",
+  "description": "A device that consists of a radiosensitive detector and a means of recording the effects of radiation on the detector.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001086",
+  "isRoot": false,
+  "label": "radiation measurement device",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

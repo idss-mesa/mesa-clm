@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001968",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001968",
+  "description": "Operational Taxonomic Unit matrix  is a data item, organized as a table, where organismal taxonomic units, computed by sequence analysis and genetic distance calculation, are counted in a set of biological or environmental samples. The table is  used to appraise biodiversity of a population or community of living organism.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001968",
+  "isRoot": false,
+  "label": "operational taxonomic unit matrix",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

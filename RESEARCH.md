@@ -744,6 +744,29 @@ will move when it lands.
   the closure and finds 0 missing. EMBL-EBI OLS4 terms are under the OBO Foundry ontologies'
   own licenses (`THIRD_PARTY.md`).
 
+- **The teacher corpus (D19), read label-free on 2026-10-04** (`~/neon-ducklake/curation/generic/`,
+  a live working tree: the neon-ducklake checkout was at commit "data: KONZ curation results and
+  updated ontology maps" of 2026-10-04 16:18 -0600, which rewrote `DP1.00001.001.validated.json`
+  at 16:17:55 while M4's pre-run work was reading the directory; the content hash
+  `bench.registered.teacher_corpus_sha256` therefore moved from `d97b1690b450…` to
+  `d90387928bed…` that afternoon, and M4 pins the bytes its ingest reads together with the
+  neon-ducklake commit). The corpus holds **55** `<DP>.validated.json` files and **389** `accepted`
+  items (every status `accepted`; no `human_accepted` list exists), every file's `model`
+  `claude-opus-5-5`, and **no replicate proposal files** anywhere under `curation/` (so
+  `teacher_implicit` rows are zero by construction). Both bench products have a file
+  (`DP1.10003.001`, `DP1.10022.001`). CURIE prefixes: envo 114, obi 55, ncbitaxon 38, stato 36,
+  pato 30, iao 29, chebi 14, go 11, to 10, obcs 9, pco 9, bco 9, chmo 4, uberon 4, so 4, ecocore 3,
+  genepio 2, ppo 2, agro 2, oba 2, po 1, flopo 1; aspects: measured_property 114, data_type 80,
+  method 63, environmental_material 55, organism_group 41, process 36. In-registry and
+  aspect-mapped: 110 distinct CURIEs; 101 items name a column (231 (item, table card)
+  resolutions over the SRER cards, 11 columns found in no card), 101 are dataset-level without a
+  column; 54 of 55 products have a table card (`DP1.10092.001` has none). D19's "19 accepted, 14
+  in-registry, 13 usable" described the SRER generics of 2026-09-29 and is superseded. The OLS
+  records of the 110 CURIEs were recorded once from live EMBL-EBI OLS4 on 2026-10-04
+  (22:17:41Z–22:18:12Z, 110 `get_term` requests, 0 failures; `scripts/record_ols_teacher.py`,
+  `.local/ols_teacher_report.json`) into `tests/fixtures/ols-teacher/`. The ingest's own counts
+  (rows per task, drops per reason) are in DESIGN "Implementation notes (M4)" once it has run.
+
 ## Baselines (`stale_after: 2027-03-31`)
 
 - **AnyJev L2, leave-one-card-out over 7 cards** — mesa-anyjev
@@ -966,6 +989,71 @@ killed and proposals use `ols_rank`. The AnyJev side is the per-item `x2.json` c
 `<task>.baseline.anyjev_l2` (285 and 190 items, fully joined). Under K1, term.fits enters M4
 through probe cells first; column.ontology_fits through its F9 tiers and probes.
 
+## M4 results (registered run, 2026-10-05; `stale_after: 2027-03-31`)
+
+The registered M4 run: the M4 plan §12 run on sparky-1 from the pre-run commit `07caecf`, outputs
+committed as produced in `7a198b6` and `b92d762` (DESIGN, "Implementation notes (M4)", "M4
+registered run": every file's sha256, the attempts and their causes, the protocol times; the
+decisions are DESIGN A7). Files are under `bench/results/2026-10-04/`; `file#/pointer` is a JSON
+pointer. The registered snapshot, folds, item sets and controls are M2's (RESEARCH "M2 results").
+Silver labels are four-model agreement, not truth. Intervals are the pair of one-sided 95%
+card-cluster bootstrap bounds (B = 2000, seed 0).
+
+**X3, the probe cells** (`x3.json#/cells/<cell>`; a cell without `@` is the nested, citable-form
+cell; `@latest`/`@raw` restrict the grid to one model's specs; `@full` is the full-data
+configuration in every fold, exploratory):
+
+| cell | n | acc | NLL | ECE | AUROC [bounds] | majority / lookup | novel keys: AUROC, NLL | beats_lookup_novel | identity (full-data choice) |
+|---|---|---|---|---|---|---|---|---|---|
+| neon_term_fits.probe.F7 | 285 | 0.754 | 0.485 | 0.079 | 0.804 [0.749, 0.864] | 0.698 / 0.772 | 0.785, 0.503 | **true** (AUROC lower bound 0.753; NLL ≻ lookup_prob, lower bound 0.057, rule R passed) | pair512.v1, clm-latest, logreg λ 1, Platt; 6/7 folds agree |
+| neon_term_fits.probe.F7@latest | 285 | 0.768 | 0.469 | 0.077 | 0.817 [0.774, 0.866] | | 0.806, 0.479 | | pair512.v1 |
+| neon_term_fits.probe.F7@raw | 285 | 0.786 | 0.509 | 0.071 | 0.770 [0.700, 0.843] | | 0.735, 0.527 | | joint4096@S1ns |
+| neon_ontology_fits.probe.F9 | 190 | 0.821 | 0.404 | 0.061 | 0.892 [0.855, 0.933] | 0.600 / 0.800 | 0.833, 0.490 | **false** (AUROC lower bound 0.751; NLL rule R bound 0.047 passes, its card sign test fails) | pair512.v1, clm-latest, logreg λ 0.1, Platt; 4/7 folds (5/7 by the artifact's count) |
+| neon_ontology_fits.probe.F9@latest | 190 | 0.858 | 0.358 | 0.049 | 0.916 [0.884, 0.953] | | 0.878, 0.413 | | pair512.v1 |
+| neon_ontology_fits.probe.F9@raw | 190 | 0.811 | 0.424 | 0.102 | 0.882 [0.848, 0.919] | | 0.809, 0.519 | | joint4096@S1 |
+| neon_value_kind.probe.F7 | 278 | 0.655 | 0.859 | 0.109 | — (K = 4) | 0.478 / 0.680 | —, 1.070 | false (no AUROC) | choice.state.v1, logreg λ 1, temperature; 3/7 |
+| neon_annotate.probe.F7, neon_aspect.probe.F7 | 0 | — | — | — | — | | | false | every fold below the 100-OOF calibrator floor, as stated in advance |
+
+Per-fold choices are `fold_choices` (term.fits: pair512.v1/logreg λ 1 in 6 folds, joint4096@S1ns in
+brd_countdata; ontology_fits: pair512.v1 λ 0.1 in 4 folds, λ 1 in one, joint4096@S1/@S1ns in two;
+value_kind: choice.raw.v1 in 4 folds, choice.state.v1 in 3); no fold's Platt is inverted; every
+`threshold_cp` is `None` at both risks (no statistic with ≥ 30 items clears the Clopper–Pearson
+bound), so no numeric `auto` can be cited from any probe cell.
+
+**K2** (`k2.json#/tasks/<task>`): `neon_term_fits` best tier probe, verdict **b** (proposer-only):
+`beats_lookup_novel` true; non-inferiority to AnyJev L2 fails (Δacc −0.011, cluster lower bound
+−0.053 < −0.02); the literal card-sign test fails (4 of 7 cards, 6 needed; the report-only
+margin variant also fails); ECE 0.079 ≤ 0.08 but its cluster upper bound 0.129 > 0.12. The probe
+≻ the K1 calibrated audit cell on NLL (that cell is `selection: none`, not a candidate).
+`neon_ontology_fits` best tier probe (≻ the calibrated F9 cell on NLL under rule R), verdict
+**c**: `beats_lookup_novel` false (above); non-inferiority fails (Δacc −0.016, lower bound −0.053;
+2 of 7 cards); ECE 0.061 with upper bound 0.131. `neon_value_kind`, `neon_annotate`,
+`neon_aspect`: **c** (no AUROC; no evaluated fold; no AnyJev cell). The clm-raw clause:
+`head_adds_nothing` **false** for both rank_fit tasks — `@latest` ≻ `@raw` on NLL under rule R
+(lower bounds 0.012 and 0.026), so CLM's head adds signal over the raw encoder.
+
+**X4** (`x4.json#/cells/<task>.probe.<framing>@teacher-<arm>[-minus-opus]`, all exploratory
+variants): teacher rows (231 term.fits, 204 column.ontology_fits; none in a test fold) at
+(0.5, 0.3) versus off on novel-key NLL under rule R — `term.fits` Δ +0.006 (lower bound −0.062)
+on silver, +0.035 (−0.037) on the 187 surviving silver-minus-Opus items; `column.ontology_fits`
+−0.106 (−0.166) and −0.114 (`insufficient_clusters`, 66 surviving novel-key items); (0.3, 0.1):
+term.fits +0.035 (−0.008) / +0.047 (−0.013), ontology_fits −0.070 (−0.126) / −0.102. **keep =
+false** for both tasks (`diagnostics.teacher_decision`). Cell metrics: term.fits off 0.761 /
+0.507 / 0.073 (acc / NLL / ECE), 0.5 arm 0.765 / 0.508 / 0.086, 0.3 arm 0.761 / 0.494 / 0.116;
+ontology_fits off 0.821 / 0.405 / 0.050, 0.5 arm 0.768 / 0.457 / 0.110, 0.3 arm 0.768 / 0.458 /
+0.093. The expected ≈ null held for term.fits and the teacher rows hurt ontology_fits.
+
+**Artifacts** (`artifacts_v1/78be8c462b2e/manifest.json`, version 1 under clm-latest, registered):
+probes `term.fits` (`a686a06aab14497a`: pair512.v1, logreg λ 1, Platt, n_train 285, cite
+`x3.json#neon_term_fits.probe.F7`, 6/7 folds), `column.ontology_fits` (`c95785008b523fd0`:
+pair512.v1, λ 0.1, cite its probe cell, 5/7), `avu.value_kind` (`082178504fb4a3c9`: choice.state.v1,
+λ 1, temperature, 3/7); calibrators for the five tasks, only `column.ontology_fits`'s citing a
+nested cell (`tiers.json#neon_ontology_fits.calibrated.F9`, 7/7). Promoted on the serving host
+by `learn promote --version 1 --task term.fits --tier probe` (DESIGN A7); nothing else promoted.
+
+**Recomputation.** A scratch rerun of X3 after the SVD fallback (`linear._thin_svd`, commit
+`034672e`) reproduced all 20 committed X3 cells exactly (timing diagnostics excluded).
+
 ## Contradictions found during exploration and how they were settled
 
 1. HF caches were said to be under the repo tree; they are under `~/.cache/huggingface/hub`, and
@@ -996,6 +1084,8 @@ through probe cells first; column.ontology_fits through its F9 tiers and probes.
 - M0 (settled above): the 285/303 reconciliation (five GAZ root terms) and kilometer's UO id
   (UO:0010066; UO:0000009 is kilogram). The AnyJev per-item L2 dump ran in M1-A's GPU window
   and reproduces the committed cells (see Baselines).
-- M4: teacher target resolution (column → table card, else dataset scope).
+- M4 (settled in `design/m4-analysis-plan.md` B3.3, pre-run): teacher target resolution is column →
+  every table card of the product that carries the column; a column found in no card, or an item
+  without a column, is dropped and counted (no dataset-scope state is synthesized).
 - M7: the local `--data`/`--workflow` directory layout `finetune.py` expects.
 - Whether the released head was trained at max_len 8192 or 2048 is not stated upstream.

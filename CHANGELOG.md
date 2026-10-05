@@ -8,6 +8,134 @@ All notable changes to the mesa-clm package. The format follows
 
 ## [Unreleased]
 
+### Changed (DESIGN A7: the M4 outcomes, 2026-10-05)
+
+- A task in `decider.ols_rank_tasks` is decided by `ols_rank` unless the provider resolves a
+  promoted probe for it (`CURRENT.json`), in which case the probe decides at level `probe`,
+  proposed-only, and D24's specificity refinement is asked again for those groups (A7 amends A1,
+  D28, D24). The shipped default `[term.fits]` is unchanged; on the serving host the `term.fits`
+  probe of artifact version 1 is promoted (`learn promote --version 1 --task term.fits --tier
+  probe`; K2(b)). `column.ontology_fits`' probe (K2(c)), the closed choices' probes and every
+  calibrator stay unpromoted; production proposals for Q3 are unchanged (F9 zero-shot
+  rank-and-cap, A1/D28). X4 keeps no teacher labels. Every `auto` stays null. Only tier `auto`
+  or `probe` lifts a task out of `ols_rank_tasks`; the annotate output and summary list
+  `probe_tasks` beside `ols_rank_tasks`.
+- Tests no longer read the host's `~/.mesa/clm/artifacts` (`artifacts.dir` is redirected per
+  session in `tests/conftest.py`, as the serving home already was), so a host that has run
+  `learn promote` keeps the hermetic suite hermetic.
+
+### Added (milestone M4: the registered run)
+
+- `bench/results/2026-10-04/`: `x3.json`/`.md` (the probe cells of the five tasks), `k2.json`/`.md`
+  (verdicts: term.fits **b**, column.ontology_fits **c**, the closed choices **c**;
+  `head_adds_nothing` false for both rank_fit tasks), `x4.json`/`.md` (teacher ablation, keep =
+  false), `table.md`, `artifacts_v1/78be8c462b2e/` (version 1: three probes and the A1
+  calibrators), committed as produced; every number in RESEARCH.md "M4 results (registered run)",
+  the attempts and the protocol times in DESIGN "Implementation notes (M4)".
+- `bench/snapshots/2026-10-04-teacher.parquet` (the registered rows plus 435 teacher rows) and
+  `2026-10-04-minus-opus.parquet` (the silver rebuilt without claude-opus-5-5), pinned in
+  `bench.registered.REGISTERED_M4` with the teacher corpus hash and its neon-ducklake commit.
+
+### Fixed (milestone M4)
+
+- `learn/linear.py`: `prepare` falls back to the thin SVD from the Gram eigendecomposition (rank
+  cut on the eigenvalues) when LAPACK's divide-and-conquer SVD raises `LinAlgError`, seen once on
+  a stacked silver-plus-teacher design in the X4 run; the success path is unchanged (X3's cells
+  reproduce exactly).
+- `learn fit` indexes the manifest with the M4 framings (`F7,F9,X2`), so the joint specs a
+  full-data selection chooses find their texts.
+
+### Added (milestone M4, pre-run: the analysis plan and its code, before any result)
+
+- `design/m4-analysis-plan.md`: the M4 analysis plan, every frozen rule M4 runs (X3's probe tier,
+  K2, X4, the citation test, artifacts and promotion, the production audit) read as one
+  deterministic algorithm, each alternative reading named with the reason it was rejected, every
+  constant in Appendix B (held to the code by `tests/unit/test_m4_plan_constants.py`), the run
+  protocol (§12). Committed and pushed with its code before the first M4 run on the snapshot's
+  labels; until then nothing combined a model output with a silver label (DESIGN, "Implementation
+  notes (M4)": the pre-run disclosure).
+- `learn/linear.py`: the weighted fitters of plan §5.3 and D20 in numpy (L2 logistic regression,
+  binary and symmetric multinomial, Newton with Armijo halving; LDA with weighted means, pooled
+  covariance and shrinkage toward the scaled identity; ridge on one-hot targets with √w row
+  scaling), label weights as sample weights against a weighted-mean data term, training-set
+  standardization (floor 1e-8), the exact SVD row-span reduction for wide matrices, hyperparameter
+  grids in declared order, a non-converged fit used as it is and flagged; `LinearModel` JSON.
+- `learn/probe.py`: the probe specs (`lowdim.v1`, `pair512.v1`, `pair4096.v1`, `joint4096@S1`,
+  `joint4096@S1ns`; `choice.state.v1`, `choice.raw.v1`; each belonging to one model) built from the
+  feature store as the tier cells score (`FeatureBuilder`); the nested selection (`inner_select`:
+  grouped inner leave-one-card-out over the training cards, the 30/5 guard and the 40 floor per
+  inner fit, the pooled out-of-fold NLL of the uncalibrated probe as the criterion, ties to the
+  first configuration in declared order); the out-of-fold calibrator (Platt on the OOF logit at
+  K = 2, temperature above; the 100 floor on the OOF pool) and the refit on all training cards
+  (`nested_probe`); teacher rows in every training set except the held-out card's product, never
+  a test item; the full-data selection (`full_probe`); `ProbeArtifact` (`mesa-clm/probe/1`) whose
+  `predict` equals the bench's held-out probabilities.
+- `bench/x3.py` and `bench x3 --date`: the probe cells of all five tasks through
+  `cells.assemble_cell` — the nested `<task>.probe.<active framing>` (identity: the full-data
+  configuration; `fold_choices` per outer fold), `@latest` and `@raw` (one model's specs), `@full`
+  (`selection: full`, exploratory) — with every M2 cell field, `items`, `threshold_cp`, the lookup
+  controls and `beats_lookup_novel`; the producer applies the M4 registration itself.
+- `bench/k2.py` and `bench k2 --date`: K2 per task on the best servable nested tier (the committed
+  calibrated cell of `tiers.json` or the probe cell of `x3.json`, by pooled NLL; ties to
+  calibrated; a candidate must itself be pre-registered): `beats_lookup_novel`, paired
+  non-inferiority to AnyJev L2 (`x2.json`'s per-item cells) on the full item set with the −0.02
+  margin on the cluster lower bound and the card-sign condition as rule R's literal sign test
+  (per-card Δacc > 0 on at least 80% of the counting cards; the margin-shifted per-card count is
+  reported, not gated), ECE ≤ 0.08 with cluster upper bound ≤ 0.12; verdicts a/b/c with every
+  number; the clm-raw clause
+  (`head_adds_nothing`) on the `@raw` and `@latest` cells; `k2.json`, `k2.md`; `bench table` lists
+  the verdicts.
+- `learn/teacher.py` and `labels ingest-teacher --neon-root`: the D19 ingest of neon-ducklake's
+  `curation/generic/<DP>.validated.json` (accepted items, in-registry and aspect-mapped CURIEs,
+  weight 0.5, `fold_eligible=false`, `leak_group` the product, a `mesa-clm` model refused; a column
+  resolves to every table card of the product that carries it; items without a resolvable column
+  are dropped and counted; no replicate proposal files exist, so no `teacher_implicit` row), the
+  candidates through the OLS layer replaying `tests/fixtures/ols-teacher/` (110 `get_term`
+  responses recorded once; `scripts/record_ols_teacher.py`); `learn.labels.TeacherRows`,
+  `teacher_rows`, `surviving_identities`.
+- `bench/x4.py` and `bench x4 --date`: the teacher ablation on identical outer folds (off,
+  (0.5/0.3), (0.3/0.1)) scored on silver and on silver-minus-Opus (the registered items whose
+  label survives a label-free rebuild without `claude-opus-5-5`; the rebuilt snapshot pinned), the
+  decision `on ≻ off` on novel-key NLL under rule R for both scorings, every cell a variant.
+- `bench/e2e.py`: the end-to-end measure's interface and its measurement half (consensus-all
+  recall against AnyJev's static 0.25, anchor-abstain precision, cluster bounds); `bench e2e
+  --loco` is second-wave and says so.
+- `bench/registered.py`: `REGISTERED_M4` (A1's framings lock, the active framings, the X3 grid,
+  the K2 constants, X4's arms, the pinned `tiers.json` and `x2.json`, the teacher corpus hash at its
+  neon-ducklake commit and the teacher and silver-minus-Opus snapshots, pinned from the label-free
+  ingest run before the commit),
+  the M4 deviation helpers; a run under any other configuration is written unregistered.
+- `artifacts.py`, `learn fit|promote`, `artifacts publish|pull`: immutable artifact versions
+  (`<dir>/<encoder_fp>/<clm_model_fp>/<lock8>/v<N>/`, `manifest.json` with per-file sha256 and the
+  cited cell's identity, `probes/<question_key>.json`, `calibrators.json`; `CURRENT.json` per task),
+  strict load (hashes always; fingerprints, the framings lock and stale question keys under
+  `artifacts.strict`), `learn fit` (the full-data probes and the A1 calibrators from the registered
+  snapshot, the pinned `tiers.json` and the date's `x3.json` by default, exported to
+  `bench/results/<date>/artifacts_v<N>/`; it applies the M4 registration and refuses, writing
+  nothing, on any deviation of the lock, the fingerprints or the grid; a `--tasks` subset is
+  recorded as `tasks_fitted`), `learn promote` (a pre-registered
+  nested cell with matching identity, a K2 verdict a or b, new ≻ current on NLL and ≽ on accuracy
+  within 0.01, heads refused until M7), local publish and verified pull.
+- The probe tier served (`providers/tiered.py`, `providers/live.py`): `resolve_tier` prefers a
+  promoted probe, then a calibrator, else zero_shot; the probe path embeds through the encoder
+  with a read-only vector cache, projects through the pinned head, builds the spec features with
+  `learn.probe`'s formulas and never asks clm-serve; records at level `probe` with `raw_probs` the
+  zero-shot softmax over the same vectors, `p_fit` the probe's calibrated probability, `probs` the
+  softmax over `logit(p_fit)` with the anchor at 0, `feature_spec`, `artifact_version` and
+  `artifact` set; `_honest` requires `feature_spec` iff level ∈ {probe, head}; the live provider
+  loads `CURRENT.json` with K4 and framings-lock refusals.
+- `policy.CellCitationValidator` (D8, plan §4.7), the default validator: every field of the frozen
+  citation test checked against the cited results file under `policy.results_root`, the live
+  fingerprint and the served configuration; the `audit_required` demotion under
+  `auto_requires_audit` through `StoreAuditCheck`; `tests/unit/test_policy_citations.py` negates
+  every field once.
+- `audit.py` and `audit sample|review|record`: the production audit (non-bench cards only, three
+  strata, seed 0, ≥ 5 cards; curator verdicts at an interactive terminal; `audits` rows whose pass
+  rule `n ≥ 50 ∧ n_cards ≥ 3 ∧ cp95_upper ≤ 2·risk` `AuditRow` enforces; the proposed-precision
+  Clopper–Pearson interval report-only).
+- `health.py`: the doctor's `artifacts` check and the artifacts tree among the permission targets;
+  `config.py`: `policy.results_root`.
+
 ### Changed (DESIGN A6: the closed choices by rule, 2026-10-04)
 
 - **The closed choices Q1, Q2 and Q7 are answered by deterministic rules by default**, CLM's

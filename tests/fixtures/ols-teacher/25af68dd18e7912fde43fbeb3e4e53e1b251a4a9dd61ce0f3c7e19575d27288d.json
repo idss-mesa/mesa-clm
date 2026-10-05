@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_03600030",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:03600030",
+  "description": "A soil layer which is parallel to the soil surface and which has roughly homogenous physical, chemical and biological properties relative to the soil layers above or beneath it.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_03600030",
+  "isRoot": false,
+  "label": "soil horizon",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

@@ -46,6 +46,9 @@ from mesa_clm.vocab import (
 )
 
 __all__ = [
+    "AUDIT_MIN_CARDS",
+    "AUDIT_MIN_N",
+    "AUDIT_RISK_FACTOR",
     "CALIBRATED_CALIBRATIONS",
     "CALIBRATED_LEVELS",
     "CALL_STATUSES",
@@ -69,6 +72,7 @@ __all__ = [
     "LinkOp",
     "OverrideAction",
     "RunRow",
+    "audit_passes",
 ]
 
 # -- sidecar-only vocabularies ---------------------------------------------------------------------
@@ -467,7 +471,9 @@ class AuditRow(_Row):
     """A curator audit of would-be-auto decisions (plan §4.7): ``n`` decisions from ``n_cards``
     non-bench cards (``cards`` lists them), ``n_errors`` found by ``reviewer``, the one-sided
     95% Clopper-Pearson upper bound on the error rate and the ``risk`` it was held against;
-    ``passed`` when ``cp95_upper <= 2 * risk`` with ``n >= 50`` and ``n_cards >= 3``."""
+    ``passed`` when ``cp95_upper <= 2 * risk`` with ``n >= 50`` and ``n_cards >= 3``
+    (:data:`AUDIT_MIN_N`, :data:`AUDIT_MIN_CARDS`, :data:`AUDIT_RISK_FACTOR`; M4, R7). The
+    pass rule is enforced here (:func:`audit_passes`), not by a CHECK: the DDL is unchanged."""
 
     audit_id: UUID = Field(default_factory=uuid4)
     task_key: str
@@ -489,7 +495,28 @@ class AuditRow(_Row):
         # CHECK (n_errors <= n)
         if self.n_errors > self.n:
             raise ValueError("n_errors cannot exceed n")
+        # The pass rule (plan §4.7; no CHECK: a floating-point rule stays in Python).
+        expected = audit_passes(self.n, self.n_cards, self.cp95_upper, self.risk)
+        if self.passed != expected:
+            raise ValueError(
+                f"passed must be {expected}: n >= {AUDIT_MIN_N} and n_cards >= "
+                f"{AUDIT_MIN_CARDS} and cp95_upper <= {AUDIT_RISK_FACTOR} * risk (plan §4.7)"
+            )
         return self
+
+
+# Plan §4.7 "With auto_requires_audit": at least 50 would-be-auto decisions from at least 3
+# non-bench cards, with a one-sided 95% Clopper-Pearson error upper bound at or below 2 x risk.
+AUDIT_MIN_N: Final[int] = 50
+AUDIT_MIN_CARDS: Final[int] = 3
+AUDIT_RISK_FACTOR: Final[float] = 2.0
+
+
+def audit_passes(n: int, n_cards: int, cp95_upper: float, risk: float) -> bool:
+    """The plan §4.7 pass rule of an audit (module constants above)."""
+    return (
+        n >= AUDIT_MIN_N and n_cards >= AUDIT_MIN_CARDS and cp95_upper <= AUDIT_RISK_FACTOR * risk
+    )
 
 
 # -- clm calls ---------------------------------------------------------------------------------------

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_4751",
+  "ontology_id": "ncbitaxon"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "NCBITaxon:4751",
+  "description": "",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_4751",
+  "isRoot": false,
+  "label": "Fungi",
+  "ontologyId": "ncbitaxon",
+  "synonyms": []
+ }
+}

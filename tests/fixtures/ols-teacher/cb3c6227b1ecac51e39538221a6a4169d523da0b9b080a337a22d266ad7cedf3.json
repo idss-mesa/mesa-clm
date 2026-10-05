@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000257",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0000257",
+  "description": "A DNA extraction is a nucleic acid extraction where the desired output material is DNA.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000257",
+  "isRoot": false,
+  "label": "DNA extraction",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000033",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0000033",
+  "description": "A quality inhering in a substance by virtue of the amount of the bearer's there is mixed with another substance.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000033",
+  "isRoot": false,
+  "label": "concentration of",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

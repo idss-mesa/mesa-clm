@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PCO_1000004",
+  "ontology_id": "pco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PCO:1000004",
+  "description": "An ecological community which is composed of co-existing populations of microbial organisms that interact, directly or indirectly, such that they impact one another's ecological fitness.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/PCO_1000004",
+  "isRoot": false,
+  "label": "microbial community",
+  "ontologyId": "pco",
+  "synonyms": []
+ }
+}

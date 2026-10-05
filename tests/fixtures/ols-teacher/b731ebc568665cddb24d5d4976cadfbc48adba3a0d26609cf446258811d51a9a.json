@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001857",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001857",
+  "description": "In the Earth's climate system, long-wave radiation involves processes of absorption, scattering, and emissions from atmospheric gases, aerosols, clouds and the surface.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001857",
+  "isRoot": false,
+  "label": "outgoing longwave radiation",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

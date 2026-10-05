@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000893",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0000893",
+  "description": "An assay, based on the PCR, that amplifies and simultaneously quantifies a specific DNA molecule based on the use of complementary probes/primers. It enables both detection and quantification (as absolute number of copies or relative amount when normalized to DNA input or additional normalizing genes) of one or more specific sequences in a DNA sample.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000893",
+  "isRoot": false,
+  "label": "real time polymerase chain reaction assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

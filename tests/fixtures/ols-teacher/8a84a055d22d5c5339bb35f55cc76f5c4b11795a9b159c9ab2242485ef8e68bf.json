@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001170",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001170",
+  "description": "An assay that determines the concentration of RNA in a sample in which an RNA strand is first reverse transcribed into its DNA complement (complementary DNA, or cDNA) using the enzyme reverse transcriptase, and the resulting cDNA is amplified using traditional or real-time PCR.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001170",
+  "isRoot": false,
+  "label": "reverse transcription polymerase chain reaction assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

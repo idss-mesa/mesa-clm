@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_33090",
+  "ontology_id": "ncbitaxon"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "NCBITaxon:33090",
+  "description": "",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_33090",
+  "isRoot": false,
+  "label": "Viridiplantae",
+  "ontologyId": "ncbitaxon",
+  "synonyms": []
+ }
+}

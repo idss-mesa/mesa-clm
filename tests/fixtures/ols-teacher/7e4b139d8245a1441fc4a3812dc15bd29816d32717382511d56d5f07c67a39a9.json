@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001030",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001030",
+  "description": "A physical quality that exists by virtue of the rate of flow of the bearer across a given surface.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001030",
+  "isRoot": false,
+  "label": "flux",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

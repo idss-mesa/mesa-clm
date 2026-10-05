@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_09000026",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:09000026",
+  "description": "The concentration of a liquid water when measured in soil.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_09000026",
+  "isRoot": false,
+  "label": "concentration of liquid water in soil",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

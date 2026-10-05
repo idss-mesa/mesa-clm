@@ -7,8 +7,8 @@ tags:
   - configuration
   - environment
 generated:
-  by: "claude/opus-5.5"
-  at: "2026-10-04T18:00:00Z"
+  by: "claude/fable-5.1"
+  at: "2026-10-04T23:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -53,8 +53,9 @@ snippet of the file (a YAML syntax error names the file, line and column).
 | `decider` | `tier`: `auto` (the best promoted artifact, else `zero_shot`), `zero_shot`, `calibrated`, `probe`, `head`, or `ols_rank` (the degraded OLS top-1 method for every candidate group, proposed-only, DESIGN D28); `ols_rank_fallback` (default `false`): whether `annotate --provider clm` at tier `auto` runs `ols_rank` when clm-serve does not answer instead of refusing; `ols_rank_tasks` (default `[term.fits]`, DESIGN A1's K1): the candidate-group tasks `ols_rank` decides whatever the tier (a YAML list, or `MESA_CLM_DECIDER__OLS_RANK_TASKS` as a list, a comma-separated string or `none`); `[]` asks CLM about `term.fits` too, an audit run; `closed_choice` (default `rules`, DESIGN A6): who answers the closed choices, `rules` (every non-identifier column annotated whatever the planner says; aspects from the planner's hint and the M0 lookup over the packaged table frozen from the registered labels snapshot, else the first two in the lookup's prior order; value kind "the term label"; CLM's answers recorded audit-only) or `clm` (the M2 behaviour; `MESA_CLM_DECIDER__CLOSED_CHOICE`, `annotate --closed-choice`). Requests always use temperature 1; calibration is client-side. |
 | `planner` | The reasoning model that only plans: `static` (default in 0.1.0), `claude`, `gateway`. |
 | `claude` | Credentials profile and model for the planner and the second opinion. |
-| `policy` | Profile (`prod` needs `calibrated` for auto-writes and an audit; `dev` allows `--history none`), thresholds file (`policy_defaults.yaml`). |
-| `artifacts`, `features` | Artifact root and feature cache under `~/.mesa/clm/`, keyed by fingerprint. |
+| `policy` | Profile (`prod` needs `calibrated` for auto-writes and a passing audit row; `dev` allows `--history none`), thresholds file (`policy_defaults.yaml`), and `results_root` (M4, `MESA_CLM_POLICY__RESULTS_ROOT`): where a numeric auto's cite `bench/results/<date>/<file>.json#<cell>` is resolved and where the committed snapshots `bench/snapshots/*.parquet` are hashed (never opened for their labels); `null` (the default) means the checkout root when `mesa_clm` runs from a `src/` checkout, else `~/.mesa/clm/results`. `learn fit`, `learn promote` and the doctor's `artifacts` check read it too. |
+| `artifacts` | `dir` (default `~/.mesa/clm/artifacts`): the learned artifacts under `<dir>/<encoder_fp>/<clm_model_fp>/<lock8>/v<N>/` with `CURRENT.json` beside the versions (M4); `strict` (default `true`): refuse a version whose fingerprints are not the live ones, whose framings lock is not the code's, or an entry whose question key is stale (K4); `false` drops such entries with a warning noted on the run and serves `zero_shot` for them. A hash mismatch is refused whatever `strict` says. |
+| `features` | The feature cache under `~/.mesa/clm/features/<encoder_fp>/` (M1); the probe path reads it as a vector cache and never writes it. |
 | `provenance`, `ducklake` | Sidecar DSN (`duckdb:///~/.mesa/clm/provenance.duckdb`, a bare `*.duckdb` path, or `postgresql://`), TTL for abandoned runs; local DuckLake catalog for development. The DuckDB sidecar, its lock and everything mesa-clm creates for it are owner-only (0700/0600). |
 | `history` | `backend` (`direct`, `spool`, `none`, `auto`), `multiwriter`, spool root, lock paths (`$MESA_HOME/locks/mesa-catalog.lock` plus neon's when configured). |
 | `apply` | Batch size (≤500 operations per call) and the token bucket (`max_calls_per_s`, default 5). |
@@ -62,6 +63,7 @@ snippet of the file (a YAML syntax error names the file, line and column).
 | `neon` | The neon-ducklake root, iRODS root and curation-sync switch for the adapter (0.2.0). |
 
 The configuration module is ported from mesa-anyjev in M0; the serving-facing sections
-(`clm`, `encoder`, `decider`) are live since M1 (`annotate --provider clm`, `doctor --serve`) and
-`history`/`apply` become live in M3. The authoritative field list is
+(`clm`, `encoder`, `decider`) are live since M1 (`annotate --provider clm`, `doctor --serve`),
+`artifacts` and `policy.results_root` since M4's pre-run commit, and `history`/`apply` become
+live in M3. The authoritative field list is
 the `mesa_clm.config` model and `config.yaml.example` in the repository.

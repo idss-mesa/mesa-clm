@@ -52,6 +52,7 @@ from mesa_clm.vocab import LEVEL_RANK, METHODS_WITHOUT_PROBS, Calibration, Level
 __all__ = [
     "CALL_STATUSES",
     "CLM_METHODS",
+    "FEATURE_SPEC_LEVELS",
     "REASONS",
     "ArtifactRef",
     "CallStatus",
@@ -120,6 +121,10 @@ _LEVEL_CALIBRATIONS: Final[dict[str, frozenset[str]]] = {
     "probe": frozenset({"platt", "temperature"}),
     "head": frozenset({"platt", "temperature"}),
 }
+
+# The levels whose numbers come from a feature specification (plan §5.3): ``feature_spec`` is
+# set on exactly these records (M4; ``_check_feature_spec``).
+FEATURE_SPEC_LEVELS: Final[frozenset[str]] = frozenset({"probe", "head"})
 
 # How a call to clm-serve ended; the same vocabulary as ``provenance.models.CallStatus``
 # (``tests/unit/test_tiered_provider.py`` asserts they agree).
@@ -309,6 +314,7 @@ class DecisionRecord(_Frozen):
         _check_shape(self)
         _check_mask(self)
         _check_artifact(self)
+        _check_feature_spec(self)
         _check_abstain(self)
         _check_ols_rank(self)
         return self
@@ -538,6 +544,17 @@ def _check_artifact(r: DecisionRecord) -> None:
         )
 
 
+def _check_feature_spec(r: DecisionRecord) -> None:
+    """``feature_spec`` names the probe (or head) feature specification a record's numbers came
+    from (plan §5.3), so it is set exactly when the level is ``probe`` or ``head`` (M4, R4). The
+    sidecar's DDL carries no CHECK for it: the column is free text and the rule lives here."""
+    learned = r.level in FEATURE_SPEC_LEVELS
+    if learned and not r.feature_spec:
+        raise ValueError(f"level {r.level!r} names its feature_spec (plan §5.3)")
+    if not learned and r.feature_spec is not None:
+        raise ValueError(f"a {r.level!r} record applies no feature spec (feature_spec is None)")
+
+
 def _check_abstain(r: DecisionRecord) -> None:
     """Invariant 6 (the record side): a truncated context never yields an answer."""
     if r.truncated and r.answer_index >= 0:
@@ -731,7 +748,9 @@ class DecisionProvider(Protocol):
     and must be ``None`` for a closed choice. ``tier`` is ``None``/``"auto"`` (the best tier
     this provider can serve honestly for the framing's question key, :meth:`resolve_tier`) or
     an explicit tier; a tier the provider cannot serve raises :class:`TierUnavailable`.
-    ``fingerprint`` is stamped on every record (D5).
+    ``fingerprint`` is stamped on every record (D5). :meth:`resolve_tier` answers ``probe``
+    only for a question key a promoted probe serves; the pipeline asks it for each task's
+    active framing to let that probe decide a task ``decider.ols_rank_tasks`` names (DESIGN A7).
     """
 
     name: str

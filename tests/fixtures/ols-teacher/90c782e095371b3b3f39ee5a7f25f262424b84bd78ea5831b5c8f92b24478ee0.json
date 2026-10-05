@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001323",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001323",
+  "description": "A 2-D extent quality inhering in a bearer by virtue of the bearer's two dimensional extent.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001323",
+  "isRoot": false,
+  "label": "area",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

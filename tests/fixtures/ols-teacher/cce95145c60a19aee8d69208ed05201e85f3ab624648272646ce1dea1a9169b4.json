@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000973",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0000973",
+  "description": "A data item that representing the primary structure of a macromolecule(it's sequence) sometimes associated with an indicator of confidence of that measurement.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000973",
+  "isRoot": false,
+  "label": "sequence data",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

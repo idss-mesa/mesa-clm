@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000832",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0000832",
+  "description": "A device in which a measure function inheres.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000832",
+  "isRoot": false,
+  "label": "measurement device",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000976",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000976",
+  "description": "An animal trap which consists of a container set flush with the ground such that animals moving along the ground may fall in and be available for examination or collection.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000976",
+  "isRoot": false,
+  "label": "pitfall trap",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

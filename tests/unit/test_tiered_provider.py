@@ -300,7 +300,7 @@ def test_tier_resolution_without_artifacts(target: dict[str, Any]) -> None:
     assert not provider.supports_tier("column.ontology", "zero_shot")  # never asked
     with pytest.raises(TierUnavailable, match="no calibrator for question_key"):
         provider.decide(TERM, [target], [CANDS], tier="calibrated")
-    with pytest.raises(TierUnavailable, match=r"probe tier .* lands in M4"):
+    with pytest.raises(TierUnavailable, match="no probe for question_key"):
         provider.decide(TERM, [target], [CANDS], tier="probe")
     with pytest.raises(TierUnavailable, match=r"head tier .* lands in M7"):
         provider.decide(TERM, [target], [CANDS], tier="head")

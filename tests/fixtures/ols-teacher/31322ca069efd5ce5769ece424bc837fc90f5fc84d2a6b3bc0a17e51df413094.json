@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001858",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001858",
+  "description": "An area density which inheres in a clouds by virtue of some influence exerted their mass exerts on a given area.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001858",
+  "isRoot": false,
+  "label": "cloud cover",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

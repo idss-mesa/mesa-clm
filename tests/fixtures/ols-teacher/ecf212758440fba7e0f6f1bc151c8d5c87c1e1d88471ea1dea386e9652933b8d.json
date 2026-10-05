@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000185",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0000185",
+  "description": "An assay that produces a picture of an entity.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000185",
+  "isRoot": false,
+  "label": "imaging assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

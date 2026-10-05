@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3193",
+  "ontology_id": "ncbitaxon"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "NCBITaxon:3193",
+  "description": "",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/NCBITaxon_3193",
+  "isRoot": false,
+  "label": "Embryophyta",
+  "ontologyId": "ncbitaxon",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001048",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001048",
+  "description": "An image acquisition device that takes video or still photographs, or both, digitally by recording images via an electronic image sensor.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001048",
+  "isRoot": false,
+  "label": "digital camera",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

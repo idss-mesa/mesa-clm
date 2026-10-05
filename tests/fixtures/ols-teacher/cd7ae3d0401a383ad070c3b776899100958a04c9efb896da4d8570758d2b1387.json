@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_06105265",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:06105265",
+  "description": "Despite the label, this is not a shortwave radiation process, but the energy that is absorbed from one. This term is used to describe, e.g., the energy absorbed from insolation and stored by the Earth. Gross shortwave radiation would also include shortwave radiation reflected back into space by clouds, aerosols, and solid surfaces with high albedo.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_06105265",
+  "isRoot": false,
+  "label": "net shortwave radiation",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

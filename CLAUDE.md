@@ -16,8 +16,25 @@ plan is `design/plan-2026-09-28.md`; how M2 reads the frozen rules (X1, the tier
 constant) is `design/m2-analysis-plan.md`, committed before any M2 result and changed after the
 first run only by amendment.
 
-**Current state (2026-10-04): M2 merged (PR #4, `81e4495`); amendment A6 on
-`feat/a6-closed-choice-fallbacks`.** The registered run (plan §14, once; outputs committed as
+**Current state (2026-10-05): M2 merged (PR #4, `81e4495`); A6 merged (PR #5, `b46c36b`); M4
+pre-run on `feat/m4-learned-tiers`.** M4 (learned tiers: X3's probe tier, K2, X4, artifacts and
+promotion, the citation test, audits) follows M2's discipline: `design/m4-analysis-plan.md` and
+its code are committed before any M4 verb runs on labels (DESIGN "Implementation notes (M4)",
+the pre-run disclosure); the teacher corpus and the two X4 snapshots are pinned in
+`bench.registered.REGISTERED_M4`; the run protocol is plan §12 (`bench x3` → `bench k2` →
+`bench x4` → `bench table`, outputs committed as produced, then `learn fit`, amendment A7 with
+K2's verdicts, `learn promote`, the curator's production audit); `bench e2e --loco` is
+second-wave. **The registered M4 run is done** (`bench/results/2026-10-04/`, `learn fit` v1
+committed as `artifacts_v1/`) and **A7** (2026-10-05) records it: K2's verdicts are
+`term.fits` **b**, `column.ontology_fits` **c**, the three closed choices **c** (by
+construction); the version-1 `term.fits` probe (`x3.json#neon_term_fits.probe.F7`) is promoted
+on the serving host and the production rule is: a task in `decider.ols_rank_tasks` is decided by
+`ols_rank` *unless the provider resolves a promoted probe for its active framing*, in which case
+the probe decides at level `probe`, proposed-only (every `auto` stays null), D24 asked again,
+the run's `probe_tasks` naming it and `ols_rank_tasks` listing only what `ols_rank` decided
+(`pipeline.Annotator`, `tests/unit/test_a7_promoted_probe.py`); X4 keeps no teacher labels
+(production fits use the registered snapshot only); the production audit of plan §8 is still to
+run. The registered run of M2 (plan §14, once; outputs committed as
 produced in `bench/results/2026-10-03/`, never edited) decided, and DESIGN **A1** records:
 `column.ontology_fits` → **F9 on `clm-latest`** (`framings.ACTIVE`, `framings.lock.json`
 rotated, lock_sha `7c93cc3e0ff6…`; no question_key moved); `term.fits` → **K1** (no arm
@@ -38,8 +55,8 @@ only for a column with a unit; no CLM answer chooses an aspect), and Q7 is the p
 audit-only (outcome `abstain`, reason `audit_only_a6`: no link, no label, never offered);
 `--closed-choice clm` is the M2 behaviour. The user confirmed A6's two readings on 2026-10-04 (an
 unseen column name goes to the fallback; the fallback's order and cap of two), and the annotate
-latency budget for M3 must be re-measured under `rules`. Next: M3 (the live proposed-only
-loop).
+latency budget for M3 must be re-measured under `rules`. Next: the M4 run (plan §12), then M3
+(the live proposed-only loop).
 
 ## Commands
 
@@ -81,7 +98,10 @@ MESA_CLM_NEON_ROOT=<clm root> uv run pytest -q -m neon                          
 Bench sequence (plan §9; verbs land milestone by milestone, `mesa-clm --help` lists what exists):
 `labels ingest-neon-eval --eval-root tests/fixtures/neon-avu-eval` → `labels snapshot` →
 `features build` → `bench mde` → `bench baselines` → `bench framing --decide` → `bench run
---loco` → `bench e2e --loco` → `bench table`. M0 ships `labels
+--loco` → `bench x3` → `bench k2` → `bench x4` → (`bench e2e --loco`, second-wave) → `bench
+table`. M4 adds `labels ingest-teacher`, `bench x3|k2|x4`, `learn fit|promote`, `artifacts
+publish|pull`, `audit sample|review|record` (`mesa-clm <verb> --help`; the analysis plan §12 for
+when each runs). M0 ships `labels
 ingest-neon-eval|import-anyjev|snapshot|stats`, `bench baselines` (lookup_prob, novel-key, LOPO)
 and `bench mde`, both stamped with the `labels_sha256` of `bench/snapshots/<date>.parquet`
 (written from the store when missing, refused when the store has changed since; DESIGN D30), and
@@ -141,7 +161,13 @@ mesa-clm writes under `~/.mesa/clm` is owner-only (0700/0600) whatever the umask
   not asked for them (no `p_fit`; the group records it), its zero_shot/calibrated tiers are
   audit-only (`--ols-rank-tasks none`) until a probe is promoted, M4 goes probe-first. The closed
   choices are untouched by A1. The committed M2 results are never edited or re-run; the
-  registration keeps G1's framings lock.
+  registration keeps G1's framings lock. **A7** (2026-10-05, after the registered M4 run)
+  amends A1, D28 and D24: K2's verdicts are b/c/c/c/c (`term.fits`, `column.ontology_fits`,
+  the three closed choices), the version-1 `term.fits` probe is promoted, and a task in
+  `decider.ols_rank_tasks` is decided by `ols_rank` unless the provider resolves a promoted
+  probe for its active framing, in which case the probe decides at level `probe`, proposed-only
+  (every `auto` null), with D24 asked again; `--tier ols_rank` overrides it, the shipped default
+  `[term.fits]` is unchanged, X4 keeps no teacher labels.
 - **The closed choices by rule (A6, D28).** `decider.closed_choice: rules` (default): Q1, Q2 and
   Q7 are deterministic rules (`closed_choice.py`), CLM's answers to them are stored audit-only
   (`abstain`, `audit_only_a6`) and never decide, link, label or get offered; the Q2 lookup is
@@ -233,8 +259,9 @@ fingerprints, AnyJev dump), `bench/run.py` (the M2
 verbs), `learn/calibrate.py` (weighted Platt, temperature) **M2** (registered run
 `bench/results/2026-10-03/`; A1: `framings.ACTIVE`, `decider.ols_rank_tasks`) · `apply.py`,
 `revert.py`, `irods_io.py`, `history/` (two-phase apply, revert, backends, spool, recorder, lock
-set) M3 · `learn/{linear,fit}.py`, `artifacts.py`,
-`learn/teacher.py` M4 · `bench/e2e.py` M4 · `adapters/neon.py` M6 ·
+set) M3 · `learn/{linear,probe,teacher}.py`, `bench/{x3,k2,x4}.py`, `artifacts.py`, `audit.py`,
+`policy.CellCitationValidator`, the probe tier in `providers/tiered.py` **M4 (pre-run)** ·
+`bench/e2e.py` (interface; the fold provider is second-wave) M4 · `adapters/neon.py` M6 ·
 `learn/finetune.py` M7. `serving/` and `deploy/` hold the serve-venv side (patches, encoder
 scripts, units) and never import `mesa_clm`.
 

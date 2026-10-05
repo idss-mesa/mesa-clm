@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002728",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0002728",
+  "description": "An organism detection assay that detects pathogens.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002728",
+  "isRoot": false,
+  "label": "pathogen detection assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

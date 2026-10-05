@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000978",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000978",
+  "description": "Aqueous solutions used in these traps include: formalin (10% formaldehyde), alcohol, methylated spirits, trisodium phosphate and picric acid.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000978",
+  "isRoot": false,
+  "label": "wet pitfall trap",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

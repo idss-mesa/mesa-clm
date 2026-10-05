@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00002040",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:00002040",
+  "description": "",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00002040",
+  "isRoot": false,
+  "label": "wood",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

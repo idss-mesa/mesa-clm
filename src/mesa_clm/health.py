@@ -205,6 +205,8 @@ class ServeProbes:
     proc: Path = Path("/proc")
     # The feature stores' root; None: the configured features.dir.
     features_dir: Path | None = None
+    # The learned artifacts' root (plan §5.5, M4); None: the configured artifacts.dir.
+    artifacts_dir: Path | None = None
 
     @classmethod
     def offline(cls, home: Path | None = None) -> ServeProbes:
@@ -223,6 +225,7 @@ class ServeProbes:
             golden_dirs=(),
             proc=Path("/nonexistent/proc"),
             features_dir=Path("/nonexistent/mesa-clm-features"),
+            artifacts_dir=Path("/nonexistent/mesa-clm-artifacts"),
         )
 
 
@@ -266,6 +269,7 @@ def doctor(
     _store_checks(cfg, rep)
     _sidecar_check(cfg, rep)
     _feature_store_check(cfg, rep, probes)
+    _artifacts_check(cfg, rep, probes)
     _secret_checks(cfg, rep)
     _permissions_check(cfg, rep, probes)
     _path_checks(cfg, rep)
@@ -522,6 +526,118 @@ def _store_checks(cfg: Config, rep: HealthReport) -> None:
         rep.add("labels store", "ok", "none yet (`mesa-clm labels ingest-neon-eval` creates it)")
 
 
+def _artifacts_check(cfg: Config, rep: HealthReport, probes: ServeProbes) -> None:
+    """``artifacts`` (plan §5.5, M4): the learned artifacts of the served head under
+    ``artifacts.dir`` (``<encoder_fp>/<clm_model_fp>/<lock8>/``): ``CURRENT.json`` parses, each
+    promoted version's manifest loads with the live lock's fingerprints and the code's framings
+    lock, and each promotion's cite names a results file that exists and holds the cell. Nothing
+    is re-hashed here (the provider does that when it loads); directory modes are the
+    ``permissions`` check's. Promoted artifacts filed under another framings lock are a
+    warning: the provider refuses them (K4)."""
+    from mesa_clm import framings
+    from mesa_clm.artifacts import (
+        VERSION_RE,
+        ArtifactError,
+        ArtifactLayout,
+        entry_key,
+        load_manifest,
+    )
+    from mesa_clm.policy import default_results_root, parse_cite
+
+    root = (
+        probes.artifacts_dir if probes.artifacts_dir is not None else expand_path(cfg.artifacts.dir)
+    )
+    if not root.is_dir():
+        rep.add(
+            "artifacts",
+            "ok",
+            f"none yet under {root} (`mesa-clm learn fit` writes the first version)",
+        )
+        return
+    lock = _live_lock(probes)
+    if lock is None:
+        rep.add("artifacts", "ok", f"skipped: no serving lock verifies here ({root} exists)")
+        return
+    fp = lock.fingerprint(cfg.clm.model)
+    layout = ArtifactLayout.for_fingerprint(root, fp)
+    try:
+        current = layout.read_current()
+    except ArtifactError as exc:
+        rep.add("artifacts", "fail", str(exc))
+        return
+    others = layout.other_locks_with_current()
+    tail = (
+        f"; promoted artifacts of other framings lock(s) {', '.join(others)} under "
+        f"{layout.model_dir} (the provider refuses them, K4)"
+        if others
+        else ""
+    )
+    if current is None:
+        versions = layout.versions()
+        rep.add(
+            "artifacts",
+            "warn" if others else "ok",
+            f"nothing promoted for {cfg.clm.model} under {layout.dir} "
+            f"(versions: {', '.join(f'v{n}' for n in versions) or 'none'}; "
+            "`mesa-clm learn promote` writes CURRENT.json)" + tail,
+        )
+        return
+    results_root = (
+        expand_path(cfg.policy.results_root) if cfg.policy.results_root else default_results_root()
+    )
+    problems: list[str] = []
+    served: list[str] = []
+    for task_id, entry in sorted(current.tasks.items()):
+        m = VERSION_RE.match(entry.version)
+        if m is None:
+            problems.append(f"{task_id}: version {entry.version!r} is not v<N>")
+            continue
+        try:
+            manifest = load_manifest(layout.version_dir(int(m.group(1))))
+        except ArtifactError as exc:
+            problems.append(f"{task_id}: {exc}")
+            continue
+        if (manifest.encoder_fp, manifest.clm_model_fp) != (fp.encoder_fp, fp.clm_model_fp):
+            problems.append(
+                f"{task_id}: {entry.version} was fitted under ({manifest.encoder_fp}, "
+                f"{manifest.clm_model_fp}), the live lock is ({fp.encoder_fp}, {fp.clm_model_fp})"
+            )
+        if manifest.framings_lock_sha != framings.lock_sha():
+            problems.append(
+                f"{task_id}: {entry.version} was fitted under framings lock "
+                f"{manifest.framings_lock_sha[:12]}, the code's is {framings.lock_sha()[:12]}"
+            )
+        if entry_key(entry.tier, entry.question_key) not in manifest.entries:
+            problems.append(f"{task_id}: {entry.version} holds no entry {entry.question_key}")
+        ref = parse_cite(entry.cite)
+        if ref is None:
+            problems.append(f"{task_id}: the promotion cites nothing valid ({entry.cite!r})")
+        else:
+            path = results_root / ref.path
+            if not path.is_file():
+                problems.append(f"{task_id}: {ref.path} is missing under {results_root}")
+            else:
+                from mesa_clm.bench.results import load_results
+
+                try:
+                    cells = load_results(path).cells
+                except (ValueError, OSError) as exc:
+                    problems.append(f"{task_id}: {ref.path}: {type(exc).__name__}")
+                else:
+                    key = f"{ref.task}.{ref.tier}.{ref.framing}"
+                    if key not in cells:
+                        problems.append(f"{task_id}: {ref.path} has no cell {key}")
+        served.append(f"{task_id} {entry.tier} {entry.version}")
+    if problems:
+        rep.add("artifacts", "fail", "; ".join(problems) + tail)
+        return
+    rep.add(
+        "artifacts",
+        "warn" if others else "ok",
+        f"{layout.current_path}: {', '.join(served)}" + tail,
+    )
+
+
 def _secret_checks(cfg: Config, rep: HealthReport) -> None:
     """Key files are stat-ed for the 0600 rule of :mod:`mesa_clm.secrets`, never opened. The
     serving pair's default files (``~/.mesa/clm/secrets/{clm,encoder}.key``, used when no key is
@@ -581,6 +697,13 @@ def _permission_targets(cfg: Config, probes: ServeProbes) -> list[Path]:
     if features.is_dir():
         for store in sorted(p for p in features.iterdir() if p.is_dir()):
             paths.extend([store, store / DB_FILE, store / (DB_FILE + ".wal"), store / LOCK_FILE])
+    # The learned artifacts (plan §5.5, M4): every version directory and file, CURRENT.json.
+    artifacts = (
+        probes.artifacts_dir if probes.artifacts_dir is not None else expand_path(cfg.artifacts.dir)
+    )
+    paths.append(artifacts)
+    if artifacts.is_dir():
+        paths.extend(sorted(artifacts.rglob("*")))
     return list(dict.fromkeys(paths))
 
 

@@ -79,6 +79,19 @@ caller names an empty set (an audit run; ``annotate --ols-rank-tasks none``). Q4
 group; when it would have been (specificity on, a proposed winner with OLS children) the group's
 ``search_json`` records ``specificity: {asked: false, reason: no_p_fit_ols_rank}`` and the
 proposal's rationale says so. ``column.ontology_fits`` (Q3) is asked with its A1 framing, F9.
+
+**A promoted probe (DESIGN A7).** A task in ``ols_rank_tasks`` is decided by ``ols_rank``
+*unless the provider resolves a promoted probe for its active framing*
+(``provider.resolve_tier(question_key) == "probe"``: ``CURRENT.json`` promotes one, M4) and the
+tier in effect lets the provider serve it (``auto`` or ``probe``). Then the probe decides at
+level ``probe`` (proposed-only: every ``auto`` threshold is null, D6/D8), the group carries
+``p_fit`` so Q4b is asked again (D24), and the run records the task under ``probe_tasks``
+instead of ``ols_rank_tasks`` (which lists only the tasks ``ols_rank`` actually decided). An
+explicit tier ``ols_rank`` still sends every rank_fit task to ``ols_rank``; an explicit
+``zero_shot`` or ``calibrated`` keeps the K1 default (CLM's zero-shot ``term.fits`` answers
+stay audit-only, never proposals). A host without the promoted artifact proposes by ``ols_rank``
+as before. ``decider.ols_rank_fallback`` is unchanged: the encoder down under a promoted probe
+gives ``unavailable`` records, which fall back to ``ols_rank`` and mark the run ``degraded``.
 """
 
 from __future__ import annotations
@@ -125,6 +138,7 @@ from mesa_clm.planner.static_planner import habitat_queries, queries_for_column,
 from mesa_clm.policy import (
     Policy,
     PolicyError,
+    StoreAuditCheck,
     Thresholds,
     Verdict,
     cap_at_proposed,
@@ -267,7 +281,9 @@ class AnnotationRun:
     tokens it reported, ``n_failed_calls`` those that got no answer; ``degraded`` is true when
     a CLM answer was unavailable (its group fell back to ``ols_rank``) or the tier was
     ``ols_rank`` (D28); ``ols_rank_tasks`` are the rank_fit tasks the run decided by ``ols_rank``
-    whatever CLM answered (``term.fits`` under K1, DESIGN A1). ``closed_choice`` says who
+    whatever CLM answered (``term.fits`` under K1, DESIGN A1) and ``probe_tasks`` the rank_fit
+    tasks a promoted probe decided at level ``probe`` (DESIGN A7; a task is in at most one of
+    the two). ``closed_choice`` says who
     answered Q1, Q2 and Q7 (``rules`` or ``clm``, DESIGN A6) and ``n_audit_only`` counts the CLM
     records kept for audit only (``outcomes`` counts them under ``abstain``). ``buffer`` holds
     the rows (committed when a store was given)."""
@@ -292,6 +308,7 @@ class AnnotationRun:
     ols_rank_tasks: tuple[str, ...] = ()
     closed_choice: str = "rules"
     n_audit_only: int = 0
+    probe_tasks: tuple[str, ...] = ()
 
     def to_dict(self) -> dict[str, Any]:
         """The ``mesa_clm_annotate`` output (plan §7.1) minus the tool's ``next_step``."""
@@ -310,6 +327,7 @@ class AnnotationRun:
             "outcomes": dict(self.outcomes),
             "degraded": self.degraded,
             "ols_rank_tasks": list(self.ols_rank_tasks),
+            "probe_tasks": list(self.probe_tasks),
             "closed_choice": self.closed_choice,
             "n_audit_only": self.n_audit_only,
             "seconds": self.seconds,
@@ -650,6 +668,13 @@ class _ColumnAspects:
         }
 
 
+def _promoted_probe(provider: DecisionProvider, task_id: str) -> bool:
+    """Whether ``provider`` resolves a promoted probe for ``task_id``'s active framing (DESIGN
+    A7: ``resolve_tier`` of the framing's ``question_key`` is ``probe`` only when the promotion
+    table, ``CURRENT.json``, names one for that exact key)."""
+    return provider.resolve_tier(fr.active_framing(task_id).question_key) == "probe"
+
+
 class Annotator:
     """The collaborators of one annotate call; :meth:`annotate` runs one card.
 
@@ -661,7 +686,9 @@ class Annotator:
     apply check it) and ``actor`` who asked for it. ``tier`` is a :data:`TIERS` value (default
     ``cfg.decider.tier``); ``ols_rank`` sends every rank_fit task to the degraded method, and
     ``ols_rank_tasks`` does so per task (K1/K2(c); default ``cfg.decider.ols_rank_tasks``,
-    ``term.fits`` under DESIGN A1; an empty collection asks CLM for every task, an audit run).
+    ``term.fits`` under DESIGN A1; an empty collection asks CLM for every task, an audit run)
+    unless the provider resolves a promoted probe for the task's active framing and the tier
+    is ``auto`` or ``probe``, in which case the probe decides it (DESIGN A7; ``probe_tasks``).
     ``closed_choice`` (default ``cfg.decider.closed_choice``) is ``rules`` (DESIGN A6: Q1, Q2
     and Q7 by rule, CLM's answers audit-only) or ``clm`` (the M2 behaviour); ``aspect_table`` is
     the lookup table Q2 reads under ``rules`` (default the packaged, sha256-pinned one; tests
@@ -698,17 +725,33 @@ class Annotator:
             raise ValueError(
                 f"unknown closed_choice {mode!r}; expected one of {CLOSED_CHOICE_MODES} (DESIGN A6)"
             )
-        by_design = cfg.decider.ols_rank_tasks if ols_rank_tasks is None else ols_rank_tasks
-        degraded_tasks = frozenset(by_design) | (
-            RANK_FIT_TASKS if chosen == "ols_rank" else frozenset()
+        by_design = frozenset(
+            cfg.decider.ols_rank_tasks if ols_rank_tasks is None else ols_rank_tasks
         )
-        unknown = degraded_tasks - RANK_FIT_TASKS
+        unknown = by_design - RANK_FIT_TASKS
         if unknown:
             raise ValueError(f"ols_rank ranks candidate groups only; not {sorted(unknown)} (D28)")
+        # DESIGN A7: a promoted probe (CURRENT.json) decides a rank_fit task at level ``probe``
+        # whenever the tier lets the provider serve it; a task ``ols_rank_tasks`` names is
+        # lifted out of the degraded set by it. Tier ``ols_rank`` lifts nothing.
+        promoted = (
+            frozenset(t for t in RANK_FIT_TASKS if _promoted_probe(provider, t))
+            if chosen in ("auto", "probe")
+            else frozenset()
+        )
+        degraded_tasks = (by_design - promoted) | (
+            RANK_FIT_TASKS if chosen == "ols_rank" else frozenset()
+        )
         self.provider = provider
         self.planner = planner
         self.ols = ols
         self.policy = policy
+        # M4: the citation test compares the cited cells with the live fingerprint (K4), and
+        # the prod profile's auto_requires_audit reads the sidecar's audits (plan §4.7).
+        policy.bind(
+            live=provider.fingerprint,
+            audit_check=StoreAuditCheck(store) if store is not None else None,
+        )
         self.cfg = cfg
         self.owner = owner
         self.actor = actor or owner
@@ -718,6 +761,9 @@ class Annotator:
         # What the provider is asked for: its own best tier unless one was named.
         self.clm_tier: str | None = None if chosen in ("auto", "ols_rank") else chosen
         self.ols_rank_tasks: frozenset[str] = degraded_tasks
+        # The rank_fit tasks a promoted probe decides this run (DESIGN A7), none under
+        # ``ols_rank``.
+        self.probe_tasks: frozenset[str] = promoted - degraded_tasks
         self.encoder_model = encoder_model
         self.closed_choice: str = mode
         # DESIGN A6: the frozen M0 lookup table Q2 reads under ``rules`` (checked against its
@@ -896,6 +942,7 @@ class _Pass:
             ols_rank_tasks=tuple(sorted(self.a.ols_rank_tasks)),
             closed_choice=self.a.closed_choice,
             n_audit_only=self.n_audit,
+            probe_tasks=tuple(sorted(self.a.probe_tasks)),
         )
 
     def _fail(self) -> None:

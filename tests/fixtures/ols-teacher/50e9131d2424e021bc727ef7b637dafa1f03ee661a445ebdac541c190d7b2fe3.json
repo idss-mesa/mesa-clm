@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001361",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001361",
+  "description": "A direction which inheres in an atmospheric wind, typically expressed as the inverse of the direction the wind is moving in.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001361",
+  "isRoot": false,
+  "label": "atmospheric wind direction",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

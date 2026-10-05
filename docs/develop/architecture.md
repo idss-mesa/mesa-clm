@@ -6,8 +6,8 @@ tags:
   - develop
   - architecture
 generated:
-  by: "claude/opus-5.5"
-  at: "2026-10-04T18:00:00Z"
+  by: "claude/fable-5.1"
+  at: "2026-10-04T23:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -36,8 +36,12 @@ the providers (`providers/base.py`: `DecisionRecord` with level, calibration and
 and its `_honest` invariants; `providers/tiered.py`: the tiered provider that resolves a tier
 per `question_key`, the fake provider and the degraded `ols_rank` records;
 `providers/claude_provider.py`: the recorded second opinion; `providers/live.py`: the live
-provider) below the pipeline (`pipeline.py`, `Annotator.annotate`, Q1–Q8), the policy
-(`policy.py`, every outcome) and the sidecar (`provenance/`). `service.py` puts one provider,
+provider, which from M4 loads the promoted artifacts of `CURRENT.json` and serves a promoted
+probe locally through the encoder, the pinned head's export and `learn/probe.py`'s spec
+formulas, never clm-serve) below the pipeline (`pipeline.py`, `Annotator.annotate`, Q1–Q8), the policy
+(`policy.py`, every outcome; from M4 the citation test `CellCitationValidator` over
+`policy.results_root` and the `audit_required` blocker), the artifacts (`artifacts.py`:
+versions, manifests, `CURRENT.json`, promotion, publish, pull), the audits (`audit.py`) and the sidecar (`provenance/`). `service.py` puts one provider,
 planner, OLS layer, policy and store behind the decider lock for the CLI and, from M3, the MCP
 tools. The planner is a separate role that only proposes. `mesa_mcp.ols` provides the OLS
 client and the canonical AVU transform; `mesa_ducklake.DuckLakeClient` records snapshots (M3);
@@ -99,7 +103,7 @@ a batch all or nothing.
 | M1 | `framings.py`, `render.py`, `framings.lock.json`; `vocab.py`; `perms.py`; `clm/{http,encoder,headproj,fingerprint,fake}.py`; `providers/{base,tiered,claude_provider,live}.py`; `pipeline.py`; `policy.py`; `provenance/{models,store,store_postgres,migrate,export}.py` and `migrations/0001_mesa_clm.sql`; `service.py`; `serving.py` (keys, units with the encoder's loopback socket proxy, the serving lock with its container recipe, its verification, the container's network namespace); `learn/features.py` (the feature store with float32 vectors and the lock's vector recipe, the X1/X2 manifest, the TextCache export) and `learn/offline.py` (offline scoring from cached vectors); `health.py` M1 checks (framings lock, schema sha256, sidecar schema, feature store, permissions, serving lock, host, `gpu_budget`, the serving reachability line and the serve-mode probes: the binds' owners, the encoder socket, the units against the rendering, the encoder network namespace, the headroom timer, the 401 matrix, goldens, long input, systemone parity, drift); `cli.py` M1 verbs (`framings`, `annotate`, `explain`, `review`, `feedback`, `provenance migrate\|export\|import\|prune`, `serve keys\|units\|lock`, `features build\|export-npz\|project\|stats`, `doctor --serve`); `serving/` (with the encoder's bearer guard `vllm_auth.py`, the route probe `vllm_routes.py` and the encoder's endpoint proxy `encoder_proxy.py`), `deploy/` (the serve-venv side, never importing `mesa_clm`); `net.py`'s port-owner check (keyed clients never send a key to another account's loopback socket); `scripts/` M1-A probes and records |
 | M2 | `bench/{framing,cells,x2,registered,run}.py` (X1, the tier cells, X2, the registration, the verbs), `learn/calibrate.py` (weighted Platt, temperature); after the registered run, amendment A1: `framings.ACTIVE` (F9 for `column.ontology_fits`) and `decider.ols_rank_tasks` (`term.fits` decided by `ols_rank`, K1); amendment A6: `closed_choice.py`, `aspect_lookup.json` and `decider.closed_choice` (the closed choices by rule, CLM's answers audit-only; the aspect lookup reuses `bench.baselines.Lookup` over a table frozen from the registered snapshot by `scripts/freeze_aspect_lookup.py`) |
 | M3 | `apply.py`, `revert.py`, `irods_io.py`, `history/`; the five `mesa_clm_*` tools in `mcp_tools/` |
-| M4 | `learn/{linear,fit,teacher}.py`, `artifacts.py`, `bench/e2e.py`, audits |
+| M4 (pre-run) | `learn/linear.py` (the weighted fitters: L2 logistic regression, shrinkage LDA, ridge; the SVD reduction; the grids), `learn/probe.py` (the specs, `FeatureBuilder`, the nested inner selection, the OOF calibrator, `TeacherRows`, `ProbeArtifact`, `full_probe`), `learn/teacher.py` (the D19 ingest and the corpus pin), `learn/labels.py` teacher rows and `surviving_identities`; `bench/x3.py`, `bench/k2.py`, `bench/x4.py` (the producers), `bench/e2e.py` (the measurement half; the fold provider is planned, second wave), `bench/registered.py` `REGISTERED_M4` and `bench/run.py`'s M4 verbs; `artifacts.py` (versions, the manifest, `CURRENT.json`, `fit_version`, `promote`, `publish`, `pull`); `audit.py` (`audit sample\|review\|record`); `policy.py` `CellCitationValidator`, `StoreAuditCheck`, `default_results_root`; `providers/tiered.py`'s probe path (`ServedProbe`, `VectorCache`, the spec formulas' serving side) and `providers/live.py`'s artifact loading; `providers/base.py` `FEATURE_SPEC_LEVELS`; `provenance/models.py` `AuditRow`'s pass rule; `health.py`'s `artifacts` check; `config.py` `policy.results_root`; `cli.py` (`labels ingest-teacher`, `bench x3\|k2\|x4\|e2e`, `learn fit\|promote`, `artifacts publish\|pull`, `audit sample\|review\|record`); `scripts/record_ols_teacher.py` and `tests/fixtures/ols-teacher/`. The analysis plan is `design/m4-analysis-plan.md`; nothing here has run on real labels yet |
 | M6 | `adapters/neon.py` |
 | M7 | `learn/finetune.py`, `serving/finetune_preflight.py`, `serving/rescore_head.py` |
 

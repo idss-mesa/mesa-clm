@@ -21,10 +21,16 @@ by ``task_id`` and adds the citation hook. Changes against the source:
   at all (``dev`` does not); a level other than ``zero_shot`` (D6) at or above both floors,
   ``max(LEVEL_RANK[t.min_level], LEVEL_RANK[profile.min_level_write])``; a calibration the
   profile lists; ``stat >= t.auto``; ``margin >= t.margin``; and a citation that a
-  :class:`CitationValidator` accepted as valid and fingerprint-matched (D8). The shipped
-  validator (:class:`RefuseAllCitations`) refuses every cite until M4 implements the check, so
-  a numeric ``auto`` cannot write before the bench backs it; the module-level :func:`outcome`
-  refuses unless the caller passes ``cite_ok=True``.
+  :class:`CitationValidator` accepted as valid and fingerprint-matched (D8). The default
+  validator is :class:`CellCitationValidator` (M4): it reads the cited results file under
+  ``policy.results_root`` and checks every field of the citation test (its docstring);
+  :class:`RefuseAllCitations` refuses every cite. The module-level :func:`outcome` refuses
+  unless the caller passes ``cite_ok=True``.
+* **audit (step 2, prod).** Under a profile with ``auto_requires_audit`` an ``auto`` also
+  needs a passing ``audits`` row for the record's ``(task_key, artifact_version)``, read from
+  the :class:`AuditCheck` the caller supplies (the sidecar's, :class:`StoreAuditCheck`);
+  without one the verdict is ``proposed`` with reason ``audit_required`` (M4; ``apply`` is
+  M3's, so the pipeline records the blocker now).
 * **proposed / abstain (steps 3-4)** at ``stat >= t.propose``, else ``abstain``
   (``below_propose``).
 * **Demotions only.** The group margin (the ``p_fit`` gap to the runner-up candidate) and the
@@ -44,14 +50,15 @@ from __future__ import annotations
 import logging
 import math
 import re
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Collection, Mapping, Sequence
 from pathlib import Path
-from typing import TYPE_CHECKING, Final, NamedTuple, Protocol, TypeVar, runtime_checkable
+from typing import TYPE_CHECKING, Any, Final, NamedTuple, Protocol, TypeVar, runtime_checkable
 
 import numpy as np
 import numpy.typing as npt
 from pydantic import BaseModel, ConfigDict
 
+from mesa_clm.clm.fingerprint import Fingerprint
 from mesa_clm.policy_defaults import (
     PolicyDefaults,
     Profile,
@@ -70,8 +77,16 @@ __all__ = [
     "ABSTAIN_REASONS",
     "AUTO_BLOCKERS",
     "CITE_RE",
+    "DEFAULT_RESULTS_HOME",
+    "DEMOTION_REASONS",
+    "FOLD_AGREEMENT_MIN",
+    "GUARD_MIN",
     "MAX_AVUS",
+    "MIN_NESTED_FOLDS",
+    "SNAPSHOTS_DIR",
     "SPECIFICITY_DELTA",
+    "AuditCheck",
+    "CellCitationValidator",
     "CitationValidator",
     "CiteCheck",
     "CiteRef",
@@ -80,10 +95,12 @@ __all__ = [
     "PolicyError",
     "Profile",
     "RefuseAllCitations",
+    "StoreAuditCheck",
     "Thresholds",
     "Verdict",
     "cap_at_proposed",
     "dedup_and_cap",
+    "default_results_root",
     "demote_for_group_margin",
     "fingerprint_mismatches",
     "group_margin",
@@ -134,7 +151,20 @@ AUTO_BLOCKERS: Final[tuple[str, ...]] = (
     "below_auto",  # stat < t.auto
     "margin_below",  # margin < t.margin (or no margin)
     "cite_refused",  # no valid, fingerprint-matched citation (D8)
+    "audit_required",  # the profile needs a passing audits row and none exists (plan §4.7, M4)
 )
+
+# The reasons a demotion from auto records on a proposed row (``decisions.reason``; M4).
+DEMOTION_REASONS: Final[tuple[str, ...]] = ("audit_required",)
+
+# The citation test's constants (plan §4.7, PR "Citation test"; M4, R6).
+MIN_NESTED_FOLDS: Final[int] = 5  # n_folds >= 5
+FOLD_AGREEMENT_MIN: Final[int] = 5  # fold_choices agree with the served configuration in >= 5/7
+GUARD_MIN: Final[int] = 30  # counts.n_neg (rank_fit) / n_nonmodal (choice) >= 30
+# The committed snapshots a cited cell's labels_sha256 must be one of (hashed under results_root).
+SNAPSHOTS_DIR: Final[str] = "bench/snapshots"
+# Where cites resolve outside a src/ checkout (``policy.results_root`` unset).
+DEFAULT_RESULTS_HOME: Final[str] = "~/.mesa/clm/results"
 
 # plan §4.7: ``bench/results/<date>/<file>.json#<task>.<tier>.<framing>``; the fragment is
 # ``bench.results.cell_key``.
@@ -227,6 +257,244 @@ class RefuseAllCitations:
         return CiteCheck(
             ok=False,
             reason=f"{task_id}: citation validation lands in M4 (D8); refused until then",
+        )
+
+
+def default_results_root() -> Path:
+    """Where a cite's ``bench/results/...`` path is resolved when ``policy.results_root`` is
+    unset (M4): the checkout root when :mod:`mesa_clm` is imported from a ``src/`` checkout
+    (the directory holding ``src/`` and ``pyproject.toml``), else ``~/.mesa/clm/results``."""
+    here = Path(__file__).resolve()
+    if len(here.parents) >= 3 and here.parents[1].name == "src":
+        root = here.parents[2]
+        if (root / "pyproject.toml").is_file():
+            return root
+    return Path(DEFAULT_RESULTS_HOME).expanduser()
+
+
+def _snapshot_hashes(root: Path, snapshots_dir: str) -> dict[str, str]:
+    """``{labels_sha256: file name}`` of the committed snapshots under ``root`` (the sha256 of
+    each ``*.parquet``'s bytes, D30; the files are hashed, never opened for their labels)."""
+    import hashlib
+
+    out: dict[str, str] = {}
+    directory = root / snapshots_dir
+    if not directory.is_dir():
+        return out
+    for path in sorted(directory.glob("*.parquet")):
+        out[hashlib.sha256(path.read_bytes()).hexdigest()] = path.name
+    return out
+
+
+class CellCitationValidator:
+    """The D8 citation test (plan §4.7, PR "Citation test"; M4, R6): a numeric ``auto`` cites a
+    pre-registered nested LOCO cell that qualifies, field by field, for the record it is applied
+    to. ``results_root`` resolves the cite's path (default :func:`default_results_root`);
+    ``labels_sha256s`` is the set of committed snapshot hashes (default: the ``*.parquet`` under
+    ``<results_root>/bench/snapshots``, hashed once); ``live`` is the live
+    :class:`~mesa_clm.clm.fingerprint.Fingerprint` the cell must equal, ``serving_lock_sha``
+    included (bound by the pipeline through :meth:`bind`; unbound, every cite is refused:
+    ``serving_lock_sha`` is not on a record and cannot be checked).
+
+    Every check, in order (the first failure is the reason): the cite is well-formed; the
+    results file exists and loads; the cell exists and is the record's task's; ``loco``,
+    ``pre_registered``, ``selection == "nested"``, not ``exploratory``, ``servable``,
+    ``n_folds >= 5``, ``teacher_in_test is False``; the masking is the record's framing's, read
+    as M2's cells record it (``bench.cells.assemble_cell``: every cell has ``masked: true`` and
+    ``mask`` the task's option restriction, ``"aspect"`` or ``None``): ``cell.masked is True``
+    and ``cell.mask == framing.mask_rule`` (``None == None`` for a task without a mask); a cell
+    with ``masked: false`` or a ``mask`` other than the framing's rule is refused;
+    ``labels_sha256`` is a committed snapshot's; the guards
+    ``counts.n_neg >= 30`` (rank_fit) or ``n_nonmodal >= 30`` (choice); ``question_key`` equals
+    the record's; the fingerprint equals the record's fields and the live fingerprint;
+    ``fold_choices`` agree with the served configuration in at least 5 folds (a calibrated
+    cell: the fold's arm is the cell's; a probe cell: the fold's ``model`` is the record's and
+    its ``spec`` the record's ``feature_spec``); ``baselines.beats_lookup_novel is True``;
+    ``thresholds.auto >= metrics.threshold_cp[risk]`` (``None`` refuses). The cell's tier must
+    be the record's level (the brief's "tier rank >= level" read at its most conservative:
+    equality, which satisfies it), checked right after the task so a mismatch is named as such.
+    """
+
+    def __init__(
+        self,
+        results_root: str | Path | None = None,
+        *,
+        live: Fingerprint | None = None,
+        labels_sha256s: Collection[str] | None = None,
+        snapshots_dir: str = SNAPSHOTS_DIR,
+    ) -> None:
+        self.results_root = (
+            Path(results_root).expanduser() if results_root is not None else default_results_root()
+        )
+        self.live = live
+        self.snapshots_dir = snapshots_dir
+        self._given: frozenset[str] | None = (
+            None if labels_sha256s is None else frozenset(labels_sha256s)
+        )
+        self._hashed: dict[str, str] | None = None
+        self._loaded: dict[str, Any] = {}
+
+    def bind(self, live: Fingerprint | None) -> None:
+        """Name the live fingerprint the cells must equal (the pipeline binds the provider's)."""
+        self.live = live
+
+    def committed_snapshots(self) -> frozenset[str]:
+        if self._given is not None:
+            return self._given
+        if self._hashed is None:
+            self._hashed = _snapshot_hashes(self.results_root, self.snapshots_dir)
+        return frozenset(self._hashed)
+
+    def _results(self, path: str) -> Any:
+        from mesa_clm.bench.results import load_results
+
+        if path not in self._loaded:
+            self._loaded[path] = load_results(self.results_root / path)
+        return self._loaded[path]
+
+    def __call__(
+        self, task_id: str, thresholds: Thresholds, record: DecisionRecord, /
+    ) -> CiteCheck:
+        why = self._refusal(task_id, thresholds, record)
+        if why is not None:
+            return CiteCheck(ok=False, reason=f"{task_id}: {why}")
+        return CiteCheck(ok=True, reason=f"{task_id}: {thresholds.cite} qualifies (D8)")
+
+    def _refusal(self, task_id: str, t: Thresholds, record: DecisionRecord) -> str | None:
+        if t.auto is None:
+            return "no numeric auto, nothing to cite"
+        if not t.cite:
+            return f"auto={t.auto} cites nothing"
+        ref = parse_cite(t.cite)
+        if ref is None:
+            return (
+                f"cite {t.cite!r} is not bench/results/<date>/<file>.json#<task>.<tier>.<framing>"
+            )
+        path = self.results_root / ref.path
+        if not path.is_file():
+            return f"{ref.path}: no such results file under {self.results_root}"
+        try:
+            results = self._results(ref.path)
+        except Exception as exc:
+            return f"{ref.path}: not a results file ({type(exc).__name__})"
+        key = f"{ref.task}.{ref.tier}.{ref.framing}"
+        cell = results.cells.get(key)
+        if cell is None:
+            return f"{ref.path}: no cell {key}"
+        if cell.task_id != task_id or record.task_id != task_id:
+            return f"cell {key} is {cell.task_id}'s, the record is {record.task_id}'s"
+        if cell.tier != record.level:
+            return f"cell {key} is a {cell.tier} cell; the record's level is {record.level}"
+        if not cell.loco:
+            return f"cell {key} is not leave-one-card-out"
+        if not cell.pre_registered:
+            return f"cell {key} is not pre_registered"
+        if cell.selection != "nested":
+            return f"cell {key} selection is {cell.selection!r}, not 'nested' (D27)"
+        if cell.exploratory:
+            return f"cell {key} is exploratory (D27)"
+        if not cell.servable:
+            return f"cell {key} is not servable"
+        if cell.n_folds < MIN_NESTED_FOLDS:
+            return f"cell {key} has {cell.n_folds} folds, fewer than {MIN_NESTED_FOLDS}"
+        if cell.teacher_in_test is not False:
+            return f"cell {key} does not record teacher_in_test false (D19)"
+        expected_mask = _framing_mask_rule(record)
+        if cell.masked is not True:
+            return f"cell {key} masked={cell.masked!r}: every servable cell records masked true"
+        if cell.mask != expected_mask:
+            return (
+                f"cell {key} mask={cell.mask!r} is not the record's framing's mask rule "
+                f"{expected_mask!r} (plan §4.2 Q3)"
+            )
+        if cell.labels_sha256 not in self.committed_snapshots():
+            return f"cell {key} labels_sha256 {cell.labels_sha256[:12]} is not a committed snapshot"
+        if record.shape == "rank_fit":
+            if cell.counts.n_neg is None or cell.counts.n_neg < GUARD_MIN:
+                return f"cell {key} n_neg {cell.counts.n_neg} is below {GUARD_MIN}"
+        elif cell.counts.n_nonmodal < GUARD_MIN:
+            return f"cell {key} n_nonmodal {cell.counts.n_nonmodal} is below {GUARD_MIN}"
+        diffs = fingerprint_mismatches(
+            record, question_key=cell.question_key, fingerprint=cell.fingerprint
+        )
+        if diffs:
+            return f"cell {key}: " + "; ".join(diffs)
+        if self.live is None:
+            return "no live fingerprint is bound: serving_lock_sha cannot be checked (K4)"
+        if cell.fingerprint is None or not self.live.matches(cell.fingerprint):
+            return f"cell {key} fingerprint is not the live one (serving_lock_sha included; K4)"
+        agree = _fold_agreement(cell, record)
+        if agree < FOLD_AGREEMENT_MIN:
+            return (
+                f"cell {key} fold_choices agree with the served configuration in {agree} folds, "
+                f"fewer than {FOLD_AGREEMENT_MIN}"
+            )
+        if cell.baselines is None or cell.baselines.beats_lookup_novel is not True:
+            return f"cell {key} does not beat the lookup on novel keys (beats_lookup_novel)"
+        if cell.metrics is None:
+            return f"cell {key} has no metrics"
+        risk_key = f"{t.risk:.2f}"
+        cp = cell.metrics.threshold_cp.get(risk_key)
+        if cp is None:
+            return f"cell {key} has no Clopper-Pearson threshold at risk {risk_key}"
+        if t.auto < cp:
+            return f"auto {t.auto} is below the cell's threshold_cp[{risk_key}] = {cp}"
+        return None
+
+
+def _framing_mask_rule(record: DecisionRecord) -> str | None:
+    """The record's framing's option restriction after scoring (``mask_rule``: ``"aspect"`` or
+    ``None``), what a cell's ``mask`` must equal (``bench.tasks.neon.MASKS`` per task)."""
+    from mesa_clm.framings import FRAMINGS
+
+    framing = FRAMINGS.get(record.task_id, {}).get(record.framing_id)
+    return None if framing is None else framing.mask_rule
+
+
+def _fold_agreement(cell: Any, record: DecisionRecord) -> int:
+    """The outer folds of ``cell`` whose ``fold_choices`` entry chose the served configuration:
+    a calibrated cell's arm (``framing``, ``model``) or, for a probe cell, the record's
+    ``model`` and ``feature_spec``."""
+    folds = cell.fold_choices or {}
+    agree = 0
+    for choice in folds.values():
+        if not isinstance(choice, Mapping) or not choice.get("evaluated", True):
+            continue
+        if cell.tier == "probe":
+            ok = (
+                record.feature_spec is not None
+                and choice.get("model") == record.model
+                and choice.get("spec") == record.feature_spec
+            )
+        else:
+            ok = choice.get("framing") == cell.framing and choice.get("model") == cell.model
+        agree += int(bool(ok))
+    return agree
+
+
+# -- audits (plan §4.7 "auto_requires_audit"; M4, R7) --------------------------------------------
+
+
+@runtime_checkable
+class AuditCheck(Protocol):
+    """Whether a passing ``audits`` row exists for ``(task_key, artifact_version)``: what the
+    ``prod`` profile's ``auto_requires_audit`` reads (the caller supplies it: the sidecar's)."""
+
+    def __call__(self, task_key: str, artifact_version: str, /) -> bool: ...
+
+
+class StoreAuditCheck:
+    """:class:`AuditCheck` over a provenance store (``store.audits(task_key)``): a row with
+    ``passed`` for that ``artifact_version``."""
+
+    def __init__(self, store: Any) -> None:
+        self.store = store
+
+    def __call__(self, task_key: str, artifact_version: str, /) -> bool:
+        rows = self.store.audits(task_key)
+        return any(
+            bool(r.get("passed")) and str(r.get("artifact_version")) == artifact_version
+            for r in rows
         )
 
 
@@ -565,8 +833,10 @@ class Policy:
 
     ``thresholds`` is the loaded :class:`~mesa_clm.policy_defaults.PolicyDefaults`; ``profile``
     a profile name in it (or a :class:`~mesa_clm.policy_defaults.Profile`); ``validator`` the
-    :class:`CitationValidator` (default :class:`RefuseAllCitations`, so no numeric ``auto``
-    writes until M4 validates its cell). A validator that raises counts as a refusal.
+    :class:`CitationValidator` (default a :class:`CellCitationValidator` over
+    ``results_root``). A validator that raises counts as a refusal. ``audit_check`` is the
+    :class:`AuditCheck` a profile with ``auto_requires_audit`` reads (``None``: no audit
+    exists, every auto is demoted to ``proposed`` with reason ``audit_required``).
     """
 
     def __init__(
@@ -575,6 +845,8 @@ class Policy:
         *,
         profile: str | Profile = "prod",
         validator: CitationValidator | None = None,
+        results_root: str | Path | None = None,
+        audit_check: AuditCheck | None = None,
     ) -> None:
         self.defaults = thresholds
         if isinstance(profile, Profile):
@@ -587,7 +859,8 @@ class Policy:
                     f"no profile {profile!r} in the policy file "
                     f"(known: {', '.join(sorted(thresholds.profiles)) or 'none'})"
                 ) from None
-        self.validator: CitationValidator = validator or RefuseAllCitations()
+        self.validator: CitationValidator = validator or CellCitationValidator(results_root)
+        self.audit_check: AuditCheck | None = audit_check
 
     @classmethod
     def load(
@@ -596,19 +869,49 @@ class Policy:
         *,
         profile: str | Profile = "prod",
         validator: CitationValidator | None = None,
+        results_root: str | Path | None = None,
+        audit_check: AuditCheck | None = None,
     ) -> Policy:
         """:func:`~mesa_clm.policy_defaults.load_policy_defaults` (``None``: the shipped file)
-        wrapped with ``profile`` and ``validator``."""
-        return cls(load_policy_defaults(path), profile=profile, validator=validator)
+        wrapped with ``profile``, ``validator`` (default the cell validator over
+        ``results_root``) and ``audit_check``."""
+        return cls(
+            load_policy_defaults(path),
+            profile=profile,
+            validator=validator,
+            results_root=results_root,
+            audit_check=audit_check,
+        )
 
     @classmethod
     def from_config(
-        cls, section: PolicyConfig, *, validator: CitationValidator | None = None
+        cls,
+        section: PolicyConfig,
+        *,
+        validator: CitationValidator | None = None,
+        audit_check: AuditCheck | None = None,
     ) -> Policy:
         """From the config's ``policy`` section: its ``policy_path`` (``None``: the shipped
-        file) and ``profile``."""
+        file), ``profile`` and ``results_root``."""
         path = Path(section.policy_path).expanduser() if section.policy_path else None
-        return cls.load(path, profile=section.profile, validator=validator)
+        return cls.load(
+            path,
+            profile=section.profile,
+            validator=validator,
+            results_root=section.results_root,
+            audit_check=audit_check,
+        )
+
+    def bind(
+        self, *, live: Fingerprint | None = None, audit_check: AuditCheck | None = None
+    ) -> None:
+        """What the pipeline knows and the policy does not: the live fingerprint the cited
+        cells must equal (given to a validator with ``bind``) and the sidecar's audit check."""
+        bind = getattr(self.validator, "bind", None)
+        if live is not None and callable(bind):
+            bind(live)
+        if audit_check is not None:
+            self.audit_check = audit_check
 
     def thresholds(self, task_id: str) -> Thresholds:
         """``task_id``'s thresholds; :class:`PolicyError` for a task without an entry."""
@@ -634,9 +937,29 @@ class Policy:
         if record.method == "rule":
             return Verdict(outcome="rule")
         t = self.thresholds(record.task_id)
-        return _decide(
-            record, t, profile or self.profile, lambda: self._cite(record.task_id, t, record)
-        )
+        p = profile or self.profile
+        v = _decide(record, t, p, lambda: self._cite(record.task_id, t, record))
+        if v.outcome == "auto" and p.auto_requires_audit and not self._audited(record):
+            return Verdict(
+                outcome="proposed",
+                reason="audit_required",
+                stat=v.stat,
+                auto_blockers=("audit_required",),
+                cite=v.cite,
+            )
+        return v
+
+    def _audited(self, record: DecisionRecord) -> bool:
+        """A passing audit for the record's ``(task_key, artifact_version)`` (module
+        docstring); a record without an artifact version has none, and a check that raises
+        counts as none."""
+        if self.audit_check is None or not record.artifact_version:
+            return False
+        try:
+            return bool(self.audit_check(record.task_key, record.artifact_version))
+        except Exception as exc:  # fail closed, never auto
+            logger.warning("audit check failed for %s (%s)", record.task_id, type(exc).__name__)
+            return False
 
     def outcome(self, record: DecisionRecord, *, profile: Profile | None = None) -> Outcome:
         """The outcome of ``record`` under this policy (plan §4.7)."""

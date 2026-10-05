@@ -64,6 +64,17 @@ Every context view ends with the target, because last-token pooling weights the 
   framing for those audit records;
 * the closed choices (Q1, Q2, Q7) keep F7: no pre-registered rule covers them.
 
+Amendment **A7** (2026-10-05, after the registered M4 run) adds the production rule for a
+promoted probe: a task in `decider.ols_rank_tasks` is decided by `ols_rank` *unless the provider
+resolves a promoted probe for its active framing* (`CURRENT.json`), in which case the probe
+decides it at level `probe`, proposed-only. For `term.fits` (K2(b), the version-1 `pair512.v1`
+probe promoted on the serving host) that means: Q4, Q5 and Q6 are the probe's calibrated ranks
+there (`p_fit` per candidate, `probs` their odds against the anchor, never `auto`), Q4b is asked
+again for those groups (D24 amended back, since the record carries `p_fit`), the run names the
+task under `probe_tasks` and `ols_rank_tasks` lists only what `ols_rank` actually decided. A host
+without the promoted artifact keeps K1 exactly as above. `column.ontology_fits` (K2(c)) keeps
+its zero-shot F9 proposals; the closed choices keep A6's rules.
+
 The numbers behind A1 are in RESEARCH.md, "M2 results (registered run)", and on
 [Learning and bench](learning-and-bench.md).
 
@@ -122,9 +133,9 @@ measurement of the rules on new cards.
 | Q2 | `column.aspect` | choice K=8; by default hint, lookup, else the prior-ordered fallback, CLM audit-only (A6) | same text as Q1 | `ASPECT_OPTIONS`; under `clm`: top-1 if proposed, else top-2 |
 | Q3 | `column.ontology_fits` | rank_fit 12 + anchor | F9 (A1): `NEON dataset {title}. Column {name}: {description} ({unit}). {aspect} ontology term:` | registry `option_text`, masked by aspect after scoring |
 | S | candidates | OLS | — | `search_candidates` ≤12, fixed `unit_candidate` |
-| Q4 | `term.fits` | rank_fit ≤12 + anchor; by default `ols_rank` (K1, A1) | `target_state = {card_header, scope, aspect, column|site}` | `"{label}: {description[:300]}"` |
-| Q4b | `term.fits` (specificity) | rank_fit; not asked for an `ols_rank` group (A1) | same | {parent, ≤10 children, anchor}; a child wins at `p_fit +0.10`, proposed-only (DESIGN D24) |
-| Q5 / Q6 | `term.fits` | rank_fit; by default `ols_rank` (K1, A1) | `{card_header, site}` / `{card_header}` | ENVO biome descendants / NCBITaxon |
+| Q4 | `term.fits` | rank_fit ≤12 + anchor; by default `ols_rank` (K1, A1), the promoted probe where `CURRENT.json` holds one (A7) | `target_state = {card_header, scope, aspect, column|site}` | `"{label}: {description[:300]}"` |
+| Q4b | `term.fits` (specificity) | rank_fit; not asked for an `ols_rank` group (A1), asked for a probe group (A7) | same | {parent, ≤10 children, anchor}; a child wins at `p_fit +0.10`, proposed-only (DESIGN D24) |
+| Q5 / Q6 | `term.fits` | rank_fit; by default `ols_rank` (K1, A1), the promoted probe where `CURRENT.json` holds one (A7) | `{card_header, site}` / `{card_header}` | ENVO biome descendants / NCBITaxon |
 | Q7 | `avu.value_kind` | choice K=4; by default the pre-rule, else "the term label", CLM audit-only (A6) | `value_kind_state` | `VALUE_KINDS`, deterministic pre-rules first |
 | Q8 | rule | — | — | exact-triple dedup, cap 25 by `p_fit` (DESIGN D25) |
 
@@ -142,7 +153,10 @@ never `auto` (DESIGN D28); `decider.tier: ols_rank` selects it for every candida
 the second taxon of Q6 is not kept (only the top-1 is proposed), and where Q4b would have refined
 a proposed winner with OLS children the group records `specificity: {asked: false, reason:
 no_p_fit_ols_rank}` and the proposal's rationale says so. A run is marked `degraded` only when
-CLM did not answer or the tier is `ols_rank`, not for the tasks `ols_rank` decides by design.
+CLM did not answer or the tier is `ols_rank`, not for the tasks `ols_rank` decides by design,
+nor for a task a promoted probe decides instead (A7: at tier `auto` or `probe` the provider's
+`resolve_tier` for the task's active framing is `probe`, the probe decides at level `probe`, Q4b
+is asked, and the run's `probe_tasks` names it; `--tier ols_rank` overrides the probe).
 
 Each CLM question is stored as one `decisions` row with one `decision_options` row per candidate
 and one for the anchor (`s_c`, `p_fit`, rank, masked), and each candidate group as a

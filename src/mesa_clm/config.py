@@ -288,11 +288,31 @@ class PolicyConfig(_Section):
     # Specificity (D24): a child term replaces its parent when p_fit(child) >= p_fit(parent) + delta.
     specificity: bool = True
     specificity_delta: float = Field(default=0.10, ge=0)
+    # Where a numeric auto's cite (bench/results/<date>/<file>.json#<cell>) is resolved (D8, M4):
+    # None means the checkout root when mesa_clm runs from a src/ checkout, else
+    # ~/.mesa/clm/results (policy.default_results_root). The committed snapshots are read from
+    # <results_root>/bench/snapshots/*.parquet (hashed, never opened for their labels).
+    results_root: str | None = None
+
+
+# The default ``artifacts.dir``, read when a configuration is built (the hermetic test suite
+# points it at an empty per-test path, so this host's promoted ``CURRENT.json`` never reaches a
+# unit test; ``tests/conftest.py``).
+DEFAULT_ARTIFACTS_DIR = "~/.mesa/clm/artifacts"
+
+
+def _default_artifacts_dir() -> str:
+    return DEFAULT_ARTIFACTS_DIR
 
 
 class ArtifactsConfig(_Section):
-    dir: str = "~/.mesa/clm/artifacts"
-    # Refuse fingerprint mismatches and stale question keys on load (§5.5).
+    """The learned artifacts (plan §5.5, M4): ``<dir>/<encoder_fp>/<clm_model_fp>/<framings
+    lock sha8>/v<N>/`` plus ``CURRENT.json`` (what ``learn promote`` put in production);
+    ``dir`` defaults to :data:`DEFAULT_ARTIFACTS_DIR`."""
+
+    dir: str = Field(default_factory=_default_artifacts_dir)
+    # Refuse fingerprint mismatches and stale question keys on load (§5.5, K4); False drops the
+    # mismatched entries with a warning instead (never silently: the run notes say so).
     strict: bool = True
 
 

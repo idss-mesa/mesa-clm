@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/IAO_0000414",
+  "ontology_id": "iao"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "IAO:0000414",
+  "description": "A scalar measurement datum that is the result of measurement of mass quality",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/IAO_0000414",
+  "isRoot": false,
+  "label": "mass measurement datum",
+  "ontologyId": "iao",
+  "synonyms": []
+ }
+}
