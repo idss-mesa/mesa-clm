@@ -13,7 +13,9 @@ the state builders only; the degraded ``ols_rank`` path proposes and never autos
 Every card runs under both ``decider.closed_choice`` modes (DESIGN A6): ``rules``, the default
 (Q1, Q2, Q7 by rule, CLM's answers audit-only), and ``clm``, the M2 behaviour, under which M2's
 assertions on Q1, Q2 and Q7 hold unchanged. ``tests/unit/test_a6_closed_choice.py`` covers A6's
-rules themselves.
+rules themselves. DESIGN A8 (2026-10-05) changed the fallback's aspects on the fixture cards'
+unseen columns (``measurement`` leads a numeric or unit-bearing column; ``taxon`` never comes
+from the fallback); nothing here names a fallback aspect, so no expectation moved.
 """
 
 from __future__ import annotations

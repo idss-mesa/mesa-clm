@@ -8,6 +8,26 @@ All notable changes to the mesa-clm package. The format follows
 
 ## [Unreleased]
 
+### Changed (DESIGN A8: the aspect fallback for unseen columns, 2026-10-05)
+
+- Q2's fallback under `decider.closed_choice: rules`, for a column the frozen M0 lookup has
+  not seen (`closed_choice.fallback_aspects`, `FALLBACK_RULE`), now reads the card's column
+  grammar: a numeric column (dtype `real`, `integer`, `unsigned integer`, …;
+  `cards.is_numeric`) or a column with a unit gets `measurement` first, then `unit` when it has
+  a unit, else the next aspect of the lookup's training prior that is neither `taxon` nor
+  `other`; a string column keeps the prior order with `taxon` removed. The cap of two, the
+  in-play filter and "`unit` only for a column with a unit" stay; `taxon` never comes from the
+  fallback (the planner's hint and the lookup's top two are unchanged). The user's decision after
+  A7's note (seven non-bench SRER runs: `method` 53, `taxon` 44, `measurement` 1, 25 of the
+  `taxon` on numeric or unit-bearing columns, because the prior comes from the bench's bird and
+  beetle tables).
+- A fallback column's Q3 groups record `search_json.a6.fallback` with `rule: "a8"`, `reason`
+  (`unit`, `numeric` or `string`), `rule_text`, the prior `order`, the order `considered`,
+  `has_unit`, `numeric` and `kept`. The audit-only CLM records, the framings and the sidecar
+  schema are untouched.
+- `cards.NUMERIC_DTYPES`, `cards.is_numeric_dtype`, `cards.is_numeric`: the grammar's numeric
+  dtypes, compared without case, spaces or underscores.
+
 ### Fixed (CI: documentation workflow)
 
 - `docs.yml`: every `main` deploy had failed at `actions/configure-pages` (no Pages site exists,

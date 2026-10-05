@@ -8,8 +8,12 @@ audit-only records are stored with their markers, and Q1 annotates every non-ide
 whatever the planner says; (c) the hint, lookup and fallback paths choose aspects as A6 says: the
 hint and the lookup's top two uncapped, the lookup M0's over the packaged frozen table (equal to
 M0's per-fold lookup on the registered snapshot) with the annotated card held out, the fallback
-in the order of the lookup's training prior, capped at two, never ``unit`` for a column without
-a unit, and needing no CLM answer; (d) ``closed_choice: clm`` is the M2 behaviour; (e) every
+(DESIGN A8, amending A6's fallback only) by the column's dtype and unit: a numeric or
+unit-bearing column ``measurement`` then ``unit`` or the next non-``taxon`` aspect of the
+lookup's training prior, a string column the prior order without ``taxon``, capped at two,
+never ``unit`` for a column without a unit, never ``taxon`` from the fallback (the hint and the
+lookup still give it), the ``search_json.a6.fallback`` record marked ``rule: "a8"`` with its
+reason, and needing no CLM answer; (d) ``closed_choice: clm`` is the M2 behaviour; (e) every
 fixture card annotates end to end in both modes; and explain, review and feedback never offer an
 audit-only record.
 
@@ -35,7 +39,7 @@ from mesa_clm.avu import VALUE_KIND_LABEL, VALUE_KIND_TOP
 from mesa_clm.bench import registered as reg
 from mesa_clm.bench.baselines import Lookup, evaluate_lookup, task_keys
 from mesa_clm.bench.run import load_inputs
-from mesa_clm.cards import DatasetCard, is_identifier, load_card
+from mesa_clm.cards import DatasetCard, is_identifier, is_numeric, load_card
 from mesa_clm.cli import EXIT_OK, main
 from mesa_clm.clm.fake import FakeClm
 from mesa_clm.clm.http import ChoiceAnswer, Question, SystemOneResponse
@@ -47,6 +51,9 @@ from mesa_clm.closed_choice import (
     CLOSED_CHOICE_MODES,
     CLOSED_CHOICE_TASKS,
     FALLBACK_CAP,
+    FALLBACK_MARKER,
+    FALLBACK_REASONS,
+    FALLBACK_RULE,
     LOOKUP_TOP,
     TABLE_PATH,
     TABLE_SHA256,
@@ -56,6 +63,8 @@ from mesa_clm.closed_choice import (
     AspectTableError,
     candidate_aspects,
     fallback_aspects,
+    fallback_order,
+    fallback_reason,
     freeze_table,
     is_audit_only,
     packaged_table,
@@ -299,21 +308,89 @@ def test_candidate_aspects_hint_then_the_lookups_top_two_uncapped() -> None:
     assert candidate_aspects(None, []) == []
 
 
-def test_fallback_aspects_follow_the_order_capped_at_two() -> None:
-    every = frozenset({"envo", "ncbitaxon", "pato", "uo", "obi", "iao", "gaz", "ro"})
-    order = ["other", "unit", "method", "taxon", "measurement"]
-    assert FALLBACK_CAP == 2
-    # other is never an aspect; unit only for a column with a unit.
-    assert fallback_aspects(order, in_play=every, has_unit=False) == ["method", "taxon"]
-    assert fallback_aspects(order, in_play=every, has_unit=True) == ["unit", "method"]
-    # An aspect with no ontology in play is skipped (method: obi, iao, bco, genepio).
-    assert fallback_aspects(order, in_play={"ncbitaxon", "pato"}, has_unit=False) == [
-        "taxon",
+EVERY = frozenset({"envo", "ncbitaxon", "pato", "uo", "obi", "iao", "gaz", "ro"})
+# A prior order shaped like the packaged table's (method first, then taxon): A6's fallback gave
+# method and taxon to every unseen column (DESIGN A7's note).
+PRIOR = ["method", "taxon", "environment", "measurement", "unit", "data_type", "location", "other"]
+
+
+def test_fallback_aspects_by_dtype_and_unit_capped_at_two() -> None:
+    """DESIGN A8: a numeric column or a column with a unit gets measurement first, then unit
+    when it has a unit, else the next non-taxon aspect of the prior; a string column keeps the
+    prior order with taxon removed; two kept; taxon never from the fallback."""
+    assert FALLBACK_CAP == 2 and FALLBACK_MARKER == "a8"
+    assert FALLBACK_REASONS == ("numeric", "unit", "string")
+    assert "taxon never comes from the fallback" in FALLBACK_RULE
+    # (a) numeric with a unit: measurement, unit.
+    assert fallback_aspects(PRIOR, in_play=EVERY, has_unit=True, numeric=True) == [
+        "measurement",
+        "unit",
+    ]
+    # (a) numeric without a unit: measurement, then the prior's first non-taxon aspect.
+    assert fallback_aspects(PRIOR, in_play=EVERY, has_unit=False, numeric=True) == [
+        "measurement",
+        "method",
+    ]
+    # (a) a string column with a unit counts as unit-bearing.
+    assert fallback_aspects(PRIOR, in_play=EVERY, has_unit=True, numeric=False) == [
+        "measurement",
+        "unit",
+    ]
+    # (b) a string column: the prior order with taxon removed (A6 gave method, taxon).
+    assert fallback_aspects(PRIOR, in_play=EVERY, has_unit=False, numeric=False) == [
+        "method",
+        "environment",
+    ]
+    # The order the rule considers, before the in-play and unit filters.
+    assert fallback_order(PRIOR, has_unit=False, numeric=True) == [
+        "measurement",
+        "unit",
+        "method",
+        "environment",
+        "data_type",
+        "location",
+    ]
+    assert fallback_order(PRIOR, has_unit=False, numeric=False) == [
+        a for a in PRIOR if a != "taxon"
+    ]
+    # Why a column took its branch: unit (whatever the dtype), numeric, string.
+    assert fallback_reason(has_unit=True, numeric=True) == "unit"
+    assert fallback_reason(has_unit=True, numeric=False) == "unit"
+    assert fallback_reason(has_unit=False, numeric=True) == "numeric"
+    assert fallback_reason(has_unit=False, numeric=False) == "string"
+    # other is never an aspect; unit only for a column with a unit, even when the prior puts it
+    # first; a prior led by taxon never yields it.
+    order = ["other", "unit", "taxon", "method", "measurement"]
+    assert fallback_aspects(order, in_play=EVERY, has_unit=False, numeric=False) == [
+        "method",
         "measurement",
     ]
-    assert fallback_aspects(order, in_play={"ro"}, has_unit=True) == []
-    assert fallback_aspects(list(ASPECTS), in_play=every, has_unit=False) == [
-        "taxon",
+    assert fallback_aspects(order, in_play=EVERY, has_unit=False, numeric=True) == [
+        "measurement",
+        "method",
+    ]
+    assert fallback_aspects(["taxon", "other"], in_play=EVERY, has_unit=False, numeric=False) == []
+    # An aspect with no ontology in play is skipped (method: obi, iao, bco, genepio;
+    # measurement: envo, obi, pato, pco); the cap still holds.
+    assert fallback_aspects(
+        PRIOR, in_play={"ncbitaxon", "pato"}, has_unit=False, numeric=False
+    ) == ["measurement"]
+    assert fallback_aspects(PRIOR, in_play={"iao", "uo"}, has_unit=False, numeric=True) == [
+        "method",
+        "data_type",
+    ]
+    assert fallback_aspects(PRIOR, in_play={"iao", "uo"}, has_unit=True, numeric=True) == [
+        "unit",
+        "method",
+    ]
+    assert fallback_aspects(PRIOR, in_play={"ro"}, has_unit=True, numeric=True) == []
+    # Registry order (an empty prior): taxon dropped, so environment leads a string column.
+    assert fallback_aspects(list(ASPECTS), in_play=EVERY, has_unit=False, numeric=False) == [
+        "environment",
+        "method",
+    ]
+    assert fallback_aspects(list(ASPECTS), in_play=EVERY, has_unit=False, numeric=True) == [
+        "measurement",
         "environment",
     ]
 
@@ -642,10 +719,16 @@ def test_the_packaged_lookup_decides_on_a_host_without_labels(tmp_path: Path) ->
             ]
         else:
             n_fallback += 1
-            want = fallback_aspects(order, in_play=allowed_ontologies(), has_unit=bool(col.unit))
+            want = fallback_aspects(  # DESIGN A8: by the column's dtype and unit
+                order,
+                in_play=allowed_ontologies(),
+                has_unit=bool(col.unit),
+                numeric=is_numeric(col),
+            )
             assert chosen == [
                 (a, ASPECT_REASONS["fallback"], ASPECT_MODELS["fallback"]) for a in want
             ]
+            assert "taxon" not in want
         for a6 in rows.a6(column):
             lookup = a6["lookup"]
             assert (lookup["held_out"], lookup["table_sha256"]) == (SERVICE_CARD, TABLE_SHA256)
@@ -657,6 +740,10 @@ def test_the_packaged_lookup_decides_on_a_host_without_labels(tmp_path: Path) ->
             if a6["aspect_source"] == "fallback":
                 assert a6["fallback"]["kept"] == a6["aspects"]
                 assert [a for a, _ in a6["fallback"]["order"]] == order
+                assert a6["fallback"]["rule"] == FALLBACK_MARKER  # DESIGN A8
+                assert a6["fallback"]["reason"] == fallback_reason(
+                    has_unit=bool(col.unit), numeric=is_numeric(col)
+                )
             else:
                 assert a6["fallback"] is None
     assert n_lookup >= 3 and n_fallback >= 3
@@ -667,6 +754,141 @@ def test_the_packaged_lookup_decides_on_a_host_without_labels(tmp_path: Path) ->
 def allowed_ontologies() -> frozenset[str]:
     """The static planner's ontologies in play: the whole registry."""
     return frozenset(o for a in ASPECTS for o in allowed_for_aspect(a))
+
+
+# -- (c') the fallback by dtype and unit (DESIGN A8) --------------------------------------------------
+
+# The service card's unseen columns (no other bench card carries the name) by kind: numeric
+# with a unit, numeric without one, string without one. The packaged prior with the card held
+# out starts method, taxon, environment, measurement, unit (A6's fallback gave method, taxon to
+# all of them).
+A8_UNIT = ("boutNumber", "clusterSize", "observerDistance")
+A8_NUMERIC = ("pointCountMinute",)
+A8_STRING = ("plotType", "targetTaxaPresent", "vernacularName", "detectionMethod",
+             "visualConfirmation", "sexOrAge")  # fmt: skip
+A8_SEEN = {"namedLocation": ["method"], "taxonID": ["taxon", "method"],
+           "scientificName": ["taxon"], "taxonRank": ["measurement"]}  # fmt: skip
+
+
+def test_a8_an_unseen_numeric_column_gets_measurement_then_unit_or_the_next(
+    tmp_path: Path,
+) -> None:
+    """DESIGN A8 on the packaged table: an unseen numeric column with a unit gets
+    ``[measurement, unit]``; one without a unit ``[measurement, <the prior's next non-taxon>]``,
+    here ``method``; unit is searched in UO by rule and Q3 is asked at most twice."""
+    store = DuckDBStore(tmp_path / "prov.duckdb")
+    run = annotator(store).annotate(card(SERVICE_CARD))
+    rows = Rows(store, run)
+    fall = (ASPECT_REASONS["fallback"], ASPECT_MODELS["fallback"])
+    for name in A8_UNIT:
+        col = run.card.column(name)
+        assert is_numeric(col) and col.unit, name
+        assert rows.aspects()[name] == [("measurement", *fall), ("unit", *fall)], name
+        [uo] = [d for d in rows.of("column.ontology_fits", name) if d["method"] == "rule"]
+        assert (uo["answer"], uo["reason"]) == ("uo", "unit_aspect")
+        assert [a for c, a in rows.asked_q3() if c == name] == ["measurement"]
+    for name in A8_NUMERIC:
+        col = run.card.column(name)
+        assert is_numeric(col) and not col.unit, name
+        assert rows.aspects()[name] == [("measurement", *fall), ("method", *fall)], name
+        assert [a for c, a in rows.asked_q3() if c == name] == ["measurement", "method"]
+    assert not [a for a in run.abstained if a["reason"] == "no_aspect"]
+
+
+def test_a8_an_unseen_string_column_never_gets_taxon_from_the_fallback(tmp_path: Path) -> None:
+    """DESIGN A8: a string column keeps the prior order with taxon removed (method, then
+    environment here, where A6 gave method, taxon); no fallback aspect anywhere is taxon."""
+    store = DuckDBStore(tmp_path / "prov.duckdb")
+    run = annotator(store).annotate(card(SERVICE_CARD))
+    rows = Rows(store, run)
+    fall = (ASPECT_REASONS["fallback"], ASPECT_MODELS["fallback"])
+    for name in A8_STRING:
+        col = run.card.column(name)
+        assert not is_numeric(col) and not col.unit, name
+        assert rows.aspects()[name] == [("method", *fall), ("environment", *fall)], name
+    for name, chosen in rows.aspects().items():
+        assert ("taxon", *fall) not in chosen, name
+    # The same holds under a table whose prior is led by taxon, for every live column.
+    taxon_led = table_of(
+        ("zz_b", "elsewhere", "taxon"),
+        ("zz_c", "elsewhere", "taxon"),
+        ("zz_d", "elsewhere", "taxon"),
+        ("zz_b", "other1", "method"),
+    )
+    store2 = DuckDBStore(tmp_path / "prov2.duckdb")
+    run2 = annotator(store2, aspect_table=taxon_led).annotate(card(SERVICE_CARD))
+    rows2 = Rows(store2, run2)
+    assert set(rows2.aspects()) == set(live_columns(run2.card))
+    for name, chosen in rows2.aspects().items():
+        assert chosen and all(reason == ASPECT_REASONS["fallback"] for _, reason, _ in chosen)
+        assert "taxon" not in [a for a, _, _ in chosen], name
+    for name in A8_STRING:
+        assert [a for a, _, _ in rows2.aspects()[name]] == ["method", "environment"], name
+    for name in A8_UNIT:
+        assert [a for a, _, _ in rows2.aspects()[name]] == ["measurement", "unit"], name
+
+
+def test_a8_a_hint_of_taxon_and_a_seen_column_are_unchanged(tmp_path: Path) -> None:
+    """A8 amends the fallback only: a planner hint of taxon still yields taxon (first, as A6
+    places the hint) on a numeric or a string column, and a column the lookup has seen keeps
+    the lookup's top two, taxon included, with no fallback record."""
+    hints = {"observerDistance": "taxon", "plotType": "taxon"}
+    planner = HintPlanner(lambda col: {"aspect": hints[col.name]} if col.name in hints else {})
+    store = DuckDBStore(tmp_path / "prov.duckdb")
+    run = annotator(store, planner=planner).annotate(card(SERVICE_CARD))
+    rows = Rows(store, run)
+    hint = (ASPECT_REASONS["hint"], ASPECT_MODELS["hint"])
+    look = (ASPECT_REASONS["lookup"], ASPECT_MODELS["lookup"])
+    for name in hints:  # the hint alone: the lookup has nothing, and the fallback is not run
+        assert rows.aspects()[name] == [("taxon", *hint)], name
+        for a6 in rows.a6(name):
+            assert a6["sources"] == ["hint"] and a6["fallback"] is None
+    for name, top in A8_SEEN.items():
+        assert rows.aspects()[name] == [(a, *look) for a in top], name
+        for a6 in rows.a6(name):
+            assert a6["aspect_source"] == "lookup" and a6["fallback"] is None
+            assert a6["lookup"]["seen"] is True and a6["lookup"]["top"] == top
+    # Without the hints the same seen columns choose the same (the lookup path is A6's).
+    store2 = DuckDBStore(tmp_path / "prov2.duckdb")
+    rows2 = Rows(store2, annotator(store2).annotate(card(SERVICE_CARD)))
+    for name in A8_SEEN:
+        assert rows2.aspects()[name] == rows.aspects()[name], name
+
+
+def test_a8_the_fallback_record_carries_its_marker_and_reason(tmp_path: Path) -> None:
+    """Every fallback column's Q3 groups record ``search_json.a6.fallback`` with ``rule: "a8"``,
+    the reason (``unit``, ``numeric`` or ``string``), the rule's text, the prior order, the
+    order the rule considered, the column's facts and what was kept; the audit-only CLM
+    records are untouched."""
+    store = DuckDBStore(tmp_path / "prov.duckdb")
+    run = annotator(store).annotate(card(SERVICE_CARD))
+    rows = Rows(store, run)
+    lookup = AspectLookup.for_card(packaged_table(), SERVICE_CARD)
+    prior = [a for a, _ in lookup.prior_order()]
+    reasons: set[str] = set()
+    for name in A8_UNIT + A8_NUMERIC + A8_STRING:
+        col = run.card.column(name)
+        records = rows.a6(name)
+        assert records, name
+        for a6 in records:
+            assert a6["aspect_source"] == "fallback"
+            fb = a6["fallback"]
+            assert fb["rule"] == FALLBACK_MARKER == "a8"
+            assert fb["reason"] == fallback_reason(has_unit=bool(col.unit), numeric=is_numeric(col))
+            assert fb["reason"] in FALLBACK_REASONS
+            assert fb["rule_text"] == FALLBACK_RULE and fb["cap"] == FALLBACK_CAP
+            assert [a for a, _ in fb["order"]] == prior
+            assert fb["considered"] == fallback_order(
+                prior, has_unit=bool(col.unit), numeric=is_numeric(col)
+            )
+            assert (fb["has_unit"], fb["numeric"]) == (bool(col.unit), is_numeric(col))
+            assert fb["kept"] == a6["aspects"] == [a for a, _, _ in rows.aspects()[name]]
+            reasons.add(fb["reason"])
+    assert reasons == set(FALLBACK_REASONS)
+    # Audit-only CLM records: still stored, still abstain / audit_only_a6, none decides.
+    audit = [d for d in rows.decisions if is_audit_only(d)]
+    assert audit and {d["outcome"] for d in audit} == {"abstain"}
+    assert run.n_audit_only == len(audit)
 
 
 # A test table: other cards' labels for three of the service card's columns, plus a taxon row on
@@ -714,8 +936,10 @@ def test_the_hint_comes_first_and_the_lookup_adds_its_top_two(tmp_path: Path) ->
     # vernacularName: a hint of other is no aspect, and only its own card carries the name: the
     # fallback, in the prior's order (unit 3: no unit here; other; measurement; location).
     assert chosen["vernacularName"] == [("measurement", *fall), ("location", *fall)]
-    # boutNumber has a unit: the fallback starts with unit (uo by rule, as M2's unit aspect).
-    assert chosen["boutNumber"] == [("unit", *fall), ("measurement", *fall)]
+    # boutNumber (unsigned integer, unit "number") is unseen: DESIGN A8 gives a numeric or
+    # unit-bearing column measurement first, then unit (uo by rule, as M2's unit aspect). Under
+    # A6 the prior's order gave unit then measurement.
+    assert chosen["boutNumber"] == [("measurement", *fall), ("unit", *fall)]
     [uo] = [d for d in rows.of("column.ontology_fits", "boutNumber") if d["method"] == "rule"]
     assert (uo["answer"], uo["reason"]) == ("uo", "unit_aspect")
     for a6 in rows.a6("observerDistance"):
@@ -733,7 +957,9 @@ def test_the_hint_comes_first_and_the_lookup_adds_its_top_two(tmp_path: Path) ->
 def test_an_unseen_name_takes_the_fallback_never_unit_without_a_unit(tmp_path: Path) -> None:
     """A table whose prior puts unit first: a column without a unit is never given unit (S would
     search UO for the word "unit"); a column with a unit is. No column is left without an
-    aspect, and the fallback asks Q3 at most twice per column."""
+    aspect, and the fallback asks Q3 at most twice per column. Under DESIGN A8 a numeric or
+    unit-bearing column leads with measurement (no rows in this prior: it is placed first by
+    the rule, not by the prior), a string column follows the prior."""
     table = table_of(
         ("zz_b", "elsewhere", "unit"),
         ("zz_c", "elsewhere", "unit"),
@@ -749,8 +975,11 @@ def test_an_unseen_name_takes_the_fallback_never_unit_without_a_unit(tmp_path: P
         chosen = [
             a for a, reason, _ in rows.aspects()[name] if reason == ASPECT_REASONS["fallback"]
         ]
-        if run.card.column(name).unit:
-            assert chosen == ["unit", "data_type"], name
+        col = run.card.column(name)
+        if col.unit:  # boutNumber, clusterSize, observerDistance (A8: measurement, then unit)
+            assert chosen == ["measurement", "unit"], name
+        elif is_numeric(col):  # pointCountMinute (A8: measurement, then the prior's next)
+            assert chosen == ["measurement", "data_type"], name
         else:
             assert chosen == ["data_type", "location"], name
         assert len([a for c, a in rows.asked_q3() if c == name]) <= FALLBACK_CAP
@@ -831,10 +1060,18 @@ def test_the_plan_bounds_the_fallback_and_its_ontology_is_appended(tmp_path: Pat
     run = annotator(store, planner=planner, aspect_table=table_of()).annotate(card(SERVICE_CARD))
     rows = Rows(store, run)
     in_play = {"pato", "uo", "envo"}
-    # An empty table has no prior: registry order, skipping taxon and method (none in play).
+    # An empty table has no prior: registry order, skipping method (none in play) and taxon
+    # (never from the fallback, DESIGN A8); a numeric or unit-bearing column leads with
+    # measurement, then unit (UO in play) when it has a unit.
     for name in set(live_columns(run.card)) - set(hints):
-        want = ["environment", "measurement"]
-        assert [a for a, _, _ in rows.aspects()[name]] == want
+        col = run.card.column(name)
+        if col.unit:
+            want = ["measurement", "unit"]
+        elif is_numeric(col):
+            want = ["measurement", "environment"]
+        else:
+            want = ["environment", "measurement"]
+        assert [a for a, _, _ in rows.aspects()[name]] == want, name
         assert all(allowed_for_aspect(a) & in_play for a in want)
     # observerDistance: taxon has no ontology in play: no Q3, no group, the aspect stands.
     assert not rows.of("column.ontology_fits", "observerDistance")

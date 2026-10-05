@@ -10,9 +10,12 @@ CLM questions.
 Q1, Q2 and Q7 are answered by deterministic rules (:mod:`mesa_clm.closed_choice`): a column is
 annotated iff it is not an identifier, whatever the planner says (a ``rule`` record, ``Yes``);
 its aspects are the planner's hint, then the top two of the M0 lookup over the frozen table
-(the card held out), up to three, else the fallback: the registry's aspects in the order of the
-lookup's training prior, the first two (``other`` never, ``unit`` only for a column with a
-unit); a value kind the pre-rule leaves open is "the term label" (a ``rule`` record). No CLM
+(the card held out), up to three, else the fallback (DESIGN A8): a numeric column or a column
+with a unit gets ``measurement`` first, then ``unit`` when it has a unit, else the next aspect of
+the lookup's training prior that is neither ``taxon`` nor ``other``; a string column keeps the
+prior order with ``taxon`` removed; the first two (``other`` never, ``unit`` only for a column
+with a unit, ``taxon`` never from the fallback); a value kind the pre-rule leaves open is "the
+term label" (a ``rule`` record). No CLM
 answer chooses an aspect: Q3 is asked only for the aspects chosen, as below. CLM is still asked
 Q1, Q2 and Q7 in the same requests as below, and those records are stored audit-only (outcome
 ``abstain``, reason ``audit_only_a6``): they decide nothing and make no link. The run row's
@@ -116,7 +119,7 @@ from mesa_clm.avu import (
     triple,
     value_for,
 )
-from mesa_clm.cards import ColumnInfo, DatasetCard, SiteInfo, is_identifier
+from mesa_clm.cards import ColumnInfo, DatasetCard, SiteInfo, is_identifier, is_numeric
 from mesa_clm.clm.fingerprint import Fingerprint
 from mesa_clm.closed_choice import (
     ANNOTATE_REASON,
@@ -647,7 +650,8 @@ class _Group:
 class _ColumnAspects:
     """An annotated column under DESIGN A6 on its way to Q3: its aspects with the source of
     each (``hint``, ``lookup``, ``fallback``), the lookup's evidence for it, and the fallback's
-    order and choice when the fallback chose them."""
+    record (``rule: "a8"``, its reason, order and choice; DESIGN A8) when the fallback chose
+    them."""
 
     column: ColumnInfo
     aspects: list[str]
@@ -1177,7 +1181,8 @@ class _Pass:
         is not an identifier, whatever the planner says (a ``rule`` record, ``Yes``; the plan
         stays in ``runs.plan_json``); its aspects are the planner's hint and the lookup's top two
         (:func:`~mesa_clm.closed_choice.candidate_aspects`), else the fallback
-        (:meth:`~mesa_clm.closed_choice.AspectLookup.fallback`), each a ``rule`` record; a column
+        (:meth:`~mesa_clm.closed_choice.AspectLookup.fallback`, DESIGN A8: by the column's dtype
+        and unit, never ``taxon``), each a ``rule`` record; a column
         left without one is ``no_aspect``. No CLM answer is read. CLM is still asked Q1 and Q2
         for exactly the columns M2 sent it (one request per column, as M2: not an identifier and
         not excluded by the planner, or an identifier the planner marked ``annotate=True``), and
@@ -1229,7 +1234,9 @@ class _Pass:
             chosen = candidate_aspects(hint.aspect if hint else None, lookup.top(state))
             fallback: dict[str, Any] | None = None
             if not chosen:
-                kept, fallback = lookup.fallback(in_play=self.in_play, has_unit=bool(col.unit))
+                kept, fallback = lookup.fallback(
+                    in_play=self.in_play, has_unit=bool(col.unit), numeric=is_numeric(col)
+                )
                 chosen = [(aspect, "fallback") for aspect in kept]
             for aspect, source in chosen:
                 self._aspect_rule(col, aspect, source)

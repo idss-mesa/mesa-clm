@@ -56,7 +56,8 @@ only for a column with a unit; no CLM answer chooses an aspect), and Q7 is the p
 audit-only (outcome `abstain`, reason `audit_only_a6`: no link, no label, never offered);
 `--closed-choice clm` is the M2 behaviour. The user confirmed A6's two readings on 2026-10-04 (an
 unseen column name goes to the fallback; the fallback's order and cap of two), and the annotate
-latency budget for M3 must be re-measured under `rules`. Next: the M4 run (plan §12), then M3
+latency budget for M3 must be re-measured under `rules`. **A8** (2026-10-05) changes that
+fallback only (by the column's dtype and unit, never `taxon`; see "Fixed decisions"). Next: the M4 run (plan §12), then M3
 (the live proposed-only loop).
 
 ## Commands
@@ -177,6 +178,12 @@ mesa-clm writes under `~/.mesa/clm` is owner-only (0700/0600) whatever the umask
   and update `TABLE_SHA256`), its fallback the prior order capped at two; `runs.labels_sha256`
   names the snapshot in a `rules` run; `clm` keeps the M2 behaviour for audits and tests. A
   product-safety decision of the user, not a scientific claim: changing it again is an amendment.
+  **A8** (2026-10-05, after A7's note that the prior-ordered fallback gave `taxon` to numeric and
+  unit-bearing SRER columns) amends the fallback only: an unseen numeric column (`cards.is_numeric`)
+  or a column with a unit gets `measurement` first, then `unit` when it has a unit, else the
+  prior's next aspect that is neither `taxon` nor `other`; an unseen string column keeps the prior
+  order with `taxon` removed; two kept; `taxon` never from the fallback (still from the hint or
+  the lookup); `search_json.a6.fallback` carries `rule: "a8"` and `reason` `unit|numeric|string`.
 - **Sidecar and history (D11, D12, D13).** Per-host DuckDB opened per operation under a flock;
   the plugin always spools (`mesa-spool/1`); `direct` is CLI-only and needs the whole lock set
   free; one snapshot per (run, project); never an empty `record_changes`.

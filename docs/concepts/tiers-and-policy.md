@@ -1,6 +1,6 @@
 ---
 title: "Tiers and policy"
-description: "What level and calibration promise on a mesa-clm decision, the record invariants, how a tier is chosen and how the probe tier is served without clm-serve (M4), the rules that turn a decision into auto, proposed or abstain with a cited bench cell (the citation test as implemented, the audit demotion), promotion and the production audits, and what drives each step of a run today (ols_rank for term.fits under K1; the closed choices by rule under amendment A6)."
+description: "What level and calibration promise on a mesa-clm decision, the record invariants, how a tier is chosen and how the probe tier is served without clm-serve (M4), the rules that turn a decision into auto, proposed or abstain with a cited bench cell (the citation test as implemented, the audit demotion), promotion and the production audits, and what drives each step of a run today (ols_rank for term.fits under K1; the closed choices by rule under amendment A6, the aspect fallback by dtype and unit under A8)."
 type: Guide
 tags:
   - concepts
@@ -103,7 +103,7 @@ run with the shipped defaults:
 | Step | Driven by | Level of the deciding record |
 |---|---|---|
 | Q1 annotate | rule: every non-identifier column, whatever the planner says | `none` (`rule`) |
-| Q2 aspect | the planner's hint, then the top two of the M0 lookup over the packaged table frozen from the registered labels snapshot (the card held out), up to three; else the first two aspects in the lookup's prior order (`unit` only for a column with a unit); no CLM answer read | `none` (`rule`) |
+| Q2 aspect | the planner's hint, then the top two of the M0 lookup over the packaged table frozen from the registered labels snapshot (the card held out), up to three; else the fallback (A8): a numeric or unit-bearing column `measurement` then `unit` or the prior's next non-`taxon` aspect, a string column the lookup's prior order without `taxon`, two kept (`unit` only for a column with a unit); no CLM answer read | `none` (`rule`) |
 | Q3 ontology | CLM, F9 (A1), asked for each chosen aspect but `unit`; top two in-play ontologies kept whatever the outcome (D28) | `zero_shot` |
 | Q4–Q6 terms | `ols_rank`, the OLS top-1 (K1, A1); on a host whose `CURRENT.json` promotes the `term.fits` probe, that probe (A7) | `none` (`ols_rank`), or `probe` |
 | Q4b specificity | not asked for an `ols_rank` group (A1); asked for a probe group (A7, D24) | — or `probe` |

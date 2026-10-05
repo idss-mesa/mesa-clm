@@ -196,8 +196,11 @@ outcome; these tests hold the code to it:
   pinned and checked, and for every leave-one-card-out fold the lookup built from it is M0's
   (it reads the snapshot's 60 `column.aspect` labels, which M0's lookup cell already read); the
   hint and the lookup's top two are not capped, with M0's tie rule and the annotated card held
-  out; the fallback follows the lookup's prior, keeps two, never offers `unit` to a column
-  without a unit, needs no CLM answer (`ols_rank`, CLM down) and asks only the aspects with an
+  out; the fallback (DESIGN A8) gives an unseen numeric or unit-bearing column `measurement`
+  then `unit` or the prior's next non-`taxon` aspect and a string column the lookup's prior
+  without `taxon`, keeps two, never offers `taxon` or `unit` to a column without a unit, records
+  `rule: "a8"` and its reason in `search_json.a6.fallback`, leaves a planner hint of `taxon`
+  and every seen column unchanged, needs no CLM answer (`ols_rank`, CLM down) and asks only the aspects with an
   ontology the plan puts in play, the planner's ontology still appended; a sidecar file without
   the schema; `clm` mode is the M2 behaviour; all seven fixture cards annotate in both modes under
   the shipped decider with at most three Q3 questions per column; explain, the pending groups,
