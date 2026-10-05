@@ -33,8 +33,9 @@ on the serving host and the production rule is: a task in `decider.ols_rank_task
 the probe decides at level `probe`, proposed-only (every `auto` stays null), D24 asked again,
 the run's `probe_tasks` naming it and `ols_rank_tasks` listing only what `ols_rank` decided
 (`pipeline.Annotator`, `tests/unit/test_a7_promoted_probe.py`); X4 keeps no teacher labels
-(production fits use the registered snapshot only); the production audit of plan §8 is still to
-run. The registered run of M2 (plan §14, once; outputs committed as
+(production fits use the registered snapshot only); the production audit of plan §8 is **deferred,
+not run** (A7's appended note: the curator cannot review by hand, D21 admits no other curator
+labels; no `audits` row exists; the sample and the seven live runs are kept). The registered run of M2 (plan §14, once; outputs committed as
 produced in `bench/results/2026-10-03/`, never edited) decided, and DESIGN **A1** records:
 `column.ontology_fits` → **F9 on `clm-latest`** (`framings.ACTIVE`, `framings.lock.json`
 rotated, lock_sha `7c93cc3e0ff6…`; no question_key moved); `term.fits` → **K1** (no arm

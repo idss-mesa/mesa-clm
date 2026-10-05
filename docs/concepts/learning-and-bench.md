@@ -647,7 +647,8 @@ kept.** `on ≻ off` on novel-key NLL fails for both scorings at (0.5, 0.3): `te
 −0.070 (−0.126) / −0.102. Production fits use the registered snapshot only. **CLM's head adds
 signal**: `@latest` ≻ `@raw` on NLL under rule R for both rank_fit tasks (lower bounds 0.012 and
 0.026). No numeric `auto` exists (every probe cell's `threshold_cp` is null at both risks; 0.1.0
-ships proposed-only), and the production audit on the promoted `term.fits` probe is still to run.
+ships proposed-only), and the production audit on the promoted `term.fits` probe is deferred, not run (DESIGN A7's
+appended note; the sample of 100 probe decisions over seven non-bench cards is kept).
 
 ## Baseline numbers
 

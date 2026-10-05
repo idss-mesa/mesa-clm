@@ -2235,6 +2235,26 @@ frozen rule, a committed cell or a number.
   production audit of plan §8 M4 (≥ 100 proposals from ≥ 5 non-bench SRER cards, the curator's
   review, `audit record`) runs on the promoted `term.fits` probe and is reported in RESEARCH.md
   when done; its outcome changes nothing here (no `auto` exists to gate).
+  *(Appended 2026-10-05.)* **The production audit is deferred, not run.** A sample was drawn
+  twice (`.local/m4/audit/sample-2026-10-05.json`, 100 decisions over 7 cards, 56 of them
+  zero-shot `column.ontology_fits` decisions that carry no artifact; superseded by
+  `sample-2026-10-05b.json`, 100 `term.fits` decisions of the promoted probe over the same 7
+  cards, drawn after PR #7 made `audit review` show the column context and `audit sample`
+  default to artifact-backed decisions). The curator (the user) began the first review blind
+  — the display then showed no column — and those four verdicts and their four curator labels
+  were voided and deleted; the curator does not have the time to review by hand, and D21
+  admits no other source of curator labels (an agent's verdict is `agent_pick` at weight 0 and
+  can mint no `audits` row). So no `audits` row exists, `auto_requires_audit` cannot be met,
+  every `auto` stays null, and 0.1.0 ships proposed-only, as plan §8 says it does whatever K2
+  decides. The M4 acceptance item "production audit … curator-reviewed; proposed-precision CP
+  CI reported" is therefore **not met** and stays open; the sample file and the seven runs
+  (sidecar runs `7e126249…`, `6509b778…`, `62e39103…`, `57f95a80…`, `4d0144a0…`, `4378ae80…`,
+  `bea9484a…`) remain for a later review. What the first look did show, label-free from the
+  seven runs' groups: the A6 aspect fallback gave the `term.fits` column groups `method` 53,
+  `taxon` 44 and `measurement` 1 times (25 of the 44 `taxon` to numeric or unit-bearing columns,
+  e.g. `archiveMass` in grams → the OLS query `gram` → twelve organisms), because the lookup's
+  prior order comes from the bench's bird and beetle tables; the fix is an amendment to A6 the
+  user has been asked to decide.
 
 **Why.** These are the outcomes the M4 run was registered to produce (M4 plan §12.10: "the
 consequences of K2 and of X4's decision are the integrator's amendment (A7)"); the readings above
