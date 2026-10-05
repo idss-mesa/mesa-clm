@@ -311,3 +311,39 @@ def test_grids_and_constants_are_the_declared_ones() -> None:
         L.grid_of("nope")  # type: ignore[arg-type]
     z = np.array([[1.0, 2.0, 3.0], [0.0, 0.0, 0.0]])
     np.testing.assert_allclose(np.exp(log_softmax(z)), softmax(z))
+
+
+def test_the_gram_fallback_gives_the_same_fit_when_lapack_does_not_converge(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """When numpy's divide-and-conquer SVD raises ``LinAlgError`` (seen once on an X4 design),
+    ``prepare`` falls back to the Gram eigendecomposition: the same rank, the same row span and
+    the same fitted probabilities; the success path is untouched (a converging matrix gives
+    numpy's own factors)."""
+    rng = np.random.default_rng(11)
+    x = rng.normal(size=(120, 700))
+    x[40:60] = x[20:40]  # duplicated rows (teacher rows of one column across tables)
+    y = rng.integers(0, 2, 120)
+    normal = prepare(x)
+    real_svd = np.linalg.svd
+    calls = {"n": 0}
+
+    def flaky(a: np.ndarray, **kw: object) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise np.linalg.LinAlgError("SVD did not converge")
+        return real_svd(a, **kw)  # type: ignore[no-any-return]
+
+    monkeypatch.setattr(np.linalg, "svd", flaky)
+    fallback = prepare(x)
+    assert calls["n"] == 1
+    monkeypatch.setattr(np.linalg, "svd", real_svd)
+    assert fallback.r == normal.r == 99
+    # the same row span: every reduced row of one lies in the span of the other
+    proj = fallback.v @ (fallback.v.T @ normal.v)
+    np.testing.assert_allclose(proj, normal.v, atol=1e-8)
+    for kind, hyper in (("logreg", {"lambda": 1.0}), ("ridge", {"lambda": 1.0})):
+        a = fit_design(normal, kind, y, k=2, hyper=hyper)
+        b = fit_design(fallback, kind, y, k=2, hyper=hyper)
+        np.testing.assert_allclose(a.probs(x), b.probs(x), atol=1e-8)
+        np.testing.assert_allclose(a.coef, b.coef, atol=1e-7)

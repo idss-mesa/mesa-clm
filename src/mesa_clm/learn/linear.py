@@ -305,10 +305,38 @@ def prepare(X: npt.ArrayLike, weights: npt.ArrayLike | None = None) -> Design:
     w = _weights(weights, n)
     standardizer = Standardizer.fit(x, w)
     xs = standardizer.transform(x)
-    u, s, vt = np.linalg.svd(xs, full_matrices=False)
+    u, s, vt = _thin_svd(xs)
     tol = float(s.max()) * max(xs.shape) * RANK_EPS if s.size else 0.0
     r = int(np.sum(s > tol))
     return Design(standardizer, u[:, :r] * s[:r], vt[:r].T.copy(), w)
+
+
+def _thin_svd(xs: FloatArray) -> tuple[FloatArray, FloatArray, FloatArray]:
+    """``numpy.linalg.svd(xs, full_matrices=False)``, and when LAPACK's divide-and-conquer
+    driver does not converge (``LinAlgError``; seen once on a stacked silver-plus-teacher
+    design of the X4 run, every entry finite) the same thin SVD from the eigendecomposition of
+    the Gram matrix ``xs xsᵀ`` (``n × n``, ``n`` the rows: ``U`` its eigenvectors, ``s`` the
+    square roots of its eigenvalues, ``Vᵀ = diag(1/s) Uᵀ xs`` on the components above the rank
+    tolerance, the rest zero). Only the failure path differs from numpy's; a design whose SVD
+    converges is byte-identical to the one numpy returns."""
+    try:
+        u, s, vt = np.linalg.svd(xs, full_matrices=False)
+    except np.linalg.LinAlgError:
+        gram = xs @ xs.T
+        evals, evecs = np.linalg.eigh(gram)
+        order = np.argsort(evals)[::-1]
+        evals, evecs = evals[order], evecs[:, order]
+        # The rank cut is made on the eigenvalues: a null direction of the Gram matrix carries
+        # eigenvalue noise of order eps·λ_max, whose square root (√eps·s_max) would pass the
+        # singular-value tolerance of :func:`prepare`; the rest of ``s`` is zeroed so that
+        # ``prepare`` keeps exactly the components kept here.
+        keep = evals > (float(evals.max()) * max(xs.shape) * RANK_EPS if evals.size else 0.0)
+        s = np.where(keep, np.sqrt(np.clip(evals, 0.0, None)), 0.0)
+        vt = np.zeros((s.size, xs.shape[1]), dtype=np.float64)
+        vt[keep] = (evecs[:, keep].T @ xs) / s[keep][:, None]
+        u = evecs
+        return u, s, vt
+    return u, s, vt
 
 
 # -- the model ---------------------------------------------------------------------------------------
