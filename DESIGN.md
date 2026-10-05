@@ -2298,6 +2298,13 @@ returned organisms (`gram` → *Colletotrichum graminicola* and eleven more) for
 probe to rank. No bench cell is touched: the lookup's items are the bench cards' columns, which
 the lookup *sees*, so the fallback never fires on a bench card except for a column absent from
 the other six cards' items.
+*(Appended after the merge, 2026-10-05.)* The same seven cards re-annotated under A8 (sidecar runs
+`1f13e4db…`, `c23d717b…`, `d6bfbfc8…`, `0ac32a08…`, `813f8149…`, `9d1dd27b…`, `272c1c22…`): the
+`term.fits` column groups' aspects moved from `method 298 / taxon 293 / measurement 2` to
+`measurement 292 / method 153 / unit 72`, `taxon` 0; the proposals from `taxon 28 / method 21`
+(49, 27 of them NCBITaxon) to `measurement 54 / method 6 / unit 4 / taxon 1` (65: ENVO 34, PATO
+11, OBI 12, UO 4, GENEPIO 3, NCBITaxon 1), abstains 545 → 436 (RESEARCH.md "A8 on the seven SRER
+cards"). Label-free, production runs, no bench cell.
 
 **Why.** A product-safety decision, like A6: a fallback that names organisms for a pressure or a
 mass column proposes nothing a curator could accept, and the prior order is the bench's, not the
