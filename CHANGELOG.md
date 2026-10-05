@@ -8,6 +8,12 @@ All notable changes to the mesa-clm package. The format follows
 
 ## [Unreleased]
 
+### Changed (DESIGN A7 note: the production audit is deferred)
+
+- The M4 production audit was not run (the curator cannot review by hand; D21 admits no other
+  source of curator labels): no `audits` row exists, every `auto` stays null, 0.1.0 ships
+  proposed-only; the acceptance item stays open with the sample and the seven live runs kept.
+
 ### Fixed (audit review)
 
 - `audit sample` fills each stratum's share card-spanning (each pick prefers a card the sample

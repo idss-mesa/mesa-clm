@@ -1051,6 +1051,16 @@ pair512.v1, λ 0.1, cite its probe cell, 5/7), `avu.value_kind` (`082178504fb4a3
 nested cell (`tiers.json#neon_ontology_fits.calibrated.F9`, 7/7). Promoted on the serving host
 by `learn promote --version 1 --task term.fits --tier probe` (DESIGN A7); nothing else promoted.
 
+**Production audit: deferred, not run** (DESIGN A7, the appended note): no `audits` row exists;
+the seven live runs on non-bench SRER cards (2026-10-05 04:57Z–05:06Z: `DP1.00004.001.BP_30min`,
+`DP1.00002.001.SAAT_30min`, `DP1.00013.001.wdp_collectionChem`, `DP1.00038.001.wdi_isoPerSample`,
+`DP1.10047.001.spc_biogeochem`, `DP1.10026.001.cfc_carbonNitrogen`, `DP1.00024.001.PARPAR_30min`;
+1,380 decisions, the promoted `term.fits` probe deciding every `term.fits` group) and the
+artifact-only sample of 100 probe decisions (7 would-be-auto by the top decile, 60 proposed, 33
+anchor-abstains) are in the sidecar and `.local/m4/audit/`. Label-free, from those runs' groups:
+the A6 aspect fallback assigned `method` 53, `taxon` 44, `measurement` 1 to the `term.fits`
+column groups; 25 of the 44 `taxon` assignments went to numeric or unit-bearing columns.
+
 **Recomputation.** A scratch rerun of X3 after the SVD fallback (`linear._thin_svd`, commit
 `034672e`) reproduced all 20 committed X3 cells exactly (timing diagnostics excluded).
 

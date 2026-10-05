@@ -272,6 +272,7 @@ no row, since an audit is of an artifact version, and a sample drawn with `--all
 many reviewed items had none (`reviewed_without_artifact`, the `report_only` line). The
 proposed-precision interval is printed per stratum, report-only. The production audit of plan §8
 (at least five non-bench SRER cards under the promoted tiers) is part of the M4 run protocol and
-has not run; its first review pass (2026-10-05) found the two defects this paragraph now
+is **deferred, not run** (DESIGN A7's appended note: the curator cannot review by hand and D21
+admits no other source of curator labels, so no `audits` row exists and every `auto` stays null); its first review pass (2026-10-05) found the two defects this paragraph now
 describes the fix of (the review showed no context; the default sample included unpromoted
 tiers).
