@@ -294,8 +294,8 @@ def stratified_sample(
     """``n`` items in equal shares per stratum (the remainder to the first strata; a stratum
     short of its share gives the rest to the others, in order), drawn with
     ``numpy.random.default_rng(seed)`` from each stratum sorted by decision id and then
-    interleaved by card (:func:`_interleave_by_card`: the first items of a stratum come from as
-    many cards as it has, so a draw spans the cards the pool allows and the ``min_cards`` check
+    filled card-spanning (:func:`_take_spanning`: each pick prefers a card the sample has not
+    got yet, so a draw spans the cards the pool allows and the ``min_cards`` check
     fails only when the pool itself cannot span them); refused when the pool is empty or the
     sample spans fewer than ``min_cards`` cards."""
     if n < 1 or min_cards < 1:
@@ -307,16 +307,19 @@ def stratified_sample(
     for item in sorted(pool, key=lambda i: i.decision_id):
         by_stratum[item.stratum].append(item)
     shuffled = {
-        s: _interleave_by_card([items[i] for i in rng.permutation(len(items))])
-        for s, items in by_stratum.items()
+        s: [items[i] for i in rng.permutation(len(items))] for s, items in by_stratum.items()
     }
     shares = {s: n // len(STRATA) + (1 if i < n % len(STRATA) else 0) for i, s in enumerate(STRATA)}
-    chosen: dict[str, list[AuditItem]] = {s: shuffled[s][: shares[s]] for s in STRATA}
+    seen: set[str] = set()
+    chosen: dict[str, list[AuditItem]] = {}
+    for s in STRATA:
+        chosen[s] = _take_spanning(shuffled[s], shares[s], seen)
     spare = n - sum(len(c) for c in chosen.values())
     for s in STRATA:  # a stratum short of its share passes the rest on, in order
-        extra = min(spare, len(shuffled[s]) - len(chosen[s]))
-        chosen[s] = shuffled[s][: len(chosen[s]) + extra]
-        spare -= extra
+        rest = [i for i in shuffled[s] if i not in chosen[s]]
+        extra = _take_spanning(rest, min(spare, len(rest)), seen)
+        chosen[s] = chosen[s] + extra
+        spare -= len(extra)
     out = [i for s in STRATA for i in chosen[s]]
     cards = {i.card for i in out}
     if len(cards) < min_cards:
@@ -327,19 +330,19 @@ def stratified_sample(
     return out
 
 
-def _interleave_by_card(items: Sequence[AuditItem]) -> list[AuditItem]:
-    """``items`` reordered round-robin over their cards, the cards in order of first appearance
-    and each card's items in their given order: a prefix of the result covers as many distinct
-    cards as the prefix is long, up to the number of cards. Deterministic in ``items``."""
-    by_card: dict[str, list[AuditItem]] = {}
-    for item in items:
-        by_card.setdefault(item.card, []).append(item)
-    queues = [list(reversed(q)) for q in by_card.values()]
+def _take_spanning(items: Sequence[AuditItem], k: int, seen: set[str]) -> list[AuditItem]:
+    """The first ``k`` of ``items`` (a shuffled stratum) in a card-spanning order: each pick is
+    the earliest remaining item whose card the sample has not got yet (``seen``, updated), else
+    the earliest remaining item. So a sample spans as many distinct cards as its strata's pools
+    allow and the ``min_cards`` check fails only when the pool itself cannot span them.
+    Deterministic in ``items``."""
+    remaining = list(items)
     out: list[AuditItem] = []
-    while queues:
-        for q in queues:
-            out.append(q.pop())
-        queues = [q for q in queues if q]
+    while remaining and len(out) < k:
+        pick = next((i for i in remaining if i.card not in seen), remaining[0])
+        remaining.remove(pick)
+        seen.add(pick.card)
+        out.append(pick)
     return out
 
 
