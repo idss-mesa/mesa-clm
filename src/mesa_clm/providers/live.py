@@ -16,6 +16,16 @@ installed, else the checkout's ``serving/serving.lock.json``) under the served h
   not re-run, so the host runs another recipe than the code describes);
 * a served head other than ``clm-latest``/``clm-raw`` (promoted heads arrive with M7).
 
+**Artifacts (M4, plan §5.5).** When ``<artifacts.dir>/<encoder_fp>/<clm_model_fp>/<lock8>/
+CURRENT.json`` names promoted artifacts for the served head, the provider serves them
+(:func:`mesa_clm.artifacts.bundle_from_current`): every version is re-hashed against its
+manifest, its fingerprints must be the live ones and its framings lock the code's, and a
+promoted probe needs the pinned head's export (:func:`head_export`, as the doctor loads it)
+when its spec reads head quantities; a mismatch refuses (K4), never a silent ``zero_shot``,
+unless ``artifacts.strict`` is false, which drops the mismatched entries with a warning noted
+on the run. Promoted artifacts filed under another framings lock than the live one are
+refused the same way. Without a ``CURRENT.json`` the provider serves ``zero_shot``.
+
 :func:`preflight` is what the CLI asks next, before a single question: clm-serve's ``/health``
 (unguarded on loopback, 5 s, no retry), which tells an unreachable clm-serve, or one whose
 encoder is down (``embedder: false``), from a reachable one (the caller may degrade to
@@ -44,20 +54,23 @@ a key.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Final
 
 import httpx
 
 from mesa_clm import render
+from mesa_clm.artifacts import ArtifactLayout, bundle_from_current
 from mesa_clm.clm.encoder import EncoderClient
-from mesa_clm.clm.fingerprint import LockError, ServingLock, load_serving_lock
+from mesa_clm.clm.fingerprint import Fingerprint, LockError, ServingLock, load_serving_lock
+from mesa_clm.clm.headproj import HeadError, HeadProjector
 from mesa_clm.clm.http import HEALTH_TIMEOUT_S, ClmError, ClmHttpClient
 from mesa_clm.config import Config
 from mesa_clm.net import EndpointError, ListenerOwnerError
-from mesa_clm.providers.tiered import TieredProvider
+from mesa_clm.providers.tiered import ArtifactBundle, ArtifactError, TieredProvider
 from mesa_clm.serving import (
+    HEADS_DIR,
     INSTALLED_LOCK,
     DockerArgv,
     Runner,
@@ -75,10 +88,12 @@ __all__ = [
     "LiveStack",
     "PreflightError",
     "ProviderSetupError",
+    "artifacts_for",
     "clm_provider",
     "clm_status",
     "container_check",
     "encoder_problems",
+    "head_export",
     "live_lock_path",
     "preflight",
 ]
@@ -114,17 +129,71 @@ def live_lock_path(home: str | Path | None = None) -> Path:
 
 @dataclass
 class LiveStack:
-    """The live provider and the two clients behind it (closed together)."""
+    """The live provider and the two clients behind it (closed together); ``notes`` what the
+    artifacts loading wants recorded on the run (module docstring)."""
 
     provider: TieredProvider
     client: ClmHttpClient
     encoder: EncoderClient
     lock: ServingLock
     lock_path: Path
+    artifacts: ArtifactBundle | None = None
+    notes: list[str] = field(default_factory=list)
 
     def close(self) -> None:
         self.client.close()
         self.encoder.close()
+
+
+def head_export(lock: ServingLock, home: str | Path | None = None) -> HeadProjector | None:
+    """The pinned head's numpy export under the serving home (``heads/npz/<sha8>.npz``, plan
+    §6.2) when present and exported from the lock's checkpoint (``source_sha256``; K4), else
+    ``None`` (the doctor's rule, ``health._head``)."""
+    path = serving_home(home) / HEADS_DIR / "npz" / f"{lock.head.sha256[:8]}.npz"
+    if not path.is_file():
+        return None
+    try:
+        head = HeadProjector.from_npz(path)
+    except HeadError:
+        return None
+    return head if head.source_sha256 == lock.head.sha256 else None
+
+
+def artifacts_for(cfg: Config, fp: Fingerprint) -> tuple[ArtifactBundle | None, list[str]]:
+    """The promoted artifacts of the served head (module docstring): ``(bundle, notes)``;
+    ``None`` when nothing is promoted. :class:`ProviderSetupError` for a bundle that must not
+    be served under ``artifacts.strict`` (K4)."""
+    layout = ArtifactLayout.from_config(cfg, fp)
+    notes: list[str] = []
+    strict = cfg.artifacts.strict
+    others = layout.other_locks_with_current()
+    if others and not layout.current_path.is_file():
+        message = (
+            f"promoted artifacts under {layout.model_dir} are filed under framings lock(s) "
+            f"{', '.join(others)}, not the live {layout.framings_lock_sha[:8]} (K4: re-bench "
+            "and re-promote under the live lock)"
+        )
+        if strict:
+            raise ProviderSetupError(message + "; or set artifacts.strict false to serve zero_shot")
+        notes.append(f"artifacts: {message}; serving zero_shot (artifacts.strict false)")
+        return None, notes
+    if not layout.current_path.is_file():
+        return None, notes
+    try:
+        bundle = bundle_from_current(layout, live=fp, strict=strict)
+    except ArtifactError as exc:
+        raise ProviderSetupError(f"artifacts: {exc}") from None
+    if bundle is None:
+        notes.append(
+            f"artifacts: {layout.current_path} promotes nothing servable (artifacts.strict "
+            f"{'true' if strict else 'false'}); serving zero_shot"
+        )
+        return None, notes
+    served = ", ".join(
+        f"{task} {promo.tier} {promo.version}" for task, promo in sorted(bundle.promoted.items())
+    )
+    notes.append(f"artifacts {bundle.version} ({layout.current_path}): {served}")
+    return bundle, notes
 
 
 def _checked_lock(path: Path, home: str | Path | None, explicit: bool) -> ServingLock:
@@ -179,6 +248,25 @@ def clm_provider(
         )
     path = Path(lock_path).expanduser() if lock_path is not None else live_lock_path(home)
     lock = _checked_lock(path, home, explicit=lock_path is not None)
+    fp = lock.fingerprint(model)
+    bundle, notes = artifacts_for(cfg, fp)
+    head: HeadProjector | None = None
+    store = None
+    if bundle is not None and bundle.probes:
+        from mesa_clm.learn.features import FeatureStore
+
+        promoted = [p for p in bundle.probes.values() if bundle.promotion_for(p.question_key)]
+        if any(p.needs_head for p in promoted):
+            head = head_export(lock, home)
+            if head is None:
+                raise ProviderSetupError(
+                    "a promoted probe reads head quantities but the pinned head's export "
+                    f"(heads/npz/{lock.head.sha256[:8]}.npz) is missing or not the lock's (K4)"
+                )
+        live_store = FeatureStore.for_lock(cfg, lock)
+        if live_store.exists():
+            store = live_store  # read-only on the probe path; never written by a provider
+            notes.append(f"artifacts: encoder vectors cached from {live_store.path} (read-only)")
     client = ClmHttpClient.from_config(cfg.clm, transport=transport)
     try:
         encoder = EncoderClient.from_config(
@@ -187,10 +275,23 @@ def clm_provider(
     except Exception:
         client.close()
         raise
-    provider = TieredProvider(
-        client, encoder, lock.fingerprint(model), method="clm", name="clm", model=model
-    )
-    return LiveStack(provider, client, encoder, lock, path)
+    try:
+        provider = TieredProvider(
+            client,
+            encoder,
+            fp,
+            bundle,
+            method="clm",
+            name="clm",
+            model=model,
+            head=head,
+            feature_store=store,
+        )
+    except ArtifactError as exc:
+        client.close()
+        encoder.close()
+        raise ProviderSetupError(f"artifacts: {exc}") from None
+    return LiveStack(provider, client, encoder, lock, path, bundle, notes)
 
 
 def clm_status(client: ClmHttpClient) -> tuple[bool, str]:

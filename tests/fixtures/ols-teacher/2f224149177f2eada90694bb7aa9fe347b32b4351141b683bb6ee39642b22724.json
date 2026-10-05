@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002623",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0002623",
+  "description": "A DNA sequencing assay that intends to provide information on the DNA sequences of multiple genomes (a metagenome) from different organisms present in the same input sample.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002623",
+  "isRoot": false,
+  "label": "whole metagenome sequencing assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

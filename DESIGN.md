@@ -844,6 +844,122 @@ the frozen section below; each says what the code does and where the reading is 
   (`tiers.json#/cells/neon_annotate.calibrated.F7/skipped_folds`). All 7 annotate training sets
   (77–92 items) are below 100, so the cell is empty under either order.
 
+## Implementation notes (M4)
+
+How M4 reads the frozen pre-registration where its text leaves room. None of these notes changes
+the frozen section below; each says what the code does and where the reading is written down.
+
+- **M4 analysis plan (pre-run).** Every frozen rule M4 runs (X3's probe tier, K2, X4 and the
+  teacher corpus, the citation test, artifacts and promotion, the production audit) is read as one
+  deterministic algorithm in `design/m4-analysis-plan.md`, committed and pushed with its code
+  (`src/mesa_clm/learn/{linear,probe,teacher}.py`, `bench/{x3,k2,x4,e2e,registered,run}.py`,
+  `artifacts.py`, `audit.py`, `policy.py`, `providers/{tiered,live,base}.py`, `health.py`, `cli.py`,
+  `scripts/record_ols_teacher.py`) **before the first M4 run on the snapshot's labels**, so the
+  commit shows every choice was made before a result existed. Where the frozen text admits more
+  than one reading the plan names each alternative and why it was rejected (the more conservative
+  reading wins; plan §0). The readings that settle the shape of X3, in short: the framing is not an
+  axis of the grid (a probe is fitted and served on the active framing's texts after A1; plan §0.4);
+  a spec belongs to one model, and K2's clm-raw clause is read on the model-restricted nested cells
+  (§0.4, B2.4); the floors are per fit, the probe floor of 40 on every probe fit's training items and
+  the calibration floor of 100 on the out-of-fold pool the probe's calibrator is fitted on (§0.4,
+  P.3.2, P.4.2); the inner criterion is the pooled out-of-fold NLL of the uncalibrated probe,
+  unweighted over items, with ties to the first configuration in declared order (P.3.3); the
+  logistic penalty is normalised against a weighted-mean data term (P.2.7); K2's best servable tier
+  is the candidate with the lowest pooled NLL, ties to `calibrated`, and "on the full set" is read
+  strictly (B2.2–B2.3); teacher target resolution is column → every table card of the product that
+  carries it, nothing synthesized for a column found in no card (B3.3); the silver-minus-Opus
+  subset is the registered items whose label survives a rebuild without Opus (B3.6); the citation
+  test requires the cell's tier to equal the record's level (C3.3); only promoted entries are served
+  (C1.5). The three pre-commit reviews (faithfulness, statistics, integrity; read-only, synthetic
+  data and `/tmp` copies, mutation runs of the suite) changed, still before any run: K2's
+  "card-sign condition" is now the literal rule R sign test (per-card Δacc > 0 on ≥ ⌈0.8·m_c⌉
+  counting cards), the margin-shifted per-card variant the drafts had gated on being kept
+  report-only and computed in integers (`50·Δcorrect > −n_card`, no float rounding at exactly
+  −0.02) — the more conservative reading, stated in advance to make K2(a) demanding against
+  AnyJev L2 (B2.3); the citation test reads `masked` as M2's cells record it (`masked: true` with
+  `mask` the framing's rule or none; the draft would have refused every real term.fits cell and
+  its fake cells hid it; C3.2); `learn fit` applies the M4 registration and refuses on any
+  deviation, cites only pre-registered nested cells (the closed choices' and term.fits' calibrated
+  entries get `cite: null` by construction) and records the registration in the manifest (C1.7);
+  `k2` requires `pre_registered: true` per candidate and fails closed on an unknown task count;
+  `k2_verdict` has no per-tier hook; the "no AUROC" wording for `column.annotate` corrected; P.6's
+  "stated in advance" claims qualified by the published per-card counts (aspect's inner training
+  sets fall to 36 < 40); the alternatives for the nested cell's identity and the clm-raw clause
+  named and rejected; the registration gained the neon-ducklake commit pin and name-wise constant
+  tests; the suite gained the tests the mutation runs found missing (the calibrator fitted on
+  inner out-of-fold predictions only, the inner 30/5 guard, strict boundaries of rule R's bound,
+  ECE's cluster bound, an exploratory candidate's ineligibility, promotion's accuracy rule, X4's
+  decision direction, the inner-fold refits reproducing the winner's OOF scores) and single-thread
+  BLAS with reduced synthetic grids so it runs in 8 minutes; `ontology_not_aspect_allowed` left
+  the ingest's `dropped` tally. Nothing changed a frozen rule or a committed cell.
+- **M4 pre-run disclosure: every look at labelled bench data from the A6 merge (`b46c36b`) to this
+  commit.** Nothing in this phase computed a quantity that combines a silver label with a model
+  output (from the feature store, clm-serve, the encoder or anything else), and no M4 verb (`bench
+  x3`, `bench k2`, `bench x4`, `learn fit`, `learn promote`) ran on the registered snapshot or the
+  live feature store. What was read or run on real data, all label-free with respect to model
+  outputs or already published:
+  1. *Published counts and identity fields*: the cell keys, `tier`, `selection`, the flags,
+     `question_key`, `model`, `n` and item counts of `bench/results/2026-10-03/{tiers,x2,x1}.json`
+     and the two files' sha256 (the pins); `baselines.json`'s per-card counts for the plan's
+     "stated in advance" paragraphs. No metric value of a committed cell entered code or a test.
+  2. *The snapshot, label-free*: the hermetic M4 tests build their worlds on the registered
+     snapshot's identity and state columns through the M2 CLI test world, every label-bearing column
+     replaced first (`tests/unit/test_bench_m4_cli.py`); the learn, serving and bench unit tests of
+     M4 are fully synthetic (random vectors, random heads, planted labels, fake results files, a
+     snapshot file that exists only to be hashed).
+  3. *The feature store*: `features stats --json` (1,953 texts, all embedded, 0 truncated, every
+     one projected on both sides under `clm-latest`), read once to confirm the X3 inputs exist.
+     Nothing was added to the store before this commit.
+  4. *The teacher corpus and the SRER cards* (`~/neon-ducklake`, a live working tree): file bytes
+     for the content hash, item counts per status, prefix, aspect and column, card column names for
+     the resolution counts (RESEARCH.md "The teacher corpus"). One corpus file was rewritten on disk
+     by a neon-ducklake commit at 2026-10-04 22:17:55Z while the pre-run work was reading the
+     directory, so the hash first computed (`d97b1690b450…`) was superseded by `d90387928bed…`,
+     the bytes the ingest read at neon-ducklake commit `b1fa52a8d3ff…` ("data: KONZ curation
+     results and updated ontology maps", committed 2026-10-04 22:18Z, the writer of that file; the
+     item set, 389, did not change); both are pinned. The hermetic suite now also reads the real
+     corpus when `~/neon-ducklake` exists (`tests/unit/test_teacher.py`, the fixture-closure check:
+     file names, bytes for the hash, CURIEs; label-free).
+  5. *Live EMBL-EBI OLS4*: `scripts/record_ols_teacher.py` recorded the 110 `get_term` responses of
+     the corpus's in-registry, aspect-mapped CURIEs on 2026-10-04 22:17:41Z–22:18:12Z (110
+     requests, 0 failures, 0 retries, 31 s; `.local/ols_teacher_report.json`) into
+     `tests/fixtures/ols-teacher/`; label-free.
+  6. *The teacher ingest and the two snapshots* (plan §12.2; labels copied or created, no model
+     output): on 2026-10-05 from 01:44Z to 01:46Z, `labels ingest-neon-eval --eval-root
+     tests/fixtures/neon-avu-eval` into a fresh store (`.local/m4/labels.duckdb`; its snapshot's
+     content digest equals the registered `5c60a8a6…`, the file hash differs by row ids and
+     timestamps; that check snapshot is `.local/m4/check.parquet`, 934 rows, outside the
+     repository), then `labels ingest-teacher --neon-root ~/neon-ducklake` (report
+     `.local/m4/ingest_teacher.log`: 55 files, 389 items, corpus sha256 `d90387928bed…`, 6
+     proposal files found under `sites/SRER/curation/proposals` but 0 `teacher_implicit` rows, 231
+     (item, card) resolutions; dropped: 103 `out_of_registry`, 101 `no_column`, 22
+     `unmapped_aspect`, 17 `collapsed_identity`, 11 `unresolved_column`, 5
+     `ontology_not_aspect_allowed` (the term.fits row still written); inserted 435 rows: 231
+     `term.fits`, 204 `column.ontology_fits`; `DP1.10092.001` has no card; `terms_missing` empty),
+     then `labels snapshot --out bench/snapshots/2026-10-04-teacher.parquet` (1,369 labels;
+     sha256 `397f98d4b28c…`, content `deb0dc46e17b…`); and `labels ingest-neon-eval --eval-root
+     tests/fixtures/neon-avu-eval --exclude-models claude-opus-5-5` into a second fresh store
+     (`.local/m4/minus_opus.duckdb`) with `labels snapshot --out
+     bench/snapshots/2026-10-04-minus-opus.parquet` (679 labels; sha256 `2cd529ffa439…`, content
+     `d8e26a0c7ac3…`). The pins are in `bench.registered.REGISTERED_M4`. The teacher snapshot's
+     silver rows are the registered rows (`bench x4` checks their content digest).
+  7. *The builders and the reviews*: the three builders (the probe tier; the bench producers and
+     the registration; the serving side) reported synthetic-only work, the bench builder's
+     label-free reads being items 1, 4 and 5 (their reports are in this session's transcript, not
+     in the repository). The three pre-commit reviews (faithfulness, statistics, integrity) worked
+     read-only, on synthetic data and in `/tmp` copies (planted worlds, mutation runs of the test
+     suite); the integrity review also ran `features stats --json`, hashed the two snapshots,
+     recomputed the teacher snapshot's silver content digest and counted rows per task, source and
+     origin in the `.local/m4` stores and in seven leftover synthetic M2-CLI test worlds under
+     `/tmp/mesa-clm-bench-*` (origin `…@synthetic000`, actor `synthetic`; deleted afterwards). No
+     label value met a model output in any of it.
+  8. *Found by the integrity check, outside this branch*: the A6 review round's two live probes of
+     2026-10-04 that joined clm-serve's F9 Q3 answers on the bench cards to the `column.aspect`
+     silver labels, recorded in the correction appended to A6 (exploratory, nothing written, no
+     registered number touched, `column.aspect` has no citable cell in M2 or M4).
+  Anything else done before the first run that reads labelled bench data or asks a bench item is
+  added here, in place, before that run.
+
 ## Pre-registration (G1)
 
 ### G1 freeze
@@ -1993,6 +2109,23 @@ Checks outside the repository, before the commit:
   planner's exclusion, the unseen key, the fallback without Q3 `p_fit`, `runs.labels_sha256`, Q3
   never choosing an aspect, `unit` without a unit, the bare sidecar file, and the Q3 count per
   column.
+
+**Correction (2026-10-05, appended by the M4 pre-run integrity check; nothing above is edited).**
+The sentence "Building and testing the table reads the snapshot's 60 `column.aspect` silver labels
+… and combines them with no model output" is true of the table and its tests, but the A6 review
+round of 2026-10-04 also ran two exploratory checks that did combine a model output with those
+labels, which this register did not record: `/tmp/a6audit/live_fallback_probe.py` (14:56Z–14:57Z)
+asked live clm-serve the F9 Q3 question for the 97 columns of the seven bench cards (679
+`clm/zero_shot` answers) and joined the answers to the snapshot's 40 labelled `column.aspect`
+items (`fallback_top1_equals_silver` 6, `silver_in_fallback_kept` 18, silver majority `method`
+18 / `taxon` 12), and a skeptic's rerun (`/tmp/skeptic2/probe.py`, 15:27Z–15:28Z) reproduced it
+(97/97 columns). Both were exploratory ("not evidence for any cell", their own docstrings), read
+the snapshot read-only, wrote nothing into the repository, and touched no registered number:
+`column.aspect` has no citable cell (below every floor; the M2 cells of the closed choices are
+fixed arms, M2 plan §9.5), A6 is a product-safety decision not a scientific claim, and M4's
+`column.aspect` probe cell is calibrator-floor skipped by construction (M4 plan §0.4). They are
+recorded here and in the M4 pre-run disclosure so that the register's account of every look at
+labelled bench data is complete.
 
 ## Plan (summary; the full plan is `design/plan-2026-09-28.md`)
 

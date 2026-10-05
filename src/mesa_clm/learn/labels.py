@@ -37,7 +37,7 @@ import collections
 import hashlib
 import json
 import re
-from collections.abc import Collection, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Final
@@ -723,6 +723,163 @@ def labelled_targets(
         leak_group=[str(r["leak_group"]) for r in rows],
         excluded=dict(sorted(excluded.items())),
     )
+
+
+# -- teacher rows (D19, plan §5.4; M4 R3/X4) ----------------------------------------------------
+
+TEACHER_SOURCES: Final[tuple[str, ...]] = ("teacher", "teacher_implicit")
+
+
+@dataclass(frozen=True)
+class TeacherRows:
+    """The teacher label rows of one task, **for training only** (D19: ``fold_eligible=false``,
+    never pooled, never in a test fold): parallel lists, one entry per ``(target_sha256,
+    option_key)`` identity (``teacher`` wins over ``teacher_implicit`` on the same identity, as
+    :func:`labelled_targets` selects). ``leak_group`` is the row's NEON product code: a fold
+    whose held-out card belongs to that product drops the row from its training set
+    (:meth:`training_indices`). ``weights`` are the stored weights until :meth:`reweighted`
+    gives an X4 arm its own (D20: they enter the fitters as sample weights).
+
+    ``builder`` is set by the bench (``bench/x4.py``): a ``learn.probe.FeatureBuilder`` over
+    :meth:`as_task` whose ``matrix(spec_id)`` returns the rows' feature matrix in this order, so
+    a nested probe can stack teacher rows under the silver training rows of a fold
+    (:meth:`matrix`). The rows are label-free with respect to the bench's silver labels: they
+    come from the neon-ducklake curation corpus (``learn/teacher.py``)."""
+
+    task_id: str
+    states: list[dict[str, Any]]
+    labels: list[int]
+    weights: list[float]
+    sources: list[str]
+    cards: list[str]
+    leak_group: list[str]
+    target_sha256: list[str]
+    option_key: list[str]
+    builder: Any = None
+
+    def __post_init__(self) -> None:
+        n = len(self.states)
+        for name in (
+            "labels",
+            "weights",
+            "sources",
+            "cards",
+            "leak_group",
+            "target_sha256",
+            "option_key",
+        ):
+            if len(getattr(self, name)) != n:
+                raise ValueError(f"TeacherRows.{name} needs one entry per row ({n})")
+        bad = sorted({s for s in self.sources if s not in TEACHER_SOURCES})
+        if bad:
+            raise ValueError(f"not teacher sources: {bad}")
+
+    def __len__(self) -> int:
+        return len(self.states)
+
+    def reweighted(self, weights: Mapping[str, float]) -> TeacherRows:
+        """The same rows at ``weights[source]`` per source (an X4 arm: ``{"teacher": 0.5,
+        "teacher_implicit": 0.3}``); a source the mapping does not name keeps its weight."""
+        return TeacherRows(
+            task_id=self.task_id,
+            states=list(self.states),
+            labels=list(self.labels),
+            weights=[
+                float(weights.get(s, w)) for s, w in zip(self.sources, self.weights, strict=True)
+            ],
+            sources=list(self.sources),
+            cards=list(self.cards),
+            leak_group=list(self.leak_group),
+            target_sha256=list(self.target_sha256),
+            option_key=list(self.option_key),
+            builder=self.builder,
+        )
+
+    def with_builder(self, builder: Any) -> TeacherRows:
+        """The same rows with their feature builder attached (module docstring)."""
+        return TeacherRows(**{**self.__dict__, "builder": builder})
+
+    def training_indices(self, held_out_product: str) -> list[int]:
+        """The rows a fold holding out a card of ``held_out_product`` may train on: every row
+        whose ``leak_group`` is another product (plan §5.4: "train drops teacher rows whose
+        leak_group equals the held-out product")."""
+        return [i for i, g in enumerate(self.leak_group) if g != held_out_product]
+
+    def matrix(self, spec_id: str) -> Any:
+        """The rows' feature matrix for ``spec_id`` (``[len(self), d]``) from the attached
+        builder; ``RuntimeError`` without one."""
+        if self.builder is None:
+            raise RuntimeError("TeacherRows has no feature builder attached (bench/x4.py sets it)")
+        return self.builder.matrix(spec_id)
+
+    def as_task(self, name: str | None = None) -> Any:
+        """The rows as a bench :class:`~mesa_clm.bench.tasks.base.Task` (for building their
+        features through the same manifest index as the silver items; ``meta.label_sources``
+        names the teacher sources, so ``cells.assemble_cell`` refuses to pool it)."""
+        from mesa_clm.bench.tasks.base import Task
+
+        counts: collections.Counter[str] = collections.Counter(self.sources)
+        return Task(
+            name or f"teacher:{self.task_id}",
+            TASKS[self.task_id],
+            [(st, y) for st, y in zip(self.states, self.labels, strict=True)],
+            "neon-ducklake curation (teacher, D19)",
+            "curation/generic/<DP>.validated.json",
+            cards=list(self.cards),
+            weights=list(self.weights),
+            products=list(self.leak_group),
+            option_keys=list(self.option_key),
+            meta={
+                "task_id": self.task_id,
+                "task_key": TASKS[self.task_id].key,
+                "min_weight": 0.0,
+                "label_sources": dict(sorted(counts.items())),
+                "teacher": True,
+                "masked": True,
+                "mask": None,
+            },
+        )
+
+
+def teacher_rows(store: LabelStore, task_id: str) -> TeacherRows:
+    """The teacher rows of ``task_id`` in ``store`` (sources :data:`TEACHER_SOURCES`, every
+    weight; one entry per identity, ``teacher`` over ``teacher_implicit``), in identity order.
+    Empty when the store holds none."""
+    ls = labelled_targets(store, task_id, min_weight=0.0, sources=TEACHER_SOURCES)
+    return TeacherRows(
+        task_id=task_id,
+        states=list(ls.states),
+        labels=list(ls.labels),
+        weights=list(ls.weights),
+        sources=list(ls.sources),
+        cards=list(ls.cards),
+        leak_group=list(ls.leak_group),
+        target_sha256=list(ls.target_sha256),
+        option_key=list(ls.option_key),
+    )
+
+
+def surviving_identities(
+    registered: LabelledSet | Sequence[tuple[str, str, int]],
+    rebuilt: LabelledSet | Sequence[tuple[str, str, int]],
+) -> list[int]:
+    """X4's **silver-minus-Opus** item subset (R3): the indices of ``registered``'s entries whose
+    identity ``(target_sha256, option_key)`` is present in ``rebuilt`` (the silver labels built
+    with ``ingest_neon_eval(exclude_models=["claude-opus-5-5"])``) **with the same label**. An
+    identity the rebuild no longer carries (a pair only Opus proposed) or carries with another
+    label (a Yes that became ``consensus_negative`` when Opus's vote left the majority) does not
+    survive; a weight change alone (``consensus_all`` -> ``consensus_majority``) does. Both
+    arguments are :class:`LabelledSet` objects or ``(target_sha256, option_key, label_index)``
+    triples; the subset is scored on the registered labels, which equal the rebuilt ones on it
+    by construction."""
+
+    def triples(x: LabelledSet | Sequence[tuple[str, str, int]]) -> list[tuple[str, str, int]]:
+        if isinstance(x, LabelledSet):
+            return list(zip(x.target_sha256, x.option_key, x.labels, strict=True))
+        return [(str(t), str(o), int(y)) for t, o, y in x]
+
+    survivors = {(t, o): y for t, o, y in triples(rebuilt)}
+    return [i for i, (t, o, y) in enumerate(triples(registered)) if survivors.get((t, o)) == y]
 
 
 def snapshot(store: LabelStore, out_path: str | Path) -> str:

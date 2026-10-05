@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0085001",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0085001",
+  "description": "An osmolarity quality inhering in a bearer by virtue of the total amount of ionic salts dissolved in the bearer.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0085001",
+  "isRoot": false,
+  "label": "salinity",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

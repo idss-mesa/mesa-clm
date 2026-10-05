@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00002005",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:00002005",
+  "description": "The mixture of gases (roughly (by molar content/volume: 78% nitrogen, 20.95% oxygen, 0.93% argon, 0.038% carbon dioxide, trace amounts of other gases, and a variable amount (average around 1%) of water vapor) that surrounds the planet Earth.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00002005",
+  "isRoot": false,
+  "label": "air",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

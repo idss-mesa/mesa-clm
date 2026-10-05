@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002763",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0002763",
+  "description": "An amplicon sequencing assay in which the amplicon is derived from universal primers used to amplify the 16S ribosomal RNA gene from isolate bacterial genomic DNA or metagenomic DNA from a microbioal community. Resulting sequences are compared to reference 16S sequence databases to identify or classify bacteria present within a given sample.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002763",
+  "isRoot": false,
+  "label": "16s ribosomal gene sequencing assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

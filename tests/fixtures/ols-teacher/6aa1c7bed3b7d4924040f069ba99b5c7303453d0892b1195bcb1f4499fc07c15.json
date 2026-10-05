@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102189",
+  "ontology_id": "genepio"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "GENEPIO:0102189",
+  "description": "An amplicon sequencing assay that targets and sequences a standardized region of the mitochondrial cytochrome c oxidase subunit I (COI) gene to enable taxonomic identification of eukaryotic organisms based on DNA barcodes.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/GENEPIO_0102189",
+  "isRoot": false,
+  "label": "Cytochrome c oxidase I barcoding",
+  "ontologyId": "genepio",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002140",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0002140",
+  "description": "An assay to determine the temperature of an evaluant.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0002140",
+  "isRoot": false,
+  "label": "temperature measurement assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

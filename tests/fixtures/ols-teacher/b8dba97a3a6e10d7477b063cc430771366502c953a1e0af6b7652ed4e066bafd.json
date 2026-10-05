@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001432",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001432",
+  "description": "A quality inhering in a bearer by virtue of the bearer's decomposition into component parts.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001432",
+  "isRoot": false,
+  "label": "decayed",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

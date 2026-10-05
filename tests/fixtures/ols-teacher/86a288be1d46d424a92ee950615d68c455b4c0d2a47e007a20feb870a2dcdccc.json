@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001135",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001135",
+  "description": "A measuring instrument that is used to determine the weight or mass of an object.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001135",
+  "isRoot": false,
+  "label": "balance",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

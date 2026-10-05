@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_06105267",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:06105267",
+  "description": "A planned process during which a soil profile is examined and the soil horizons that compose it are described.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_06105267",
+  "isRoot": false,
+  "label": "soil profile characterization",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

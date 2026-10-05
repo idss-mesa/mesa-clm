@@ -24,10 +24,11 @@ it (they never touch the real snapshot's labels: the M2 pre-commitment rule).
 from __future__ import annotations
 
 import hashlib
+import json
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING, Any, Final
 
 if TYPE_CHECKING:
     from mesa_clm.bench.tasks.base import Task
@@ -35,23 +36,37 @@ if TYPE_CHECKING:
 __all__ = [
     "FINGERPRINTS",
     "FRAMINGS_LOCK_SHA",
+    "FRAMINGS_LOCK_SHA_M4",
+    "K2_CONSTANTS",
     "REGISTERED",
+    "REGISTERED_M4",
     "ROOT",
     "SERVING_LOCK_SHA",
+    "UNPINNED",
+    "X3_GRID",
+    "X4_TEACHER_ARMS",
     "Registration",
     "RegistrationError",
+    "RegistrationM4",
     "TaskCounts",
     "anyjev_deviations",
     "check_anyjev",
+    "check_committed_input",
     "check_snapshot",
     "check_task",
     "check_tasks",
+    "committed_input_deviations",
     "current",
+    "current_m4",
     "data_deviations",
     "file_sha256",
+    "grid_deviations",
     "identity_deviations",
+    "m4_identity_deviations",
+    "pinned_snapshot_deviations",
     "run_deviations",
     "task_set_deviations",
+    "teacher_corpus_sha256",
 ]
 
 ROOT: Final[Path] = Path(__file__).resolve().parents[3]
@@ -284,19 +299,20 @@ def identity_deviations(
     fingerprints: Mapping[str, Mapping[str, str] | None] | None,
     models: Sequence[str],
     ignore: Sequence[str] = (),
+    registered_lock_sha: str | None = None,
 ) -> list[str]:
     """How the framings and models a run used depart from the registration (empty: none): the
     framings lock sha it scored under (``None``: not part of the run) and, for each of
     ``models``, its D5 fingerprint (every field but those in ``ignore``; a missing fingerprint or
     a model the registration does not name is a deviation). The producers apply it themselves
     (X1, the tier cells, X2), and ``bench framing --decide --from`` applies it to what
-    ``x1.json`` records (§12.6 (0))."""
+    ``x1.json`` records (§12.6 (0)). ``registered_lock_sha`` names another registered framings
+    lock than M2's (the M4 producers pass A1's, :func:`m4_identity_deviations`)."""
     reg = current()
+    want_lock = registered_lock_sha if registered_lock_sha is not None else reg.framings_lock_sha
     out: list[str] = []
-    if framings_lock_sha is not None and framings_lock_sha != reg.framings_lock_sha:
-        out.append(
-            f"framings lock_sha {_short(framings_lock_sha)} is not {_short(reg.framings_lock_sha)}"
-        )
+    if framings_lock_sha is not None and framings_lock_sha != want_lock:
+        out.append(f"framings lock_sha {_short(framings_lock_sha)} is not {_short(want_lock)}")
     for model in models:
         want = reg.fingerprints.get(model)
         got = None if fingerprints is None else fingerprints.get(model)
@@ -385,3 +401,266 @@ def check_tasks(tasks: Mapping[str, Task]) -> None:
         raise RegistrationError(f"the snapshot gives no items for {', '.join(missing)}")
     for name in reg.counts:
         check_task(name, tasks[name])
+
+
+# -- M4: the learned tiers (plan §8 M4, K2; DESIGN D19, D20, D27; design/m4-analysis-plan.md) ----
+#
+# The M4 producers (``bench x3``, ``bench k2``, ``bench x4``, ``learn fit``) apply this
+# registration themselves, exactly as the M2 producers apply :data:`REGISTERED`: the same
+# snapshot (both hashes), counts, B/seed/α and model fingerprints come from :data:`REGISTERED`
+# (through :func:`current`); M4 adds the framings lock of DESIGN A1 (the pre-run commit's
+# ``framings.lock.json``; M2 keeps G1's), the active framing per task, the X3 grid, the committed
+# M2 inputs K2 reads (by sha256), the K2 constants, X4's teacher weights and the teacher inputs.
+# A pin that reads :data:`UNPINNED` is a placeholder the integrator fills after the teacher
+# ingest (the corpus hash, the teacher snapshot, the silver-minus-Opus snapshot); until then a
+# producer that needs it writes every cell unregistered (``pre_registered: false``,
+# ``exploratory: true``) with the missing pin named among its deviations. Nothing here reads a
+# label value.
+
+# A pin the integrator has not filled yet (module comment above).
+UNPINNED: Final[str] = ""
+
+# ``framings.lock_sha()`` at the M4 pre-run commit: G1's lock rotated by DESIGN A1
+# (column.ontology_fits' active framing F7 -> F9, no question_key moved); the lock M4 scores
+# under (tests/unit/test_m4_plan_constants.py holds it to the checkout).
+FRAMINGS_LOCK_SHA_M4: Final[str] = (
+    "7c93cc3e0ff6c26918a631cb787ceb6623dfd797fa1bb90cc353e956c1856920"
+)
+
+# The active framing per task after A1 (``framings.ACTIVE``), the framing every probe cell
+# serves (R1: the framing is X1's decision, not an X3 axis).
+ACTIVE_FRAMINGS_M4: Final[Mapping[str, str]] = {
+    "column.annotate": "F7",
+    "column.aspect": "F7",
+    "column.ontology_fits": "F9",
+    "term.fits": "F7",
+    "avu.value_kind": "F7",
+}
+
+# The X3 grid (plan §5.3, R1): probe specs per shape, the fitters with their hyperparameter
+# grids (declared order = tie order; values only, the key name is ``learn.linear``'s), the inner
+# criterion and the floors. ``learn.probe.DEFAULT_GRID`` / ``learn.linear.GRIDS`` must equal it
+# (:func:`grid_deviations`); a run on another grid is unregistered.
+X3_GRID: Final[Mapping[str, Any]] = {
+    "specs": {
+        "rank_fit": (
+            "lowdim.v1",
+            "pair512.v1",
+            "pair4096.v1",
+            "joint4096@S1",
+            "joint4096@S1ns",
+        ),
+        "choice": ("choice.state.v1", "choice.raw.v1"),
+    },
+    "spec_models": {
+        "lowdim.v1": "clm-latest",
+        "pair512.v1": "clm-latest",
+        "pair4096.v1": "clm-raw",
+        "joint4096@S1": "clm-raw",
+        "joint4096@S1ns": "clm-raw",
+        "choice.state.v1": "clm-latest",
+        "choice.raw.v1": "clm-raw",
+    },
+    "fitters": ("logreg", "lda", "ridge"),
+    "hypers": {
+        "logreg": (1e-2, 1e-1, 1.0, 10.0),
+        "lda": (0.1, 0.5, 0.9),
+        "ridge": (1e-1, 1.0, 10.0),
+    },
+    "inner_criterion": "pooled OOF NLL of the uncalibrated probe probabilities over the training "
+    "cards' inner LOCO; ties -> the first configuration in the grid's declared order",
+    "calibration_floor": 100,
+    "probe_floor": 40,
+    "std_floor": 1e-8,
+}
+
+# K2 (plan §8, R2): the non-inferiority margin on accuracy against AnyJev L2, the clm-raw clause's
+# margin, the ECE ceiling and its cluster upper bound, and the card-sign condition (the rule R
+# sign test's fraction, minimum items per card and minimum counting cards).
+K2_CONSTANTS: Final[Mapping[str, float | int]] = {
+    "acc_margin": 0.02,
+    "head_acc_margin": 0.01,
+    "ece_max": 0.08,
+    "ece_upper_max": 0.12,
+    "sign_fraction": 0.8,
+    "sign_min_items": 10,
+    "min_clusters": 4,
+}
+
+# X4 (plan §5.6, R3): the teacher arms as (teacher weight, teacher_implicit weight); ``None`` is
+# the off arm. The decision rule reads the (0.5, 0.3) arm; (0.3, 0.1) is reported.
+X4_TEACHER_ARMS: Final[tuple[tuple[float, float] | None, ...]] = (None, (0.5, 0.3), (0.3, 0.1))
+X4_DECISION_ARM: Final[tuple[float, float]] = (0.5, 0.3)
+
+
+@dataclass(frozen=True)
+class RegistrationM4:
+    """The pre-registered M4 inputs (module comment). Paths are relative to the repository root;
+    the snapshot, counts, bootstrap settings and model fingerprints are :data:`REGISTERED`'s
+    (:func:`current`), never repeated here."""
+
+    framings_lock_sha: str = FRAMINGS_LOCK_SHA_M4
+    active: Mapping[str, str] = field(default_factory=lambda: dict(ACTIVE_FRAMINGS_M4))
+    tiers_results: str = "bench/results/2026-10-03/tiers.json"
+    tiers_sha256: str = "42501a293f45eacdd5db70fc7ee6d28acd5d9c726bcf3b79e5f657ac52f8684d"
+    x2_results: str = "bench/results/2026-10-03/x2.json"
+    x2_sha256: str = "76e07c34ddaed64e8987a2611c5af462457d7c398f49027533de3ea43cdb701d"
+    grid: Mapping[str, Any] = field(default_factory=lambda: dict(X3_GRID))
+    k2: Mapping[str, float | int] = field(default_factory=lambda: dict(K2_CONSTANTS))
+    teacher_arms: tuple[tuple[float, float] | None, ...] = X4_TEACHER_ARMS
+    # Pinned 2026-10-05T01:45Z after the label-free `labels ingest-teacher` (analysis plan §12.2):
+    # sha256 over the sorted (filename, file sha256) pairs of the corpus files
+    # (:func:`teacher_corpus_sha256`) as read at that neon-ducklake commit, the teacher snapshot
+    # with both hashes, the silver-minus-Opus snapshot with both hashes.
+    teacher_corpus_sha256: str = "d90387928bed0a9c196a8efc4dce3cbf40b1e2e8cc879bfb50c5e3451b208785"
+    neon_ducklake_commit: str = "b1fa52a8d3ffc56173a09794253ad86b0fd10111"
+    teacher_snapshot: str = "bench/snapshots/2026-10-04-teacher.parquet"
+    teacher_labels_sha256: str = "397f98d4b28c1cbff951a0797a7c3dca73dfe5e21b7e59262ca79bbf7906153f"
+    teacher_labels_content_sha256: str = (
+        "deb0dc46e17bdf7879f11135cec8090f58f12f7ed50f114037852e93a79bb07b"
+    )
+    minus_opus_snapshot: str = "bench/snapshots/2026-10-04-minus-opus.parquet"
+    minus_opus_labels_sha256: str = (
+        "2cd529ffa43986585bcb79988fbe683febc137d310ce34d9b94ace809a3676fe"
+    )
+    minus_opus_labels_content_sha256: str = (
+        "d8e26a0c7ac3b182e00741715d22e9e5a84c47ea898bf1d086a77c641acaa62c"
+    )
+
+    def tiers_path(self, root: str | Path | None = None) -> Path:
+        return _under(self.tiers_results, root)
+
+    def x2_path(self, root: str | Path | None = None) -> Path:
+        return _under(self.x2_results, root)
+
+    def teacher_snapshot_path(self, root: str | Path | None = None) -> Path | None:
+        return None if not self.teacher_snapshot else _under(self.teacher_snapshot, root)
+
+    def minus_opus_snapshot_path(self, root: str | Path | None = None) -> Path | None:
+        return None if not self.minus_opus_snapshot else _under(self.minus_opus_snapshot, root)
+
+
+REGISTERED_M4: RegistrationM4 = RegistrationM4()
+
+
+def current_m4() -> RegistrationM4:
+    """The M4 registration in force (:data:`REGISTERED_M4`; a test may stand another in)."""
+    return REGISTERED_M4
+
+
+def teacher_corpus_sha256(corpus_dir: str | Path, pattern: str = "*.validated.json") -> str:
+    """The teacher corpus content hash the M4 registration pins (R5): sha256 of
+    ``json.dumps(sorted((filename, sha256(file bytes)) pairs))`` over the files matching
+    ``pattern`` directly under ``corpus_dir`` (default separators, so the pin reproduces from
+    the formula alone). Hashes bytes only."""
+    folder = Path(corpus_dir).expanduser()
+    pairs = sorted((p.name, file_sha256(p)) for p in folder.glob(pattern) if p.is_file())
+    return hashlib.sha256(json.dumps(pairs).encode("utf-8")).hexdigest()
+
+
+def m4_identity_deviations(
+    *,
+    framings_lock_sha: str | None,
+    fingerprints: Mapping[str, Mapping[str, str] | None] | None,
+    models: Sequence[str],
+    ignore: Sequence[str] = (),
+) -> list[str]:
+    """:func:`identity_deviations` against the M4 registration: the framings lock of A1 and the
+    same model fingerprints as M2 (the serving lock of G1 is unchanged)."""
+    return identity_deviations(
+        framings_lock_sha=framings_lock_sha,
+        fingerprints=fingerprints,
+        models=models,
+        ignore=ignore,
+        registered_lock_sha=current_m4().framings_lock_sha,
+    )
+
+
+def committed_input_deviations(name: str, path: str | Path | None, sha256: str) -> list[str]:
+    """How a committed input a producer reads (``tiers.json``, ``x2.json``, ``x3.json``)
+    departs from its pin (empty: none): a missing file, or bytes whose sha256 is not ``sha256``.
+    An :data:`UNPINNED` pin is itself a deviation."""
+    if not sha256:
+        return [f"{name} is not pinned by the M4 registration"]
+    if path is None or not Path(path).is_file():
+        return [f"{name}: no such committed input ({path})"]
+    got = file_sha256(path)
+    if got != sha256:
+        return [f"{name} sha256 {_short(got)} is not the pinned {_short(sha256)}"]
+    return []
+
+
+def check_committed_input(name: str, path: str | Path, sha256: str) -> str:
+    """sha256 of a committed input after checking it is the pinned file;
+    :class:`RegistrationError` for a missing file or other bytes (the refusal of the M4 verbs,
+    as M2's :func:`check_anyjev`). An unpinned input is checked to exist only and its sha256
+    returned (the producer records the missing pin as a deviation)."""
+    file = Path(path)
+    if not file.is_file():
+        raise RegistrationError(f"{file}: no such committed input ({name})")
+    got = file_sha256(file)
+    if sha256 and got != sha256:
+        raise RegistrationError(
+            f"{file}: sha256 {_short(got)}… is not the pinned {name} ({_short(sha256)}…); the "
+            "M4 verbs read the committed M2 outputs and nothing else"
+        )
+    return got
+
+
+def pinned_snapshot_deviations(
+    name: str, labels_sha256: str | None, labels_content_sha256: str | None
+) -> list[str]:
+    """How a pinned M4 snapshot (the teacher or the silver-minus-Opus one) a run names departs
+    from its pins (empty: none); unpinned hashes are deviations."""
+    m4 = current_m4()
+    want_sha = getattr(m4, f"{name}_labels_sha256")
+    want_content = getattr(m4, f"{name}_labels_content_sha256")
+    out: list[str] = []
+    if not want_sha or not want_content:
+        out.append(f"{name} snapshot is not pinned by the M4 registration")
+        return out
+    if labels_sha256 != want_sha:
+        out.append(f"{name} labels_sha256 {_short(labels_sha256)} is not {_short(want_sha)}")
+    if labels_content_sha256 != want_content:
+        out.append(
+            f"{name} labels_content_sha256 {_short(labels_content_sha256)} is not "
+            f"{_short(want_content)}"
+        )
+    return out
+
+
+def _hyper_values(hypers: Any) -> dict[str, tuple[float, ...]]:
+    """``{fitter: values}`` of a grid's hyperparameter table, whether its entries are plain
+    values or one-entry ``{name: value}`` mappings (``learn.linear.GRIDS``)."""
+    out: dict[str, tuple[float, ...]] = {}
+    for fitter, entries in dict(hypers).items():
+        values: list[float] = []
+        for h in entries:
+            if isinstance(h, Mapping):
+                if len(h) != 1:
+                    raise RegistrationError(f"{fitter}: a hyperparameter entry must have one value")
+                values.append(float(next(iter(h.values()))))
+            else:
+                values.append(float(h))
+        out[str(fitter)] = tuple(values)
+    return out
+
+
+def grid_deviations(grid: Any, *, shape: str) -> list[str]:
+    """How a probe grid (``learn.probe.Grid``: ``specs``, ``fitters``, ``hypers``) departs from
+    the registered X3 grid for ``shape`` (empty: none). A variant cell's grid (``@latest``,
+    ``@raw``: the specs of one model; ``@full``: one configuration) is compared by the producer
+    against the restriction it declares, not here."""
+    want = current_m4().grid
+    out: list[str] = []
+    specs = tuple(getattr(grid, "specs", ()))
+    if specs != tuple(want["specs"][shape]):
+        out.append(f"{shape} specs {list(specs)} are not {list(want['specs'][shape])}")
+    fitters = tuple(getattr(grid, "fitters", ()))
+    if fitters != tuple(want["fitters"]):
+        out.append(f"fitters {list(fitters)} are not {list(want['fitters'])}")
+    got = _hyper_values(getattr(grid, "hypers", {}))
+    for fitter, values in dict(want["hypers"]).items():
+        if got.get(fitter) != tuple(float(v) for v in values):
+            out.append(f"{fitter} hyperparameters {got.get(fitter)} are not {tuple(values)}")
+    return out

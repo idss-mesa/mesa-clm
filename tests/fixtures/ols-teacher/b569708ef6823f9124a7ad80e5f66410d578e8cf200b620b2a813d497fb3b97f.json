@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000048",
+  "ontology_id": "bco"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "BCO:0000048",
+  "description": "A list of names ascribed to biological entities of specified organismal scope recorded over some defined spatial and temporal scope following a described sampling protocol and sampling effort, potentially including values indicating abundance or biomass of the biological entities",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/BCO_0000048",
+  "isRoot": false,
+  "label": "taxonomic inventory",
+  "ontologyId": "bco",
+  "synonyms": []
+ }
+}

@@ -1,13 +1,13 @@
 ---
 title: "Testing"
-description: "How to run the hermetic mesa-clm test suite, what the fake CLM transport, the recorded OLS fixtures and the offline doctor cover, the vendored-file and parity checks, the M1 tests, the M2 bench tests on synthetic labels only (and the plan-constants test), the tests of amendment A1 after the registered run, and the opt-in live, engine, GPU, Postgres, end-to-end and neon tiers."
+description: "How to run the hermetic mesa-clm test suite, what the fake CLM transport, the recorded OLS fixtures and the offline doctor cover, the vendored-file and parity checks, the M1 tests, the M2 and M4 bench tests on synthetic labels only (and the plan-constants tests), the tests of amendment A1 after the registered run, and the opt-in live, engine, GPU, Postgres, end-to-end and neon tiers."
 type: Guide
 tags:
   - develop
   - testing
 generated:
-  by: "claude/opus-5.5"
-  at: "2026-10-04T18:00:00Z"
+  by: "claude/fable-5.1"
+  at: "2026-10-04T23:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -20,6 +20,10 @@ sources:
   - id: m2-plan
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/m2-analysis-plan.md"
     title: "mesa-clm M2 analysis plan (pre-run)"
+    author: "team:idss-mesa"
+  - id: m4-plan
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/m4-analysis-plan.md"
+    title: "mesa-clm M4 analysis plan (pre-run)"
     author: "team:idss-mesa"
 status: draft
 stale_after: "2027-03-31T00:00:00Z"
@@ -42,7 +46,9 @@ Unit tests never touch the network or a GPU, and they never read the sibling mes
 checkout: parity data (`tests/fixtures/anyjev_parity.json`: states, `state_sha256`, task keys
 and AVUs) are committed fixtures. The seven neon-avu-eval cards, 1,884 recorded EMBL-EBI OLS4
 responses (777 from mesa-anyjev, 15 for the unit table, 1,092 for the fixture closure recorded
-once with `scripts/record_ols_closure.py`) and `results/validated.json` live under
+once with `scripts/record_ols_closure.py`), the 110 `get_term` responses of the teacher corpus's
+in-registry CURIEs under `tests/fixtures/ols-teacher/` (recorded once with
+`scripts/record_ols_teacher.py`, M4) and `results/validated.json` live under
 `tests/fixtures/`. Opt-in tiers are excluded by default (`addopts` in `pyproject.toml`)
 and selected with a marker and an environment variable:
 
@@ -207,6 +213,84 @@ exercising CLM's `term.fits` path (specificity, the second opinion, runner-ups);
 on Q1, Q2 and Q7 in `clm` mode. The synthetic M2 registrations stand in the checkout's framings
 lock.
 
+## The M4 tests (pre-run)
+
+The M4 code (`design/m4-analysis-plan.md`) is tested before any M4 verb runs on the snapshot's
+labels, so **every M4 test is synthetic only**: generated labels with planted signal, fake
+feature sources and feature-store worlds with planted vectors, a probe fitted on random
+features under the fake stack's fingerprint, synthetic corpora and table cards, a stand-in
+registration with a small grid, a results root under `tmp_path` and a snapshot file that exists
+only to be hashed. No test combines a silver label with a model output, reads a committed
+results file as data, or touches the live feature store or the sidecar. `tests/fakes/m4.py`
+holds the shared fixtures (a synthetic probe artifact, planted items and `fold_choices`, a cell
+with every frozen field, a results file, a snapshot file to hash, a `k2.json` shaped like the
+producer's).
+
+- `test_linear`: each fitter reaches scikit-learn's optimum for the same objective (binary and
+  multinomial logreg, shrinkage LDA against the `lsqr` form and the direct full-space formula
+  when d > n, ridge against its normal equations); the SVD reduction is exact; weights are sample
+  weights (an integer weight equals repeated rows); the training moments and the std floor; a
+  constant column gets a zero coefficient; a fit at the iteration cap is used as it is and
+  flagged; refusals; JSON round trip and determinism; the grids and constants are the declared
+  ones.
+- `test_probe`: every spec matrix is its formula over the vectors `score_arm` reads and the
+  builder's zero-shot logits equal the tier cells' scores; the nested selection recovers the
+  planted spec in every fold, ties go to the first configuration, the criterion is the pooled
+  OOF NLL; the weights change the fit; teacher rows never reach a test fold, are dropped for the
+  held-out product (outer and inner) and change the fit; two runs are byte-identical; the 30/5
+  guards, the 40 floor, the inner floors and the 100 OOF calibrator floor skip folds with the
+  stated reasons; an unfittable configuration is recorded and never chosen;
+  `ProbeArtifact.predict` equals the bench's held-out probabilities; the full-data artifact.
+- `test_x3`, `test_k2`, `test_x4`: the four probe cells with every frozen field, the identity as
+  the full-data choice and `fold_agreement_with_full`, the `@latest`/`@raw` restriction, `@full`
+  fixed, a planted signal passing `beats_lookup_novel`, the registration (another grid, other
+  labels, a task subset stamp every cell exploratory; a stand-in makes the run registered); K2's
+  candidates and best tier, every condition with its numbers, the verdicts a, b and c, a closed
+  choice c by construction, a tier that does not pool the full set, a missing AnyJev cell, the
+  clm-raw clause, the files and the `bench table` rows; X4's three arms on identical folds, the
+  on-arm fits changed by teacher rows that never reach a test fold, the silver-minus-Opus cells
+  on the surviving subset, the decision record, the unpinned-input rule.
+- `test_teacher`: every drop reason on a synthetic corpus, the resolution to every card of the
+  product that carries the column, Yes-only rows for both tasks, the aspect-allowed rule, the
+  row flags, a `mesa-clm` model refused, the corpus pin, the rows read back as `TeacherRows`,
+  the survivor rule; one label-free closure check of `tests/fixtures/ols-teacher` runs only when
+  the real corpus is present.
+- `test_bench_m4_cli`: `bench x3|k2|x4|e2e`, `bench table` over the new files and `labels
+  ingest-teacher` end to end on `test_bench_m2_cli`'s synthetic world plus a synthetic corpus:
+  registered runs and refusals, `x3.json` required by K2, the pinned inputs refusing other bytes,
+  `bench e2e` saying it is second-wave work, a teacher snapshot whose silver rows differ refused.
+- `test_artifacts`: the layout and manifest, the cited cell's identity equal to the bench cell's,
+  immutability and owner-only modes, the strict load's refusals (tampering, another
+  fingerprint, another framings lock, a stale question key), `CURRENT.json` and the bundle it
+  gives the provider, promotion's four rules, `learn fit`'s writer with an injected fitter, the
+  export copy, publish and pull with a tampered pull refused.
+- `test_probe_provider`: a promoted synthetic probe served over the fake stack (the fake encoder
+  embeds, the fake head projects), honest records (`level='probe'`, the calibrator's kind,
+  `feature_spec`, `artifact_version`, the artifact reference, `raw_probs` the zero-shot parity
+  distribution, `s_c`, `probs` the mirror of the calibrated tier over `logit(p_fit)`), closed
+  choices, an unpromoted probe `TierUnavailable`, K4 refusing another stack, the encoder down
+  and a rejected key, the vector cache reading the store and never writing it, a pipeline run
+  storing `feature_spec` rows.
+- `test_policy_citations`: a qualifying synthetic cell lets a passing record `auto`, and every
+  field of the citation test, negated once, refuses it with a reason naming the field; the audit
+  blocker (`audit_required`), `Policy.load`'s default validator and the pipeline's binding of the
+  live fingerprint.
+- `test_audit`: sampling refuses a bench card, stratifies by outcome from a seeded draw spanning
+  enough cards, the file holds ids only, a verdict mints curator labels outside every fold, the
+  `audits` rows follow the pass rule (none for decisions that apply no artifact), and `audit
+  sample|review|record` run end to end with the review at a terminal only, over fake-provider
+  runs on synthetic non-bench copies of the fixture card.
+- `test_m4_plan_constants`: Appendix B of the M4 plan against the code (the K2 constants, the
+  artifact and audit formats, the grids and floors, the citation test's numbers, the serving
+  constants, the registration's pins: the filled teacher corpus hash, the neon-ducklake commit
+  and the two snapshots' file hashes, recomputed from the committed bytes without opening a
+  label).
+
+`test_health`, `test_policy`, `test_tiered_provider` and `test_cli` are adjusted for M4 (the
+doctor's `artifacts` check among the expected lines, `feature_spec` on the probe and head
+records the policy tests build and the audit blocker in their verdicts, the probe tier's
+`TierUnavailable` message).
+
 ## Key tests
 
 Vendored hashes; `test_anyjev_parity` (state shas, task keys and AVUs equal mesa-anyjev's);
@@ -252,6 +336,7 @@ back to `executemany`, and seven fake runs commit within a loose time bound); th
 tests above. From M3: `test_apply_anonymous_rejected`,
 `test_apply_crash_retry`, `test_revert`, `test_history_spool_recorder` (two VMs, dedup,
 quarantine), `test_mcp_conformance`. From
-M4: `test_policy_citations`, `test_loco_leakage`, `test_nested_selection`, `test_rule_r`,
-`test_lookup_prob`, `test_cp_threshold`, `test_teacher_weight_changes_fit`,
-`test_artifact_identity`. Coverage must stay at or above 80% (`fail_under`).
+M4 (pre-run): the tests above (`test_linear`, `test_probe`, `test_x3`, `test_k2`, `test_x4`,
+`test_teacher`, `test_bench_m4_cli`, `test_artifacts`, `test_probe_provider`,
+`test_policy_citations`, `test_audit`, `test_m4_plan_constants`). Coverage must stay at or
+above 80% (`fail_under`).

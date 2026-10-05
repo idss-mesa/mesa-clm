@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00002006",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:00002006",
+  "description": "An environmental material primarily composed of dihydrogen oxide in its liquid form.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00002006",
+  "isRoot": false,
+  "label": "liquid water",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

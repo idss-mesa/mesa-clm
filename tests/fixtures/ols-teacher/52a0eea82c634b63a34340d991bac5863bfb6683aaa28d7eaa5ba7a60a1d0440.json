@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_06105240",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:06105240",
+  "description": "In soils, these materials include clay and organic matter particles. Soil CEC is measured in millequivalents per 100 grams of soil (meq/100g). A meq is the number of ions which total a specific quantity of electrical charges. Common soil cations include: calcium (Ca++), magnesium (Mg++), potassium (K+), ammonium (NH4+), hydrogen (H+) and sodium (Na+).",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_06105240",
+  "isRoot": false,
+  "label": "cation exchange capacity",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

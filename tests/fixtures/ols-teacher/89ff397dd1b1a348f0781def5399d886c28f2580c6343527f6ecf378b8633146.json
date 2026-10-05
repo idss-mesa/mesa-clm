@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001362",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001362",
+  "description": "The speed of an atmospheric wind.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001362",
+  "isRoot": false,
+  "label": "atmospheric wind speed",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

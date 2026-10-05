@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003708",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0003708",
+  "description": "A measurement device that measures the concentration of gases in an air sample based on their absorption of infrared radiation.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003708",
+  "isRoot": false,
+  "label": "infrared gas analyzer",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

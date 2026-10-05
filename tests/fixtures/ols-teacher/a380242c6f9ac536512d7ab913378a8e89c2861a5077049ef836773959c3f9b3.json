@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_04000010",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:04000010",
+  "description": "A surface layer which is composed primarily of soil.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_04000010",
+  "isRoot": false,
+  "label": "soil surface layer",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

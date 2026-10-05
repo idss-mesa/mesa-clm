@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001573",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0001573",
+  "description": "A sequence data item that is about the primary structure of DNA",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0001573",
+  "isRoot": false,
+  "label": "DNA sequence data",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

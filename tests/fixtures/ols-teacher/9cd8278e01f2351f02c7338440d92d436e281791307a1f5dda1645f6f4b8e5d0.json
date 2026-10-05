@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_21001214",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:21001214",
+  "description": "A radiation process during which electromagnetic waves or their quanta are emitted when molecules change their rotational-vibrational movements, usually at wavelengths between 760 nm and 1 mm.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_21001214",
+  "isRoot": false,
+  "label": "infrared radiation",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

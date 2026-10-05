@@ -237,6 +237,8 @@ def _cmd_labels(args: argparse.Namespace, cfg: Config) -> int:
     from mesa_clm.learn import labels as learn
 
     store = label_store(cfg)
+    if args.verb == "ingest-teacher":
+        return _labels_ingest_teacher(args, cfg, store)
     if args.verb == "ingest-neon-eval":
         root = args.eval_root or cfg.eval_root
         if not root:
@@ -316,6 +318,8 @@ def _fmt(value: float | None) -> str:
 
 
 def _cmd_bench(args: argparse.Namespace, cfg: Config) -> int:
+    if args.verb in ("x3", "k2", "x4", "e2e"):
+        return _cmd_bench_m4(args, cfg)
     if args.verb in ("framing", "run", "x2", "table"):
         return _cmd_bench_m2(args, cfg)
     from mesa_clm.bench.results import ResultsExist
@@ -661,6 +665,7 @@ def _annotate_provider(
     except (EndpointError, SecretError) as exc:
         raise UsageError(str(exc)) from exc
     notes = [f"serving lock {stack.lock_path} (lock_sha {stack.lock.lock_sha[:12]})"]
+    notes.extend(stack.notes)  # M4: what the artifacts loading wants recorded
     if tier != "ols_rank":
         try:
             answering, detail = live.preflight(stack, cfg)
@@ -750,8 +755,9 @@ def _check_tier(provider: Any, tier: str, skip: Sequence[str] = ()) -> None:
     missing = [t for t in FRAMINGS if t not in skip and not provider.supports_tier(t, tier)]
     if missing:
         raise UsageError(
-            f"tier {tier} is not servable for {', '.join(missing)}: no promoted artifacts "
-            "(calibrated/probe arrive with M4, head with M7); use --tier auto or zero_shot",
+            f"tier {tier} is not servable for {', '.join(missing)}: no promoted {tier} artifact "
+            "(`mesa-clm learn fit` then `learn promote` write one; head arrives with M7); use "
+            "--tier auto or zero_shot",
             EXIT_FAIL,
         )
 
@@ -1824,7 +1830,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="labels in the sidecar: ingest the neon-avu-eval silver, import a mesa-anyjev "
         "sidecar, freeze a snapshot, print counts",
     )
-    la.add_argument("verb", choices=["ingest-neon-eval", "import-anyjev", "snapshot", "stats"])
+    la.add_argument(
+        "verb",
+        choices=["ingest-neon-eval", "ingest-teacher", "import-anyjev", "snapshot", "stats"],
+    )
     la.add_argument(
         "--eval-root", help="neon-avu-eval checkout (ingest-neon-eval; default: config eval_root)"
     )
@@ -1952,6 +1961,7 @@ def build_parser() -> argparse.ArgumentParser:
     tb.add_argument("--results", nargs="+", metavar="JSON", help="these results files instead")
     tb.add_argument("--out", help="write the table here instead of printing it")
     tb.add_argument("--force", action="store_true", help="replace an existing --out file")
+    _m4_bench_parsers(be_sub, common, la)
 
     d = sub.add_parser(
         "doctor", help="what this host can run: pins, versions, stores, paths, serving"
@@ -1974,7 +1984,184 @@ def build_parser() -> argparse.ArgumentParser:
     d.set_defaults(func=_cmd_doctor)
     _m1_parsers(sub, common)
     _features_parsers(sub)
+    _m4_serving_parsers(sub, common)
     return p
+
+
+def _m4_bench_parsers(be_sub: Any, common: argparse.ArgumentParser, la: Any) -> None:
+    """The M4 bench verbs ``x3``, ``k2``, ``x4``, ``e2e`` and the ``labels ingest-teacher``
+    options (plan §8 M4; design/m4-analysis-plan.md). No option for B, the seed, α, the grid,
+    the framings or the models (R5): the producers take them from the registrations."""
+    registered = (
+        f"the registered labels snapshot (default {REGISTERED_SNAPSHOT}; any other file is "
+        "refused, none is ever written)"
+    )
+    x3 = be_sub.add_parser(
+        "x3",
+        parents=[common],
+        help="X3: the nested probe cells of every task (specs × fitters, inner LOCO): x3.json",
+    )
+    x3.add_argument("--out-dir", default=DEFAULT_OUT_DIR, help="results root (<out-dir>/<date>/)")
+    x3.add_argument("--date", help="results directory name (default: today, UTC)")
+    x3.add_argument("--snapshot", help=registered)
+    x3.add_argument("--force", action="store_true", help="replace an existing x3.json")
+    k2 = be_sub.add_parser(
+        "k2",
+        parents=[common],
+        help="K2: the value verdict per task over the committed tiers.json, x2.json and this "
+        "date's x3.json: k2.json",
+    )
+    k2.add_argument("--out-dir", default=DEFAULT_OUT_DIR, help="results root (<out-dir>/<date>/)")
+    k2.add_argument("--date", help="results directory name (default: today, UTC)")
+    k2.add_argument(
+        "--x3-from",
+        metavar="X3_JSON",
+        help="the X3 results file (default <out-dir>/<date>/x3.json)",
+    )
+    k2.add_argument("--force", action="store_true", help="replace an existing k2.json")
+    x4 = be_sub.add_parser(
+        "x4",
+        parents=[common],
+        help="X4: the teacher ablation on term.fits and column.ontology_fits: x4.json",
+    )
+    x4.add_argument("--out-dir", default=DEFAULT_OUT_DIR, help="results root (<out-dir>/<date>/)")
+    x4.add_argument("--date", help="results directory name (default: today, UTC)")
+    x4.add_argument("--snapshot", help=registered)
+    x4.add_argument(
+        "--teacher-snapshot",
+        help="the teacher snapshot (labels snapshot after labels ingest-teacher; default: the "
+        "M4 registration's pin)",
+    )
+    x4.add_argument(
+        "--minus-opus-snapshot",
+        help="the silver-minus-Opus snapshot (default: the M4 registration's pin; none: no "
+        "silver-minus-opus scoring, unregistered)",
+    )
+    x4.add_argument(
+        "--corpus-dir",
+        help="the teacher corpus directory (<neon-root>/curation/generic); when given, its "
+        "content hash is compared with the registration's teacher_corpus_sha256 (the corpus "
+        "is pinned by the teacher snapshot; the live corpus may move, so it is not required)",
+    )
+    x4.add_argument("--force", action="store_true", help="replace an existing x4.json")
+    e2e = be_sub.add_parser(
+        "e2e",
+        parents=[common],
+        help="the end-to-end leave-one-card-out measure (report-only; second wave, R8)",
+    )
+    e2e.add_argument("--loco", action="store_true", help="leave-one-card-out (required)")
+    e2e.add_argument("--out-dir", default=DEFAULT_OUT_DIR, help="results root (<out-dir>/<date>/)")
+    e2e.add_argument("--date", help="results directory name (default: today, UTC)")
+    e2e.add_argument("--force", action="store_true", help="replace an existing e2e.json")
+    la.add_argument(
+        "--neon-root",
+        help="the neon-ducklake checkout (ingest-teacher: curation/generic/*.validated.json and "
+        "sites/SRER/cards/anyjev; default: config neon.root)",
+    )
+    la.add_argument(
+        "--cards-dir",
+        help="ingest-teacher: the table cards directory (default <neon-root>/sites/SRER/cards/anyjev)",
+    )
+
+
+def _labels_ingest_teacher(args: argparse.Namespace, cfg: Config, store: Any) -> int:
+    """``labels ingest-teacher --neon-root …``: the D19 teacher rows into the label store
+    (``learn.teacher.ingest_teacher``), the OLS terms through the OLS layer (the recorded
+    ``tests/fixtures/ols-teacher`` fixtures replay; ``ols.fixtures`` names the mode)."""
+    from mesa_clm.learn import teacher
+    from mesa_clm.learn.labels import TermResolver
+
+    root = args.neon_root or cfg.neon.root
+    if not root:
+        raise UsageError("labels ingest-teacher needs --neon-root or MESA_CLM_NEON__ROOT")
+    try:
+        report = teacher.ingest_teacher(
+            store,
+            root,
+            TermResolver(_ols_client(cfg)),
+            cards_dir=args.cards_dir,
+            actor=args.actor,
+        )
+    except teacher.TeacherError as exc:
+        raise UsageError(str(exc)) from exc
+    print(json.dumps(report.summary(), indent=1))
+    if report.terms_missing:
+        missing = sorted(set(report.terms_missing))
+        print(f"unresolved CURIEs ({len(missing)}): {', '.join(missing[:20])}", file=sys.stderr)
+    return EXIT_OK
+
+
+def _cmd_bench_m4(args: argparse.Namespace, cfg: Config) -> int:
+    """``bench x3|k2|x4|e2e`` (M4; design/m4-analysis-plan.md): refusals of the registered
+    inputs exit 1, usage problems 2, as the M2 verbs."""
+    from mesa_clm.bench import run as m4
+    from mesa_clm.bench.cells import CellError
+    from mesa_clm.bench.registered import RegistrationError
+    from mesa_clm.bench.results import ResultsExist
+    from mesa_clm.learn.features import FeatureMissing, FeatureStoreError, ManifestError
+
+    date = getattr(args, "date", None) or _today()
+    try:
+        if args.verb == "x3":
+            path, results = m4.run_x3(
+                cfg, date=date, out_dir=args.out_dir, snapshot=args.snapshot, force=args.force
+            )
+            print(path)
+            for key, cell in results.cells.items():
+                print(
+                    f"{key}: n={cell.counts.n} spec={cell.feature_spec} model={cell.model} "
+                    f"selection={cell.selection} pre_registered={cell.pre_registered} "
+                    f"exploratory={cell.exploratory}"
+                )
+            return EXIT_OK
+        if args.verb == "k2":
+            path, k2 = m4.run_k2(
+                cfg, date=date, out_dir=args.out_dir, x3_from=args.x3_from, force=args.force
+            )
+            print(path)
+            print("registered" if k2.registered else "NOT registered: " + "; ".join(k2.deviations))
+            for task, t in k2.tasks.items():
+                head = (
+                    ""
+                    if t.head_adds_nothing is None
+                    else (f" head_adds_nothing={t.head_adds_nothing.head_adds_nothing}")
+                )
+                print(f"{task}: best={t.best} verdict={t.verdict} ({t.reason}){head}")
+            return EXIT_OK
+        if args.verb == "x4":
+            path, results = m4.run_x4(
+                cfg,
+                date=date,
+                out_dir=args.out_dir,
+                snapshot=args.snapshot,
+                teacher_snapshot=args.teacher_snapshot,
+                minus_opus_snapshot=args.minus_opus_snapshot,
+                corpus_dir=args.corpus_dir,
+                force=args.force,
+            )
+            print(path)
+            for key, cell in results.cells.items():
+                print(
+                    f"{key}: n={cell.counts.n} teacher={cell.teacher} "
+                    f"pre_registered={cell.pre_registered}"
+                )
+            for note in results.notes:
+                if ": keep=" in note:
+                    print(note)
+            return EXIT_OK
+        if not args.loco:
+            raise UsageError(
+                "bench e2e needs --loco: leave-one-card-out is the only split a measure may be "
+                "reported from (D8)"
+            )
+        m4.run_e2e(cfg, date=date, out_dir=args.out_dir, force=args.force)
+        return EXIT_OK
+    except m4.BenchRunError as exc:
+        raise UsageError(str(exc), EXIT_CONFIG if exc.usage else EXIT_FAIL) from exc
+    except (RegistrationError, FeatureMissing, FeatureStoreError, CellError) as exc:
+        raise UsageError(str(exc), EXIT_FAIL) from exc
+    except (ResultsExist, ManifestError) as exc:
+        raise UsageError(str(exc), EXIT_FAIL) from exc
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -2012,3 +2199,584 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 if __name__ == "__main__":  # pragma: no cover
     sys.exit(main())
+
+
+# -- M4: learn, artifacts, audit (serving) -------------------------------------------------------
+
+
+def _results_root(cfg: Config) -> Path:
+    """Where cites resolve (``policy.results_root``; ``policy.default_results_root``)."""
+    from mesa_clm.policy import default_results_root
+
+    return (
+        expand_path(cfg.policy.results_root) if cfg.policy.results_root else default_results_root()
+    )
+
+
+def _artifact_layout(cfg: Config, model: str | None) -> Any:
+    """The artifacts layout of the served head ``model`` (default ``clm.model``) under the
+    serving lock this host runs (the live provider's rule, K4)."""
+    from mesa_clm.artifacts import ArtifactLayout
+    from mesa_clm.providers.live import ProviderSetupError, _checked_lock, live_lock_path
+
+    try:
+        lock = _checked_lock(live_lock_path(), None, explicit=False)
+    except ProviderSetupError as exc:
+        raise UsageError(str(exc), EXIT_FAIL) from exc
+    return ArtifactLayout.for_fingerprint(
+        cfg.artifacts.dir, lock.fingerprint(model or cfg.clm.model)
+    )
+
+
+def _learn_fit(args: argparse.Namespace, cfg: Config) -> int:
+    """``learn fit`` (plan §5.5; ``artifacts.fit_version``): from the registered snapshot and
+    the feature store, per task the ``@full`` probe (``learn.probe.full_probe``) and the A1
+    arm's calibrator (every task's active framing on clm-latest except the ``ols_rank_tasks``,
+    K1), one new version per served model that received anything, exported to
+    ``<out-dir>/<date>/artifacts_v<N>/<clm_model_fp>/``. Applies the M4 registration (R5):
+    the pinned ``tiers.json`` by sha256 (``--tiers`` defaults to the pin; other bytes are a
+    refusal), ``--x3`` defaults to ``bench/results/<date>/x3.json``, and the framings lock, the
+    model fingerprints, the active framings and the X3 grid must be the registered ones — any
+    deviation is a refusal (exit 1, nothing written). The manifest records ``registered: true``
+    with that identity and ``tasks_fitted`` (``--tasks`` may name a subset). A calibrated entry
+    whose task has no nested calibrated cell in the pinned ``tiers.json`` gets ``cite: null``
+    (one line per such entry on stderr: promotion will refuse it). Never touches
+    ``CURRENT.json``."""
+    from mesa_clm import framings
+    from mesa_clm.artifacts import ArtifactError, ArtifactLayout, export_copy, fit_version
+    from mesa_clm.bench import registered as reg
+    from mesa_clm.bench import run as bench_run
+    from mesa_clm.bench.cells import CellError, TextIndex, score_arm
+    from mesa_clm.bench.registered import RegistrationError
+    from mesa_clm.learn.features import CHOICE_TASKS, X1_TASKS, manifest
+    from mesa_clm.learn.offline import LATEST_MODEL, RAW_MODEL
+    from mesa_clm.learn.probe import (
+        DEFAULT_GRID,
+        FeatureBuilder,
+        ProbeError,
+        full_probe,
+        spec_shape,
+    )
+
+    date = args.date or _today()
+    wanted = _csv_arg(args.tasks)
+    m4 = reg.current_m4()
+    root = _results_root(cfg)
+    try:
+        # The M4 registration (R5), before anything is fitted: the pinned tiers.json by sha256
+        # (a refusal for other bytes), x3.json of the date (its sha256 recorded when present).
+        tiers_rel = Path(args.tiers).as_posix() if args.tiers else m4.tiers_results
+        tiers_file = Path(tiers_rel) if Path(tiers_rel).is_absolute() else root / tiers_rel
+        tiers_sha = reg.check_committed_input("tiers.json", tiers_file, m4.tiers_sha256)
+        x3_rel = Path(args.x3).as_posix() if args.x3 else f"bench/results/{date}/x3.json"
+        x3_file = Path(x3_rel) if Path(x3_rel).is_absolute() else root / x3_rel
+        x3_sha = reg.file_sha256(x3_file) if x3_file.is_file() else None
+        with bench_run.scratch() as work:
+            inputs = bench_run.load_inputs(args.snapshot, work)
+            sv = bench_run.serving(cfg)
+            deviations = [
+                *reg.m4_identity_deviations(
+                    framings_lock_sha=framings.lock_sha(),
+                    fingerprints=sv.fingerprints,
+                    models=[LATEST_MODEL, RAW_MODEL],
+                ),
+                *reg.grid_deviations(DEFAULT_GRID["rank_fit"], shape="rank_fit"),
+                *reg.grid_deviations(DEFAULT_GRID["choice"], shape="choice"),
+            ]
+            if dict(framings.ACTIVE) != dict(m4.active):
+                deviations.append(
+                    f"active framings {dict(framings.ACTIVE)} are not {dict(m4.active)}"
+                )
+            if deviations:
+                raise RegistrationError(
+                    "learn fit fits only under the M4 registration (nothing written): "
+                    + "; ".join(deviations)
+                )
+            registration = {
+                "framings_lock_sha": m4.framings_lock_sha,
+                "fingerprints": {m: dict(sv.fingerprints[m]) for m in (LATEST_MODEL, RAW_MODEL)},
+                "active": dict(m4.active),
+                "inputs": {
+                    "tiers": {"path": tiers_rel, "sha256": tiers_sha},
+                    "x3": {"path": x3_rel, "sha256": x3_sha},
+                },
+                "snapshot": {
+                    "labels_sha256": inputs.labels_sha256,
+                    "labels_content_sha256": inputs.labels_content_sha256,
+                },
+            }
+            scorers = sv.require_scorers()
+            index = TextIndex.from_manifests(
+                manifest(inputs.snapshot, X1_TASKS, "F4,F7,F9"),
+                manifest(inputs.snapshot, CHOICE_TASKS, "F7"),
+            )
+            tasks = {
+                name: task
+                for name, task in inputs.tasks.items()
+                if wanted is None or task.task_id in wanted
+            }
+            if wanted is not None and len(tasks) != len(wanted):
+                known = sorted(t.task_id for t in inputs.tasks.values())
+                raise UsageError(f"--tasks takes {', '.join(known)}; got {args.tasks}")
+            k1 = set(cfg.decider.ols_rank_tasks)
+            arm_scores = {
+                name: score_arm(
+                    task, index, sv.store, scorers[LATEST_MODEL], framings.ACTIVE[task.task_id]
+                )
+                for name, task in tasks.items()
+                if task.task_id not in k1
+            }
+
+            def fit_probe(task: Any) -> tuple[Any, dict[str, Any]]:
+                fb = FeatureBuilder(task, index, sv.store, scorers, framings.ACTIVE[task.task_id])
+                try:
+                    return full_probe(
+                        task,
+                        fb,
+                        grid=DEFAULT_GRID[spec_shape(task)],
+                        fingerprints=sv.fingerprints,
+                        labels_sha256=inputs.labels_sha256,
+                        labels_content_sha256=inputs.labels_content_sha256,
+                    )
+                except ProbeError as exc:
+                    raise ArtifactError(str(exc)) from exc
+
+            layouts = {
+                m: ArtifactLayout.for_fingerprint(cfg.artifacts.dir, sv.lock.fingerprint(m))
+                for m in (LATEST_MODEL, RAW_MODEL)
+            }
+            result = fit_version(
+                layouts,
+                tasks=tasks,
+                arm_scores=arm_scores,
+                probe_fitter=fit_probe,
+                labels_sha256=inputs.labels_sha256,
+                labels_content_sha256=inputs.labels_content_sha256,
+                results_root=root,
+                x3_path=x3_rel,
+                tiers_path=tiers_rel,
+                notes=[f"learn fit --date {date} (serving lock {sv.lock.lock_sha[:12]})"],
+                registered=True,
+                registration=registration,
+            )
+            exports = {
+                m: str(export_copy(path, args.out_dir, date))
+                for m, (_, path) in result.written.items()
+            }
+    except RegistrationError as exc:
+        raise UsageError(str(exc), EXIT_FAIL) from exc
+    except bench_run.BenchRunError as exc:
+        raise UsageError(str(exc), EXIT_CONFIG if exc.usage else EXIT_FAIL) from exc
+    except (ArtifactError, CellError) as exc:
+        raise UsageError(str(exc), EXIT_FAIL) from exc
+    for model, man in result.manifests.items():
+        for entry in man.entries.values():
+            if entry.cite is None:
+                print(
+                    f"note: {entry.task_id} {entry.tier} entry {entry.question_key} ({model}) "
+                    f"cites no pre-registered nested cell (none in "
+                    f"{tiers_rel if entry.tier == 'calibrated' else x3_rel}): "
+                    "`learn promote` will refuse it (rule i)",
+                    file=sys.stderr,
+                )
+    print(
+        _json_out(
+            {
+                "written": {
+                    m: {"version": n, "path": str(p)} for m, (n, p) in result.written.items()
+                },
+                "exported": exports,
+                "skipped": result.skipped,
+                "entries": {
+                    m: {qk: e.model_dump(mode="json") for qk, e in man.entries.items()}
+                    for m, man in result.manifests.items()
+                },
+            }
+        )
+    )
+    return EXIT_OK
+
+
+def _learn_promote(args: argparse.Namespace, cfg: Config) -> int:
+    """``learn promote --version N --task T [--tier probe|calibrated]`` (plan §5.5, rules i-iv;
+    ``artifacts.promote``) against ``k2.json``; writes ``CURRENT.json``."""
+    from mesa_clm.artifacts import ArtifactError, promote
+
+    date = args.date or _today()
+    root = _results_root(cfg)
+    k2_path = (
+        Path(args.k2).expanduser() if args.k2 else root / "bench" / "results" / date / "k2.json"
+    )
+    if not k2_path.is_file():
+        raise UsageError(f"{k2_path}: no k2.json (run `mesa-clm bench k2 --date {date}` first)")
+    try:
+        k2 = json.loads(k2_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise UsageError(f"{k2_path}: not a k2.json ({type(exc).__name__})") from exc
+    layout = _artifact_layout(cfg, args.model)
+    try:
+        report = promote(
+            layout,
+            version=args.version,
+            task_id=args.task,
+            tier=args.tier,
+            results_root=root,
+            k2=k2,
+        )
+    except ArtifactError as exc:
+        raise UsageError(str(exc), EXIT_FAIL) from exc
+    print(_json_out({**report.as_dict(), "current": str(layout.current_path)}))
+    return EXIT_OK
+
+
+def _cmd_learn(args: argparse.Namespace, cfg: Config) -> int:
+    if args.verb == "fit":
+        return _learn_fit(args, cfg)
+    return _learn_promote(args, cfg)
+
+
+def _cmd_artifacts(args: argparse.Namespace, cfg: Config) -> int:
+    """``artifacts publish --to DIR`` / ``artifacts pull --from DIR --verify`` (plan §5.5;
+    local paths, an ssh or iRODS mount included; the iRODS transport needs M3's ``irods_io``)."""
+    from mesa_clm.artifacts import ArtifactError, publish, pull
+
+    layout = _artifact_layout(cfg, args.model)
+    try:
+        if args.verb == "publish":
+            version = args.version
+            if version is None:
+                versions = layout.versions()
+                if not versions:
+                    raise UsageError(f"no artifacts version under {layout.dir}", EXIT_FAIL)
+                version = versions[-1]
+            path = publish(layout, version, args.to)
+        else:
+            path = pull(layout, args.version, args.from_, verify=not args.no_verify)
+    except ArtifactError as exc:
+        raise UsageError(str(exc), EXIT_FAIL) from exc
+    print(
+        _json_out({"verb": args.verb, "version": f"v{args.version or version}", "path": str(path)})
+    )
+    return EXIT_OK
+
+
+def _audit_runs(args: argparse.Namespace, store: Any, owner: str) -> list[dict[str, Any]]:
+    """The runs an audit samples from: ``--runs`` (ids or prefixes among the owner's runs) or
+    every run of the owner since ``--since`` (an ISO date)."""
+    from datetime import datetime
+    from uuid import UUID
+
+    if args.runs:
+        ids = [_resolve_run(store, text, owner) for text in _csv_arg(args.runs) or []]
+        rows = []
+        for rid in ids:
+            run = store.run(UUID(str(rid)))
+            if run is None or run.get("owner") != owner:
+                raise UsageError(f"run {rid} is not one of {owner}'s runs", EXIT_FAIL)
+            rows.append(run)
+        return rows
+    if args.since:
+        try:
+            since = datetime.fromisoformat(args.since)
+        except ValueError as exc:
+            raise UsageError(f"--since {args.since!r}: not an ISO date") from exc
+        if since.tzinfo is None:
+            since = since.replace(tzinfo=UTC)
+        return list(store.runs(owner=owner, since=since, limit=None))
+    raise UsageError("audit sample needs --runs or --since")
+
+
+def _audit_sample(args: argparse.Namespace, cfg: Config) -> int:
+    from mesa_clm import audit
+    from mesa_clm.policy import Policy
+
+    owner = _review_owner(args, cfg)
+    store = _open_store(cfg)
+    svc = _reader_service(cfg, store)
+    runs = _audit_runs(args, store, owner)
+    if not runs:
+        raise UsageError("no run to audit", EXIT_FAIL)
+    try:
+        pool, thresholds = audit.candidates(
+            store,
+            runs,
+            policy=Policy.from_config(cfg.policy),
+            results_root=_results_root(cfg),
+            is_bench_card=svc.is_bench_card,
+        )
+        sample = audit.build_sample(
+            pool,
+            runs=[str(r["run_id"]) for r in runs],
+            thresholds=thresholds,
+            n=args.n,
+            min_cards=args.min_cards,
+        )
+    except audit.AuditError as exc:
+        raise UsageError(str(exc), EXIT_FAIL) from exc
+    audit.write_sample(args.out, sample)
+    print(
+        _json_out(
+            {
+                "audit_id": sample.audit_id,
+                "file": str(args.out),
+                "n": len(sample.items),
+                "strata": sample.strata,
+                "cards": sample.cards,
+                "runs": sample.runs,
+                "thresholds": sample.thresholds,
+            }
+        )
+    )
+    return EXIT_OK
+
+
+def audit_review_interactive(
+    svc: Any,
+    store: Any,
+    sample: Any,
+    *,
+    owner: str,
+    actor: str,
+    ask: Any,
+    say: Any,
+    save: Any,
+) -> dict[str, int]:
+    """Walk the sample's unreviewed items: show each decision through
+    ``DecisionService.explain`` (the slim decision and its group's top candidates), ask
+    ``c`` (correct), ``i`` (incorrect), ``s`` (skip) or ``q`` (quit), record the verdict and
+    its curator labels (``audit.labels_for_verdict``; origin ``audit:<audit_id>``) and call
+    ``save(sample)`` after every answer. ``ask``/``say`` are the terminal, injectable."""
+    from datetime import datetime
+    from uuid import UUID
+
+    from mesa_clm import audit
+
+    done = {"correct": 0, "incorrect": 0, "skipped": 0}
+    explained: dict[str, dict[str, Any]] = {}
+    decisions: dict[str, dict[str, dict[str, Any]]] = {}
+    pending = [i for i in sample.items if i.verdict is None]
+    for n, item in enumerate(pending, 1):
+        if item.run_id not in explained:
+            explained[item.run_id] = svc.explain(
+                owner=owner, run_id=UUID(item.run_id), limit=10_000
+            )
+            decisions[item.run_id] = {
+                str(d["decision_id"]): d for d in store.decisions(UUID(item.run_id))
+            }
+        run = explained[item.run_id]["run"]
+        decision = decisions[item.run_id].get(item.decision_id)
+        if decision is None:
+            say(
+                f"[{n}/{len(pending)}] decision {item.decision_id} is gone from the sidecar; skipped"
+            )
+            done["skipped"] += 1
+            continue
+        say(
+            f"[{n}/{len(pending)}] {item.task_id} on {run.get('card_name')} ({item.stratum}, "
+            f"{item.level}/{item.method}, outcome {item.outcome})"
+        )
+        say(f"  answer: {decision.get('answer') or '-'}  stat {_fmt_p(item.stat)}")
+        if item.group_id:
+            lines, _ = _candidate_lines(svc.candidates_for_group(UUID(item.group_id)))
+            for line in lines:
+                say(line)
+        else:
+            options = decision.get("options") or []
+            probs = decision.get("probs") or []
+            for key, p in zip(options, probs, strict=False):
+                say(f"  {key}: {_fmt_p(p)}")
+        while True:
+            try:
+                answer = ask("c = correct, i = incorrect, s = skip, q = quit [s]: ")
+            except (EOFError, KeyboardInterrupt):
+                say("")
+                return done
+            answer = answer.strip().lower()
+            if answer in ("", "s"):
+                done["skipped"] += 1
+                break
+            if answer == "q":
+                return done
+            if answer in ("c", "i"):
+                verdict: Literal["correct", "incorrect"] = (
+                    "correct" if answer == "c" else "incorrect"
+                )
+                labels = audit.labels_for_verdict(
+                    decision, run, verdict, actor=actor, audit_id=sample.audit_id
+                )
+                written = store.insert_labels(labels) if labels else 0
+                item.verdict = verdict
+                item.reviewed_at = datetime.now(tz=UTC).isoformat(timespec="seconds")
+                item.labels_written = written
+                sample.reviewer = actor
+                save(sample)
+                done[verdict] += 1
+                say(f"  recorded {verdict}: {written} curator label(s)")
+                break
+            say(f"  '{answer}' is not an answer")
+    return done
+
+
+def _audit_review(args: argparse.Namespace, cfg: Config) -> int:
+    from mesa_clm import audit
+
+    if not stdin_is_terminal():
+        raise UsageError(
+            "audit review is interactive (it needs a terminal): its answers are curator labels "
+            "(via=cli, DESIGN A2)"
+        )
+    owner = _review_owner(args, cfg)
+    store = _open_store(cfg)
+    svc = _reader_service(cfg, store)
+    try:
+        sample = audit.load_sample(args.file)
+    except audit.AuditError as exc:
+        raise UsageError(str(exc)) from exc
+    done = audit_review_interactive(
+        svc,
+        store,
+        sample,
+        owner=owner,
+        actor=args.actor,
+        ask=input,
+        say=print,
+        save=lambda s: audit.write_sample(args.file, s),
+    )
+    print(", ".join(f"{k} {v}" for k, v in done.items()))
+    return EXIT_OK
+
+
+def _audit_record(args: argparse.Namespace, cfg: Config) -> int:
+    from mesa_clm import audit
+    from mesa_clm.policy import Policy
+
+    store = _open_store(cfg)
+    policy = Policy.from_config(cfg.policy)
+    try:
+        sample = audit.load_sample(args.file)
+    except audit.AuditError as exc:
+        raise UsageError(str(exc)) from exc
+    if not sample.reviewed:
+        raise UsageError(
+            f"{args.file}: nothing reviewed yet (`mesa-clm audit review --file`)", EXIT_FAIL
+        )
+    reviewer = sample.reviewer or args.actor
+    rows, skipped = audit.audit_rows(
+        sample, reviewer=reviewer, risk_of=lambda task_id: policy.thresholds(task_id).risk
+    )
+    for row in rows:
+        store.insert_audit(row)
+    print(
+        _json_out(
+            {
+                "audit_id": sample.audit_id,
+                "reviewer": reviewer,
+                "rows": [r.model_dump(mode="json") for r in rows],
+                "skipped": skipped,
+                "summary": audit.summarize(sample),
+            }
+        )
+    )
+    return EXIT_OK
+
+
+def _cmd_audit(args: argparse.Namespace, cfg: Config) -> int:
+    if args.verb == "sample":
+        return _audit_sample(args, cfg)
+    if args.verb == "review":
+        return _audit_review(args, cfg)
+    return _audit_record(args, cfg)
+
+
+def _m4_serving_parsers(sub: Any, common: argparse.ArgumentParser) -> None:
+    """The M4 serving verbs: ``learn fit|promote``, ``artifacts publish|pull``, ``audit
+    sample|review|record`` (plan §5.5, §4.7, §8 M4; design/m4-analysis-plan.md C1, C3, C4)."""
+    from mesa_clm.audit import DEFAULT_MIN_CARDS, DEFAULT_N
+
+    le = sub.add_parser(
+        "learn", help="fit and promote learned artifacts (plan §5.5; serving never fits, D15)"
+    )
+    le_sub = le.add_subparsers(dest="verb", required=True)
+    fit = le_sub.add_parser(
+        "fit",
+        parents=[common],
+        help="fit the full-data probes and the A1 calibrators from the registered snapshot and "
+        "the feature store into a new artifacts version (never promotes)",
+    )
+    fit.add_argument("--date", help="results date the cites name and the export lands in")
+    fit.add_argument("--tasks", help="comma-separated task ids (default: every bench task)")
+    fit.add_argument(
+        "--snapshot", help=f"the registered labels snapshot (default {REGISTERED_SNAPSHOT})"
+    )
+    fit.add_argument(
+        "--x3", help="x3.json the probe entries cite (default bench/results/<date>/x3.json)"
+    )
+    fit.add_argument(
+        "--tiers",
+        help="tiers.json the calibrated entries cite (default bench/results/<date>/tiers.json)",
+    )
+    fit.add_argument(
+        "--out-dir", default=DEFAULT_OUT_DIR, help="results root for the export (<out-dir>/<date>/)"
+    )
+    pr = le_sub.add_parser(
+        "promote",
+        parents=[common],
+        help="promote one task's artifact of a version into CURRENT.json (rules i-iv, K2)",
+    )
+    pr.add_argument("--version", type=int, required=True, help="the artifacts version N")
+    pr.add_argument("--task", required=True, help="task id (term.fits, column.aspect, ...)")
+    pr.add_argument(
+        "--tier", choices=["probe", "calibrated"], help="default: probe, else calibrated"
+    )
+    pr.add_argument("--k2", help="k2.json (default bench/results/<date>/k2.json)")
+    pr.add_argument("--date", help="the results date of k2.json (default: today, UTC)")
+    pr.add_argument("--model", help="the served head whose artifacts (default clm.model)")
+    le.set_defaults(func=_cmd_learn)
+
+    ar = sub.add_parser("artifacts", help="copy artifact versions between hosts (plan §5.5)")
+    ar_sub = ar.add_subparsers(dest="verb", required=True)
+    pub = ar_sub.add_parser("publish", parents=[common], help="copy a version to a directory")
+    pub.add_argument("--to", required=True, help="destination root (a local path or mount)")
+    pub.add_argument("--version", type=int, help="the version N (default: the newest)")
+    pub.add_argument("--model", help="the served head whose artifacts (default clm.model)")
+    pl = ar_sub.add_parser(
+        "pull", parents=[common], help="copy a version from a directory, verifying every file"
+    )
+    pl.add_argument(
+        "--from", dest="from_", required=True, help="source root (a local path or mount)"
+    )
+    pl.add_argument("--version", type=int, required=True, help="the version N")
+    pl.add_argument("--verify", action="store_true", help="re-hash every file (the default)")
+    pl.add_argument(
+        "--no-verify", action="store_true", help="skip the hashes (the load refuses later)"
+    )
+    pl.add_argument("--model", help="the served head whose artifacts (default clm.model)")
+    ar.set_defaults(func=_cmd_artifacts)
+
+    au = sub.add_parser("audit", help="curator audits of production decisions (plan §4.7, §8 M4)")
+    au_sub = au.add_subparsers(dest="verb", required=True)
+    sa = au_sub.add_parser(
+        "sample",
+        parents=[common],
+        help="draw a stratified sample of decisions from non-bench runs into a file (ids only)",
+    )
+    sa.add_argument("--n", type=int, default=DEFAULT_N, help=f"sample size (default {DEFAULT_N})")
+    sa.add_argument(
+        "--min-cards",
+        type=int,
+        default=DEFAULT_MIN_CARDS,
+        help=f"at least this many cards ({DEFAULT_MIN_CARDS})",
+    )
+    which = sa.add_mutually_exclusive_group(required=True)
+    which.add_argument("--runs", help="comma-separated run ids (or prefixes) among your runs")
+    which.add_argument("--since", help="every one of your runs since this ISO date")
+    sa.add_argument("--out", required=True, help="the sample file to write")
+    rv = au_sub.add_parser(
+        "review", parents=[common], help="review a sample at a terminal (curator labels, via=cli)"
+    )
+    rv.add_argument("--file", required=True, help="the sample file (updated as you answer)")
+    rc = au_sub.add_parser(
+        "record", parents=[common], help="write the audits rows of a reviewed sample"
+    )
+    rc.add_argument("--file", required=True, help="the reviewed sample file")
+    au.set_defaults(func=_cmd_audit)

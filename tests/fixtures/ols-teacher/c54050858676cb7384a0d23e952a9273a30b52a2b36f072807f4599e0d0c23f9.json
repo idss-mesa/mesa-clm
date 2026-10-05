@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0015009",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0015009",
+  "description": "A quality inhering in air by virtue of the partial pressure exerted by the bearer's water vapour content.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0015009",
+  "isRoot": false,
+  "label": "humidity",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001025",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001025",
+  "description": "A physical quality that inheres in a bearer by virtue of the bearer's amount of force per unit area it exerts.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001025",
+  "isRoot": false,
+  "label": "pressure",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

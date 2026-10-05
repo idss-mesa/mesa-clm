@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001757",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001757",
+  "description": "A conductivity quality inhering in a bearer by virtue of the bearer's ability to convey electricity.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001757",
+  "isRoot": false,
+  "label": "electrical conductivity",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

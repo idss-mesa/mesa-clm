@@ -288,11 +288,20 @@ class PolicyConfig(_Section):
     # Specificity (D24): a child term replaces its parent when p_fit(child) >= p_fit(parent) + delta.
     specificity: bool = True
     specificity_delta: float = Field(default=0.10, ge=0)
+    # Where a numeric auto's cite (bench/results/<date>/<file>.json#<cell>) is resolved (D8, M4):
+    # None means the checkout root when mesa_clm runs from a src/ checkout, else
+    # ~/.mesa/clm/results (policy.default_results_root). The committed snapshots are read from
+    # <results_root>/bench/snapshots/*.parquet (hashed, never opened for their labels).
+    results_root: str | None = None
 
 
 class ArtifactsConfig(_Section):
+    """The learned artifacts (plan §5.5, M4): ``<dir>/<encoder_fp>/<clm_model_fp>/<framings
+    lock sha8>/v<N>/`` plus ``CURRENT.json`` (what ``learn promote`` put in production)."""
+
     dir: str = "~/.mesa/clm/artifacts"
-    # Refuse fingerprint mismatches and stale question keys on load (§5.5).
+    # Refuse fingerprint mismatches and stale question keys on load (§5.5, K4); False drops the
+    # mismatched entries with a warning instead (never silently: the run notes say so).
     strict: bool = True
 
 

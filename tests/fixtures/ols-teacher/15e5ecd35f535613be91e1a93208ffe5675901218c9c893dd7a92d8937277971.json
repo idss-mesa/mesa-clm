@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000467",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0000467",
+  "description": "A quality inhering in a bearer by virtue of the bearer's existence.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000467",
+  "isRoot": false,
+  "label": "present",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

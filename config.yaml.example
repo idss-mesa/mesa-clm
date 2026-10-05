@@ -52,6 +52,7 @@ policy:
   max_wait_s: 30.0                     # wait for the decider lock before DeciderBusy
   specificity: true                    # child replaces parent when p_fit gains >= delta (D24)
   specificity_delta: 0.10
+  results_root: null                   # cites resolve here (M4; null = the checkout, else ~/.mesa/clm/results)
 artifacts:
   dir: ~/.mesa/clm/artifacts
   strict: true                         # refuse fingerprint mismatches and stale keys (§5.5)

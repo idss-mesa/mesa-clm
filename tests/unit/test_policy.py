@@ -31,6 +31,7 @@ from mesa_clm.policy import (
     CITE_RE,
     MAX_AVUS,
     SPECIFICITY_DELTA,
+    CellCitationValidator,
     CitationValidator,
     CiteCheck,
     CiteRef,
@@ -195,7 +196,8 @@ def _passing(rec: DecisionRecord, **over: Any) -> Thresholds:
 def test_shipped_policy_is_proposed_only(card: DatasetCard, calibrated: DecisionRecord) -> None:
     policy = Policy.load()
     assert policy.defaults == SHIPPED and policy.profile == PROD
-    assert isinstance(policy.validator, RefuseAllCitations)
+    # M4: the default validator reads the cited cell (D8); nothing cites one yet.
+    assert isinstance(policy.validator, CellCitationValidator)
     assert all(t.auto is None for t in policy.defaults.tasks.values())
     fake = FakeProvider().decide(TERM, [_target(card)], [CANDS])[0]
     for rec in (fake, calibrated, _rank_fit(card, {DISTANCE: 6.0}), _choice(card, {"unit": 9})):
@@ -415,8 +417,9 @@ def test_matrix_over_honest_records(card: DatasetCard, calibrated: DecisionRecor
         ("zero_shot", "uncalibrated"): _rank_fit(card, {DISTANCE: 6.0}),
         ("calibrated", "platt"): calibrated,
         ("calibrated", "temperature"): temperature,
-        ("probe", "platt"): calibrated.revise(level="probe"),
-        ("head", "temperature"): temperature.revise(level="head"),
+        # A learned tier names its feature spec (M4: feature_spec iff probe/head).
+        ("probe", "platt"): calibrated.revise(level="probe", feature_spec="lowdim.v1"),
+        ("head", "temperature"): temperature.revise(level="head", feature_spec="head"),
     }
     for (level, calibration), rec in records.items():
         assert (rec.level, rec.calibration) == (level, calibration)
@@ -458,10 +461,10 @@ def test_missing_or_invalid_cite_blocks_auto_even_when_the_numbers_pass(
 ) -> None:
     t = _passing(calibrated)
     defaults = _with_task(t)
-    # The shipped validator refuses a well-formed cite: validation lands in M4.
-    v = Policy(defaults).verdict(calibrated)
+    # The default validator refuses a well-formed cite whose results file does not exist.
+    v = Policy(defaults, results_root=Path("/nonexistent/mesa-clm-results")).verdict(calibrated)
     assert v.outcome == "proposed" and v.auto_blockers == ("cite_refused",)
-    assert v.cite is not None and "lands in M4" in v.cite
+    assert v.cite is not None and "no such results file" in v.cite
     # A malformed cite is refused with its own reason.
     bad = Thresholds.model_validate({**t.model_dump(), "cite": "results.json#term"})
     v = Policy(_with_task(bad)).verdict(calibrated)
@@ -473,14 +476,19 @@ def test_missing_or_invalid_cite_blocks_auto_even_when_the_numbers_pass(
     assert v.outcome == "proposed" and v.cite == "encoder_fp: cell 'aaa', record 'bbb'"
     v = Policy(defaults, validator=Broken()).verdict(calibrated)
     assert v.outcome == "proposed" and v.cite == "the validator raised RuntimeError"
-    # Only a validator that accepts lets the same record auto.
+    # Only a validator that accepts lets the same record auto, and under prod only with a
+    # passing audit for its (task_key, artifact_version) (M4, plan §4.7 auto_requires_audit).
     ok = AcceptAll()
     policy = Policy(defaults, validator=ok)
     assert isinstance(ok, CitationValidator)
+    audited = policy.verdict(calibrated)
+    assert audited.outcome == "proposed" and audited.reason == "audit_required"
+    assert audited.auto_blockers == ("audit_required",) and audited.cite == "cell ok"
+    policy = Policy(defaults, validator=ok, audit_check=lambda key, version: True)
     assert policy.verdict(calibrated) == Verdict(
         outcome="auto", stat=statistic(calibrated), cite="cell ok"
     )
-    assert ok.calls == [("term.fits", t, calibrated)]
+    assert ok.calls == [("term.fits", t, calibrated)] * 2
     # ... and never under a profile that forbids auto-writes.
     assert Policy(defaults, profile="dev", validator=ok).outcome(calibrated) == "proposed"
 
@@ -515,7 +523,11 @@ def test_policy_load_from_a_file_with_a_numeric_auto(
     path = tmp_path / "policy.yaml"
     path.write_text(yaml.safe_dump(raw), encoding="utf-8")
     assert Policy.load(path).outcome(calibrated) == "proposed"  # refused citation
-    assert Policy.load(path, validator=AcceptAll()).outcome(calibrated) == "auto"
+    assert Policy.load(path, validator=AcceptAll()).outcome(calibrated) == "proposed"  # no audit
+    assert (
+        Policy.load(path, validator=AcceptAll(), audit_check=lambda k, v: True).outcome(calibrated)
+        == "auto"
+    )
     cfg = PolicyConfig(policy_path=str(path), profile="dev")
     dev = Policy.from_config(cfg, validator=AcceptAll())
     assert dev.profile == DEV and dev.outcome(calibrated) == "proposed"

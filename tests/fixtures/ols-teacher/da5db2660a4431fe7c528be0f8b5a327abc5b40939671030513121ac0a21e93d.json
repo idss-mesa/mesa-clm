@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000125",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0000125",
+  "description": "For any biological use of PATO, the concept that should be used is 'mass' and not 'weight'. For example, increased weight of an organism.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000125",
+  "isRoot": false,
+  "label": "mass",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000406",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000406",
+  "description": "Snow is an environmental material which is primarily composed of flakes of crystalline water ice.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000406",
+  "isRoot": false,
+  "label": "snow",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

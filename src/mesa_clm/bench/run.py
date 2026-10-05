@@ -25,6 +25,17 @@ lock's pinned head (:func:`mesa_clm.bench.framing.scorers_for_lock`, K4).
   no-model controls equal the cells published in M0 (:func:`m0_comparison`, report-only).
 * :func:`table`: one markdown table over results files; every number names its file.
 
+**M4** (plan §8 M4; ``design/m4-analysis-plan.md``, the M4 registration
+:func:`mesa_clm.bench.registered.current_m4`): :func:`run_x3` the probe cells of every task
+(:func:`mesa_clm.bench.x3.run_x3`) to ``x3.json``; :func:`run_k2` the K2 verdict per task
+(:func:`mesa_clm.bench.k2.evaluate_k2`) over the committed ``tiers.json`` and ``x2.json`` (by
+their pinned sha256) and this date's ``x3.json`` to ``k2.json``; :func:`run_x4` the teacher
+ablation (:func:`mesa_clm.bench.x4.run_x4`) from the teacher snapshot (whose silver rows must be
+byte-for-byte the registered snapshot's, checked by their content digest) and the
+silver-minus-Opus snapshot to ``x4.json``; :func:`run_e2e` the end-to-end measure, second wave
+(:mod:`mesa_clm.bench.e2e`). Every M4 producer applies the M4 registration itself (R5) and
+writes unregistered otherwise; ``bench table`` lists the new files beside the M2 ones.
+
 Results files are never overwritten unless asked (``--force``): one run per file, committed as
 produced (§14).
 """
@@ -52,22 +63,34 @@ if TYPE_CHECKING:
     from mesa_clm.learn.offline import OfflineScorer
 
 __all__ = [
+    "M4_FRAMINGS",
     "REGISTERED_TIERS",
     "BenchRunError",
     "Inputs",
     "Serving",
+    "TeacherInputs",
     "load_inputs",
+    "load_minus_opus",
+    "load_teacher_inputs",
     "m0_comparison",
     "results_files",
+    "run_e2e",
     "run_framing",
+    "run_k2",
     "run_tiers",
     "run_x2",
+    "run_x3",
+    "run_x4",
     "serving",
     "snapshot_store",
     "table",
 ]
 
 REGISTERED_TIERS: Final[tuple[str, ...]] = ("zero_shot", "calibrated")
+# The framings whose texts the M4 verbs read from the manifest: every active framing after A1
+# (F7, F9) and the X2 joint specs the probe specs ``joint4096@*`` reuse (rank_fit tasks), F7 for
+# the closed choices.
+M4_FRAMINGS: Final[str] = "F7,F9,X2"
 
 
 class BenchRunError(RuntimeError):
@@ -421,7 +444,7 @@ def m0_comparison(results: BenchResults, published: Path) -> str:
 
 def _cells_of(path: Path) -> tuple[str, Any]:
     """``(format, BenchResults)`` of a results file, or ``(format, None)`` for one without
-    cells (``mde.json``)."""
+    cells (``mde.json``, ``k2.json``, whose verdicts :func:`table` lists separately)."""
     from mesa_clm.bench import framing
     from mesa_clm.bench.results import FORMAT, load_results
 
@@ -432,6 +455,28 @@ def _cells_of(path: Path) -> tuple[str, Any]:
     if fmt == FORMAT:
         return fmt, load_results(path)
     return fmt, None
+
+
+def _k2_rows(path: Path, shown: str) -> list[str]:
+    """The K2 verdict rows of a ``k2.json`` (``bench table``; empty for another format)."""
+    from mesa_clm.bench import k2
+
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if str(data.get("format", "")) != k2.FORMAT:
+        return []
+    res = k2.load_k2(path)
+    rows = [
+        "",
+        "| file#task | best tier | best cite | verdict | reason | head_adds_nothing |",
+        "|---|---|---|---|---|---|",
+    ]
+    for task, t in res.tasks.items():
+        head = "" if t.head_adds_nothing is None else str(t.head_adds_nothing.head_adds_nothing)
+        rows.append(
+            f"| {shown}#{task} | {t.best or '-'} | {t.best_cite or '-'} | **{t.verdict}** | "
+            f"{t.reason} | {head} |"
+        )
+    return rows
 
 
 def _f(value: float | None, digits: int = 3) -> str:
@@ -455,6 +500,7 @@ def table(paths: Sequence[str | Path], *, root: str | Path | None = None) -> str
         "|---|---|---|---|---|---|---|---|---|---|",
     ]
     skipped: list[str] = []
+    k2_rows: list[str] = []
     for raw_path in paths:
         path = Path(raw_path)
         shown = (
@@ -462,7 +508,11 @@ def table(paths: Sequence[str | Path], *, root: str | Path | None = None) -> str
         )
         fmt, results = _cells_of(path)
         if results is None:
-            skipped.append(f"{shown} ({fmt or 'no format'}: no cells)")
+            verdicts = _k2_rows(path, shown)
+            if verdicts:
+                k2_rows.extend(verdicts)
+            else:
+                skipped.append(f"{shown} ({fmt or 'no format'}: no cells)")
             continue
         for key, cell in results.cells.items():
             m = cell.metrics
@@ -479,6 +529,7 @@ def table(paths: Sequence[str | Path], *, root: str | Path | None = None) -> str
                 f"{'' if b is None else b.beats_lookup_novel} | {cell.selection} | "
                 f"{cell.pre_registered} | {cell.exploratory} |"
             )
+    lines += k2_rows
     if skipped:
         lines += ["", "Not tables of cells: " + "; ".join(skipped) + "."]
     return "\n".join(lines) + "\n"
@@ -490,3 +541,297 @@ def results_files(out_dir: str | Path, date: str) -> list[Path]:
     if not folder.is_dir():
         raise BenchRunError(f"{folder}: no results for {date}", usage=True)
     return sorted(p for p in folder.glob("*.json") if p.is_file())
+
+
+# -- M4 ---------------------------------------------------------------------------------------------------
+
+
+def _m4_index(inputs: Inputs) -> Any:
+    """The manifest index of every text the probe specs read: the rank_fit tasks under
+    ``F7,F9,X2`` and the closed choices under F7, from the snapshot the inputs name."""
+    from mesa_clm.bench.cells import TextIndex
+    from mesa_clm.learn.features import CHOICE_TASKS, X1_TASKS, manifest
+
+    return TextIndex.from_manifests(
+        manifest(inputs.snapshot, X1_TASKS, M4_FRAMINGS),
+        manifest(inputs.snapshot, CHOICE_TASKS, "F7"),
+    )
+
+
+def run_x3(
+    cfg: Config,
+    *,
+    date: str,
+    out_dir: str | Path,
+    snapshot: str | Path | None = None,
+    force: bool = False,
+) -> tuple[Path, BenchResults]:
+    """``bench x3``: the probe cells of every task on the registered snapshot (R1), to
+    ``x3.json``. The verb exposes no option for B, the seed, the grid, the framings or the
+    models (R5): the producer takes them from the registrations."""
+    from mesa_clm.bench import x3
+    from mesa_clm.bench.results import write_results
+
+    _refuse_existing(out_dir, date, "x3", force)
+    with scratch() as tmp:
+        inputs = load_inputs(snapshot, tmp)
+        sv = serving(cfg)
+        index = _m4_index(inputs)
+        results = x3.run_x3(
+            inputs.tasks,
+            index,
+            sv.store,
+            sv.require_scorers(),
+            sv.fingerprints,
+            labels_sha256=inputs.labels_sha256,
+            labels_content_sha256=inputs.labels_content_sha256,
+            date=date,
+            registered=True,  # the producer applies the M4 registration itself
+            B=reg.current().B,
+            seed=reg.current().seed,
+        )
+    return write_results(results, out_dir, force=force), results
+
+
+def _refuse_existing(out_dir: str | Path, date: str, name: str, force: bool) -> None:
+    """One run per results file: refuse before anything is computed when
+    ``<out_dir>/<date>/<name>.json`` exists and ``force`` is not given (``write_results``
+    repeats the check at the end)."""
+    from mesa_clm.bench.results import ResultsExist, results_path
+
+    path = results_path(out_dir, date, name)
+    if path.exists() and not force:
+        raise ResultsExist(f"{path} exists: one run per results file (pass --force to replace)")
+
+
+def _committed(name: str, path: Path, sha256: str) -> dict[str, str]:
+    """``{"path", "sha256"}`` of a committed input after :func:`registered.check_committed_input`
+    (a refusal for other bytes; an unpinned input is a deviation the caller records)."""
+    got = reg.check_committed_input(name, path, sha256)
+    return {"path": path.as_posix(), "sha256": got}
+
+
+def run_k2(
+    cfg: Config,
+    *,
+    date: str,
+    out_dir: str | Path,
+    x3_from: str | Path | None = None,
+    force: bool = False,
+) -> tuple[Path, Any]:
+    """``bench k2``: the K2 verdict per task (R2) over the committed ``tiers.json`` and
+    ``x2.json`` (the M4 registration's pins, refused when their bytes differ) and ``x3.json``
+    (default ``<out_dir>/<date>/x3.json``), to ``k2.json`` and ``k2.md``. ``cfg`` is unused but
+    taken so every bench verb has one shape."""
+    del cfg
+    from mesa_clm.bench import k2
+    from mesa_clm.bench.results import load_results, results_path
+
+    m4 = reg.current_m4()
+    x3_path = Path(x3_from) if x3_from else results_path(out_dir, date, "x3")
+    if not x3_path.is_file():
+        raise BenchRunError(
+            f"{x3_path}: no X3 results file; run `mesa-clm bench x3` first or pass --x3-from",
+            usage=True,
+        )
+    inputs = {
+        "tiers": _committed("tiers.json", m4.tiers_path(), m4.tiers_sha256),
+        "x2": _committed("x2.json", m4.x2_path(), m4.x2_sha256),
+        "x3": {"path": x3_path.as_posix(), "sha256": reg.file_sha256(x3_path)},
+    }
+    deviations = [
+        *reg.committed_input_deviations("tiers.json", m4.tiers_path(), m4.tiers_sha256),
+        *reg.committed_input_deviations("x2.json", m4.x2_path(), m4.x2_sha256),
+    ]
+    results = k2.evaluate_k2(
+        tiers=load_results(m4.tiers_path()),
+        x2=load_results(m4.x2_path()),
+        x3=load_results(x3_path),
+        date=date,
+        inputs=inputs,
+        registered=not deviations,
+        deviations=deviations,
+        B=reg.current().B,
+        seed=reg.current().seed,
+        alpha=reg.current().alpha,
+    )
+    return k2.write_k2(results, out_dir, force=force), results
+
+
+@dataclass(frozen=True)
+class TeacherInputs:
+    """The teacher snapshot (R3): its path and hashes, the teacher rows per task id (training
+    only), and the digest of its non-teacher rows, which must equal the registered
+    ``labels_content_sha256``."""
+
+    snapshot: Path
+    labels_sha256: str
+    labels_content_sha256: str
+    silver_content_sha256: str
+    teacher: dict[str, Any] = field(default_factory=dict)
+
+
+def _silver_content_sha256(snapshot: Path) -> str:
+    """The content digest (``results.labels_content_sha256``'s rows and canon) of a snapshot's
+    non-teacher rows: what must equal the registered snapshot's digest."""
+    import duckdb
+
+    from mesa_clm.bench.results import _content_sha256
+    from mesa_clm.learn.labels import TEACHER_SOURCES
+    from mesa_clm.provenance.labels import IDENTITY_COLUMNS
+
+    order = ", ".join(IDENTITY_COLUMNS)
+    sources = ", ".join(f"'{s}'" for s in TEACHER_SOURCES)
+    target = str(snapshot).replace("'", "''")
+    con = duckdb.connect()
+    try:
+        rows = [
+            list(r)
+            for r in con.execute(
+                f"SELECT {order}, label_index, weight, card, product_code, leak_group, "  # noqa: S608
+                f"fold_eligible, bench_card FROM read_parquet('{target}') "
+                f"WHERE label_source NOT IN ({sources}) ORDER BY {order}"
+            ).fetchall()
+        ]
+    finally:
+        con.close()
+    return _content_sha256(rows)
+
+
+def load_teacher_inputs(
+    snapshot: str | Path | None, workdir: str | Path, inputs: Inputs
+) -> TeacherInputs:
+    """The teacher snapshot (``snapshot``, default the M4 registration's pin; a usage error
+    when none is pinned and none given): refused when its non-teacher rows are not the
+    registered snapshot's rows (content digest), or when the pin names other bytes; its
+    teacher rows per task id from a scratch store. Reads no silver label value."""
+    from mesa_clm.bench.results import snapshot_content_sha256
+    from mesa_clm.learn.labels import teacher_rows
+    from mesa_clm.learn.teacher import TEACHER_TASKS
+
+    m4 = reg.current_m4()
+    path = Path(snapshot) if snapshot is not None else m4.teacher_snapshot_path()
+    if path is None:
+        raise BenchRunError(
+            "no teacher snapshot: pass --teacher-snapshot (the M4 registration pins none yet)",
+            usage=True,
+        )
+    if not path.is_file():
+        raise reg.RegistrationError(f"{path}: no such teacher snapshot")
+    sha = reg.file_sha256(path)
+    if m4.teacher_labels_sha256 and sha != m4.teacher_labels_sha256:
+        raise reg.RegistrationError(
+            f"{path}: labels_sha256 {sha[:12]}… is not the pinned teacher snapshot's "
+            f"{m4.teacher_labels_sha256[:12]}…"
+        )
+    silver = _silver_content_sha256(path)
+    if silver != inputs.labels_content_sha256:
+        raise reg.RegistrationError(
+            f"{path}: its non-teacher rows (content digest {silver[:12]}…) are not the "
+            f"registered snapshot's ({inputs.labels_content_sha256[:12]}…)"
+        )
+    store = snapshot_store(path, Path(workdir) / "teacher.duckdb")
+    return TeacherInputs(
+        path,
+        sha,
+        snapshot_content_sha256(path),
+        silver,
+        {task_id: teacher_rows(store, task_id) for task_id in TEACHER_TASKS},
+    )
+
+
+def load_minus_opus(
+    snapshot: str | Path | None, workdir: str | Path
+) -> tuple[Path, str, str, dict[str, Task]] | None:
+    """The silver-minus-Opus snapshot (default the M4 pin; ``None`` when neither is given):
+    its path, both hashes and the bench tasks built from it (the rebuilt silver, no model
+    output); refused when the pin names other bytes."""
+    from mesa_clm.bench.results import snapshot_content_sha256
+    from mesa_clm.bench.tasks.neon import tasks_from_store
+
+    m4 = reg.current_m4()
+    path = Path(snapshot) if snapshot is not None else m4.minus_opus_snapshot_path()
+    if path is None:
+        return None
+    if not path.is_file():
+        raise reg.RegistrationError(f"{path}: no such silver-minus-Opus snapshot")
+    sha = reg.file_sha256(path)
+    if m4.minus_opus_labels_sha256 and sha != m4.minus_opus_labels_sha256:
+        raise reg.RegistrationError(
+            f"{path}: labels_sha256 {sha[:12]}… is not the pinned silver-minus-Opus snapshot's "
+            f"{m4.minus_opus_labels_sha256[:12]}…"
+        )
+    store = snapshot_store(path, Path(workdir) / "minus_opus.duckdb")
+    return path, sha, snapshot_content_sha256(path), tasks_from_store(store)
+
+
+def run_x4(
+    cfg: Config,
+    *,
+    date: str,
+    out_dir: str | Path,
+    snapshot: str | Path | None = None,
+    teacher_snapshot: str | Path | None = None,
+    minus_opus_snapshot: str | Path | None = None,
+    corpus_dir: str | Path | None = None,
+    force: bool = False,
+) -> tuple[Path, BenchResults]:
+    """``bench x4``: the teacher ablation on the two rank_fit tasks (R3) to ``x4.json``: the
+    silver items of the registered snapshot, the teacher rows of the teacher snapshot (its
+    manifest, which carries the teacher states, indexes the texts) and the silver-minus-Opus
+    subset from its snapshot. ``corpus_dir`` (optional) is hashed
+    (``registered.teacher_corpus_sha256``) and compared with the pin; without it the corpus is
+    not checked (the teacher snapshot pins it; the live corpus may move)."""
+    from mesa_clm.bench import x4
+    from mesa_clm.bench.cells import TextIndex
+    from mesa_clm.bench.results import write_results
+    from mesa_clm.learn.features import X1_TASKS, manifest
+
+    _refuse_existing(out_dir, date, "x4", force)
+    corpus_sha = None if corpus_dir is None else reg.teacher_corpus_sha256(corpus_dir)
+    with scratch() as tmp:
+        inputs = load_inputs(snapshot, tmp)
+        sv = serving(cfg)
+        teacher = load_teacher_inputs(teacher_snapshot, tmp, inputs)
+        minus = load_minus_opus(minus_opus_snapshot, tmp)
+        index = TextIndex.from_manifests(manifest(teacher.snapshot, X1_TASKS, M4_FRAMINGS))
+        chosen = {name: t for name, t in inputs.tasks.items() if t.task_id in x4.X4_TASKS}
+        results = x4.run_x4(
+            chosen,
+            index,
+            sv.store,
+            sv.require_scorers(),
+            sv.fingerprints,
+            teacher=teacher.teacher,
+            minus_opus=None if minus is None else minus[3],
+            labels_sha256=inputs.labels_sha256,
+            labels_content_sha256=inputs.labels_content_sha256,
+            date=date,
+            registered=True,  # the producer applies the M4 registration itself
+            teacher_hashes=(teacher.labels_sha256, teacher.labels_content_sha256),
+            minus_opus_hashes=None if minus is None else (minus[1], minus[2]),
+            teacher_corpus_sha256=corpus_sha,
+            B=reg.current().B,
+            seed=reg.current().seed,
+        )
+    note = (
+        f"teacher snapshot {teacher.snapshot} (labels_sha256 {teacher.labels_sha256}); its "
+        f"non-teacher rows equal the registered snapshot (content digest "
+        f"{teacher.silver_content_sha256[:12]}…)"
+    )
+    if minus is not None:
+        note += f"; silver-minus-Opus snapshot {minus[0]} (labels_sha256 {minus[1]})"
+    results = results.model_copy(update={"notes": [*results.notes, note + "."]})
+    return write_results(results, out_dir, force=force), results
+
+
+def run_e2e(cfg: Config, *, date: str, out_dir: str | Path, force: bool = False) -> Path:
+    """``bench e2e --loco`` (R8): second-wave work; :func:`mesa_clm.bench.e2e.run_e2e` says so."""
+    del cfg, date, out_dir, force
+    from mesa_clm.bench import e2e
+
+    try:
+        e2e.run_e2e()
+    except e2e.NotImplementedYet as exc:
+        raise BenchRunError(str(exc), usage=True) from exc
+    raise BenchRunError("bench e2e: unreachable", usage=True)  # pragma: no cover

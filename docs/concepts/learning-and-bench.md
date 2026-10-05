@@ -1,6 +1,6 @@
 ---
 title: "Learning and bench"
-description: "Where mesa-clm's labels come from and how they are identified and frozen, the feature cache, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, the pre-registered experiments X1-X4 with the AnyJev baseline numbers, how M2's analysis plan runs X1, the tier cells and X2 (committed before any result), and the registered M2 results (term.fits K1; F9 for column.ontology_fits)."
+description: "Where mesa-clm's labels come from and how they are identified and frozen, the feature cache, the tier fitters, leave-one-card-out with nested selection, rule R, the lookup baseline every cell must beat, the pre-registered experiments X1-X4 with the AnyJev baseline numbers, how M2's analysis plan runs X1, the tier cells and X2, the registered M2 results (term.fits K1; F9 for column.ontology_fits), and how M4's analysis plan runs the probe tier (X3), K2, the teacher ablation (X4) and the artifacts, committed before any M4 result exists."
 type: Guide
 tags:
   - concepts
@@ -9,8 +9,8 @@ tags:
   - labels
   - calibration
 generated:
-  by: "claude/opus-5.5"
-  at: "2026-10-04T18:00:00Z"
+  by: "claude/fable-5.1"
+  at: "2026-10-04T23:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -48,6 +48,10 @@ sources:
     resource: "https://github.com/idss-mesa/mesa-clm/tree/main/bench/results/2026-10-03"
     title: "mesa-clm M2 registered run, 2026-10-03 (x1.json, tiers.json, x2.json, table.md)"
     author: "team:idss-mesa"
+  - id: m4-plan
+    resource: "https://github.com/idss-mesa/mesa-clm/blob/main/design/m4-analysis-plan.md"
+    title: "mesa-clm M4 analysis plan (pre-run): X3 the probe tier, K2, X4, artifacts and promotion, the citation test, audits"
+    author: "team:idss-mesa"
 status: draft
 stale_after: "2027-03-31T00:00:00Z"
 ---
@@ -65,7 +69,7 @@ weight and the flags `fold_eligible`, `bench_card`, `product_code` and `leak_gro
 | `curator` / `curator_implicit` | 1.0 / 0.7 | yes, except on bench cards | a pick in the MRTR elicitation or the CLI at an interactive terminal (`review`, `review --pick`, `feedback`), or a ticked neon `review.md` (DESIGN D21, A2) |
 | `agent_pick` | 0 | no | a plain `mesa_clm_feedback` tool call, the same CLI verbs run without a terminal, and mesa-anyjev curator rows imported without `--trust-curator`; recorded, never learned from |
 | `consensus_all` / `_majority` / `_negative` | 0.8 / 0.6 / 0.5 | yes | `labels ingest-neon-eval`: a term proposed by every, by at least two, or by a single one of the four agentic models in neon-avu-eval |
-| `teacher` / `teacher_implicit` | 0.5 / 0.3 | **no** | `labels ingest-teacher`: accepted items of neon-ducklake's Opus-validated generic curation, in-registry only, leak group = product (DESIGN D19) |
+| `teacher` / `teacher_implicit` | 0.5 / 0.3 | **no** | `labels ingest-teacher` (M4): accepted items of neon-ducklake's Opus-validated generic curation, in-registry and aspect-mapped only, Yes only, one row per table card of the product that carries the column, leak group = product (DESIGN D19; `teacher_implicit` would weight the unpicked candidates of replicate proposal files, of which the corpus has none) |
 | `gold` | 1.0 | yes | reserved; no hand-verified rows exist yet |
 
 The silver is *agreement between models*, not truth, and Opus is both a silver labeler and the
@@ -121,14 +125,18 @@ between different term.fits contexts of 0.831 raw and 0.677 after the head with 
 |---|---|---|---|
 | `zero_shot` | `σ(s_c)` from `clm-latest` or `clm-raw` | softmax | none |
 | `calibrated` | weighted Platt on `s_c` (`a < 0` flags `inverted`) | temperature (K>2), Platt on the logit difference (K=2) | `calibrators.json` |
-| `probe` | weighted logistic regression, LDA or ridge on `lowdim.v1`, `pair512.v1`, `pair4096.v1` or the PR #13 replica `joint4096@S1`; spec and hyperparameters by grouped inner CV, then temperature | `choice.state.v1` | `probes/<question_key>.json` |
-| `head` | per-candidate two-way rows through CLM's `finetune.py` in the serve venv, re-scored with `HeadPair`, then Platt | closed options | `heads/mesa-<task>-<qk8>-v<N>.pt` |
+| `probe` (M4) | weighted logistic regression, LDA or ridge on `lowdim.v1`, `pair512.v1`, `pair4096.v1`, `joint4096@S1` or `joint4096@S1ns`; spec, fitter and hyperparameters by grouped inner leave-one-card-out, then a weighted out-of-fold Platt on the logit difference | the same fitters on `choice.state.v1` or `choice.raw.v1`; an out-of-fold temperature at K > 2 (Platt at K = 2) | `probes/<question_key>.json` |
+| `head` (M7) | per-candidate two-way rows through CLM's `finetune.py` in the serve venv, re-scored with `HeadPair`, then Platt | closed options | `heads/mesa-<task>-<qk8>-v<N>.pt` |
 
 Artifacts live under `~/.mesa/clm/artifacts/<encoder_fp>/<clm_model_fp>/<lock8>/v<N>/`,
-immutable, with a strict loader that refuses fingerprint mismatches. `learn promote` moves
-`CURRENT` only when the new version beats the current on NLL and is within 0.01 on accuracy
-under rule R; a head is promoted only if it beats the probe (DESIGN D18). Serving never fits
-(DESIGN D15).
+immutable, with a strict loader that refuses fingerprint mismatches; `CURRENT.json` beside the
+versions says which version and tier each task serves, and only what it promotes is served.
+`learn fit` writes a version and never promotes; `learn promote` puts one task's artifact into
+`CURRENT.json` only when it cites a qualifying pre-registered nested cell, K2 judged that tier
+`a` or `b`, and, when the task already serves one, the new cell beats the current on NLL under
+rule R and is within 0.01 on accuracy; a head is promoted only if it beats the probe (DESIGN
+D18, M7). Serving never fits (DESIGN D15). The M4 reading is below and on
+[Serving](serving.md).
 
 ## Leave-one-card-out, nested selection, rule R
 
@@ -172,8 +180,9 @@ every `auto` threshold (DESIGN D8).
   make the K2(a) comparison paired.
 * **X3 tier sweep**: zero-shot and calibrated on A1; probe specs and fitters; the head (M7).
 * **X4 teacher ablation**: off vs (0.5/0.3) vs (0.3/0.1), scored on silver and
-  silver-minus-Opus; the expected effect with 13 usable items is stated in advance as about
-  null.
+  silver-minus-Opus; with few teacher rows in the bench products' registry the expected effect
+  is stated in advance as about null (D19's "13 usable items" described the SRER generics of
+  2026-09-29 and is superseded by the corpus M4 reads, below).
 
 Kill and pivot criteria K0–K4 are fixed with them: no state signal makes a task's CLM tiers
 audit-only and its proposals `ols_rank`; a task earns auto-eligibility only by beating the
@@ -329,6 +338,284 @@ AnyJev L2 cells join all 285 and 190 items. Two independent recomputations after
 every number they recomputed (RESEARCH.md, which also names what the repository reproduces itself:
 the replay, and X1's decisions under 200 other bootstrap seeds). What A1 changes in the pipeline is on
 [Decision model](decision-model.md): Q3 asks F9, term.fits groups are `ols_rank` by default.
+
+## Milestone M4: the analysis plan (pre-run)
+
+`design/m4-analysis-plan.md` reads every frozen rule M4 runs (X3's probe tier, K2, X4, the
+citation test, artifacts and promotion, the production audit) the way the M2 plan read X1: one
+deterministic algorithm per rule, every alternative reading named with the reason it was
+rejected (the more conservative one wins: the one that admits less, cites less or promotes
+less), every constant in its Appendix B and held to the code by
+`tests/unit/test_m4_plan_constants.py`. It and its code are committed and pushed **before the
+first M4 run on the snapshot's labels**; until then the code ran on synthetic data only and
+nothing combined a model output with a silver label. **No M4 result exists yet**: this section
+says what the verbs will do, not what they found, and the results files it names are planned.
+After the first run the plan changes only by amendment, with the affected cells marked
+exploratory; the amendment that records K2's verdicts, X4's decision and the promotions (A7) is
+the planned consequence of the run, not such a change.
+
+**Inputs and the M4 registration.** The snapshot is M2's, unchanged (`bench/snapshots/2026-09-29.parquet`,
+read through M2's refusals: both hashes, the published counts, never written); the folds, guards
+and weights are M2's. The feature store is the registered encoder's under the serving lock of
+G1, holding every registered text under F4, F7, F9, F1 and the X2 joint specs; X3 reads from it
+only, X4 adds the teacher items' texts (built label-free before the run). The M4 registration
+(`bench.registered.REGISTERED_M4`) adds to M2's, which it never repeats: the framings lock of
+A1 (M2's registration keeps G1's so its replay still holds) with the active framing per task
+(F9 for `column.ontology_fits`, F7 elsewhere), the X3 grid (the specs per shape, each spec's
+model, the fitters with their hyperparameter values in declared order, the inner criterion, the
+floors), the committed `tiers.json` and `x2.json` K2 reads by sha256 (other bytes are refused
+outright), the K2 constants, X4's arms, and the teacher inputs, filled from the label-free
+ingest run before the pre-run commit (plan §12.2; DESIGN "Implementation notes (M4)", item 6):
+the corpus content hash `d90387928bed…` as read at neon-ducklake commit `b1fa52a8d3ff…`, the
+teacher snapshot `bench/snapshots/2026-10-04-teacher.parquet` (sha256 `397f98d4b28c…`, content
+`deb0dc46e17b…`) and the silver-minus-Opus snapshot `bench/snapshots/2026-10-04-minus-opus.parquet`
+(sha256 `2cd529ffa439…`, content `d8e26a0c7ac3…`); no pin is a placeholder. Every producer
+applies it itself: `bench x3`, `bench k2` and `bench x4` write a run on other labels, another
+lock, other fingerprints, another grid, another active framing, a subset of tasks or other
+bootstrap settings with every cell `pre_registered: false`, `exploratory: true` and the
+deviations in the file's first note, whatever the caller says; `learn fit` computes the same
+lock, fingerprint and grid deviations and **refuses** on any (exit 1, nothing written), since an
+artifact is what production serves and an unregistered one has no cell to cite; a pinned input
+whose bytes differ is refused everywhere. The verbs expose no option for B, the seed, alpha,
+the grid, the framings or the models.
+
+### The probe tier
+
+Three readings settle X3's shape. The **framing is not an axis**: a task's probe is fitted and
+served on the texts of its active framing after A1, since which framing a task asks is X1's
+decision and a probe chosen on another framing's texts could not be served without a lock
+rotation. **A spec belongs to one model**: a spec that reads any head quantity is a
+`clm-latest` probe, one that reads raw vectors only is a `clm-raw` probe, and a served probe
+lives in the artifact bundle of its spec's model. **The floors are per fit**: 40 training items
+for every probe fit, outer and inner, and 100 out-of-fold items for the pool the probe's
+calibrator is fitted on; a fold below either is skipped with the reason recorded.
+
+**Specs** (`learn.probe.SPECS`, in declared order; `zs`, `zc` the 512-d `clm-latest`
+projections, `xs`, `xc` the raw L2-normalised 4096-d vectors, `s_latest` and `s_raw` the
+zero-shot `s_c` under each model, `⊕` concatenation, `⊙` the elementwise product):
+
+| spec | shape | model | formula |
+|---|---|---|---|
+| `lowdim.v1` | rank_fit | clm-latest | `[s_latest, s_raw]` |
+| `pair512.v1` | rank_fit | clm-latest | `zs⊙zc ⊕ |zs−zc| ⊕ [s_latest]` |
+| `pair4096.v1` | rank_fit | clm-raw | `xs⊙xc ⊕ [s_raw]` |
+| `joint4096@S1` / `@S1ns` | rank_fit | clm-raw | the raw vector of the X2 joint context text, with / without the task question |
+| `choice.state.v1` | choice | clm-latest | `zs ⊕` the K zero-shot option logits under clm-latest |
+| `choice.raw.v1` | choice | clm-raw | `xs ⊕` the K option logits under clm-raw |
+
+A rank_fit spec has one row per labelled (target, candidate) pair, a choice spec one per
+labelled target; the anchor text is read only to form `s_c`. The formulas live in one place
+(`probe.rank_fit_features`, `probe.choice_features`) for the bench and for serving, and the
+builder's zero-shot logits equal the tier cells' scores.
+
+**Fitters** (`learn.linear`): weighted L2 logistic regression (binary at K = 2, the symmetric
+multinomial form above), weighted shrinkage LDA (toward the scaled identity, the Ledoit–Wolf
+target) and weighted ridge on one-hot targets, in numpy float64, the label weights as sample
+weights (DESIGN D20: an integer weight equals that many copies of a row). Every data term is a
+**weighted mean** with the penalty `λ/2 ‖coef‖²` on the standardized features and never on an
+intercept (the convention of the M2 Platt fit; the sum form was rejected because it would make
+a 4097-d fit at the smallest λ nearly unpenalised and dependent on the scale of the weights).
+Features are standardized with the training set's weighted moments (std floored at 1e-8); a
+thin-SVD reduction to the row span makes a wide fit exact and cheap. Grids in declared order,
+which is the tie order: logreg λ ∈ {1e-2, 1e-1, 1, 10}; lda γ ∈ {0.1, 0.5, 0.9}; ridge λ ∈
+{1e-1, 1, 10}; fitters `logreg, lda, ridge`. Newton's method with Armijo halving; a fit that
+does not converge is used as it is and flagged `converged: false`, never refitted or skipped
+(the M2 calibrators' rule). LDA with a class absent from a training set is refused and that
+configuration is recorded unfittable on that fold.
+
+**The nested inner selection** (`probe.inner_select`, DESIGN D27). For an outer fold (held-out
+card *c*, training cards *T*) the inner folds are the grouped leave-one-card-out over the cards
+of *T*; nothing in the inner loop reads an item outside *T*. Each inner fold applies the 30/5
+guard and the probe floor of 40 to the task's items only (teacher rows count toward neither).
+Every configuration of the grid (spec × fitter × hyperparameter, in declared order) is fitted
+on every passing inner fold and applied to the inner held-out card; the out-of-fold
+predictions are pooled and the criterion is the **pooled OOF NLL of the uncalibrated probe
+probabilities, unweighted over the items** (the quantity the cell is judged on; the weights
+are sample weights of the fits). The lowest wins; a tie goes to the first in declared order. A
+configuration unfittable on any passing inner fold is not selectable on that outer fold; no
+selectable configuration, or no passing inner fold, skips the outer fold with the reason.
+
+**The OOF calibrator and the outer fold** (`probe.nested_probe`). After the outer guard and
+floor, fewer than 100 pooled OOF items of the winner skip the fold (`below_floor n < 100 OOF
+items (probe calibrator)`): no probe calibrator is ever fitted on fewer. Otherwise the
+calibrator is fitted **weighted** on the winner's pooled OOF predictions: at K = 2 a Platt on
+the OOF logit difference (`a < 0` flagged `inverted` and kept), at K > 2 a temperature on the
+OOF log-probabilities (a bound flagged and kept); the cell's `calibration` is its kind. The
+winner is refitted on all of *T*, applied to card *c*, the calibrator applied, and the held-out
+predictions pooled in item order, never averaged; `ProbeArtifact.predict` on a fold's fit
+equals the pooled held-out probabilities bit for bit. Stated in advance from the published
+counts (`bench/results/2026-09-29/baselines.json#per_fold_n`): `column.annotate` (98 items) and
+`column.aspect` (60) can never pool 100 OOF items, so their probe cells have no evaluated fold
+and `metrics: null`, with the uncalibrated probe reported in their diagnostics only; with
+per-card counts of 13, 11, 9, 9, 7, 6 and 5, `column.aspect`'s inner training sets also fall to
+36 or 38 items on the six inner folds where the 13-item card and an 11- or 9-item card are both
+held out, which the probe floor of 40 skips. `avu.value_kind`, `term.fits` and
+`column.ontology_fits` clear the 40 floor on every outer and inner training set outright, and
+the 100 OOF floor on every outer fold only if the inner 30/5 guards pass (the per-card class
+counts are not published, so that half is not stated in advance). Under A6 the closed choices
+are decided by rules, so none of this changes production.
+
+**Teacher rows** (`probe.TeacherRows`, DESIGN D19) are added to every training set, outer and
+inner, except the rows whose `leak_group` equals the held-out card's product; they are never in
+a test index, never counted by a guard or floor, and every fold records `n_teacher`. In X3
+there are none; X4 adds them.
+
+### The X3 cells (`bench x3`)
+
+Four cells per task, every one through the same cell builder as the M2 cells (`cells.assemble_cell`:
+the identity fields, counts, metrics, lookup controls, `beats_lookup_novel`, `threshold_cp`
+and the per-item predictions): the **nested cell** `<task>.probe.<active framing>` (the whole
+grid, `selection: "nested"`, the only citable form), `@latest` and `@raw` (the same procedure
+on the specs of one model; pre-registered, never citable because a variant; what K2's clm-raw
+clause compares) and `@full` (one configuration chosen by the inner LOCO over all seven cards,
+evaluated in every outer fold with that fold's own calibrator and refit; `selection: "full"`,
+`exploratory: true`). The nested cell's identity (`feature_spec`, `model`,
+`fingerprint.clm_model_fp`) is the **full-data** configuration's, the one production would
+serve, as A1's arm is the identity of the M2 nested cells; `fold_choices` records each outer
+fold's own configuration (spec, fitter, hyper, model, inner NLL, the calibrator record,
+`n_teacher`, `converged`, `evaluated` or the skip reason) and `diagnostics.fold_agreement_with_full`
+how many folds chose the served one. A nested cell whose folds chose specs of both models is
+one cell, each item scored by its fold's own spec. Every spec is servable (both models are
+served); a task whose full-data selection chooses nothing is `servable: false`. Report-only
+diagnostics carry every configuration's inner NLL per fold, the uncalibrated held-out and
+pooled metrics, the refit's convergence, each spec's `mean_state_cos`, calls, tokens and
+milliseconds per decision in M2's units.
+
+**What can be cited.** Only the nested cell, and only when the citation test passes
+([Tiers and policy](tiers-and-policy.md)); the closed choices' probe cells cannot have
+`beats_lookup_novel`, each for its own reason (`column.aspect` and `avu.value_kind` have no
+AUROC at K > 2; `column.annotate`, K = 2, has one, but its lookup control is
+`insufficient_clusters` under the frozen minimum-detectable-effect statement, one card having
+at least 10 novel-key items, and its probe cell has no evaluated fold under the 100 OOF floor),
+so no closed-choice probe cell can be cited in M4, stated in advance. `term.fits` can be cited for a numeric `auto` only through a promoted probe, since its
+calibrated tier is K1's audit-only.
+
+### K2 (`bench k2`)
+
+K2 judges each task's **best servable tier on nested cells**. The candidates are the task's
+citable-form nested cells: `calibrated` from the committed `tiers.json` (only
+`column.ontology_fits` has one; `term.fits`' K1 audit cells and the closed choices' fixed F7
+arms are listed with `eligible: false` and the reason) and `probe` from `x3.json`; a candidate
+is eligible only when its own cell is `pre_registered: true`, nested, servable, not exploratory
+and pools items. The best tier is the eligible candidate with the lowest pooled NLL (a tie goes
+to `calibrated`, the lower rank); whether the probe beats the calibrated tier under rule R is
+recorded beside it, because promotion needs it and K2 does not. On the best cell, with every
+number recorded:
+
+* **(a) auto-eligible**: `beats_lookup_novel` ∧ non-inferiority to AnyJev L2 on the full item
+  set ∧ ECE ≤ 0.08 with cluster upper bound ≤ 0.12. The AnyJev side is `x2.json`'s per-item
+  cell joined by identity; "the full set" is read strictly (the tier must pool every item of the
+  task, counted from its `task_counts` or the registered count and failing closed when it has
+  neither, and every one must match, so a tier that skipped a fold fails here); non-inferiority
+  is two conditions, Δacc's card-cluster paired bootstrap lower bound above −0.02 **and** the
+  card-sign condition, which is **rule R's sign test, verbatim and without a margin**: on at
+  least ⌈0.8·m_c⌉ of the m_c cards with at least 10 items the per-card Δacc is above 0, and
+  fewer than 4 such cards fails. The plan names and rejects the margin-shifted per-card test
+  (Δacc above −0.02 per card) as the permissive reading; it is reported beside the gate
+  (`card_sign_margin_report`, computed in integers), never gated on. Stated in advance: the
+  literal test asks the tier to beat AnyJev L2 on most cards, so (a) is demanding, and a tier
+  that is non-inferior on the cluster bound but not better per card is (b) at best; a numeric
+  `auto` stays null in 0.1.0 whatever the verdict;
+* **(b) proposer-only**: `beats_lookup_novel` alone;
+* **(c)** otherwise, "no eligible candidate" included. A closed choice is (c) by construction
+  (see "What can be cited" above for each one's reason).
+
+Strict inequalities are strict. **The clm-raw clause** (`head_adds_nothing`, rank_fit tasks):
+on the `@latest` and `@raw` cells, `@latest` does **not** beat `@raw` on NLL under rule R and
+`@raw` is non-inferior to `@latest` on accuracy within 0.01; recorded, with no production
+change in the run (the consequences are amendment A7's). `k2.json` holds the inputs with their
+sha256, the constants, the candidates, the comparison, the best tier and its cite, every
+condition and the verdict with its reason; `k2.md` is one row per task, and `bench table` lists
+the verdicts beside the cells of the other files.
+
+### X4 and the teacher corpus (`labels ingest-teacher`, `bench x4`)
+
+**The corpus** (`<neon-root>/curation/generic/<DP>.validated.json`), ingested label-free on
+2026-10-05 (01:44–01:46Z, before the pre-run commit; the report is transcribed in DESIGN
+"Implementation notes (M4)", item 6) at neon-ducklake commit `b1fa52a8d3ff…`, corpus hash
+`d90387928bed…`: 55 files, 389 `accepted` items, every file's `model` `claude-opus-5-5`, no
+`human_accepted` list. DESIGN D19 as read: items with status `accepted` or `human_accepted`; a
+file whose `model`, or whose replicate proposal file's `model`, starts with `mesa-clm` is
+refused (none was). The ingest found 6 replicate proposal files under
+`sites/SRER/curation/proposals`, read each for its `model` only, and wrote 0 `teacher_implicit`
+rows: it synthesizes no row from a proposal's unpicked candidates, so X4's `teacher_implicit`
+weights weight nothing in this run. Drops are counted by reason, and the ingest dropped 103
+`out_of_registry` (a CURIE prefix that is not a registry ontology), 101 `no_column` (a
+dataset-level item), 22 `unmapped_aspect` (`process`), 17 `collapsed_identity`, 11
+`unresolved_column` (no table card of the product carries the column), 0 `ontology_mismatch`
+and 0 `term_missing` (OLS has no usable record). **Target resolution**: a column resolves to
+**every** table card of the product (`sites/SRER/cards/anyjev/<DP>.<table>.md`) whose column
+set contains it, one row per card, the rows sharing `leak_group` = the product code; no
+dataset-scope state is synthesized for an item without a resolvable column (the plan had left
+that resolution to M4; this is the conservative answer); 231 (item, card) resolutions, and
+`DP1.10092.001` has no card. Rows are Yes only: `term.fits` for (column state, CURIE) with the
+candidate as OLS records it, and `column.ontology_fits` for (column state, ontology) when the
+ontology is aspect-allowed (otherwise the ontology row is skipped and counted
+`ontology_not_aspect_allowed` outside the drops, since the `term.fits` row is still written: 5
+such); 435 rows inserted, 231 `term.fits` and 204 `column.ontology_fits`; every row `teacher`
+at 0.5, `fold_eligible=false`, `bench_card=false`, origin `teacher:<file sha256[:12]>`. The OLS
+records of the corpus's in-registry CURIEs were recorded once from live EMBL-EBI OLS4 into
+`tests/fixtures/ols-teacher/` (110 `get_term` responses; `scripts/record_ols_teacher.py`), so
+the ingest replays. `labels snapshot` then wrote `bench/snapshots/2026-10-04-teacher.parquet`
+(1,369 labels), whose silver rows are byte-identical to the registered snapshot (the X4
+producer checks the content digest of its non-teacher rows); `features build --snapshot
+<teacher snapshot> --tasks term.fits,column.ontology_fits --framings F7,F9` embeds the teacher
+texts and has not run yet.
+
+**The silver-minus-Opus subset.** The committed snapshot does not carry the model set behind a
+consensus row, so the subset comes from a label-free rebuild of the silver from
+`tests/fixtures/neon-avu-eval` with Opus's runs removed (`labels ingest-neon-eval
+--exclude-models claude-opus-5-5` into a separate store, then `labels snapshot --out
+bench/snapshots/2026-10-04-minus-opus.parquet`, 679 labels, committed and pinned with the
+pre-run commit). The surviving
+items are the registered items whose identity the rebuilt task carries **with the same label**
+(a weight change survives, a flipped label or a vanished identity does not); the scoring is the
+same predictions on that subset.
+
+**The arms.** Three runs of the X3 nested procedure on **identical outer folds**: off, (0.5, 0.3)
+and (0.3, 0.1) for the (`teacher`, `teacher_implicit`) weights, the teacher rows entering every
+training set as sample weights except the held-out card's product (both bench products have a
+corpus file, so the rule fires on every fold), never a test item (`teacher_in_test: false`,
+asserted). Cells `<task>.probe.<framing>@teacher-off|-0.5|-0.3` and their `-minus-opus` twins,
+every one a variant, pre-registered and `exploratory: true`, never citable; their identity is
+the off arm's full-data choice. **Decision**: keep teacher labels in production fits iff
+`on ≻ off` on **novel-key NLL** under rule R for **both** scorings, for the (0.5, 0.3) arm; the
+(0.3, 0.1) arm is reported; fewer than two novel-key cards counts as not passing. The record is
+in every X4 cell's diagnostics and the file's notes.
+
+### `bench e2e --loco` (planned, second wave)
+
+The end-to-end measure is report-only and writes no cell: per held-out card, consensus-all
+recall (the fraction of the card's `consensus_all` Yes `term.fits` CURIEs the run proposes,
+against AnyJev's static recall of 0.25) and anchor-abstain precision (the fraction of the run's
+anchor-won groups whose candidates include no consensus-all Yes), pooled with the card-cluster
+bootstrap bounds. Its measurement half is in `bench/e2e.py`; the fold provider that serves a
+fold's nested probe or calibrator from the store behind the decision-provider protocol is
+**not in the pre-run commit**: `bench e2e --loco` exits with a usage error that says so, and
+the measure ships by amendment with its own disclosure.
+
+### The run protocol (plan §12)
+
+Before the commit nothing combines a model output with a real label and no M4 verb runs on the
+registered snapshot, the live feature store or the sidecar; the one step that reads labels, the
+teacher inputs (`labels ingest-teacher`, `labels snapshot` for the teacher snapshot, the rebuild
+without Opus and its snapshot), was run label-free with respect to model outputs on 2026-10-05
+before the commit and is disclosed above, its pins written into `REGISTERED_M4` and committed
+with the plan. Then, once each, on the serving host: `features build` for the teacher texts →
+`bench x3 --date <date>` → `bench k2 --date <date>` → `bench x4 --date <date>` → `bench table`;
+every output committed as produced, in one commit, before any of it is written into prose
+(`--force` replaces only a failed or unregistered attempt, and the replacement is disclosed).
+Then `learn fit --date <date>` (the full-data probes and calibrators, one version per served
+model, exported to `bench/results/<date>/artifacts_v<N>/` and committed; refused outright on
+any deviation from the registration), promotion decided by
+K2's verdicts and recorded in DESIGN amendment A7 with X4's decision, `learn promote` once per
+promoted task after A7, and the production audit (`annotate` on at least five non-bench SRER
+cards under the promoted tiers, `audit sample --n 100 --min-cards 5`, the curator's `audit
+review`, `audit record`). A numeric `auto` stays null in 0.1.0 whatever K2 says. Determinism:
+the fitters have no randomness, ties go to the first configuration in declared order, every
+bootstrap uses B = 2000 and seed 0, and two runs of a producer on the same inputs are
+byte-identical (tested on synthetic worlds); a discrete outcome that flips under another
+platform's last-bit differences is recorded as a discrepancy, never silently re-derived.
 
 ## Baseline numbers
 

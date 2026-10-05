@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000122",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0000122",
+  "description": "Length often refers to the longer or longest dimension of an object, however, this is not always true. See https://github.com/pato-ontology/pato/issues/337 for full discussion.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000122",
+  "isRoot": false,
+  "label": "length",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

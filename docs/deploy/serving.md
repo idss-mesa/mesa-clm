@@ -65,7 +65,8 @@ commands below prints a key, and nothing here enables a unit at boot.
 | Path | Written by | Contents |
 |---|---|---|
 | `serve/CLM`, `serve/.venv`, `serve/patches.applied.json` | bootstrap | patched clone, serve venv, the applied series and its git tree |
-| `heads/CLM_v0.1-8B.pt`, `heads/npz/<sha8>.npz`, `heads/served/` | bootstrap; promotion (M4) | the pinned head, its numpy export, promoted heads (clm-serve globs `*.pt` at start) |
+| `heads/CLM_v0.1-8B.pt`, `heads/npz/<sha8>.npz`, `heads/served/` | bootstrap; head promotion (M7) | the pinned head, its numpy export (which a promoted probe that reads head quantities needs, M4), promoted heads (clm-serve globs `*.pt` at start) |
+| `artifacts/<encoder_fp>/<clm_model_fp>/<lock8>/v<N>/`, `…/CURRENT.json` (0700, files 0600) | `learn fit`, `artifacts pull`; `learn promote` (M4) | immutable artifact versions (manifest, calibrators, probes) and the promotion table per task; see [Serving](../concepts/serving.md), "Learned artifacts" |
 | `bin/` | bootstrap | `mesa-clm-encoder-run`, `mesa-clm-wait-http`, `mesa-clm-check-headroom`, `mesa-clm-serve-bootstrap`, and `mesa-clm-encoder-proxy` (from `serving/encoder_proxy.py`, run by the serve venv's Python) |
 | `serve/vllm-auth/vllm_auth.py` (0700 directory, 0600 file) | bootstrap | the encoder's bearer guard, mounted read-only into the container (DESIGN A4) |
 | `serving.lock.json` | bootstrap | the lock the host was built from |

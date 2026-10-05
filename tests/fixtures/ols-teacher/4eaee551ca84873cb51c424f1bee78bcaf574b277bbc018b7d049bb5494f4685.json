@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_09000017",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:09000017",
+  "description": "The concentration of a nitrogen atom when measured in soil.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_09000017",
+  "isRoot": false,
+  "label": "concentration of nitrogen atom in soil",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

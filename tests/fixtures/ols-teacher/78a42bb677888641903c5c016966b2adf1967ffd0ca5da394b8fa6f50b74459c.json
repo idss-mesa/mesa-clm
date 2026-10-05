@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_09000008",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:09000008",
+  "description": "The concentration of a carbon atom when measured in soil.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_09000008",
+  "isRoot": false,
+  "label": "concentration of carbon atom in soil",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

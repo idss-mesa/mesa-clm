@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000918",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0000918",
+  "description": "A 3-D extent quality inhering in a bearer by virtue of the bearer's amount of 3-dimensional space it occupies.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0000918",
+  "isRoot": false,
+  "label": "volume",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

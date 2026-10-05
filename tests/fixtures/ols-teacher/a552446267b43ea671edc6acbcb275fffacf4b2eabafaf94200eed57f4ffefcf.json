@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00001998",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:00001998",
+  "description": "An environmental material which is primarily composed of minerals, varying proportions of sand, silt, and clay, organic material such as humus, interstitial gases, liquids, and a broad range of resident micro- and macroorganisms.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00001998",
+  "isRoot": false,
+  "label": "soil",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

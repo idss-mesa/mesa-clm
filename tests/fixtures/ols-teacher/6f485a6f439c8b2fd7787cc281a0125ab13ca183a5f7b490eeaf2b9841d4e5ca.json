@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001564",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001564",
+  "description": "An aggregate of raindrops falling to a planetary surface during a precipitation process.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001564",
+  "isRoot": false,
+  "label": "rain",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

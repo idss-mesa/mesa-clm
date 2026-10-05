@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001363",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01001363",
+  "description": "The volume of water which has fallen during a precipitation process.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01001363",
+  "isRoot": false,
+  "label": "volume of hydrological precipitation",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001842",
+  "ontology_id": "pato"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "PATO:0001842",
+  "description": "A concentration quality inhering in a bearer by virtue of the bearer's containing acid (hydrogen ions).",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/PATO_0001842",
+  "isRoot": false,
+  "label": "acidity",
+  "ontologyId": "pato",
+  "synonyms": []
+ }
+}

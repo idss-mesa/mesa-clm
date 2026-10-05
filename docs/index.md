@@ -25,7 +25,10 @@ registered framing experiment: `column.ontology_fits` is asked with the F9 frami
 see [Learning and bench](concepts/learning-and-bench.md)), and, by the user's decision after
 those results (amendment A6), the closed choices answered by rules with CLM's answers kept for
 audit only (see [Decision model](concepts/decision-model.md)), after M1's serving stack,
-rank-first annotate pipeline, sidecar and review verbs; proposed-only. Pages say which milestone
+rank-first annotate pipeline, sidecar and review verbs; proposed-only. Milestone M4 (the
+learned tiers) is in its pre-run phase: its analysis plan and code (the probe tier, K2, the
+teacher ablation, artifacts and promotion, the citation test, the audits) are written before
+any M4 result exists, and no number from it is reported anywhere yet. Pages say which milestone
 delivers what they describe, and mark what is still planned.
 
 ## Documentation

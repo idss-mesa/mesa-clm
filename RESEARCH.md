@@ -744,6 +744,29 @@ will move when it lands.
   the closure and finds 0 missing. EMBL-EBI OLS4 terms are under the OBO Foundry ontologies'
   own licenses (`THIRD_PARTY.md`).
 
+- **The teacher corpus (D19), read label-free on 2026-10-04** (`~/neon-ducklake/curation/generic/`,
+  a live working tree: the neon-ducklake checkout was at commit "data: KONZ curation results and
+  updated ontology maps" of 2026-10-04 16:18 -0600, which rewrote `DP1.00001.001.validated.json`
+  at 16:17:55 while M4's pre-run work was reading the directory; the content hash
+  `bench.registered.teacher_corpus_sha256` therefore moved from `d97b1690b450…` to
+  `d90387928bed…` that afternoon, and M4 pins the bytes its ingest reads together with the
+  neon-ducklake commit). The corpus holds **55** `<DP>.validated.json` files and **389** `accepted`
+  items (every status `accepted`; no `human_accepted` list exists), every file's `model`
+  `claude-opus-5-5`, and **no replicate proposal files** anywhere under `curation/` (so
+  `teacher_implicit` rows are zero by construction). Both bench products have a file
+  (`DP1.10003.001`, `DP1.10022.001`). CURIE prefixes: envo 114, obi 55, ncbitaxon 38, stato 36,
+  pato 30, iao 29, chebi 14, go 11, to 10, obcs 9, pco 9, bco 9, chmo 4, uberon 4, so 4, ecocore 3,
+  genepio 2, ppo 2, agro 2, oba 2, po 1, flopo 1; aspects: measured_property 114, data_type 80,
+  method 63, environmental_material 55, organism_group 41, process 36. In-registry and
+  aspect-mapped: 110 distinct CURIEs; 101 items name a column (231 (item, table card)
+  resolutions over the SRER cards, 11 columns found in no card), 101 are dataset-level without a
+  column; 54 of 55 products have a table card (`DP1.10092.001` has none). D19's "19 accepted, 14
+  in-registry, 13 usable" described the SRER generics of 2026-09-29 and is superseded. The OLS
+  records of the 110 CURIEs were recorded once from live EMBL-EBI OLS4 on 2026-10-04
+  (22:17:41Z–22:18:12Z, 110 `get_term` requests, 0 failures; `scripts/record_ols_teacher.py`,
+  `.local/ols_teacher_report.json`) into `tests/fixtures/ols-teacher/`. The ingest's own counts
+  (rows per task, drops per reason) are in DESIGN "Implementation notes (M4)" once it has run.
+
 ## Baselines (`stale_after: 2027-03-31`)
 
 - **AnyJev L2, leave-one-card-out over 7 cards** — mesa-anyjev
@@ -996,6 +1019,8 @@ through probe cells first; column.ontology_fits through its F9 tiers and probes.
 - M0 (settled above): the 285/303 reconciliation (five GAZ root terms) and kilometer's UO id
   (UO:0010066; UO:0000009 is kilogram). The AnyJev per-item L2 dump ran in M1-A's GPU window
   and reproduces the committed cells (see Baselines).
-- M4: teacher target resolution (column → table card, else dataset scope).
+- M4 (settled in `design/m4-analysis-plan.md` B3.3, pre-run): teacher target resolution is column →
+  every table card of the product that carries the column; a column found in no card, or an item
+  without a column, is dropped and counted (no dataset-scope state is synthesized).
 - M7: the local `--data`/`--workflow` directory layout `finetune.py` expects.
 - Whether the released head was trained at max_len 8192 or 2048 is not stated upstream.

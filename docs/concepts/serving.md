@@ -1,6 +1,6 @@
 ---
 title: "Serving"
-description: "The mesa-clm serving stack of milestone M1: a batch-invariant vLLM pooling container serving Qwen3-8B behind a bearer guard and a patched clm-serve on loopback with keys, the carried CLM patches, fingerprints and the serving lock, what the doctor probes, the GPU budget, and the in-process fallback encoder."
+description: "The mesa-clm serving stack of milestone M1: a batch-invariant vLLM pooling container serving Qwen3-8B behind a bearer guard and a patched clm-serve on loopback with keys, the carried CLM patches, fingerprints and the serving lock, what the doctor probes, the GPU budget, the in-process fallback encoder, and the learned artifacts of M4 (versions, CURRENT.json, learn fit and promote, publish and pull, the probe served without clm-serve)."
 type: Guide
 tags:
   - concepts
@@ -10,7 +10,7 @@ tags:
   - deploy
 generated:
   by: "claude/fable-5.1"
-  at: "2026-10-01T18:00:00Z"
+  at: "2026-10-04T23:00:00Z"
 sources:
   - id: design
     resource: "https://github.com/idss-mesa/mesa-clm/blob/main/DESIGN.md"
@@ -179,9 +179,87 @@ cosine ≥0.999, mean ≥0.9999 against the vLLM route) failed at batch 8 in M1-
 `bench/results/2026-09-29/fallback_parity.json`) and passes its two cosine gates at batch 1 on
 the A3/A4 recipe (min 0.999260, mean 0.999919, `bench/results/2026-10-01/fallback_parity.json`;
 the vectors are unchanged under A5); the third condition, probe agreement ≥99%, has nothing to
-measure before M4, and the routes' `/v1/systemone` answers still differ by a few hundredths, so
+measure before a probe is promoted (M4's run protocol), and the routes' `/v1/systemone` answers still differ by a few hundredths, so
 nothing may be shared between the routes yet. Artifacts stay keyed by `encoder_fp`, which differs
 between them. The server refuses `--batch` other than 1, which its fingerprint does not name. The fallback never runs
 alongside the vLLM container. If the GPU share is unavailable (the co-tenant plan for this host
 sums to 0.83), the headroom check fails, the doctor reports `gpu_budget`, both units stop and
 the tools return `decider_unavailable`; the bench is unaffected because features are cached.
+
+## Learned artifacts (milestone M4, pre-run)
+
+The learned tiers reach production only as artifacts (`artifacts.py`; plan §5.5; DESIGN D15,
+D18): serving never fits, and nothing below has run on real labels yet
+([Learning and bench](learning-and-bench.md), "Milestone M4").
+
+**Layout.** `<artifacts.dir>/<encoder_fp>/<clm_model_fp>/<lock8>/v<N>/{manifest.json,
+calibrators.json, probes/<question_key>.json}` and `CURRENT.json` at `<lock8>/`, `lock8` the
+first 8 hex characters of the framings lock sha. One bundle per `clm_model_fp`: a probe lives
+under its spec's model (`clm-latest` for `lowdim.v1`, `pair512.v1`, `choice.state.v1`; `clm-raw`
+for `pair4096.v1`, `joint4096@S1`, `joint4096@S1ns`, `choice.raw.v1`) and is served by the
+provider of that model, so an artifact's `(question_key, encoder_fp, clm_model_fp)` equals the
+record's (plan §4.6). A version is written to a temporary sibling directory and renamed into
+place, which fails onto an existing directory: an existing `v<N>` is never rewritten, by
+`learn fit`, `publish` or `pull`; the next version is `max + 1`. Files 0600, directories 0700.
+The manifest (`mesa-clm/artifacts/1`) records the version, when it was written, the
+fingerprints, the full framings lock sha, the labels snapshot (both hashes), one entry per
+question key (task, framing, tier `calibrated` or `probe`, file, spec, fitter, hyper, the fitted
+calibrator, `n_train`, the `cite` and the cited cell's identity with the count of evaluated
+folds that chose this configuration; no metric is copied) and the sha256 of every file. The
+strict load re-hashes every listed file (a mismatch or an unlisted file is refused, strict or
+not: tampering is never relaxed), requires the manifest's fingerprints to be the layout's and
+the live lock's (K4) and its framings lock the layout's, and every entry's `question_key` to be
+its task's **active** framing's today (a rotated template or a changed active framing makes a
+key stale); `artifacts.strict: false` drops the mismatched or stale entries with a warning noted
+on the run, never silently.
+
+**`CURRENT.json`** (`mesa-clm/artifacts-current/1`) holds per task `{version, tier,
+question_key, promoted_at, cite}`. The provider's bundle is the union of the promoted entries
+over their versions (a promotion table may span versions; each record's `artifact_version` is
+its entry's), and only promoted entries are served: an unpromoted calibrator or probe of the
+same version is `TierUnavailable` at an explicit tier and `zero_shot` at `auto`. The live
+provider loads `CURRENT.json` under `<artifacts.dir>/<encoder_fp>/<clm_model_fp of clm.model>/<lock8>/`;
+a promoted probe whose spec reads head quantities needs the pinned head's export
+(`heads/npz/<sha8>.npz` with the lock's `source_sha256`, as the doctor loads it), and the live
+feature store, when it exists, is read as a vector cache and never written. A mismatch refuses
+(K4) unless `artifacts.strict` is false; promoted artifacts filed under another framings lock
+than the live one (another `<lock8>` directory with a `CURRENT.json`, none under the live lock)
+are refused the same way, not served as `zero_shot`; without a `CURRENT.json` the provider
+serves `zero_shot`. How the probe path decides, and what its records carry, is on
+[Tiers and policy](tiers-and-policy.md).
+
+**`learn fit`** (serving host only) reads the registered snapshot through the M2 refusals and
+the feature store of the serving lock, applies the M4 registration (the framings lock, the
+fingerprints and the probe grid; `--tiers` defaults to the pinned `tiers.json`, `--x3` to the
+date's `x3.json`) and **refuses** on any deviation (exit 1, nothing written; the manifest of a
+written version records `registered: true`, the registration's identity and `tasks_fitted`,
+since a `--tasks` subset is allowed), and writes, per task, the full-data probe (the
+configuration the inner leave-one-card-out over all seven cards chooses, the fit on all items,
+the calibrator from the seven-card out-of-fold predictions; written to its spec's model's
+layout; no probe for a task whose out-of-fold pool is below 100 items or that has no selectable
+configuration) and the calibrated tier's calibrator on every item of the task's A1 arm (the
+active framing on `clm-latest`; not for the tasks `decider.ols_rank_tasks` names, which have no
+A1 arm under K1): one new version per served model that received an artifact, each entry citing
+`bench/results/<date>/x3.json#<task>.probe.<framing>` or `tiers.json#<task>.calibrated.<framing>`
+when that nested cell exists in the file (else `cite: null`, which promotion refuses: by
+construction the calibrated entries of the closed choices and of `term.fits` have no nested
+calibrated cell in the pinned `tiers.json`, and the verb prints one line per such entry saying
+so, not an error), and a copy of the manifest and probes exported to
+`bench/results/<date>/artifacts_v<N>/<clm_model_fp>/`.
+It never touches `CURRENT.json`. **`learn promote`** applies the four promotion rules of
+[Tiers and policy](tiers-and-policy.md) and writes `CURRENT.json`, nothing when a rule fails.
+
+**`artifacts publish --to DIR`** copies `v<N>` to `<DIR>/<encoder_fp>/<clm_model_fp>/<lock8>/v<N>/`
+and verifies the copy against the manifest; **`artifacts pull --from DIR --version N`** copies a
+version into a temporary sibling, re-hashes every file (`--no-verify` skips it; the strict load
+refuses a tampered version later anyway) and places nothing on a mismatch. `CURRENT.json` is
+never pulled: promotion is a local decision. Local paths only in M4 (an ssh or iRODS mount
+counts); the iRODS transport of plan §5.5 is planned with M3's `irods_io`.
+
+**The doctor's `artifacts` check** (after `feature store`): `CURRENT.json` parses, each promoted
+version's manifest loads with the live lock's fingerprints and the code's framings lock and
+holds the promoted entry, and each promotion's cite names a results file under
+`policy.results_root` that holds the cell; promoted artifacts of other locks are a warning, no
+artifacts or nothing promoted is ok, and the check is skipped where no serving lock verifies.
+Nothing is re-hashed there (the provider does that when it loads); the artifacts tree joins the
+`permissions` targets.

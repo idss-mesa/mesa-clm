@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00010005",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:00010005",
+  "description": "A volumetric density quality which inheres in soil by virtue of some influence exerted by the soil's mass on a given volume.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_00010005",
+  "isRoot": false,
+  "label": "soil bulk density",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

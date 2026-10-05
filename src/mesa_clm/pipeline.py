@@ -125,6 +125,7 @@ from mesa_clm.planner.static_planner import habitat_queries, queries_for_column,
 from mesa_clm.policy import (
     Policy,
     PolicyError,
+    StoreAuditCheck,
     Thresholds,
     Verdict,
     cap_at_proposed,
@@ -709,6 +710,12 @@ class Annotator:
         self.planner = planner
         self.ols = ols
         self.policy = policy
+        # M4: the citation test compares the cited cells with the live fingerprint (K4), and
+        # the prod profile's auto_requires_audit reads the sidecar's audits (plan §4.7).
+        policy.bind(
+            live=provider.fingerprint,
+            audit_check=StoreAuditCheck(store) if store is not None else None,
+        )
         self.cfg = cfg
         self.owner = owner
         self.actor = actor or owner

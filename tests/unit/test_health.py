@@ -49,6 +49,7 @@ M0_CHECKS = [
     "labels store",
     "sidecar schema",
     "feature store",
+    "artifacts",
     "permissions",
     "serving lock",
     "host",

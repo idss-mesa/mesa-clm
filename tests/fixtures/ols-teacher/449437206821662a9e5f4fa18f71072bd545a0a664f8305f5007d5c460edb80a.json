@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_06105204",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:06105204",
+  "description": "Often represented in micromoles of photons associated with photosynthetically active radiation per square meter per second.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_06105204",
+  "isRoot": false,
+  "label": "photosynthetic photon flux density",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

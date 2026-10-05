@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003925",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0003925",
+  "description": "A data transformation that assigns taxonomic labels to individual sequencing reads, or to a set of reads, by comparison against a reference sequence database and without prior assembly.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003925",
+  "isRoot": false,
+  "label": "read-based taxonomic classification",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

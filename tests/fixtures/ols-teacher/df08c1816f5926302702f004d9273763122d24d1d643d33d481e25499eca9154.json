@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000337",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:01000337",
+  "description": "This definition is inclusive of non-herbaceous plants that may be transiently present in the \"herb layer\". See Gilliam FS (2007) The Ecological Significance of the Herbaceous Layer in Temperate Forest Ecosystems. BioScience. 57(10):845-858. (http://dx.doi.org/10.1641/B571007) for rationale and a review of definitional and terminological variation.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_01000337",
+  "isRoot": false,
+  "label": "herb and fern layer",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

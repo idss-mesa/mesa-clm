@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/ENVO_09200012",
+  "ontology_id": "envo"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "ENVO:09200012",
+  "description": "The temperature of some soil.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/ENVO_09200012",
+  "isRoot": false,
+  "label": "temperature of soil",
+  "ontologyId": "envo",
+  "synonyms": []
+ }
+}

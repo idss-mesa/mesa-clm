@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003079",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0003079",
+  "description": "A scalar measurement datum that is the result of measuring temperature.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003079",
+  "isRoot": false,
+  "label": "temperature measurement datum",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

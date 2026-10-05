@@ -2,14 +2,24 @@
 
 Module-specific fixtures live next to their tests; imports of mesa_clm modules happen
 inside fixtures so one unfinished module never breaks collection of the others.
+
+The BLAS thread pools are pinned to one thread here, at import and before numpy loads
+(``os.environ.setdefault``: a value set in the environment wins): the fitters are small dense
+problems where thread fan-out only costs, and a loaded host makes a multi-threaded suite
+slower, not faster.
 """
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
+import os
 
-import pytest
+for _var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
+    os.environ.setdefault(_var, "1")
+
+from pathlib import Path  # noqa: E402  (after the thread pins above)
+from typing import Any  # noqa: E402
+
+import pytest  # noqa: E402
 
 FIXTURES = Path(__file__).parent / "fixtures"
 CARDS_DIR = FIXTURES / "cards"

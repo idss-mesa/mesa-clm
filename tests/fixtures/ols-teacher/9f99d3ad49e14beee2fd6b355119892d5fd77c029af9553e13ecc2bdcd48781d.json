@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000415",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0000415",
+  "description": "PCR is the process in which a DNA polymerase is used to amplify a piece of DNA by in vitro enzymatic replication. As PCR progresses, the DNA thus generated is itself used as a template for replication. This sets in motion a chain reaction in which the DNA template is exponentially amplified.",
+  "hasChildren": true,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0000415",
+  "isRoot": false,
+  "label": "polymerase chain reaction",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}

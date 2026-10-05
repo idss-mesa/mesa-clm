@@ -1,0 +1,17 @@
+{
+ "args": {
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003110",
+  "ontology_id": "obi"
+ },
+ "method": "get_term",
+ "response": {
+  "curie": "OBI:0003110",
+  "description": "A mass spectrometry assay combining mass spectrometry and gas chromatography for the qualitative as well as quantitative determination of compounds.",
+  "hasChildren": false,
+  "iri": "http://purl.obolibrary.org/obo/OBI_0003110",
+  "isRoot": false,
+  "label": "gas chromatography mass spectrometry assay",
+  "ontologyId": "obi",
+  "synonyms": []
+ }
+}
