@@ -1061,6 +1061,19 @@ anchor-abstains) are in the sidecar and `.local/m4/audit/`. Label-free, from tho
 the A6 aspect fallback assigned `method` 53, `taxon` 44, `measurement` 1 to the `term.fits`
 column groups; 25 of the 44 `taxon` assignments went to numeric or unit-bearing columns.
 
+**A8 on the seven SRER cards** (DESIGN A8; label-free production runs on 2026-10-05, the same
+cards as the audit runs, `--provider clm`, the promoted `term.fits` probe deciding): under A6 the
+seven runs made 1,380 decisions, 49 proposals (`taxon` 28, `method` 21; 27 of the 49 NCBITaxon
+terms, 13 OBI, 4 GENEPIO, 3 IAO) and 545 abstains in 519 s / 238,973 encoder tokens, the
+`term.fits` column groups' aspects being `method` 298, `taxon` 293, `measurement` 2; under A8
+(runs `1f13e4db…`, `c23d717b…`, `d6bfbfc8…`, `0ac32a08…`, `813f8149…`, `9d1dd27b…`, `272c1c22…`)
+1,496 decisions, 65 proposals (`measurement` 54, `method` 6, `unit` 4, `taxon` 1; ENVO 34, OBI 12,
+PATO 11, UO 4, GENEPIO 3, NCBITaxon 1) and 436 abstains in 1,843 s / 160,779 tokens, the aspects
+`measurement` 292, `method` 153, `unit` 72, `taxon` 0. The longer wall time is the live OLS
+searches the new aspects needed (first asks, not cached); the encoder tokens fell with the
+shorter candidate lists. Whether the new proposals are right is what the deferred production
+audit would measure (A7's appended note); these counts say only what the pipeline now asks.
+
 **Recomputation.** A scratch rerun of X3 after the SVD fallback (`linear._thin_svd`, commit
 `034672e`) reproduced all 20 committed X3 cells exactly (timing diagnostics excluded).
 

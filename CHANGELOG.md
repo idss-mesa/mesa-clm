@@ -10,6 +10,10 @@ All notable changes to the mesa-clm package. The format follows
 
 ### Changed (DESIGN A8: the aspect fallback for unseen columns, 2026-10-05)
 
+- Measured on the seven SRER audit cards re-annotated under A8 (RESEARCH.md "A8 on the seven
+  SRER cards"): proposals `taxon 28 / method 21` → `measurement 54 / method 6 / unit 4 / taxon 1`,
+  abstains 545 → 436.
+
 - Q2's fallback under `decider.closed_choice: rules`, for a column the frozen M0 lookup has
   not seen (`closed_choice.fallback_aspects`, `FALLBACK_RULE`), now reads the card's column
   grammar: a numeric column (dtype `real`, `integer`, `unsigned integer`, …;
