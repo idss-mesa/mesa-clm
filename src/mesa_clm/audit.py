@@ -293,8 +293,11 @@ def stratified_sample(
 ) -> list[AuditItem]:
     """``n`` items in equal shares per stratum (the remainder to the first strata; a stratum
     short of its share gives the rest to the others, in order), drawn with
-    ``numpy.random.default_rng(seed)`` from each stratum sorted by decision id; refused when
-    the pool is empty or the sample spans fewer than ``min_cards`` cards."""
+    ``numpy.random.default_rng(seed)`` from each stratum sorted by decision id and then
+    interleaved by card (:func:`_interleave_by_card`: the first items of a stratum come from as
+    many cards as it has, so a draw spans the cards the pool allows and the ``min_cards`` check
+    fails only when the pool itself cannot span them); refused when the pool is empty or the
+    sample spans fewer than ``min_cards`` cards."""
     if n < 1 or min_cards < 1:
         raise AuditError("n and min_cards must be positive")
     if not pool:
@@ -304,7 +307,8 @@ def stratified_sample(
     for item in sorted(pool, key=lambda i: i.decision_id):
         by_stratum[item.stratum].append(item)
     shuffled = {
-        s: [items[i] for i in rng.permutation(len(items))] for s, items in by_stratum.items()
+        s: _interleave_by_card([items[i] for i in rng.permutation(len(items))])
+        for s, items in by_stratum.items()
     }
     shares = {s: n // len(STRATA) + (1 if i < n % len(STRATA) else 0) for i, s in enumerate(STRATA)}
     chosen: dict[str, list[AuditItem]] = {s: shuffled[s][: shares[s]] for s in STRATA}
@@ -320,6 +324,22 @@ def stratified_sample(
             f"the sample spans {len(cards)} card(s), fewer than --min-cards {min_cards}; "
             "audit more runs"
         )
+    return out
+
+
+def _interleave_by_card(items: Sequence[AuditItem]) -> list[AuditItem]:
+    """``items`` reordered round-robin over their cards, the cards in order of first appearance
+    and each card's items in their given order: a prefix of the result covers as many distinct
+    cards as the prefix is long, up to the number of cards. Deterministic in ``items``."""
+    by_card: dict[str, list[AuditItem]] = {}
+    for item in items:
+        by_card.setdefault(item.card, []).append(item)
+    queues = [list(reversed(q)) for q in by_card.values()]
+    out: list[AuditItem] = []
+    while queues:
+        for q in queues:
+            out.append(q.pop())
+        queues = [q for q in queues if q]
     return out
 
 

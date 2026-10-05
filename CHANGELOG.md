@@ -10,6 +10,10 @@ All notable changes to the mesa-clm package. The format follows
 
 ### Fixed (audit review)
 
+- `audit sample` interleaves each stratum's shuffled items by card, so a draw spans the cards
+  the pool allows and `--min-cards` fails only when the pool cannot span them (a 9-item draw
+  over three cards used to miss one at random).
+
 - `audit review` shows, before an item's candidates, what a curator needs to judge it from the
   sidecar alone (`audit.context_lines`): the scope and target (column name, site code with name,
   domain and habitat, or dataset), the column's description, dtype and unit from the decision's

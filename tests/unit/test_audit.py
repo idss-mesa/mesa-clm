@@ -166,6 +166,9 @@ def test_sampling_refuses_bench_cards_and_stratifies(store: DuckDBStore, tmp_pat
     assert len({i.card for i in sample}) >= 2
     assert sample != stratified_sample(pool, n=7, min_cards=2, seed=1)
     assert len({i.card for i in stratified_sample(pool, n=30, min_cards=3)}) == 3
+    # the draw is interleaved by card: a small sample already spans every card the pool has
+    small = stratified_sample(pool, n=3, min_cards=3)
+    assert len({i.card for i in small}) == 3
     with pytest.raises(AuditError, match="fewer than --min-cards"):
         stratified_sample(pool, n=3, min_cards=4)
     with pytest.raises(AuditError, match="no eligible"):
