@@ -904,8 +904,8 @@ above the task's cited cell's `threshold_cp[risk]` when the policy cites one, el
 the `TOP_DECILE = 0.90` quantile of the task's statistics in the pool), `proposed` (outcome
 `proposed`, not would-be-auto) and `anchor_abstain` (outcome `abstain`, reason `anchor_won`).
 Equal shares (`n // 3` each, the remainder to the first strata; a stratum short of its share
-passes the rest on, in order), each stratum sorted by decision id and permuted with
-`numpy.random.default_rng(SAMPLE_SEED = 0)`; the sample must span at least `min_cards` cards
+passes the rest on, in order), each stratum sorted by decision id, permuted with
+`numpy.random.default_rng(SAMPLE_SEED = 0)` and then filled card-spanning (each pick prefers a card the sample does not have yet, in the shuffled order) so that a draw spans the cards the pool allows *(added 2026-10-05 after the first review's draw, before any audit row exists: the first draw happened to span 7 of 7 cards; a 9-item test draw did not always span its 3 cards)*; the sample must span at least `min_cards` cards
 (`DEFAULT_N = 100`, `DEFAULT_MIN_CARDS = 5`, plan §8 M4). The file (`audit.FORMAT =
 "mesa-clm/audit-sample/1"`) holds ids, task keys, strata, the statistic, the card *names* and
 the checklist; no card content.

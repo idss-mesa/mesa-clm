@@ -1,9 +1,14 @@
 """Curator audits (``mesa_clm.audit``; plan §4.7, §8 M4; the M4 brief R7): sampling refuses a
-bench card, stratifies by outcome in equal shares from a seeded draw spanning enough cards, the
-sample file holds ids only, a verdict mints curator labels outside every fold, the ``audits``
-rows follow the pass rule (and get none for decisions that apply no artifact), the CLI's
-``audit sample|review|record`` run end to end with the review at a terminal only. The runs are
-fake-provider runs over synthetic (non-bench) copies of the fixture card; OLS replays."""
+bench card, draws by default only decisions that carry an ``artifact_version`` (``--all-tiers``
+restores the whole pool) with the would-be-auto decile computed per task over that pool,
+stratifies by outcome in equal shares from a seeded draw spanning enough cards, the sample file
+holds ids only and its sampling mode, the review shows what a curator needs to judge an item
+(target, description, dtype, unit, aspect, ontology, OLS queries, the tier marked plainly), a
+verdict mints curator labels outside every fold, the ``audits`` rows follow the pass rule (and
+get none for decisions that apply no artifact), the CLI's ``audit sample|review|record`` run end
+to end with the review at a terminal only. The runs are fake-provider runs over synthetic
+(non-bench) copies of the fixture card, with or without a synthetic promoted ``term.fits`` probe
+(``tests/fakes/m4.synthetic_probe``, never evidence); OLS replays."""
 
 from __future__ import annotations
 
@@ -13,23 +18,27 @@ from pathlib import Path
 from typing import Any
 from uuid import UUID
 
+import numpy as np
 import pytest
 
 from mesa_clm import audit
 from mesa_clm.audit import (
     CHECKLIST,
     STRATA,
+    TOP_DECILE,
     AuditError,
     AuditItem,
     AuditSample,
     audit_rows,
     build_sample,
     candidates,
+    context_lines,
     labels_for_verdict,
     load_sample,
     proposed_precision,
     stratified_sample,
     summarize,
+    tier_note,
     write_sample,
 )
 from mesa_clm.cards import parse_card
@@ -37,8 +46,16 @@ from mesa_clm.cli import EXIT_CONFIG, EXIT_FAIL, EXIT_OK, audit_review_interacti
 from mesa_clm.policy import Policy
 from mesa_clm.provenance.models import AuditRow
 from mesa_clm.provenance.store import DuckDBStore
+from mesa_clm.providers.tiered import (
+    ArtifactBundle,
+    FakeProvider,
+    Promotion,
+    ServedProbe,
+    fake_fingerprint,
+)
 from tests.conftest import CARD_TEXT, OLS_DIR
-from tests.fakes.pipeline import FAKE_SEED, annotator, config, service
+from tests.fakes.m4 import synthetic_probe
+from tests.fakes.pipeline import FAKE_SEED, annotator, config, service, shipped_config
 
 _ENV_PREFIXES = ("MESA_CLM_", "CLM_", "MESA_LLM_", "MESA_HOME")
 
@@ -54,6 +71,36 @@ def _runs(store: DuckDBStore, n_cards: int = 3) -> list[dict[str, Any]]:
     ann = annotator(store, cfg=config())
     out = []
     for i in range(n_cards):
+        run = ann.annotate(_synthetic_card(i))
+        row = store.run(run.run_id)
+        assert row is not None
+        out.append(row)
+    return out
+
+
+def _promoted_provider(version: str = "v1") -> FakeProvider:
+    """The fake provider with a synthetic ``term.fits`` probe promoted (as ``CURRENT.json``
+    gives the live provider after ``learn promote --tier probe``, DESIGN A7)."""
+    fp = fake_fingerprint(seed=FAKE_SEED)
+    probe = synthetic_probe("lowdim.v1", task_id="term.fits", fp=fp)
+    bundle = ArtifactBundle(
+        version=version,
+        encoder_fp=fp.encoder_fp,
+        clm_model_fp=fp.clm_model_fp,
+        probes={probe.question_key: ServedProbe(probe, version=version)},
+        promoted={
+            "term.fits": Promotion(tier="probe", question_key=probe.question_key, version=version)
+        },
+    )
+    return FakeProvider(seed=FAKE_SEED, artifacts=bundle)
+
+
+def _promoted_runs(store: DuckDBStore, n_cards: int = 3) -> list[dict[str, Any]]:
+    """Synthetic cards annotated under the shipped defaults with the promoted probe: the
+    ``term.fits`` decisions carry ``artifact_version``, the zero-shot Q3 decisions none."""
+    out = []
+    for i in range(n_cards):
+        ann = annotator(store, provider=_promoted_provider(), cfg=shipped_config())
         run = ann.annotate(_synthetic_card(i))
         row = store.run(run.run_id)
         assert row is not None
@@ -87,10 +134,24 @@ def test_sampling_refuses_bench_cards_and_stratifies(store: DuckDBStore, tmp_pat
             results_root=tmp_path,
             is_bench_card=svc.is_bench_card,
         )
-    pool, thresholds = candidates(
+    # Fake zero_shot runs apply no artifact: the default (artifact-only) pool is empty and
+    # build_sample names --all-tiers; --all-tiers (artifact_only=False) is the whole pool.
+    empty, _ = candidates(
         store, runs, policy=policy, results_root=tmp_path, is_bench_card=svc.is_bench_card
     )
+    assert empty == []
+    with pytest.raises(AuditError, match=r"no artifact-backed decision.*--all-tiers"):
+        build_sample(empty, runs=[], thresholds={}, n=3, min_cards=1)
+    pool, thresholds = candidates(
+        store,
+        runs,
+        policy=policy,
+        results_root=tmp_path,
+        is_bench_card=svc.is_bench_card,
+        artifact_only=False,
+    )
     assert pool and all(i.card.startswith("DP9.") for i in pool)
+    assert all(i.artifact_version is None for i in pool)
     assert thresholds == {t: None for t in thresholds}  # the shipped policy cites nothing
     present = {i.stratum for i in pool}
     assert "proposed" in present and "anchor_abstain" in present and "would_be_auto" in present
@@ -105,6 +166,9 @@ def test_sampling_refuses_bench_cards_and_stratifies(store: DuckDBStore, tmp_pat
     assert len({i.card for i in sample}) >= 2
     assert sample != stratified_sample(pool, n=7, min_cards=2, seed=1)
     assert len({i.card for i in stratified_sample(pool, n=30, min_cards=3)}) == 3
+    # the draw is interleaved by card: a small sample already spans every card the pool has
+    small = stratified_sample(pool, n=3, min_cards=3)
+    assert len({i.card for i in small}) == 3
     with pytest.raises(AuditError, match="fewer than --min-cards"):
         stratified_sample(pool, n=3, min_cards=4)
     with pytest.raises(AuditError, match="no eligible"):
@@ -113,19 +177,227 @@ def test_sampling_refuses_bench_cards_and_stratifies(store: DuckDBStore, tmp_pat
     few = [i for i in pool if i.stratum != "anchor_abstain"]
     big = stratified_sample(few, n=min(len(few), 9), min_cards=1)
     assert len(big) == min(len(few), 9) and not any(i.stratum == "anchor_abstain" for i in big)
-    # The file: ids only, the checklist, the strata.
+    # The file: ids only, the checklist, the strata, the sampling mode.
     built = build_sample(
-        pool, runs=[str(r["run_id"]) for r in runs], thresholds=thresholds, n=9, min_cards=3
+        pool,
+        runs=[str(r["run_id"]) for r in runs],
+        thresholds=thresholds,
+        n=9,
+        min_cards=3,
+        artifact_only=False,
     )
     path = write_sample(tmp_path / "sample.json", built)
     assert oct(os.stat(path).st_mode)[-3:] == "600"
     data = json.loads(path.read_text())
     assert data["format"] == audit.FORMAT and data["checklist"] == list(CHECKLIST)
+    assert data["artifact_only"] is False
     assert set(data["items"][0]) == set(AuditItem.model_fields)
     assert not any("observerDistance" in json.dumps(i) for i in data["items"])  # no card content
     assert load_sample(path) == built
+    # A sample file written before the mode existed reads as artifact-only (the format is kept).
+    del data["artifact_only"]
+    (tmp_path / "old.json").write_text(json.dumps(data))
+    assert load_sample(tmp_path / "old.json").artifact_only is True
     with pytest.raises(AuditError, match="not an audit sample"):
         load_sample(tmp_path / "prov.duckdb")
+
+
+class _Rows:
+    """A store of one run's decisions, for the pool rules alone."""
+
+    def __init__(self, rows: list[dict[str, Any]]) -> None:
+        self.rows = rows
+
+    def decisions(self, run_id: Any) -> list[dict[str, Any]]:
+        return [dict(r, run_id=str(run_id)) for r in self.rows]
+
+
+def _decision(i: int, task_id: str, p_fit: float, version: str | None) -> dict[str, Any]:
+    return {
+        "decision_id": f"d{i:03d}",
+        "group_id": None,
+        "task_id": task_id,
+        "task_key": "k",
+        "shape": "rank_fit",
+        "method": "clm",
+        "level": "probe" if version else "zero_shot",
+        "artifact_version": version,
+        "p_fit": p_fit,
+        "outcome": "proposed",
+        "reason": None,
+    }
+
+
+def test_the_would_be_auto_decile_is_per_task_over_the_artifact_backed_pool(
+    tmp_path: Path,
+) -> None:
+    """Unpromoted zero_shot ``column.ontology_fits`` decisions (p_fit 1.000 everywhere, no
+    artifact) never set or join the would-be-auto stratum by default; with ``--all-tiers``
+    each task's decile is its own."""
+    probe = [_decision(i, "term.fits", 0.50 + i * 0.01, "v1") for i in range(20)]  # 0.50..0.69
+    saturated = [_decision(100 + i, "column.ontology_fits", 1.0, None) for i in range(20)]
+    policy = Policy.from_config(config().policy)
+    runs = [{"run_id": "r1", "card_name": "DP9.00001.001 / synth_1"}]
+    pool, thresholds = candidates(
+        _Rows(probe + saturated),
+        runs,
+        policy=policy,
+        results_root=tmp_path,
+        is_bench_card=lambda c: False,
+    )
+    assert thresholds == {"term.fits": None}
+    assert {i.task_id for i in pool} == {"term.fits"} and all(
+        i.artifact_version == "v1" for i in pool
+    )
+    cut = float(np.quantile([d["p_fit"] for d in probe], TOP_DECILE))
+    auto = {i.decision_id for i in pool if i.stratum == "would_be_auto"}
+    assert auto == {d["decision_id"] for d in probe if d["p_fit"] >= cut} and len(auto) == 2
+    assert all(i.stat is not None and i.stat < cut for i in pool if i.stratum == "proposed")
+    everything, thresholds_all = candidates(
+        _Rows(probe + saturated),
+        runs,
+        policy=policy,
+        results_root=tmp_path,
+        is_bench_card=lambda c: False,
+        artifact_only=False,
+    )
+    assert thresholds_all == {"term.fits": None, "column.ontology_fits": None}
+    by_task = {t: [i for i in everything if i.task_id == t] for t in thresholds_all}
+    # The term.fits decile is unchanged by the saturated task; the saturated task is all
+    # would-be-auto at its own (meaningless) decile of 1.0, which is why it is report-only.
+    assert {i.decision_id for i in by_task["term.fits"] if i.stratum == "would_be_auto"} == auto
+    assert all(i.stratum == "would_be_auto" for i in by_task["column.ontology_fits"])
+    assert all(i.artifact_version is None for i in by_task["column.ontology_fits"])
+
+
+def test_default_sample_is_the_promoted_artifacts_decisions(
+    store: DuckDBStore, tmp_path: Path
+) -> None:
+    svc = service(store)
+    runs = _promoted_runs(store)
+    policy = Policy.from_config(shipped_config().policy)
+    pool, thresholds = candidates(
+        store, runs, policy=policy, results_root=tmp_path, is_bench_card=svc.is_bench_card
+    )
+    assert pool and thresholds == {"term.fits": None}
+    assert {(i.task_id, i.level, i.artifact_version) for i in pool} == {
+        ("term.fits", "probe", "v1")
+    }
+    assert {i.stratum for i in pool} == set(STRATA)
+    everything, _ = candidates(
+        store,
+        runs,
+        policy=policy,
+        results_root=tmp_path,
+        is_bench_card=svc.is_bench_card,
+        artifact_only=False,
+    )
+    assert {i.decision_id for i in pool} < {i.decision_id for i in everything}
+    rest = [i for i in everything if i.decision_id not in {p.decision_id for p in pool}]
+    assert rest and all(i.artifact_version is None and i.level == "zero_shot" for i in rest)
+    assert {i.task_id for i in rest} == {"column.ontology_fits"}
+    built = build_sample(
+        pool, runs=[str(r["run_id"]) for r in runs], thresholds=thresholds, n=9, min_cards=3
+    )
+    assert built.artifact_only is True and all(i.artifact_version == "v1" for i in built.items)
+    # Every item of an artifact-only sample can feed an audits row once reviewed.
+    for item in built.items:
+        if item.stratum == "would_be_auto":
+            item.verdict = "correct"
+    s = summarize(built)
+    assert s["artifact_only"] is True and s["reviewed_without_artifact"] == 0
+    assert set(s["would_be_auto"]) <= {f"{i.task_key}@v1" for i in built.items}
+
+
+def test_review_shows_what_a_curator_needs(store: DuckDBStore, tmp_path: Path) -> None:
+    svc = service(store)
+    runs = _promoted_runs(store, 1)
+    run = runs[0]
+    rows = store.decisions(run["run_id"])
+    # A term.fits item on a column with a description and a unit, decided by the probe.
+    term = next(
+        d
+        for d in rows
+        if d["task_id"] == "term.fits"
+        and d["scope"] == "column"
+        and d["state_json"]["column"]["unit"]
+        and d["group_id"]
+        and not (store.group(d["group_id"]) or {}).get("search_json", {}).get("specificity_of")
+    )
+    group = store.group(term["group_id"])
+    assert group is not None
+    col = term["state_json"]["column"]
+    text = "\n".join(context_lines(term, group))
+    assert f"target: column {col['name']}  (scope column)" in text
+    assert f"description: {col['description']}" in text
+    assert f"dtype: {col['dtype']}  unit: {col['unit']}" in text
+    assert f"aspect: {group['aspect']}  ontology: {group['ontology_id']}" in text
+    queries = group["search_json"]["queries"]
+    assert queries and f"OLS queries: {' | '.join(queries)}" in text
+    assert "tier: probe/fake v1 (platt)" in text and tier_note(term) == "probe/fake v1 (platt)"
+    # A column.ontology_fits item: the aspect, that the candidates are ontologies, the tier.
+    onto = next(d for d in rows if d["task_id"] == "column.ontology_fits")
+    ogroup = store.group(onto["group_id"])
+    assert ogroup is not None
+    otext = "\n".join(context_lines(onto, ogroup))
+    assert f"target: column {onto['column_name']}  (scope column)" in otext
+    assert f"description: {onto['state_json']['column']['description']}" in otext
+    assert f"aspect: {ogroup['aspect']}  (the candidates are ontologies" in otext
+    assert "ontology:" not in otext and "OLS queries" not in otext
+    assert "tier: zero_shot/fake (uncalibrated: p_fit is σ(s_c), saturates near 1)" in otext
+    # A site group names the site; a D24 refinement says what it refines; a rule has no tier.
+    site = next(d for d in rows if d["scope"] == "site" and d["group_id"])
+    stext = "\n".join(context_lines(site, store.group(site["group_id"])))
+    assert f"target: site {site['site_code']}  (scope site)" in stext and "habitat:" in stext
+    refinement = next(
+        (
+            d
+            for d in rows
+            if d["group_id"]
+            and (store.group(d["group_id"]) or {}).get("search_json", {}).get("specificity_of")
+        ),
+        None,
+    )
+    if refinement is not None:
+        rtext = "\n".join(context_lines(refinement, store.group(refinement["group_id"])))
+        assert "refines:" in rtext and "(D24" in rtext
+    rule = next(d for d in rows if d["method"] == "rule")
+    assert "tier: none/rule" in "\n".join(context_lines(rule))
+    assert tier_note({"level": "zero_shot", "method": "clm", "shape": "choice"}).startswith(
+        "zero_shot/clm (uncalibrated: confidence"
+    )
+    assert tier_note({"method": "ols_rank", "level": "none"}).startswith("ols_rank (degraded")
+    # The interactive walk prints the context before the candidates for both kinds of item.
+    policy = Policy.from_config(shipped_config().policy)
+    pool, thresholds = candidates(
+        store,
+        runs,
+        policy=policy,
+        results_root=tmp_path,
+        is_bench_card=svc.is_bench_card,
+        artifact_only=False,
+    )
+    sample = build_sample(
+        pool, runs=[str(run["run_id"])], thresholds=thresholds, n=len(pool), min_cards=1,
+        artifact_only=False,
+    )  # fmt: skip
+    said: list[str] = []
+    done = audit_review_interactive(
+        svc, store, sample, owner="alice", actor="alice",
+        ask=lambda prompt: "s", say=said.append, save=lambda s: None,
+    )  # fmt: skip
+    assert done == {"correct": 0, "incorrect": 0, "skipped": len(pool)}
+    out = "\n".join(said)
+    assert f"description: {col['description']}" in out and f"unit: {col['unit']}" in out
+    assert f"OLS queries: {' | '.join(queries)}" in out
+    assert "(the candidates are ontologies" in out and "tier: probe/fake v1 (platt)" in out
+    assert "saturates near 1" in out
+    # Order within an item: header, context, answer, candidates, in that order.
+    head = next(i for i, line in enumerate(said) if "term.fits on" in line)
+    block = said[head : head + 12]
+    tier_at = next(i for i, line in enumerate(block) if line.startswith("  tier:"))
+    answer_at = next(i for i, line in enumerate(block) if line.startswith("  answer:"))
+    assert 0 < tier_at < answer_at
 
 
 def test_verdicts_mint_curator_labels_outside_every_fold(store: DuckDBStore) -> None:
@@ -191,6 +463,8 @@ def test_audit_rows_follow_the_pass_rule_and_skip_unversioned_decisions() -> Non
     assert tight[0].passed is True  # 0.101 <= 0.12
     s = summarize(sample)
     assert s["reviewed"] == len(items) - 1
+    assert s["artifact_only"] is True  # the field's default; the file records the mode drawn
+    assert s["reviewed_without_artifact"] == 1 + 9 + 1  # d200, the proposed, the abstain
     assert s["strata"]["proposed"] == proposed_precision(
         [i for i in items if i.stratum == "proposed"]
     )
@@ -248,23 +522,25 @@ def test_cli_sample_review_record(
         runs.append(json.loads(out.read_text())["run_id"])
     capsys.readouterr()  # the annotate summaries
     sample_path = tmp_path / "audit.json"
-    code = main(
-        [
-            "audit",
-            "sample",
-            "--n",
-            "9",
-            "--min-cards",
-            "3",
-            "--runs",
-            ",".join(r[:8] for r in runs),
-            "--out",
-            str(sample_path),
-        ]
-    )
-    assert code == EXIT_OK
+    draw = [
+        "audit",
+        "sample",
+        "--n",
+        "9",
+        "--min-cards",
+        "3",
+        "--runs",
+        ",".join(r[:8] for r in runs),
+        "--out",
+        str(sample_path),
+    ]
+    # Fake zero_shot runs apply no artifact: the default draw refuses and names --all-tiers.
+    assert main(draw) == EXIT_FAIL
+    assert "--all-tiers" in capsys.readouterr().err and not sample_path.exists()
+    assert main([*draw, "--all-tiers"]) == EXIT_OK
     summary = json.loads(capsys.readouterr().out)
     assert summary["n"] == 9 and len(summary["cards"]) == 3 and set(summary["runs"]) == set(runs)
+    assert summary["artifact_only"] is False and load_sample(sample_path).artifact_only is False
     # review: a terminal is required.
     monkeypatch.setattr("mesa_clm.cli.stdin_is_terminal", lambda: False)
     assert main(["audit", "review", "--file", str(sample_path)]) == EXIT_CONFIG
@@ -308,6 +584,12 @@ def test_cli_sample_review_record(
     assert recorded["audit_id"] == sample.audit_id and recorded["reviewer"] == "alice"
     assert recorded["rows"] == []  # fake zero_shot decisions apply no artifact: no audits row
     assert recorded["summary"]["reviewed"] == 3
+    assert recorded["artifact_only"] is False
+    assert recorded["summary"]["reviewed_without_artifact"] == 3
+    assert recorded["report_only"].startswith("3 of 3 reviewed item(s) apply no artifact")
+    assert (
+        "--all-tiers" in recorded["report_only"] and "feed no audits row" in recorded["report_only"]
+    )
     assert store.audits() == []
     # A sample of another owner's runs is refused.
     assert (
@@ -342,6 +624,7 @@ def test_cli_sample_review_record(
                 "2020-01-01",
                 "--min-cards",
                 "1",
+                "--all-tiers",
                 "--out",
                 str(tmp_path / "y.json"),
             ]

@@ -169,9 +169,9 @@ owner-only, directories 0700 and files 0600, whatever the umask.
 | `learn promote --version N --task T [--tier probe\|calibrated] [--k2 PATH] [--date D] [--model M]` | **M4.** Put one task's artifact of version N into `CURRENT.json` when the four promotion rules pass (a qualifying pre-registered nested cell cited, a K2 verdict a or b for that tier, new ≻ current on NLL and ≽ on accuracy within 0.01 when something is already promoted, no head before M7); nothing is written when a rule fails. |
 | `artifacts publish --to DIR [--version N] [--model M]` | **M4.** Copy a version (default the newest) under `DIR/<encoder_fp>/<clm_model_fp>/<lock8>/v<N>/` and verify the copy against its manifest; a local path or mount only (the iRODS transport is planned with M3's `irods_io`). |
 | `artifacts pull --from DIR --version N [--verify\|--no-verify] [--model M]` | **M4.** Copy a version in, re-hashing every file against the manifest (`--verify`, the default); a mismatch places nothing. `CURRENT.json` is never pulled: promotion is a local decision. |
-| `audit sample --n N --min-cards M (--runs IDS \| --since DATE) --out FILE` | **M4.** Draw a stratified, seeded sample of your annotate decisions on non-bench cards (a bench card refuses the whole sample) into a file of ids, strata and the reviewer's checklist, no card content; default 100 decisions over at least 5 cards. |
-| `audit review --file FILE` | **M4.** Review the sample at a terminal (required, like `review`): each decision with its group's candidates, `c` correct, `i` incorrect, `s` skip, `q` quit; verdicts mint curator labels outside every fold and the file is rewritten after each answer. |
-| `audit record --file FILE` | **M4.** Write one `audits` row per `(task_key, artifact_version)` among the reviewed would-be-auto decisions, with its pass rule; decisions that apply no artifact get no row. The proposed-precision Clopper–Pearson interval is printed, report-only. |
+| `audit sample --n N --min-cards M (--runs IDS \| --since DATE) [--all-tiers] --out FILE` | **M4.** Draw a stratified, seeded sample of your annotate decisions on non-bench cards (a bench card refuses the whole sample) into a file of ids, strata, the sampling mode (`artifact_only`) and the reviewer's checklist, no card content; default 100 decisions over at least 5 cards. By default only decisions that carry an `artifact_version` (a promoted artifact's) are drawn, the would-be-auto decile computed per task over them, since only those can feed an `audits` row; `--all-tiers` adds the `zero_shot` and `ols_rank` decisions for the report-only precision. A run set without an artifact-backed decision is refused with the flag named. |
+| `audit review --file FILE` | **M4.** Review the sample at a terminal (required, like `review`): each decision with its target (scope and column name, site or dataset), the column's description, dtype and unit, the aspect and ontology its group searched and the OLS queries sent (for `column.ontology_fits`: the aspect, and that the candidates are ontologies), the tier marked plainly (`probe/clm v1 (platt)`; `zero_shot/clm (uncalibrated: p_fit is σ(s_c), saturates near 1)`), then its group's candidates; `c` correct, `i` incorrect, `s` skip, `q` quit; verdicts mint curator labels outside every fold and the file is rewritten after each answer. |
+| `audit record --file FILE` | **M4.** Write one `audits` row per `(task_key, artifact_version)` among the reviewed would-be-auto decisions, with its pass rule; decisions that apply no artifact get no row, and a sample drawn with `--all-tiers` reports how many reviewed items had none (`report_only`). The proposed-precision Clopper–Pearson interval is printed, report-only. |
 | `features build --snapshot PATH [--tasks T] [--framings F] [--batch N]` | Embed every X1/X2 text of a frozen snapshot that the store of the live `encoder_fp` lacks (`~/.mesa/clm/features/<encoder_fp>/`), one text per request by default, after the exact token guard; refuses an encoder that is not the serving lock's. Serving host only. |
 | `features export-npz --out DIR` | The store as CLM's `TextCache` file for `finetune.py --embed-cache DIR` (refused below the 0.9999 fp16 round-trip gate). |
 | `features project [--model clm-latest\|clm-raw]` | Cache the pinned head's 512-d projections of every stored vector. |
@@ -2056,20 +2056,40 @@ strata of equal shares: `would_be_auto` (the policy statistic, `p_fit` of the an
 rank_fit or `confidence` for a choice, at or above the task's cited cell's `threshold_cp[risk]`
 when the policy cites one, else at or above the top decile of the task's statistics in the
 pool), `proposed` and `anchor_abstain`; each stratum sorted by id and permuted with seed 0; the
-sample must span at least `--min-cards` cards (defaults 100 and 5). The file holds ids, task
-keys, strata, the statistic, the card names and the checklist, no card content. `audit review`
-needs a terminal, like `review` (its answers are curator labels, DESIGN A2): a rank_fit
-decision's answered CURIE gets `Yes` (correct) or `No` (incorrect), a correct closed choice gets
-its answer, an incorrect closed choice, an anchor answer or an abstain mints no label (no true
-class is named); every row is `curator` at weight 1.0, `fold_eligible=false`, `bench_card=false`,
-origin `audit:<audit_id>`. `audit record` writes one `audits` row per `(task_key,
-artifact_version)` among the reviewed would-be-auto decisions with `n`, `n_cards`, `n_errors`,
-`cp95_upper` (the one-sided 95% Clopper–Pearson bound on the error rate), the task's `risk` and
-`passed = n ≥ 50 ∧ n_cards ≥ 3 ∧ cp95_upper ≤ 2 × risk`, enforced by the row model itself;
-decisions that apply no artifact (`zero_shot`, `ols_rank`) get no row, since an audit is of an
-artifact version. The proposed-precision interval is printed per stratum, report-only. The
-production audit of plan §8 (at least five non-bench SRER cards under the promoted tiers) is part
-of the M4 run protocol and has not run.
+sample must span at least `--min-cards` cards (defaults 100 and 5). By default the pool is the
+decisions that carry an `artifact_version`, the promoted artifacts' decisions (on the serving
+host after DESIGN A7: the `term.fits` probe's), because only those can feed an `audits` row; the
+top-decile rule is computed per task over that pool alone, so an unpromoted tier's statistic (a
+zero-shot `p_fit` is σ(s_c), uncalibrated, and saturates near 1, 1.000 for every zero-shot
+`column.ontology_fits` decision of the first real review) sets no would-be-auto cut. `audit
+sample --all-tiers` adds the `zero_shot` and `ols_rank` decisions for the report-only precision,
+each task with its own decile. The file holds ids, task keys, strata, the statistic, the card
+names, the sampling mode (`artifact_only: true|false`) and the checklist, no card content; a file
+without the field reads as artifact-only. `audit review` needs a terminal, like `review` (its
+answers are curator labels, DESIGN A2). Before an item's candidates it shows what a curator
+needs to judge it, from the sidecar alone: the scope and target (the column name, the site code
+with its name, domain and habitat, or the dataset), the column's description, dtype and unit
+(the stored `state_json`'s `column` block), the aspect and ontology the group searched and the
+OLS queries it sent (the group's `search_json`; the unit-table lookup and a D24 refinement are
+named as such), for `column.ontology_fits` the aspect and that the candidates are ontologies of
+the registry, not terms, and the tier marked plainly: `probe/clm v1 (platt)` for a promoted
+artifact's decision, `zero_shot/clm (uncalibrated: p_fit is σ(s_c), saturates near 1)` for a
+zero-shot rank_fit, `ols_rank (degraded: OLS rank order, no p_fit)` for K1's fallback. The
+answers are unchanged: a rank_fit decision's answered CURIE gets `Yes` (correct) or `No`
+(incorrect), a correct closed choice gets its answer, an incorrect closed choice, an anchor
+answer or an abstain mints no label (no true class is named); every row is `curator` at weight
+1.0, `fold_eligible=false`, `bench_card=false`, origin `audit:<audit_id>`. `audit record` writes
+one `audits` row per `(task_key, artifact_version)` among the reviewed would-be-auto decisions
+with `n`, `n_cards`, `n_errors`, `cp95_upper` (the one-sided 95% Clopper–Pearson bound on the
+error rate), the task's `risk` and `passed = n ≥ 50 ∧ n_cards ≥ 3 ∧ cp95_upper ≤ 2 × risk`,
+enforced by the row model itself; decisions that apply no artifact (`zero_shot`, `ols_rank`) get
+no row, since an audit is of an artifact version, and a sample drawn with `--all-tiers` says how
+many reviewed items had none (`reviewed_without_artifact`, the `report_only` line). The
+proposed-precision interval is printed per stratum, report-only. The production audit of plan §8
+(at least five non-bench SRER cards under the promoted tiers) is part of the M4 run protocol and
+has not run; its first review pass (2026-10-05) found the two defects this paragraph now
+describes the fix of (the review showed no context; the default sample included unpromoted
+tiers).
 
 ---8<--- https://idss-mesa.github.io/mesa-clm/develop/architecture/
 
@@ -2635,6 +2655,7 @@ third-party component and its hash.
 
 ## 2026-10-05
 
+* **Update**: after the first real curator review pass of the production audit (the curator could not judge correctness from what `audit review` showed, and the sample held unpromoted decisions). [Tiers and policy](concepts/tiers-and-policy.md), the audits paragraph: `audit sample` draws by default only decisions that carry an `artifact_version` (the promoted artifacts' decisions, the only ones that can feed an `audits` row), the would-be-auto decile is computed per task over that pool alone (a zero-shot `p_fit` is σ(s_c) and saturates near 1, so the unpromoted `column.ontology_fits` decisions set no cut), `--all-tiers` restores the whole pool for the report-only precision, the file records `artifact_only`; `audit review` shows, before the candidates, the target (scope and column name, site or dataset), the column's description, dtype and unit, the aspect and ontology the group searched and its OLS queries, for `column.ontology_fits` that the candidates are ontologies, and the tier marked plainly; `audit record` says how many reviewed items had no artifact under `--all-tiers`. [Install](getting-started/install.md): the three `audit` rows of the verb table. `llms.txt` and `llms-full.txt` regenerated.
 * **Update**: for DESIGN amendment A7 (the consequences of the registered M4 run, `bench/results/2026-10-04/`): a task `decider.ols_rank_tasks` names is decided by `ols_rank` unless the provider resolves a promoted probe for its active framing, in which case the probe decides it at level `probe` (proposed-only, every `auto` null), D24's specificity refinement is asked again for those groups, the run names the task under `probe_tasks` and `ols_rank_tasks` lists only what `ols_rank` actually decided; `--tier ols_rank` still sends every candidate group to `ols_rank`, `decider.ols_rank_fallback` is unchanged, and a host without the promoted artifact keeps K1. [Tiers and policy](concepts/tiers-and-policy.md): the rule, the shipped-defaults table and the one promotion that exists (`learn promote --version 1 --task term.fits --tier probe`, K2(b)). [Decision model](concepts/decision-model.md): Q4–Q6 and Q4b under a promoted probe, `degraded` unchanged. [Install](getting-started/install.md): what `learn promote` changes for `term.fits` at tier `auto`. [Learning and bench](concepts/learning-and-bench.md) gains "M4 results (2026-10-04; DESIGN A7)" with the numbers A7 quotes from `x3.json`, `k2.json` and `x4.json` (`term.fits` K2(b), the probe promoted; `column.ontology_fits` K2(c), nothing promoted; the closed choices K2(c) by construction; X4 keeps no teacher labels; CLM's head adds signal; no numeric `auto`). `llms.txt` and `llms-full.txt` regenerated.
 
 ## 2026-10-04
