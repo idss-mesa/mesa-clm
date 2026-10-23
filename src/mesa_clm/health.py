@@ -8,8 +8,8 @@ milestones stand on:
   repository root, so the check is skipped, and says so, when mesa-clm runs from a wheel);
 * the effective configuration (its secret-free ``config_sha256``, profile, tier, planner);
 * the Python, duckdb, mesa-mcp and mesa-ducklake versions, with the installed git commits of the
-  two MESA packages compared against the DESIGN D0 pins, and duckdb against the 1.5.x window the
-  shared catalog is written with (D11);
+  two MESA packages compared against the DESIGN D0 pins, and duckdb against the 2.x window
+  mesa-ducklake 0.2.0 requires (D11);
 * mesa-mcp's plugin API, ``load_plugins`` and ``register_tool(meta=)`` (D14), and the ``clm``
   entry point this package declares;
 * the policy defaults (D9: they load, every active task has thresholds, the profile exists);
@@ -123,12 +123,12 @@ Status = Literal["ok", "warn", "fail"]
 # The git commits pyproject.toml pins (DESIGN D0). A different installed commit is a warning,
 # not a failure: it runs, but the pin bump that changes it must update this table as well.
 PINNED_COMMITS: Final[dict[str, str]] = {
-    "mesa-mcp": "c74f3aa1a3caade558f063f4f637a9127dba82d9",
-    "mesa-ducklake": "7bc143fefb093f0a2ace748a7036598147533ca0",
+    "mesa-mcp": "0e2e561b023abb896d148a8b85d3ba6b4f386d2e",
+    "mesa-ducklake": "00a2ee84b71179ce748d3263c0fcb9b2b9418dbc",
 }
-# The shared MESA catalog is written by duckdb 1.5.x everywhere on the stack (DESIGN D11).
-DUCKDB_MIN: Final = (1, 5, 5)
-DUCKDB_MAX: Final = (1, 6)
+# The MESA stack runs duckdb 2.x since mesa-ducklake 0.2.0 (DESIGN D11).
+DUCKDB_MIN: Final = (2, 0, 0)
+DUCKDB_MAX: Final = (3,)
 PYTHON_MIN: Final = (3, 11)
 VENDORED_MANIFEST: Final = "vendored.sha256"
 PLUGIN_ENTRY_POINT: Final = "clm"
@@ -308,15 +308,15 @@ def _duckdb_check(rep: HealthReport) -> None:
     version = duckdb.__version__
     parsed = _version_tuple(version)
     if parsed is None:
-        rep.add("duckdb", "warn", f"{version}: unparseable version; the stack pins 1.5.x (D11)")
+        rep.add("duckdb", "warn", f"{version}: unparseable version; the stack pins 2.x (D11)")
     elif DUCKDB_MIN <= parsed < DUCKDB_MAX:
-        rep.add("duckdb", "ok", f"{version} (shared catalog window 1.5.5 <= v < 1.6)")
+        rep.add("duckdb", "ok", f"{version} (stack window 2.0 <= v < 3)")
     else:
         rep.add(
             "duckdb",
             "warn",
-            f"{version}: the shared MESA catalog is written by duckdb 1.5.x (D11); "
-            "direct history mode may not open it",
+            f"{version}: mesa-ducklake 0.2.0 requires duckdb 2.x (D11); "
+            "direct history mode may not open the shared catalog",
         )
 
 

@@ -2313,6 +2313,32 @@ A6), a per-product aspect table (nothing frozen exists for other products), and 
 until curator labels accrue (the audit that would produce them is deferred, A7). Changing it
 again is an amendment.
 
+### A9 (2026-10-23) — amends D0, D11
+
+**What changed.** The stack moves to DuckDB 2.0. `[tool.uv.sources]` pins mesa-mcp
+`0e2e561b023abb896d148a8b85d3ba6b4f386d2e` (0.2.0) and mesa-ducklake
+`00a2ee84b71179ce748d3263c0fcb9b2b9418dbc` (0.2.0, which requires `duckdb>=2.0,<3`). mesa-clm's own
+window becomes `duckdb>=2.0,<3` (it was `>=1.5.5,<1.6`), and the doctor's duckdb check uses that
+window (`health.DUCKDB_MIN`/`DUCKDB_MAX`, `PINNED_COMMITS`). Both new pins descend from the old
+ones (`c74f3aa`, `7bc143f`), so `load_plugins` and `register_tool(meta=)` (D14) are still there.
+The sidecar schema, its `NOT NULL DEFAULT ''` sentinels and `store.bulk_insert` are unchanged.
+
+**Evidence** (RESEARCH.md, "DuckDB 2.0 in this venv"): DuckDB 2.0.0 still rejects `UNIQUE NULLS
+NOT DISTINCT` with a ParserException and still enforces CHECK constraints, so D11's sentinels
+stand. It no longer probes `import pandas` per bound value, so `bulk_insert` is no longer needed
+for speed; it is kept because its rows are identical to `executemany`'s and it still binds fewer
+values. mesa-ducklake 0.2.0's migration note
+(`docs/dev/duckdb-2-migration.md` there) lists the 2.0 hazards. The sidecar avoids the
+concurrency one already (one connection per operation under the flock, D11). An existing
+catalog file keeps its storage version when 2.0 opens it; a new one is written at storage
+version 69, which DuckDB 1.x cannot open (`duckdb:///…?storage_version=v1.5.0` keeps it readable).
+
+**Why.** mesa-mcp 0.2.0 needs mesa-ducklake 0.2.0, which needs DuckDB 2.x, and D0 already said the
+pins move to the upstream merge commits. A 1.5.x window would keep mesa-clm off the version the
+rest of the stack runs. No bench cell, lock or artifact rotates: the 2.0 suite passes unchanged
+apart from the doctor's pin and window tests. D12's `MULTIWRITER=1` (the Quack catalog) is not
+adopted here; that is a separate change.
+
 ## Plan (summary; the full plan is `design/plan-2026-09-28.md`)
 
 Milestones, each a `feat/mN-*` branch merged by PR after `scripts/wait_for_checks.sh`:

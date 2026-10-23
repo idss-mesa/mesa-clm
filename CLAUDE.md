@@ -252,7 +252,7 @@ order, the audit-only marker; `aspect_lookup.json` beside it) **A6** · `policy.
 `masked()`) **M1** ·
 `provenance/{models,store,store_postgres,migrate,export}.py` (sidecar `mesa_clm`, migrations
 including `LABELS_DDL`, export/import/prune; `store.bulk_insert` binds one JSON value per chunk
-because DuckDB 1.5.6 probes `import pandas` per bound value) **M1** · `service.py`
+because DuckDB 1.5.6 probed `import pandas` per bound value; 2.0.0 does not, DESIGN A9) **M1** · `service.py`
 (`DecisionService`: owners, pending groups, one answer per group) **M1** · `serving.py` (keys,
 units incl. the encoder's loopback socket proxy, the lock and its container recipe, lock
 verification, the container's network namespace) **M1** · `learn/features.py`

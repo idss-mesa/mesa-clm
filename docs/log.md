@@ -1,5 +1,9 @@
 # Directory Update Log
 
+## 2026-10-23
+
+* **Update**: for DESIGN amendment A9 (DuckDB 2.0; mesa-mcp and mesa-ducklake 0.2.0). [Install](getting-started/install.md): the doctor checks duckdb against the 2.x window. [Provenance](concepts/provenance.md) and [Architecture](develop/architecture.md): DuckDB 2.0.0 still rejects `UNIQUE NULLS NOT DISTINCT` and no longer probes `import pandas` per bound value; `bulk_insert` is kept. `llms.txt` and `llms-full.txt` regenerated.
+
 ## 2026-10-05
 
 * **Update**: for DESIGN amendment A8 (the user's decision of 2026-10-05, amending A6's aspect fallback only, after A7's note that on seven non-bench SRER runs the prior-ordered fallback gave `taxon` to 25 numeric or unit-bearing columns). [Decision model](concepts/decision-model.md): the Q2 fallback row and a new A8 paragraph (a numeric column or a column with a unit gets `measurement` first, then `unit` when it has a unit, else the prior's next aspect that is neither `taxon` nor `other`; a string column keeps the prior order with `taxon` removed; two kept; `taxon` never from the fallback, still from the hint or the lookup; `search_json.a6.fallback` carries `rule: "a8"` and the reason `unit`, `numeric` or `string`; what moved on the fixture cards). [Tiers and policy](concepts/tiers-and-policy.md), [Quickstart](getting-started/quickstart.md), [Configuration](getting-started/configuration.md) and [Testing](develop/testing.md): the fallback's one-line descriptions and the A8 tests. `llms.txt` and `llms-full.txt` regenerated.

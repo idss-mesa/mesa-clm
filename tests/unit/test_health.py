@@ -197,13 +197,12 @@ def test_python_check(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_duckdb_window(monkeypatch: pytest.MonkeyPatch) -> None:
     for version, status in (
-        ("1.5.5", "ok"),
-        ("1.5.6", "ok"),
-        ("1.5.99", "ok"),
-        ("1.5.4", "warn"),
+        ("2.0.0", "ok"),
+        ("2.0.1", "ok"),
+        ("2.99.0", "ok"),
+        ("1.5.6", "warn"),
         ("1.4.1", "warn"),
-        ("1.6.0", "warn"),
-        ("2.0.0", "warn"),
+        ("3.0.0", "warn"),
         ("weird", "warn"),
     ):
         monkeypatch.setattr(duckdb, "__version__", version)
@@ -233,8 +232,8 @@ def test_dependency_check_statuses(monkeypatch: pytest.MonkeyPatch) -> None:
     health._dependency_check("something-unpinned", rep)
     assert [c.status for c in rep.checks] == ["fail", "warn", "ok", "ok"]
     assert rep.checks[0].detail == "not installed"
-    assert "pyproject.toml pins c74f3aa" in rep.checks[1].detail
-    assert "pin 7bc143f unverified" in rep.checks[2].detail
+    assert f"pyproject.toml pins {PINNED_COMMITS['mesa-mcp'][:7]}" in rep.checks[1].detail
+    assert f"pin {PINNED_COMMITS['mesa-ducklake'][:7]} unverified" in rep.checks[2].detail
     assert rep.checks[3].detail == "1.0 (no git commit recorded)"
 
 

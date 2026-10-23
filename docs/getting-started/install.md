@@ -158,7 +158,7 @@ bench/snapshots/2026-09-29.parquet` → `bench baselines --date 2026-09-29` → 
 
 Every check prints `ok`, `WARN` or `FAIL`; the doctor exits 1 on any failure. The M0 checks
 cover the vendored files (`vendored.sha256`), the configuration's secret-free hash, Python,
-duckdb (the 1.5.x window), mesa-mcp and mesa-ducklake against their pinned commits, mesa-mcp's
+duckdb (the 2.x window, DESIGN A9), mesa-mcp and mesa-ducklake against their pinned commits, mesa-mcp's
 plugin API and the `clm` entry point, the policy defaults, the provenance path, the label store,
 key files (configured or the serving pair's defaults, named "(default)"; stat-ed for mode 0600,
 never read), the eval root and the OLS fixtures. M1 adds:

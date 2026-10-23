@@ -44,8 +44,8 @@ fingerprints, context sha and token count, outcome and reason), `decision_option
 mirror_failed, local_only}`, `accepted_by ∈ {policy, human, agent}`, spool batch and snapshot
 ids), `human_overrides` (`via ∈ {elicitation, cli, tool}` and what was offered), `labels`
 (identity `(task_key, target_sha256, option_key, label_source)`, product code, leak group,
-`fold_eligible`, `bench_card`), `audits`, `clm_calls`, `schema_versions`. DuckDB 1.5.5 rejects
-`UNIQUE NULLS NOT DISTINCT`, so nullable key columns are `NOT NULL DEFAULT ''` sentinels.
+`fold_eligible`, `bench_card`), `audits`, `clm_calls`, `schema_versions`. DuckDB (1.5.5 and
+2.0.0) rejects `UNIQUE NULLS NOT DISTINCT`, so nullable key columns are `NOT NULL DEFAULT ''` sentinels.
 
 A rank_fit question is one CLM Choice over a candidate group, so it is one `decisions` row
 (the answered candidate's `s_c` and `p_fit` on the row) with one `decision_options` row per
@@ -54,7 +54,7 @@ top `p_fit`, the group margin and whether the anchor won. Every CLM request of a
 `clm_calls` row (latency, input tokens, status), and a run that fails is still committed with
 status `failed` so the post-mortem has its rows. Writes buffer the whole run and commit it in
 one transaction; the DuckDB store passes each table's rows as one JSON parameter per chunk
-(DuckDB 1.5.6 pays a failed `pandas` import per bound value otherwise; see
+(DuckDB 1.5.6 paid a failed `pandas` import per bound value otherwise, 2.0.0 no longer does; see
 [Architecture](../develop/architecture.md)).
 
 Decisions are never updated; only a link's write status and snapshot id, and a run's status,

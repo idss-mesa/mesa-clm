@@ -633,6 +633,11 @@ Source: https://github.com/idss-mesa/mesa-ducklake at
   400 attempts, a bound list of 100 integers 202, and the same 100 rows bound as one JSON string
   2. Each failed attempt walks the import path, which is what made a per-row sidecar commit slow
   → DESIGN implementation notes (M1), "Bulk sidecar inserts".
+- *DuckDB 2.0 in this venv (verified 2026-10-23, duckdb 2.0.0, pandas not installed, the same
+  `sys.meta_path` finder):* `executemany` of 1, 10 and 100 rows of two values, a bound list of 100
+  integers and one bound JSON string each make **0** lookups of `pandas`; 2.0.0 still rejects
+  `UNIQUE NULLS NOT DISTINCT (a, b)` with a ParserException and still enforces CHECK constraints
+  (in-memory). → DESIGN A9.
 
 ## neon-ducklake seam (`stale_after: 2027-03-31`)
 
