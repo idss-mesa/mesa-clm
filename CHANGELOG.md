@@ -8,6 +8,14 @@ All notable changes to the mesa-clm package. The format follows
 
 ## [Unreleased]
 
+### Changed (DESIGN A9: DuckDB 2.0, 2026-10-23)
+
+- `duckdb>=2.0,<3` (was `>=1.5.5,<1.6`); mesa-mcp pinned to `0e2e561` (0.2.0) and mesa-ducklake to
+  `00a2ee8` (0.2.0), the DuckDB 2.0 releases of both. `mesa-clm doctor` checks duckdb against the
+  2.x window and the installed MESA packages against the new commits.
+- The sidecar schema and `store.bulk_insert` are unchanged. DuckDB 2.0.0 still rejects `UNIQUE
+  NULLS NOT DISTINCT` and no longer probes `import pandas` per bound value (RESEARCH.md).
+
 ### Changed (DESIGN A8: the aspect fallback for unseen columns, 2026-10-05)
 
 - Measured on the seven SRER audit cards re-annotated under A8 (RESEARCH.md "A8 on the seven

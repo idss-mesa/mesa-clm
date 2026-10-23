@@ -67,7 +67,7 @@ encoder problem into exit 2. During the run a 401, 403 or 404 from `/v1/systemon
 per group.
 
 **Sidecar writes** (`provenance/store.py`). A run's rows are buffered in a `RunBuffer` and
-committed in one transaction under the flock (DESIGN D11). DuckDB 1.5.6 tries `import pandas`
+committed in one transaction under the flock (DESIGN D11). DuckDB 1.5.6 (not 2.0.0; DESIGN A9) tries `import pandas`
 twice for every Python value it binds when pandas is not installed (the failed import is not
 cached; RESEARCH.md, "mesa-ducklake"), so a commit that binds one parameter per value spends most
 of its time in failed imports; multi-row `VALUES` statements bind just as many values. `bulk_insert` therefore binds one value per chunk

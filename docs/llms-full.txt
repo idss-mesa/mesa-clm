@@ -236,7 +236,7 @@ bench/snapshots/2026-09-29.parquet` → `bench baselines --date 2026-09-29` → 
 
 Every check prints `ok`, `WARN` or `FAIL`; the doctor exits 1 on any failure. The M0 checks
 cover the vendored files (`vendored.sha256`), the configuration's secret-free hash, Python,
-duckdb (the 1.5.x window), mesa-mcp and mesa-ducklake against their pinned commits, mesa-mcp's
+duckdb (the 2.x window, DESIGN A9), mesa-mcp and mesa-ducklake against their pinned commits, mesa-mcp's
 plugin API and the `clm` entry point, the policy defaults, the provenance path, the label store,
 key files (configured or the serving pair's defaults, named "(default)"; stat-ed for mode 0600,
 never read), the eval root and the OLS fixtures. M1 adds:
@@ -1490,8 +1490,8 @@ fingerprints, context sha and token count, outcome and reason), `decision_option
 mirror_failed, local_only}`, `accepted_by ∈ {policy, human, agent}`, spool batch and snapshot
 ids), `human_overrides` (`via ∈ {elicitation, cli, tool}` and what was offered), `labels`
 (identity `(task_key, target_sha256, option_key, label_source)`, product code, leak group,
-`fold_eligible`, `bench_card`), `audits`, `clm_calls`, `schema_versions`. DuckDB 1.5.5 rejects
-`UNIQUE NULLS NOT DISTINCT`, so nullable key columns are `NOT NULL DEFAULT ''` sentinels.
+`fold_eligible`, `bench_card`), `audits`, `clm_calls`, `schema_versions`. DuckDB (1.5.5 and
+2.0.0) rejects `UNIQUE NULLS NOT DISTINCT`, so nullable key columns are `NOT NULL DEFAULT ''` sentinels.
 
 A rank_fit question is one CLM Choice over a candidate group, so it is one `decisions` row
 (the answered candidate's `s_c` and `p_fit` on the row) with one `decision_options` row per
@@ -1500,7 +1500,7 @@ top `p_fit`, the group margin and whether the anchor won. Every CLM request of a
 `clm_calls` row (latency, input tokens, status), and a run that fails is still committed with
 status `failed` so the post-mortem has its rows. Writes buffer the whole run and commit it in
 one transaction; the DuckDB store passes each table's rows as one JSON parameter per chunk
-(DuckDB 1.5.6 pays a failed `pandas` import per bound value otherwise; see
+(DuckDB 1.5.6 paid a failed `pandas` import per bound value otherwise, 2.0.0 no longer does; see
 [Architecture](../develop/architecture.md)).
 
 Decisions are never updated; only a link's write status and snapshot id, and a run's status,
@@ -2183,7 +2183,7 @@ encoder problem into exit 2. During the run a 401, 403 or 404 from `/v1/systemon
 per group.
 
 **Sidecar writes** (`provenance/store.py`). A run's rows are buffered in a `RunBuffer` and
-committed in one transaction under the flock (DESIGN D11). DuckDB 1.5.6 tries `import pandas`
+committed in one transaction under the flock (DESIGN D11). DuckDB 1.5.6 (not 2.0.0; DESIGN A9) tries `import pandas`
 twice for every Python value it binds when pandas is not installed (the failed import is not
 cached; RESEARCH.md, "mesa-ducklake"), so a commit that binds one parameter per value spends most
 of its time in failed imports; multi-row `VALUES` statements bind just as many values. `bulk_insert` therefore binds one value per chunk
@@ -2676,6 +2676,10 @@ third-party component and its hash.
 ---8<--- https://idss-mesa.github.io/mesa-clm/log/
 
 # Directory Update Log
+
+## 2026-10-23
+
+* **Update**: for DESIGN amendment A9 (DuckDB 2.0; mesa-mcp and mesa-ducklake 0.2.0). [Install](getting-started/install.md): the doctor checks duckdb against the 2.x window. [Provenance](concepts/provenance.md) and [Architecture](develop/architecture.md): DuckDB 2.0.0 still rejects `UNIQUE NULLS NOT DISTINCT` and no longer probes `import pandas` per bound value; `bulk_insert` is kept. `llms.txt` and `llms-full.txt` regenerated.
 
 ## 2026-10-05
 

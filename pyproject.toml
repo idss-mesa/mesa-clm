@@ -32,8 +32,8 @@ dependencies = [
     "httpx>=0.28",
     "pyyaml>=6",
     "structlog>=24",
-    # The shared MESA catalog is written by duckdb 1.5.x everywhere on the stack (DESIGN D11).
-    "duckdb>=1.5.5,<1.6",
+    # The MESA stack runs duckdb 2.x since mesa-ducklake 0.2.0 (DESIGN D11).
+    "duckdb>=2.0,<3",
     "platformdirs>=4",
     # ols.py catches requests.RequestException from mesa-mcp's OLS client; declared, not transitive.
     "requests>=2.28",
@@ -97,8 +97,8 @@ include = [
 ]
 
 [tool.uv.sources]
-mesa-mcp = { git = "https://github.com/idss-mesa/mesa-mcp", rev = "c74f3aa1a3caade558f063f4f637a9127dba82d9" }
-mesa-ducklake = { git = "https://github.com/idss-mesa/mesa-ducklake", rev = "7bc143fefb093f0a2ace748a7036598147533ca0" }
+mesa-mcp = { git = "https://github.com/idss-mesa/mesa-mcp", rev = "0e2e561b023abb896d148a8b85d3ba6b4f386d2e" }
+mesa-ducklake = { git = "https://github.com/idss-mesa/mesa-ducklake", rev = "00a2ee84b71179ce748d3263c0fcb9b2b9418dbc" }
 
 [tool.ruff]
 line-length = 100
